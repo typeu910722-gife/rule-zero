@@ -11,7 +11,7 @@ const SECRETS := {
 	"tag_off": "名牌背面的字",
 	"asked_past": "問「以前」",
 	"night_out": "夜晚的小鎮",
-	"found_lulu_bow": "藍色蝴蝶結",
+	"found_lulu_bow": "黃色蝴蝶結",
 	"found_fox_tail": "狐狸尾巴",
 	"lulu_song": "露露哼的另一首歌",
 }

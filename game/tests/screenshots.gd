@@ -36,11 +36,17 @@ func _run() -> void:
 			break
 		await process_frame
 	gs.fast = false
-	main.player.position = Vector2(760, 650)
+	main.player.position = Vector2(640, 560)
 	await _frames(40)
 	await _shot("01_plaza")
+	main.player.position = Vector2(1000, 330)
+	await _frames(40)
+	await _shot("01b_north")
+	main.player.position = Vector2(330, 880)
+	await _frames(40)
+	await _shot("01c_residents")
 
-	main.player.position = Vector2(1100, 960)
+	main.player.position = Vector2(1340, 720)
 	await _frames(40)
 	dlg.run("fen_d1")
 	await _frames(10)
@@ -55,8 +61,8 @@ func _run() -> void:
 	await _shot("03_board")
 	main.board.close()
 
-	main.player.position = Vector2(420, 1000)
-	main.actors.lulu.position = Vector2(470, 990)
+	main.player.position = Vector2(340, 470)
+	main.actors.lulu.position = Vector2(390, 450)
 	await _frames(40)
 	gs.courage = 1
 	gs.set_flag("bread_done")
@@ -74,7 +80,7 @@ func _run() -> void:
 
 	main._layout("night")
 	main._set_tint("night")
-	main.player.position = Vector2(820, 640)
+	main.player.position = Vector2(700, 600)
 	await _frames(40)
 	await _shot("05_night")
 

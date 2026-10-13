@@ -26,7 +26,7 @@ func _ready() -> void:
 	txt += "帶走的線頭　　%d 條\n" % GameState.threads_earned()
 	txt += "懷疑值　　　　%d\n\n" % GameState.suspicion
 	txt += "[color=#a39ba8]第三天（森林、鐘聲、修理）與第二章開場尚未實作。\n"
-	txt += "「藍色蝴蝶結」「狐狸尾巴」在第三天；「露露哼的另一首歌」需要揉麵團小遊戲。[/color]"
+	txt += "「黃色蝴蝶結」「狐狸尾巴」在第三天；「露露哼的另一首歌」需要揉麵團小遊戲。[/color]"
 	t.text = txt
 	box.add_child(t)
 	var b := Button.new()

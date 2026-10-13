@@ -18,10 +18,14 @@ static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := 
 			ellipse(ci, head + Vector2(-r * 0.95, 2 * s), Vector2(6, 17) * s, col.darkened(0.05), 0.25)
 			ellipse(ci, head + Vector2(r * 0.95, 2 * s), Vector2(6, 17) * s, col.darkened(0.05), -0.25)
 			ci.draw_circle(head, r, col)
-			ci.draw_circle(head + Vector2(-6 * s, -r + 1), 5 * s, Color("#ff8fab"))
-			ci.draw_circle(head + Vector2(6 * s, -r + 1), 5 * s, Color("#ff8fab"))
-			ci.draw_circle(head + Vector2(0, -r + 1), 2.5 * s, Color("#e05780"))
+			# 薄荷綠蝴蝶結（森林裡舊耳朵上的是黃色）
+			ci.draw_circle(head + Vector2(-6 * s, -r + 1), 5 * s, Color("#9fd8c4"))
+			ci.draw_circle(head + Vector2(6 * s, -r + 1), 5 * s, Color("#9fd8c4"))
+			ci.draw_circle(head + Vector2(0, -r + 1), 2.5 * s, Color("#5fa891"))
 		"sheep":
+			# 綠色斗篷與皮革小背包
+			ellipse(ci, Vector2(0, -7) * s, Vector2(19, 8) * s, Color("#7d9471"))
+			ci.draw_rect(Rect2(Vector2(12, -14) * s, Vector2(9, 8) * s), Color("#b9853f"))
 			for k in 10:
 				var a := TAU * k / 10.0
 				ci.draw_circle(head + Vector2(cos(a), sin(a)) * r * 0.85, r * 0.42, col)
@@ -42,6 +46,10 @@ static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := 
 			ci.draw_circle(head + Vector2(r * 0.75, -r * 0.75), r * 0.18, col.lightened(0.3))
 			ci.draw_circle(head, r, col)
 			ellipse(ci, head + Vector2(0, 7 * s), Vector2(9, 6) * s, col.lightened(0.35))
+			# 高禮帽
+			ci.draw_rect(Rect2(head + Vector2(-13 * s, -r - 2), Vector2(26 * s, 4 * s)), Color("#2f3a2f"))
+			ci.draw_rect(Rect2(head + Vector2(-8 * s, -r - 2 - 12 * s), Vector2(16 * s, 12 * s)), Color("#2f3a2f"))
+			ci.draw_rect(Rect2(head + Vector2(-8 * s, -r - 2 - 4 * s), Vector2(16 * s, 2.5 * s)), Color("#8a6d3b"))
 		"penguin":
 			ci.draw_circle(head, r, col)
 			ellipse(ci, head + Vector2(0, 5 * s), Vector2(r * 0.7, r * 0.75), Color("#fdfdfd"))
@@ -52,6 +60,26 @@ static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := 
 			ci.draw_circle(head, r, col)
 			ellipse(ci, head + Vector2(-7, -2) * s, Vector2(5, 6) * s, Color("#444"), 0.4)
 			ellipse(ci, head + Vector2(7, -2) * s, Vector2(5, 6) * s, Color("#444"), -0.4)
+		"hamster":
+			ci.draw_circle(head + Vector2(-r * 0.7, -r * 0.8), r * 0.28, Color("#f6c6c0"))
+			ci.draw_circle(head + Vector2(r * 0.7, -r * 0.8), r * 0.28, Color("#f6c6c0"))
+			ellipse(ci, head + Vector2(0, 4 * s), Vector2(r * 1.15, r * 1.05), col)
+			ci.draw_circle(head + Vector2(-13, 6) * s, 6 * s, Color("#f3d2a8"))
+			ci.draw_circle(head + Vector2(13, 6) * s, 6 * s, Color("#f3d2a8"))
+			# 空白的名牌：全鎮只有他的名牌是空的
+			ci.draw_rect(Rect2(head + Vector2(-7, 15) * s, Vector2(14, 7) * s), Color("#fffdf6"))
+			ci.draw_rect(Rect2(head + Vector2(-7, 15) * s, Vector2(14, 7) * s), Color("#c9b79c"), false, 1.0)
+		"calico":
+			_tri(ci, head + Vector2(-16, -8) * s, head + Vector2(-4, -18) * s, head + Vector2(-15, -28) * s, Color("#e8a77d"))
+			_tri(ci, head + Vector2(16, -8) * s, head + Vector2(4, -18) * s, head + Vector2(15, -28) * s, Color("#9a9aa6"))
+			ci.draw_circle(head, r, col)
+			ellipse(ci, head + Vector2(-9, -9) * s, Vector2(8, 7) * s, Color("#e8a77d"), 0.3)
+			ellipse(ci, head + Vector2(10, -11) * s, Vector2(7, 6) * s, Color("#9a9aa6"), -0.3)
+			ellipse(ci, head + Vector2(0, 15) * s, Vector2(9, 3) * s, Color("#f5e17a"))
+		"puppy":
+			ellipse(ci, head + Vector2(-r * 0.9, -2 * s), Vector2(6, 11) * s, col.darkened(0.15), 0.3)
+			ellipse(ci, head + Vector2(r * 0.9, -2 * s), Vector2(6, 11) * s, col.darkened(0.15), -0.3)
+			ci.draw_circle(head, r, col)
 		"cat":
 			_tri(ci, head + Vector2(-16, -8) * s, head + Vector2(-4, -18) * s, head + Vector2(-15, -28) * s, col)
 			_tri(ci, head + Vector2(16, -8) * s, head + Vector2(4, -18) * s, head + Vector2(15, -28) * s, col)

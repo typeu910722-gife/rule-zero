@@ -13,34 +13,37 @@ const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
 const Summary := preload("res://scripts/ui/summary.gd")
 
 const ACTORS := {
-	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#ffe5ec"), "pos": Vector2(410, 1010)},
-	"popo": {"name": "波波", "species": "penguin", "color": Color("#3d5a80"), "pos": Vector2(720, 1010)},
-	"fen": {"name": "Fen", "species": "fox", "color": Color("#f4a261"), "pos": Vector2(1150, 970), "smile": false, "stitched": true},
-	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c99a6b"), "pos": Vector2(900, 540), "size": 1.9},
-	"mochi": {"name": "麻糬", "species": "panda", "color": Color("#fbfbfb"), "pos": Vector2(1000, 740)},
-	"tama": {"name": "小玉", "species": "cat", "color": Color("#fde2a7"), "pos": Vector2(610, 700)},
-	"extra1": {"name": "居民", "species": "bear", "color": Color("#e6ccb2"), "pos": Vector2(-500, -500)},
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(390, 420)},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(960, 700)},
+	"fen": {"name": "Fen", "species": "fox", "color": Color("#c8642b"), "pos": Vector2(1400, 740), "smile": false, "stitched": true},
+	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(740, 600), "size": 1.9},
+	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(230, 940)},
+	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(400, 960)},
+	"extra1": {"name": "居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(-500, -500)},
 	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
-	"extra3": {"name": "居民", "species": "rabbit", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
+	"extra3": {"name": "居民", "species": "puppy", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
 }
 
 const OBJECTS := {
-	"board": {"name": "公告欄", "pos": Vector2(720, 560)},
-	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(480, 990)},
-	"mail_sack": {"name": "郵袋", "pos": Vector2(800, 1000)},
-	"mayor_door": {"name": "鎮長辦公室的門", "pos": Vector2(1280, 700)},
-	"clocktower": {"name": "鐘塔大門", "pos": Vector2(800, 390)},
-	"forest": {"name": "森林入口", "pos": Vector2(440, 260)},
-	"station": {"name": "車站", "pos": Vector2(980, 1140)},
-	"mirror": {"name": "鏡子", "pos": Vector2(230, 560)},
-	"bed": {"name": "床", "pos": Vector2(400, 560)},
+	"board": {"name": "公告欄", "pos": Vector2(580, 580)},
+	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(470, 410)},
+	"mail_sack": {"name": "郵袋", "pos": Vector2(1040, 700)},
+	"mayor_door": {"name": "鎮長公館的門", "pos": Vector2(870, 430)},
+	"repair_room": {"name": "修理室", "pos": Vector2(1070, 250)},
+	"mirror_house": {"name": "鏡之屋", "pos": Vector2(1090, 485)},
+	"clocktower": {"name": "鐘塔大門", "pos": Vector2(700, 360)},
+	"forest": {"name": "森林小徑", "pos": Vector2(1260, 285)},
+	"station": {"name": "火車站", "pos": Vector2(760, 1020)},
+	"mirror": {"name": "鏡子", "pos": Vector2(120, 550)},
+	"bed": {"name": "床", "pos": Vector2(290, 550)},
 }
 
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
-const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "clocktower"]
+const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
 const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
-const HOUSE_BOUNDS := Rect2(195, 490, 255, 190)
-const HOME_SPOT := Vector2(330, 640)
+const HOUSE_BOUNDS := Rect2(85, 490, 255, 180)
+const HOME_SPOT := Vector2(220, 630)
+const WORLD_BOUNDS := Rect2(20, 40, 1560, 1000)
 
 const TINTS := {
 	"day": Color(1, 1, 1),
@@ -110,7 +113,7 @@ func run_chapter() -> void:
 	_set_phase("prologue")
 	hud.set_status_visible(false)
 	_layout("arrival")
-	player.position = Vector2(900, 1190)
+	player.position = Vector2(700, 1030)
 	await Dialogue.run("prologue")
 	await Dialogue.run("arrival")
 	_layout("day")
@@ -153,8 +156,8 @@ func _after_interaction() -> void:
 func _day1_evening() -> void:
 	await _fade_to(1.0)
 	_set_tint("sunset")
-	player.position = Vector2(560, 620)
-	actors.lulu.position = Vector2(620, 600)
+	player.position = Vector2(470, 580)
+	actors.lulu.position = Vector2(530, 560)
 	await _fade_to(0.0)
 	await Dialogue.run("day1_evening")
 	await _fade_to(1.0)
@@ -173,7 +176,7 @@ func _day2_morning() -> void:
 	town.clock_stopped = true
 	town.queue_redraw()
 	_set_tint("day")
-	player.bounds = Rect2(20, 40, 1560, 1240)
+	player.bounds = WORLD_BOUNDS
 	player.position = HOME_SPOT
 	_layout("day")
 	Dialogue.set_bg("none")
@@ -186,7 +189,7 @@ func _night_out() -> void:
 	await _fade_to(1.0)
 	_layout("night")
 	_set_tint("night")
-	player.position = Vector2(500, 610)
+	player.position = Vector2(400, 600)
 	await _fade_to(0.0)
 	await Dialogue.run("night_intro")
 	_set_phase("night_out")
@@ -297,8 +300,8 @@ func _on_event(event_name: String) -> void:
 			add_child(m)
 			await m.play()
 		"to_plaza":
-			player.position = Vector2(760, 640)
-			actors.mayor.position = Vector2(860, 580)
+			player.position = Vector2(560, 660)
+			actors.mayor.position = Vector2(660, 620)
 	Dialogue.event_done.emit()
 
 
@@ -312,8 +315,8 @@ func _layout(mode: String) -> void:
 		a.follow_eyes = false
 	match mode:
 		"arrival":
-			var spots := [Vector2(780, 1110), Vector2(840, 1100), Vector2(960, 1100), Vector2(1020, 1110),
-				Vector2(720, 1130), Vector2(1080, 1130), Vector2(900, 1080)]
+			var spots := [Vector2(580, 1010), Vector2(630, 990), Vector2(800, 990), Vector2(850, 1010),
+				Vector2(540, 1030), Vector2(890, 1030), Vector2(720, 975)]
 			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "mayor"]
 			for k in who.size():
 				actors[who[k]].position = spots[k]
@@ -326,7 +329,7 @@ func _layout(mode: String) -> void:
 			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "extra3"]
 			for k in who.size():
 				var a: Interactable = actors[who[k]]
-				a.position = Vector2(670 + k * 44, 425 + (k % 2) * 40)
+				a.position = Vector2(545 + k * 40, 432 + (k % 2) * 38)
 				a.visible = true
 				a.follow_eyes = true
 			actors.mayor.visible = false

@@ -3,7 +3,7 @@ extends Node2D
 
 const SPEED := 230.0
 
-var bounds := Rect2(20, 40, 1560, 1240)
+var bounds := Rect2(20, 40, 1560, 1000)
 var can_move := true
 var _facing := Vector2.DOWN
 
@@ -14,7 +14,7 @@ func _ready() -> void:
 	cam.limit_left = 0
 	cam.limit_top = 0
 	cam.limit_right = 1600
-	cam.limit_bottom = 1300
+	cam.limit_bottom = 1150
 	cam.position_smoothing_enabled = true
 	add_child(cam)
 
