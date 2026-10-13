@@ -225,15 +225,10 @@ func _fill_menu() -> void:
 
 func _build_menu() -> void:
 	_menu = PanelContainer.new()
-	_menu.position = Vector2(740, 30)
-	_menu.custom_minimum_size = Vector2(500, 560)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("#fffaf3")
-	sb.border_color = Color("#cdb4db")
-	sb.set_border_width_all(4)
-	sb.set_corner_radius_all(16)
-	sb.set_content_margin_all(24)
-	_menu.add_theme_stylebox_override("panel", sb)
+	_menu.position = Vector2(690, 10)
+	_menu.custom_minimum_size = Vector2(570, 700)
+	# 日記本的紙（art/ui_diary.png）
+	_menu.add_theme_stylebox_override("panel", UiSkin.tex("ui_diary", 100, 100, 100, 100, Vector4(92, 64, 84, 56)))
 	_menu.visible = false
 	add_child(_menu)
 	var v := VBoxContainer.new()
@@ -244,7 +239,7 @@ func _build_menu() -> void:
 	# 內容會越來越多（委託、碎片、上一輪的事）：固定高度、可以捲動
 	_menu_text.fit_content = false
 	_menu_text.scroll_active = true
-	_menu_text.custom_minimum_size = Vector2(452, 400)
+	_menu_text.custom_minimum_size = Vector2(394, 380)
 	_menu_text.add_theme_color_override("default_color", Color("#4a3b47"))
 	v.add_child(_menu_text)
 	var board_btn := Button.new()
@@ -268,18 +263,7 @@ func _build_menu() -> void:
 	v.add_child(hint)
 
 
+
 func _style_button(b: Button) -> void:
-	b.add_theme_font_size_override("font_size", 18)
-	for state in ["normal", "hover", "focus", "pressed", "disabled"]:
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color("#fff8f0") if state in ["normal", "disabled"] else Color("#ffe1ec")
-		sb.border_color = Color("#e8a0bf") if state != "disabled" else Color("#d9cfd6")
-		sb.set_border_width_all(3 if state in ["hover", "focus"] else 2)
-		sb.set_corner_radius_all(12)
-		sb.content_margin_top = 6
-		sb.content_margin_bottom = 6
-		b.add_theme_stylebox_override(state, sb)
-	b.add_theme_color_override("font_color", Color("#4a3b47"))
-	b.add_theme_color_override("font_hover_color", Color("#c2558a"))
-	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
-	b.add_theme_color_override("font_disabled_color", Color("#b8aab4"))
+	UiSkin.button(b, 18)
+	b.custom_minimum_size.y = 52

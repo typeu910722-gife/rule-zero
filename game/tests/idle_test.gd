@@ -23,7 +23,7 @@ func _run() -> void:
 	gs.fast = true
 	gs.save_dir = "user://test_saves"
 	gs.meta = {"runs": 0, "chapters_done": 0}
-	for who in ["lulu", "popo", "fen", "mayor", "mochi", "tama"]:
+	for who in ["lulu", "popo", "fen", "mayor", "mochi", "tama", "puppy"]:
 		gs.reset()
 		var got := []
 		for i in 8:

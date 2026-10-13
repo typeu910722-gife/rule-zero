@@ -80,5 +80,40 @@ def main() -> None:
     print("寫入", OUT, out.size, "可走比例 %.1f%%" % (100 * keep.mean()))
 
 
+def forest() -> None:
+    """森林地圖（game/art/forest_map.jpg）：土黃色的小徑可以走。"""
+    src = "game/art/forest_map.jpg"
+    im = np.asarray(Image.open(src).convert("RGB")).astype(float) / 255
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    mx = im.max(-1)
+    mn = im.min(-1)
+    d = mx - mn + 1e-6
+    h = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) * 60
+    s = d / (mx + 1e-6)
+    m = (h >= 20) & (h <= 48) & (s > 0.18) & (s < 0.55) & (mx > 0.78)
+    img = Image.fromarray((m * 255).astype("uint8")).filter(ImageFilter.MedianFilter(7))
+    img = img.filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.MinFilter(5))
+    a = (np.asarray(img) > 127).copy()
+    for x, y, w, hh in [(500, 370, 80, 70)]:   # 往左的岔路接回主路
+        a[y:y + hh, x:x + w] = True
+    H, W = a.shape
+    seed = (770, 1050)
+    keep = np.zeros_like(a)
+    q = deque([(seed[1], seed[0])])
+    keep[seed[1], seed[0]] = True
+    while q:
+        y, x = q.popleft()
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < H and 0 <= nx < W and a[ny, nx] and not keep[ny, nx]:
+                keep[ny, nx] = True
+                q.append((ny, nx))
+    out = Image.fromarray((keep * 255).astype("uint8")).filter(ImageFilter.MaxFilter(9))
+    out = out.resize((W // 2, H // 2), Image.NEAREST)
+    out.save("game/art/forest_mask.png", optimize=True)
+    print("寫入 game/art/forest_mask.png", out.size, "可走比例 %.1f%%" % (100 * keep.mean()))
+
+
 if __name__ == "__main__":
     main()
+    forest()

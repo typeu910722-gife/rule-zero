@@ -1,47 +1,65 @@
 extends CanvasLayer
-## 公告欄：棉花糖鎮好孩子守則。異常會悄悄改變它的內容（不提示）。
+## 公告欄：棉花糖鎮好孩子守則（美術：art/ui_rules_board.png，十條木牌）。
+## 異常會悄悄改變它的內容（不提示）。
 
 signal closed
 
-var _panel: PanelContainer
-var _text: RichTextLabel
+const BOARD := preload("res://art/ui_rules_board.png")
+## 原圖上十條木牌的上緣（像素），每條高約 25px；可寫字的左右範圍
+const SLATS := [134, 179, 219, 260, 301, 342, 383, 424, 465, 506]
+const SLAT_H := 26.0
+const TEXT_X := Vector2(92, 432)
+const SHOW_H := 680.0
+
+var _board: TextureRect
+var _rows: Array[RichTextLabel] = []
+var _hint: Label
 
 
 func _ready() -> void:
 	layer = 45
 	visible = false
 	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.35)
+	dim.color = Color(0, 0, 0, 0.45)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(dim)
-	_panel = PanelContainer.new()
-	_panel.custom_minimum_size = Vector2(640, 560)
-	_panel.position = Vector2(320, 70)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("#fff3e0")
-	sb.border_color = Color("#a1887f")
-	sb.set_border_width_all(8)
-	sb.set_corner_radius_all(10)
-	sb.set_content_margin_all(28)
-	_panel.add_theme_stylebox_override("panel", sb)
-	add_child(_panel)
-	_text = RichTextLabel.new()
-	_text.bbcode_enabled = true
-	_text.fit_content = true
-	_text.add_theme_color_override("default_color", Color("#4e342e"))
-	_text.add_theme_font_size_override("normal_font_size", 24)
-	_text.add_theme_font_size_override("bold_font_size", 24)
-	_panel.add_child(_text)
-	for c in [dim, _panel, _text]:
-		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var k := SHOW_H / BOARD.get_height()
+	var size := Vector2(BOARD.get_width(), BOARD.get_height()) * k
+	_board = TextureRect.new()
+	_board.texture = BOARD
+	_board.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_board.size = size
+	_board.position = Vector2(640 - size.x / 2, 360 - size.y / 2 - 8)
+	_board.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_board)
+	for y in SLATS:
+		var r := RichTextLabel.new()
+		r.bbcode_enabled = true
+		r.scroll_active = false
+		r.clip_contents = false
+		r.position = Vector2(TEXT_X.x, y + 2) * k
+		r.size = Vector2(TEXT_X.y - TEXT_X.x, SLAT_H) * k
+		r.add_theme_color_override("default_color", Color("#4e342e"))
+		r.add_theme_font_size_override("normal_font_size", 16)
+		r.add_theme_font_size_override("bold_font_size", 16)
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_board.add_child(r)
+		_rows.append(r)
+	_hint = Label.new()
+	_hint.text = "按 E／空白鍵，或點一下畫面 關閉"
+	_hint.add_theme_font_size_override("font_size", 16)
+	_hint.add_theme_color_override("font_color", Color("#f3e9f1"))
+	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint.position = Vector2(0, 692)
+	_hint.size = Vector2(1280, 24)
+	add_child(_hint)
 
 
-func rules_bbcode() -> String:
+func rules() -> Array:
 	# 第二天起：第 9 條的「回來」字型變粗，像是後來補寫的
 	var back := "回來" if GameState.day < 2 else "[b]回來[/b]"
-	var lines := [
-		"[center][font_size=30]棉花糖鎮　好孩子守則[/font_size][/center]",
-		"",
+	return [
 		"1. 每天都要笑嘻嘻！",
 		"2. 晚上八點鐘聲響起前，要乖乖回家睡覺。",
 		"3. 不可以去鐘塔後面的森林。",
@@ -50,17 +68,19 @@ func rules_bbcode() -> String:
 		"6. 壞掉的東西，交給熊熊鎮長修理。",
 		"7. 不要問「以前」的事。",
 		"8. 鏡子是用來整理儀容的，不要盯著看太久。",
-		"9. 新朋友來的時候，大家要一起說「歡迎%s」。" % back,
+		"9. 新朋友來的時候，大家要說「歡迎%s」。" % back,
 		"10. 守則永遠只有十條。",
-		"11. 不要和以前的朋友說話。" if GameState.has("chapter2") else "",
-		"",
-		"[center][color=#a1887f][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
 	]
-	return "\n".join(lines)
+
+
+func rules_bbcode() -> String:
+	return "\n".join(rules())
 
 
 func open() -> void:
-	_text.text = rules_bbcode()
+	var lines := rules()
+	for i in _rows.size():
+		_rows[i].text = "[center]%s[/center]" % lines[i]
 	visible = true
 	if GameState.fast:
 		close()

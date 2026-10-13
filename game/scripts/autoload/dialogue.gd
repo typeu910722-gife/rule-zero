@@ -15,11 +15,17 @@ const BG_COLORS := {
 	"train": Color("#f6d6e6"),
 	"dream": Color("#d8d4cc"),
 }
+## 有美術的背景（game/art/bg_*.jpg）。@bg 名稱 → 全畫面背景圖
+const BG_IMAGES := ["train", "platform", "plaza", "bakery", "repair", "clocktower", "room_night",
+	"hospital_child", "hospital_empty", "hospital_haruka"]
+## 夢境（醫院）時換成「記憶揭露」的音樂
+const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka"]
 
 ## 說話者 → 表情圖（game/art/face_*.png，4 欄 × 2 列，每格 256px）
 const FACES := {
 	"小布": "bu", "熊熊鎮長": "mayor", "鎮長": "mayor", "露露": "lulu", "Fen": "fen",
 	"波波": "popo", "麻糬": "mochi", "小玉": "tama",
+	"車掌": "conductor", "居民": "puppy", "小狗居民": "puppy", "貓居民": "cat",
 }
 const FACE_CELL := 256.0
 
@@ -29,8 +35,9 @@ var _portrait: TextureRect
 var _face_tex := {}
 
 var _bg: ColorRect
-var _train: Control
-var _train_t := 0.0
+var _bg_img: TextureRect
+var _item: TextureRect
+var _item_tw: Tween
 var _more: Label
 var _hint: Label
 var _tip: Label
@@ -100,6 +107,7 @@ func run(label: String) -> void:
 	_portrait.visible = false
 	_more.visible = false
 	_hint.visible = false
+	show_item("none")
 	running = false
 	finished.emit()
 
@@ -132,6 +140,9 @@ func _command(op: String, args: Array) -> int:
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
+		"show":
+			# @show 物件名：在對話框上方秀出一張物件圖（game/art/item_*.png）；@show none 收起來
+			show_item(args[0])
 		"idle":
 			# 閒聊：輪流出現 4 句普通的，第 3 次會出現一次驚悚的（整個存檔只一次）
 			return parser.labels[GameState.idle_label(args[0])]
@@ -150,16 +161,33 @@ func _command(op: String, args: Array) -> int:
 func set_bg(mode: String) -> void:
 	_bg.visible = mode != "none"
 	if _bg.visible:
-		_bg.color = BG_COLORS[mode]
-	_train.visible = mode == "train"
-	# 夢境時換成「記憶揭露」的音樂
-	Sound.override_bgm("memory" if mode == "dream" else "")
+		_bg.color = BG_COLORS.get(mode, BG_COLORS.black)
+	_bg_img.visible = mode in BG_IMAGES
+	if _bg_img.visible:
+		_bg_img.texture = load("res://art/bg_%s.jpg" % mode)
+	Sound.override_bgm("memory" if mode in MEMORY_BGS else "")
+
+
+func show_item(name: String) -> void:
+	if _item_tw:
+		_item_tw.kill()
+	if name == "none" or name == "":
+		_item.visible = false
+		return
+	_item.texture = load("res://art/item_%s.png" % name)
+	_item.visible = true
+	_item.modulate.a = 0.0
+	_item.scale = Vector2(0.92, 0.92)
+	_item_tw = create_tween().set_parallel()
+	_item_tw.tween_property(_item, "modulate:a", 1.0, 0.25)
+	_item_tw.tween_property(_item, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _say(who: String, text: String) -> void:
 	text = GameState.fill(text)
 	_box.visible = true
-	_name.visible = who != ""
+	# 名字放在對話框左上角的布標上；旁白時留空（版面不跳動）
+	_name.visible = true
 	_name.text = who
 	_show_face(who, text)
 	if who != "" and not GameState.fast:
@@ -179,9 +207,6 @@ func _say(who: String, text: String) -> void:
 
 
 func _process(delta: float) -> void:
-	if _train.visible:
-		_train_t += delta
-		_train.queue_redraw()
 	# 一句話打完了：右下角的 ▼ 輕輕跳動，告訴玩家可以按下一句
 	_hint.visible = running and _box.visible and not _choosing and not DisplayServer.is_touchscreen_available()
 	if running and _box.visible and not _typing and not _choosing:
@@ -248,8 +273,7 @@ func _choose(opts: Array) -> int:
 		var b := Button.new()
 		b.text = GameState.fill(o.text)
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.add_theme_font_size_override("font_size", 22)
-		_style_button(b)
+		UiSkin.button(b, 21)
 		if o.cost > 0:
 			b.text = "★ %s　（違反守則・膽量 -%d）" % [GameState.fill(o.text), o.cost]
 			if GameState.courage < o.cost:
@@ -257,7 +281,8 @@ func _choose(opts: Array) -> int:
 				b.disabled = true
 		if o.text.begins_with("〔記得〕"):
 			# 上一輪的記憶：紫色，提醒玩家這會讓鎮長起疑
-			b.add_theme_color_override("font_color", Color("#7b4fa0"))
+			b.add_theme_color_override("font_color", Color("#5b2d7a"))
+			b.add_theme_color_override("font_focus_color", Color("#5b2d7a"))
 			b.text += "　（鎮長懷疑值↑）"
 		b.pressed.connect(func():
 			Sound.sfx("choice")
@@ -287,6 +312,23 @@ func _build_ui() -> void:
 	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_bg.visible = false
 	add_child(_bg)
+	_bg_img = TextureRect.new()
+	_bg_img.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bg_img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_bg_img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_bg_img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bg_img.visible = false
+	add_child(_bg_img)
+	# 物件特寫：畫面中間偏上，對話框上面
+	_item = TextureRect.new()
+	_item.position = Vector2(440, 40)
+	_item.size = Vector2(400, 440)
+	_item.pivot_offset = _item.size / 2
+	_item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_item.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_item.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_item.visible = false
+	add_child(_item)
 
 	_box = PanelContainer.new()
 	_box.anchor_left = 0.0
@@ -297,29 +339,12 @@ func _build_ui() -> void:
 	_box.offset_right = -60
 	_box.offset_top = -200
 	_box.offset_bottom = -24
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("#fff8f0")
-	sb.border_color = Color("#e8a0bf")
-	sb.set_border_width_all(4)
-	sb.set_corner_radius_all(20)
-	sb.content_margin_left = 28
-	sb.content_margin_right = 28
-	sb.content_margin_top = 16
-	sb.content_margin_bottom = 16
-	sb.shadow_color = Color(0, 0, 0, 0.12)
-	sb.shadow_size = 6
+	# 布料對話框（art/ui_dialog.png）
+	var sb := UiSkin.tex("ui_dialog", 80, 60, 80, 50, Vector4(50, 2, 50, 16))
 	_box.add_theme_stylebox_override("panel", sb)
 	_box.visible = false
 	add_child(_box)
 
-	# 火車車廂（序章）：粉紅色的牆、兩扇窗、窗外的雲慢慢往後跑
-	_train = Control.new()
-	_train.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_train.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_train.visible = false
-	_train.draw.connect(_draw_train)
-	add_child(_train)
-	move_child(_train, _bg.get_index() + 1)
 
 	# ▼（下一句）與「按住快轉」提示，貼在對話框右下角
 	_more = Label.new()
@@ -330,8 +355,8 @@ func _build_ui() -> void:
 	_more.anchor_right = 1.0
 	_more.anchor_top = 1.0
 	_more.anchor_bottom = 1.0
-	_more.offset_left = -100
-	_more.offset_right = -76
+	_more.offset_left = -160
+	_more.offset_right = -136
 	_more.offset_top = -76
 	_more.offset_bottom = -50
 	_more.visible = false
@@ -346,8 +371,8 @@ func _build_ui() -> void:
 	_hint.anchor_right = 1.0
 	_hint.anchor_top = 1.0
 	_hint.anchor_bottom = 1.0
-	_hint.offset_left = -300
-	_hint.offset_right = -110
+	_hint.offset_left = -350
+	_hint.offset_right = -170
 	_hint.offset_top = -72
 	_hint.offset_bottom = -52
 	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -385,10 +410,12 @@ func _build_ui() -> void:
 	add_child(_portrait)
 
 	var v := VBoxContainer.new()
+	# 名字在布標上，台詞往下一點，落在米色的布裡
+	v.add_theme_constant_override("separation", 14)
 	_box.add_child(v)
 	_name = Label.new()
-	_name.add_theme_color_override("font_color", Color("#c2558a"))
-	_name.add_theme_font_size_override("font_size", 22)
+	_name.add_theme_color_override("font_color", Color("#f8f1df"))
+	_name.add_theme_font_size_override("font_size", 19)
 	v.add_child(_name)
 	_text = RichTextLabel.new()
 	_text.bbcode_enabled = true
@@ -407,10 +434,10 @@ func _build_ui() -> void:
 	# 往右偏一點，不要擋住左邊的表情頭像
 	_choices.offset_left = -290
 	_choices.offset_right = 430
-	_choices.offset_top = -420
-	_choices.offset_bottom = -215
+	_choices.offset_top = -480
+	_choices.offset_bottom = -205
 	_choices.alignment = BoxContainer.ALIGNMENT_END
-	_choices.add_theme_constant_override("separation", 8)
+	_choices.add_theme_constant_override("separation", 4)
 	_choices.visible = false
 	add_child(_choices)
 	# 對話框本身不攔截點擊，讓「點畫面任何地方」都能前進（手機）
@@ -491,28 +518,3 @@ func _style_button(b: Button) -> void:
 	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
 	b.add_theme_color_override("font_disabled_color", Color("#b8aab4"))
 
-
-func _draw_train() -> void:
-	var c := _train
-	c.draw_rect(Rect2(0, 0, 1280, 720), Color("#f6d6e6"))
-	# 牆上的條紋壁紙
-	for k in 32:
-		c.draw_rect(Rect2(k * 40, 0, 18, 720), Color("#f2cadc"))
-	for w: Rect2 in [Rect2(130, 90, 420, 300), Rect2(730, 90, 420, 300)]:
-		# 窗外：粉紅色的天空與一直往後跑的雲
-		c.draw_rect(w, Color("#fbe3ee"))
-		c.draw_rect(Rect2(w.position + Vector2(0, w.size.y * 0.55), Vector2(w.size.x, w.size.y * 0.45)), Color("#f9d3e3"))
-		for k in 6:
-			var x: float = fposmod(w.position.x + k * 120 - _train_t * 60.0 - w.position.x * 0.3, w.size.x + 160) + w.position.x - 80
-			var y: float = w.position.y + 50 + (k * 47) % 170
-			for o: Vector2 in [Vector2(-22, 6), Vector2(0, 0), Vector2(24, 6), Vector2(4, 12)]:
-				var p: Vector2 = Vector2(x, y) + o
-				if Rect2(w.position + Vector2(18, 18), w.size - Vector2(36, 36)).has_point(p):
-					c.draw_circle(p, 18, Color(1, 1, 1, 0.95))
-		c.draw_rect(w, Color("#b07a8e"), false, 14)
-		c.draw_line(w.position + Vector2(w.size.x / 2, 0), w.position + Vector2(w.size.x / 2, w.size.y), Color("#b07a8e"), 8)
-	# 椅背
-	for x: float in [80.0, 680.0]:
-		c.draw_rect(Rect2(x, 430, 520, 140), Color("#c76d8f"))
-		c.draw_rect(Rect2(x, 430, 520, 24), Color("#d98aa7"))
-	c.draw_rect(Rect2(0, 570, 1280, 150), Color("#8e5a74"))

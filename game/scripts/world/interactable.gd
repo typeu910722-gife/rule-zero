@@ -23,6 +23,14 @@ var _step := -1
 var _step_t := 0.0
 
 const MIRROR_TEX := preload("res://art/mirror_states.png")
+const PHOTO_TEX := preload("res://art/item_photo.png")
+const SACK_TEX := preload("res://art/item_sack.png")
+const FOREST_TEX := {
+	"forest_bow": preload("res://art/item_bow_ear.png"),
+	"forest_tags": preload("res://art/item_tags_pile.png"),
+	"forest_tail": preload("res://art/item_fox_tail.png"),
+	"forest_sheep": preload("res://art/item_sheep_pile.png"),
+}
 
 
 func setup(p_id: String, data: Dictionary) -> Interactable:
@@ -136,64 +144,32 @@ func _draw_object() -> void:
 			# 地圖上已經畫了公告欄，這裡不再疊一張（以前會擋住小布）
 			_glint_ring(Vector2(0, -6))
 		"mirror":
-			# 立鏡（鏡中的孩子素材第 1 格：空鏡）
-			draw_texture_rect_region(MIRROR_TEX, Rect2(-60, -150, 120, 150), Rect2(30, 0, 196, 256))
-			if covered:
-				draw_colored_polygon(PackedVector2Array([Vector2(-42, -150), Vector2(42, -150), Vector2(52, -30), Vector2(-52, -30)]), Color("#f7c5d3"))
-				for k in 9:
-					draw_circle(Vector2(-28 + (k % 3) * 28, -128 + (k / 3) * 34), 4, Color("#ffffff"))
+			# 房間的美術圖上已經畫了蓋著布的立鏡；掀開布之後，在原處畫出鏡子
+			if not covered:
+				draw_rect(Rect2(-86, -288, 172, 276), Color("#2a2230"))
+				draw_texture_rect_region(MIRROR_TEX, Rect2(-86, -288, 172, 276), Rect2(30, 0, 196, 256))
+			_glint_ring(Vector2(0, -150))
 		"bed":
-			draw_rect(Rect2(-80, -110, 160, 26), Color("#a47551"))
-			draw_rect(Rect2(-80, -90, 160, 100), Color("#fdf6ec"))
-			draw_rect(Rect2(-70, -84, 70, 30), Color("#ffffff"))
-			draw_rect(Rect2(-80, -48, 160, 58), Color("#a2d2ff"))
-			for k in 4:
-				draw_circle(Vector2(-55 + k * 36, -20), 5, Color("#ffffff"))
-			draw_rect(Rect2(-80, -110, 160, 120), Color("#7a5236"), false, 4)
+			_glint_ring(Vector2(-110, -40))
+		"home_exit":
+			_glint_ring(Vector2(-20, -60))
 		"bakery_photo":
-			draw_rect(Rect2(-14, -40, 28, 22), Color("#ffffff"))
-			draw_rect(Rect2(-14, -40, 28, 22), Color("#8d6e63"), false, 2)
-			draw_rect(Rect2(-12, -38, 12, 18), Color("#e0d6cc"))
+			draw_texture_rect(PHOTO_TEX, Rect2(-17, -46, 34, 40), false)
+			_glint_ring(Vector2(0, -26))
 		"mail_sack":
-			# 鼓鼓的帆布郵袋：袋口用繩子綁起來，露出一角信封
-			Critter.ellipse(self, Vector2(0, -2), Vector2(22, 6), Color(0, 0, 0, 0.15))
-			draw_colored_polygon(PackedVector2Array([Vector2(-20, -2), Vector2(-24, -20), Vector2(-14, -36),
-				Vector2(-6, -38), Vector2(6, -38), Vector2(14, -36), Vector2(24, -20), Vector2(20, -2)]), Color("#d8b98f"))
-			draw_polyline(PackedVector2Array([Vector2(-20, -2), Vector2(-24, -20), Vector2(-14, -36),
-				Vector2(-6, -38), Vector2(6, -38), Vector2(14, -36), Vector2(24, -20), Vector2(20, -2), Vector2(-20, -2)]), Color("#8d6e4a"), 2)
-			draw_colored_polygon(PackedVector2Array([Vector2(-7, -38), Vector2(7, -38), Vector2(10, -50), Vector2(-10, -50)]), Color("#d8b98f"))
-			draw_line(Vector2(-9, -40), Vector2(9, -40), Color("#7a4e2d"), 3)
-			draw_rect(Rect2(-4, -56, 16, 10), Color("#fffaf0"))
-			draw_rect(Rect2(-4, -56, 16, 10), Color("#c27a8c"), false, 1)
-			draw_string(GameState.font, Vector2(-14, -12), "郵", HORIZONTAL_ALIGNMENT_CENTER, 28, 14, Color("#8d6e4a"))
-			_glint_ring(Vector2(0, -20))
+			Critter.ellipse(self, Vector2(0, -2), Vector2(24, 6), Color(0, 0, 0, 0.15))
+			draw_texture_rect(SACK_TEX, Rect2(-28, -56, 56, 55), false)
+			_glint_ring(Vector2(0, -28))
 		"mayor_door":
 			# 門是地圖原圖上的；這裡只在門框外加一圈淡淡的光
 			_glint_ring(Vector2(0, -34))
-		"forest_bow":
-			Critter.ellipse(self, Vector2(0, -14), Vector2(7, 22), Color("#c9a3aa"), 1.2)
-			draw_circle(Vector2(-14, -22), 6, Color("#f2d16b"))
-			draw_circle(Vector2(-4, -22), 6, Color("#f2d16b"))
-			draw_circle(Vector2(-9, -22), 3, Color("#c9a227"))
-		"forest_tags":
-			for k in 9:
-				var p := Vector2(-30 + (k % 3) * 20, -30 + (k / 3) * 12) + Vector2((k * 7) % 5, 0)
-				draw_rect(Rect2(p, Vector2(16, 9)), Color("#ece4da"))
-				draw_rect(Rect2(p, Vector2(16, 9)), Color("#b08d9a"), false, 1)
-		"forest_tail":
-			Critter.ellipse(self, Vector2(0, -12), Vector2(26, 9), Color("#a8552a"), -0.3)
-			draw_circle(Vector2(24, -20), 7, Color("#efe6da"))
-			for k in 4:
-				draw_line(Vector2(-14 + k * 8, -18), Vector2(-10 + k * 8, -6), Color("#4a2e1f"), 1.5)
-		"forest_sheep":
-			for k in 5:
-				var off := Vector2(-96 + k * 48, -6 - (k % 2) * 18)
-				draw_set_transform(off, 0.4 * (k - 2) * 0.3, Vector2(0.85, 0.85))
-				Critter.draw(self, "sheep", Color.WHITE, 0.8, Vector2.ZERO, k != 2, k == 2, false, -1,
-					Color(0.82, 0.8, 0.78, 0.95) if k != 2 else Color(0.95, 0.93, 0.9))
-			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-			draw_rect(Rect2(-8, 0, 30, 14), Color("#f6efe6"))
-			draw_string(GameState.font, Vector2(-8, 11), "No.46", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("#5c3d2e"))
+		"forest_bow", "forest_tags", "forest_tail", "forest_sheep":
+			var tex: Texture2D = FOREST_TEX[id]
+			var w := 170.0 if id == "forest_sheep" else 110.0
+			var h := w * tex.get_height() / tex.get_width()
+			Critter.ellipse(self, Vector2(0, -4), Vector2(w * 0.45, 9), Color(0, 0, 0, 0.18))
+			draw_texture_rect(tex, Rect2(-w / 2, -h, w, h), false)
+			_glint_ring(Vector2(w * 0.3, -h * 0.8))
 		_:
 			# 鐘塔門、森林、車站等：一圈會呼吸的光圈
 			_glint_ring(Vector2(0, -10))

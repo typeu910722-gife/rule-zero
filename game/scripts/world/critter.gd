@@ -12,6 +12,8 @@ const SHEETS := {
 	"penguin": "res://art/walk_popo.png",
 	"hamster": "res://art/walk_mochi.png",
 	"calico": "res://art/walk_tama.png",
+	"puppy": "res://art/walk_puppy.png",
+	"conductor": "res://art/walk_conductor.png",
 }
 const CELL := 192.0
 ## s = 1 時角色在畫面上的高度（像素）

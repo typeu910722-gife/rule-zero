@@ -6,6 +6,9 @@ signal new_game
 signal continue_game
 
 var _area: Control
+const BG := preload("res://art/bg_platform.jpg")
+const TICKET := preload("res://art/item_ticket.png")
+const TICKET_STAMPED := preload("res://art/item_ticket_stamped.png")
 
 
 func _ready() -> void:
@@ -34,20 +37,7 @@ func _ready() -> void:
 func _button(text: String, cb: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.add_theme_font_size_override("font_size", 26)
-	for state in ["normal", "hover", "focus", "pressed", "disabled"]:
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color("#fff8f0") if state != "focus" and state != "hover" else Color("#ffe1ec")
-		sb.border_color = Color("#e8a0bf") if state != "disabled" else Color("#e6dce2")
-		sb.set_border_width_all(3)
-		sb.set_corner_radius_all(16)
-		sb.content_margin_top = 8
-		sb.content_margin_bottom = 8
-		b.add_theme_stylebox_override(state, sb)
-	b.add_theme_color_override("font_color", Color("#4a3b47"))
-	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
-	b.add_theme_color_override("font_hover_color", Color("#c2558a"))
-	b.add_theme_color_override("font_disabled_color", Color("#c9bcc4"))
+	UiSkin.button(b, 24)
 	b.pressed.connect(func():
 		Sound.sfx("choice")
 		cb.call())
@@ -56,39 +46,40 @@ func _button(text: String, cb: Callable) -> Button:
 
 func _draw_area() -> void:
 	var f: Font = GameState.font
-	_area.draw_rect(Rect2(0, 0, 1280, 720), Color("#fbe7ee"))
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3
-	for k in 60:
-		_area.draw_circle(Vector2(rng.randf_range(0, 1280), rng.randf_range(0, 720)), rng.randf_range(2, 5),
-			[Color("#ffd6e0"), Color("#fff1a8"), Color("#e2d4f7")][k % 3])
+	# 背景：月台上的小布，看著棉花糖鎮（art/bg_platform.jpg）
+	_area.draw_texture_rect(BG, Rect2(0, 0, 1280, 720), false)
+	# 左邊淡淡的一層，讓標題字看得清楚
+	for k in 40:
+		_area.draw_rect(Rect2(k * 14, 0, 14, 720), Color(1, 0.95, 0.96, 0.62 * (1.0 - k / 40.0)))
+	_area.draw_string_outline(f, Vector2(110, 210), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, 10, Color(1, 0.97, 0.97, 0.9))
 	_area.draw_string(f, Vector2(110, 210), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, Color("#6d4c5c"))
 	_area.draw_string(f, Vector2(116, 270), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576"))
-	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#a38b98"))
+	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e"))
 
-	# 小布
-	_area.draw_set_transform(Vector2(820, 640), 0.0, Vector2(4.2, 4.2))
-	Critter.draw(_area, "sheep", Color.WHITE, 1.0, Vector2.ZERO, true, false, true)
-	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-
-	# 車票：戳章會隨著完成的章數變多
-	var ticket := Rect2(960, 120, 250, 140)
-	_area.draw_rect(ticket, Color("#fff8ec"))
-	_area.draw_rect(ticket, Color("#d4a373"), false, 3)
-	_area.draw_string(f, ticket.position + Vector2(18, 38), "棉花糖鎮　單程票", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7f5539"))
-	# 戳章＝第幾輪（每一輪結束都多一個）
-	# 還沒搭過火車：一個戳章都沒有。每結束一輪，就多一個。
+	# 車票：每結束一輪，背面就多一個戳章
 	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP, 0, 15)
-	if stamps == 0:
-		_area.draw_string(f, ticket.position + Vector2(18, 92), "（還沒有戳章）", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#c4a98f"))
-	for k in stamps:
-		var c := ticket.position + Vector2(30 + (k % 5) * 46, 68 + (k / 5) * 30)
-		_area.draw_arc(c, 13, 0, TAU, 20, Color(0.75, 0.2, 0.25, 0.75), 2.5)
-		_area.draw_circle(c, 3, Color(0.75, 0.2, 0.25, 0.6))
+	var tk: Texture2D = TICKET_STAMPED if stamps > 0 else TICKET
+	var ticket := Rect2(560, 560, 240, 240.0 * tk.get_height() / tk.get_width())
+	_area.draw_set_transform(ticket.get_center(), -0.08, Vector2.ONE)
+	_area.draw_texture_rect(tk, Rect2(-ticket.size / 2, ticket.size), false)
+	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	if stamps > 1:
+		_area.draw_string_outline(f, ticket.position + Vector2(150, 0), "×%d" % stamps, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 6, Color(1, 1, 1, 0.9))
+		_area.draw_string(f, ticket.position + Vector2(150, 0), "×%d" % stamps, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("#a3343c"))
 	var seen: Array = GameState.meta.get("endings", [])
 	if not seen.is_empty():
-		_area.draw_string(f, Vector2(116, 600), "看過的結局　%d / %d" % [seen.size(), GameState.ENDING_ORDER.size()],
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#a38b98"))
+		_area.draw_string(f, Vector2(116, 640), "看過的結局　%d / %d" % [seen.size(), GameState.ENDING_ORDER.size()],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#8e6f7e"))
 
 	if GameState.is_repeat():
-		_area.draw_string(f, Vector2(0, 690), "歡迎回來。", HORIZONTAL_ALIGNMENT_RIGHT, 1250, 18, Color("#c9b3bf"))
+		_area.draw_string_outline(f, Vector2(0, 700), "歡迎回來。", HORIZONTAL_ALIGNMENT_RIGHT, 1250, 18, 5, Color(0, 0, 0, 0.35))
+		_area.draw_string(f, Vector2(0, 700), "歡迎回來。", HORIZONTAL_ALIGNMENT_RIGHT, 1250, 18, Color("#fbe7ee"))
+
+
+## E（互動鍵）也可以按下目前選中的按鈕
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("interact") and not event.is_action_pressed("ui_accept"):
+		var f := get_viewport().gui_get_focus_owner()
+		if f is Button and not (f as Button).disabled:
+			get_viewport().set_input_as_handled()
+			(f as Button).pressed.emit()

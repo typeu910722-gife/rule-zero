@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/town_map.png-c17d544c135a126520f67ae6c6b05be7
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.82
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

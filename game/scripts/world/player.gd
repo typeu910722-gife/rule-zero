@@ -10,6 +10,13 @@ var bounds := Rect2(40, 110, 1800, 1540):
 		bounds = v
 		_update_camera()
 var can_move := true
+## 在房間裡畫大一點（房間的美術比例比小鎮地圖大）
+var draw_scale := 1.0
+## 在森林裡：用森林的小徑判斷能不能走
+var in_forest := false:
+	set(v):
+		in_forest = v
+		_update_camera()
 ## 是否套用小鎮的建築碰撞
 var collide := true
 var _facing := Vector2.DOWN
@@ -32,10 +39,13 @@ func _update_camera() -> void:
 	if _cam == null:
 		return
 	var area: Rect2
+	draw_scale = 1.0
 	if bounds.position.x > 2000:
 		area = preload("res://scripts/world/town.gd").ROOM_VIEW
-	elif bounds.end.y < 1200 and bounds.end.x < 1600:
-		area = Rect2(0, 0, 1600, 1150)   # 森林
+		draw_scale = 1.9
+	elif in_forest:
+		var F := preload("res://scripts/world/forest.gd")
+		area = Rect2(0, 0, F.W, F.H)
 	else:
 		var T := preload("res://scripts/world/town.gd")
 		area = Rect2(0, 0, T.W, T.H)
@@ -44,6 +54,7 @@ func _update_camera() -> void:
 	_cam.limit_right = int(area.end.x)
 	_cam.limit_bottom = int(area.end.y)
 	_cam.reset_smoothing.call_deferred()
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -56,8 +67,8 @@ func _process(delta: float) -> void:
 			queue_redraw()
 		return
 	_facing = dir
-	var T := preload("res://scripts/world/town.gd")
-	var check: bool = collide and bounds.position.x < 2000 and bounds.end.x > 1600
+	var T: GDScript = preload("res://scripts/world/forest.gd") if in_forest else preload("res://scripts/world/town.gd")
+	var check: bool = collide and (in_forest or (bounds.position.x < 2000 and bounds.end.x > 1600))
 	var move := dir * SPEED * delta
 	# 分軸移動：碰到建築時可以沿著牆滑過去
 	# 萬一被劇情放在路外面（例如草地上）：先移到最近的路上
@@ -97,7 +108,7 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	Critter.draw(self, "sheep", Color.WHITE, Critter.WORLD_SCALE, _facing, true, false, GameState.has("tag_on"), _step)
+	Critter.draw(self, "sheep", Color.WHITE, Critter.WORLD_SCALE * draw_scale, _facing, true, false, GameState.has("tag_on"), _step)
 
 
 func face(dir: Vector2) -> void:
@@ -124,7 +135,7 @@ func nearest(max_dist := -1.0) -> Interactable:
 func _bumps_npc(np: Vector2) -> bool:
 	for n in get_tree().get_nodes_in_group("interactable"):
 		var it := n as Interactable
-		if it.kind != "npc" or not it.visible:
+		if it.kind != "npc" or not it.visible or (in_forest and it.id == "fen"):
 			continue
 		var d_new := (np - it.position) * Vector2(1.0, 1.8)
 		var d_old := (position - it.position) * Vector2(1.0, 1.8)

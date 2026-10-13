@@ -27,7 +27,8 @@ const ACTORS := {
 	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(1050, 905), "size": 1.6},
 	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(230, 1290)},
 	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(645, 1330)},
-	"extra1": {"name": "居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(-500, -500)},
+	"conductor": {"name": "車掌", "species": "conductor", "color": Color("#4a2a32"), "pos": Vector2(1260, 1620), "size": 1.5},
+	"extra1": {"name": "小狗居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(1400, 660)},
 	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
 	"extra3": {"name": "居民", "species": "puppy", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
 }
@@ -63,9 +64,9 @@ const OBJECTS := {
 	"tuft_8": {"name": "一小團棉花", "pos": Vector2(1828, 990)},
 	"tuft_9": {"name": "一小團棉花", "pos": Vector2(705, 1590)},
 	# 小布的房間（地圖右邊，見 town.gd 的 ROOM）
-	"mirror": {"name": "鏡子", "pos": Vector2(2440, 360)},
-	"bed": {"name": "床", "pos": Vector2(2600, 380)},
-	"home_exit": {"name": "出門", "pos": Vector2(3040, 345)},
+	"mirror": {"name": "鏡子", "pos": Vector2(3080, 375)},
+	"bed": {"name": "床", "pos": Vector2(2425, 470)},
+	"home_exit": {"name": "出門", "pos": Vector2(3290, 470)},
 	# 森林（第三天）
 	"forest_sheep": {"name": "小綿羊", "pos": Vector2(800, 320)},
 	"forest_bow": {"name": "長耳朵", "pos": Vector2(640, 380)},
@@ -85,7 +86,7 @@ const PLACE_NAMES := {"lulu": "麵包店", "popo": "郵局", "fen": "石橋的 F
 const TALK_COOLDOWN_MS := 350
 const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
 const HOUSE_BOUNDS := Town.ROOM_BOUNDS
-const HOME_SPOT := Vector2(2720, 470)
+const HOME_SPOT := Vector2(2840, 540)
 const WORLD_BOUNDS := Town.WORLD_BOUNDS
 ## 走出家門時站的位置（門口）
 const OUTSIDE_HOME := Vector2(300, 872)
@@ -361,9 +362,10 @@ func _forest() -> void:
 	for id in actors:
 		actors[id].visible = id.begins_with("forest_")
 	actors.fen.visible = true
-	actors.fen.position = Vector2(860, 1000)
-	player.position = Vector2(800, 1030)
+	actors.fen.position = Forest.START + Vector2(60, -20)
+	player.position = Forest.START
 	player.bounds = FOREST_BOUNDS
+	player.in_forest = true
 	_set_phase("forest")
 	Sound.bgm("night")
 	await _fade_to(0.0)
@@ -386,6 +388,7 @@ func _forest_climax() -> void:
 		return
 	await _fade_to(1.0)
 	forest.visible = false
+	player.in_forest = false
 	for a in actors.values():
 		a.visible = false
 	repair_scene = RepairScene.new()
@@ -538,8 +541,8 @@ func _talk_label(id: String) -> String:
 func _process(_delta: float) -> void:
 	if phase == "forest":
 		# 越往森林深處，顏色就越淡
-		var t := clampf((1030.0 - player.position.y) / 650.0, 0.0, 1.0)
-		tint.color = Color(0.85, 0.85, 0.9).lerp(Color(0.6, 0.6, 0.64), t)
+		var t := clampf((Forest.START.y - player.position.y) / (Forest.START.y - 240.0), 0.0, 1.0)
+		tint.color = Color(1, 1, 1).lerp(Color(0.6, 0.6, 0.66), t)
 		if not busy:
 			var fen: Interactable = actors.fen
 			fen.position = fen.position.lerp(player.position + Vector2(55, 25), 0.04)
@@ -635,7 +638,7 @@ func _on_event(event_name: String) -> void:
 			player.bounds = WORLD_BOUNDS
 			player.position = STATION_SPOT + Vector2(-20, -70)
 			player.face(Vector2.DOWN)
-			var newbie: Interactable = actors.extra1
+			var newbie: Interactable = actors.extra3
 			newbie.species = "sheep"
 			newbie.display_name = "新來的小布"
 			newbie.position = STATION_SPOT + Vector2(0, 10)
@@ -662,7 +665,7 @@ func _layout(mode: String) -> void:
 	for id in ACTORS:
 		var a: Interactable = actors[id]
 		a.position = ACTORS[id].pos
-		a.visible = not id.begins_with("extra")
+		a.visible = not id.begins_with("extra") or id == "extra1"
 		a.follow_eyes = false
 		a.facing = Vector2.DOWN
 	for id in OBJECTS:
@@ -670,20 +673,23 @@ func _layout(mode: String) -> void:
 	match mode:
 		"arrival":
 			# 火車站前：大家圍著剛下車的小布
-			var spots := [Vector2(-190, 5), Vector2(-105, -25), Vector2(105, -25), Vector2(190, 5), Vector2(-300, -15)]
-			var who := ["lulu", "popo", "mochi", "tama", "mayor"]
+			var spots := [Vector2(-190, 5), Vector2(-105, -25), Vector2(105, -25), Vector2(190, 5), Vector2(-300, -15), Vector2(290, -10)]
+			var who := ["lulu", "popo", "mochi", "tama", "mayor", "extra1"]
 			for k in who.size():
 				actors[who[k]].position = STATION_SPOT + spots[k]
 				actors[who[k]].visible = true
 				actors[who[k]].face_toward(STATION_SPOT)
 			actors.fen.visible = false
+			actors.conductor.visible = false
 		"day":
 			actors.mayor.visible = GameState.day >= 2
+			# 車掌：第二天起，一直站在月台的盡頭
+			actors.conductor.visible = GameState.day >= 2
 			# 想起名字的麻糬，第三天已經被帶去修理了
 			actors.mochi.visible = not (GameState.day >= 3 and GameState.has("mochi_remembers"))
 		"night":
 			# 夜晚：居民們站在廣場，面朝鐘塔。一動也不動。鈕扣眼睛跟著小布轉。
-			var who := ["lulu", "popo", "mochi", "tama"]
+			var who := ["lulu", "popo", "mochi", "tama", "extra1"]
 			for k in who.size():
 				var a: Interactable = actors[who[k]]
 				a.position = Vector2(800 + k * 75, 960 + (k % 2) * 40)
@@ -691,6 +697,7 @@ func _layout(mode: String) -> void:
 				a.facing = Vector2.UP
 				a.follow_eyes = true
 			actors.mayor.visible = false
+			actors.conductor.visible = false
 			actors.fen.visible = false
 	_refresh_objects()
 	actors.mirror.covered = not GameState.has("mirror_open")

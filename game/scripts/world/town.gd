@@ -13,7 +13,10 @@ const WORLD_BOUNDS := Rect2(40, 110, W - 80, 1540)
 
 ## 小布家的室內：放在地圖右邊的空白處，鏡頭只看得到房間
 const ROOM := Rect2(2300, 120, 840, 480)
-const ROOM_BOUNDS := Rect2(2340, 330, 760, 240)
+## 地板上可以走的範圍（房間美術 art/room.jpg 的木地板，避開床、斗櫃、門邊的櫃子）
+const ROOM_BOUNDS := Rect2(2440, 360, 790, 330)
+const ROOM_ART := preload("res://art/room.jpg")
+const CLOCK_ART := preload("res://art/item_clock.png")
 const ROOM_VIEW := Rect2(ROOM.position.x + ROOM.size.x / 2 - 640, 0, 1280, 720)
 
 ## 可以走的地方：石板路、樓梯、橋（由 tools/build_walk_mask.py 從地圖產生）。
@@ -67,46 +70,10 @@ func _draw() -> void:
 	if clock_stopped:
 		# 指針停在三點（蓋掉原本的指針）
 		var c := CLOCK * SCALE
-		draw_circle(c, 24, Color("#fbf3dc"))
-		draw_arc(c, 24, 0, TAU, 32, Color("#7a5a3a"), 3)
-		draw_line(c, c + Vector2(15, 0), Color("#3d2b22"), 4)
-		draw_line(c, c + Vector2(0, -20), Color("#3d2b22"), 3)
-		draw_circle(c, 3, Color("#3d2b22"))
+		draw_texture_rect(CLOCK_ART, Rect2(c - Vector2(27, 25), Vector2(54, 50)), false)
 	_draw_room()
 
 
-## 小布的房間：木地板、碎花壁紙、小窗、門墊
+## 小布的房間：美術圖（床、蓋著布的立鏡、門都在圖上），鏡頭剛好看到整張圖
 func _draw_room() -> void:
-	var r := ROOM
-	draw_rect(Rect2(ROOM_VIEW.position, ROOM_VIEW.size), Color("#2b2228"))
-	# 牆
-	draw_rect(Rect2(r.position, Vector2(r.size.x, 200)), Color("#f6e3d3"))
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 46
-	for k in 70:
-		var p := r.position + Vector2(rng.randf_range(10, r.size.x - 10), rng.randf_range(10, 185))
-		draw_circle(p, 3, [Color("#f2c4ce"), Color("#cfe3c8"), Color("#f8e1a8")][k % 3])
-	draw_rect(Rect2(r.position + Vector2(0, 190), Vector2(r.size.x, 12)), Color("#c9a27e"))
-	# 地板
-	var floor_r := Rect2(r.position + Vector2(0, 202), Vector2(r.size.x, r.size.y - 202))
-	draw_rect(floor_r, Color("#d9b48c"))
-	for k in 8:
-		var y := floor_r.position.y + k * floor_r.size.y / 8.0
-		draw_line(Vector2(r.position.x, y), Vector2(r.end.x, y), Color("#c49a72"), 2)
-	# 窗戶（外面是鐘塔的方向）
-	var win := Rect2(r.position + Vector2(r.size.x / 2 - 70, 40), Vector2(140, 100))
-	draw_rect(win, Color("#bfe0f2"))
-	draw_rect(win, Color("#a47551"), false, 8)
-	draw_line(win.position + Vector2(70, 0), win.position + Vector2(70, 100), Color("#a47551"), 5)
-	draw_line(win.position + Vector2(0, 50), win.position + Vector2(140, 50), Color("#a47551"), 5)
-	# 地毯
-	Critter.ellipse(self, r.position + Vector2(r.size.x / 2, 360), Vector2(200, 60), Color("#e8a0bf"))
-	Critter.ellipse(self, r.position + Vector2(r.size.x / 2, 360), Vector2(180, 50), Color("#f6c6d6"))
-	# 門（右下）與門墊
-	var door := Rect2(r.end.x - 120, r.position.y + 70, 80, 132)
-	draw_rect(door, Color("#8d5524"))
-	draw_rect(door, Color("#5e3a1a"), false, 4)
-	draw_circle(door.position + Vector2(64, 70), 5, Color("#ffd166"))
-	draw_rect(Rect2(door.position + Vector2(-6, 136), Vector2(92, 18)), Color("#9c6b98"))
-	# 外框
-	draw_rect(r, Color("#5e3a1a"), false, 10)
+	draw_texture_rect(ROOM_ART, ROOM_VIEW, false)
