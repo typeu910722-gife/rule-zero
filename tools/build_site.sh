@@ -32,10 +32,20 @@ open(cfg_path, "w", encoding="utf-8").write("\n".join(out))
 PY
 "$GODOT" --headless --path "$ROOT/game" --export-release "Web" "$OUT/rule-zero/index.html"
 cp "$ROOT/game/web/intro.mp4" "$OUT/rule-zero/boot/intro.mp4"
-cp "$ROOT/game/art/walk_bu.png" "$OUT/rule-zero/boot/walk_bu.png"
 cp "$ROOT/game/web/intro.webm" "$OUT/rule-zero/boot/intro.webm"
-cp "$ROOT/game/web/bu_faces.png" "$OUT/rule-zero/boot/bu_faces.png"
-cp "$ROOT/game/art/item_stand_mayor.png" "$OUT/rule-zero/boot/mayor.png"
+# 載入畫面的小圖：縮小，才不會跟遊戲本體搶下載
+python3 - "$ROOT" "$OUT/rule-zero/boot" <<'PY'
+import sys
+from PIL import Image
+root, out = sys.argv[1], sys.argv[2]
+walk = Image.open(f"{root}/game/art/walk_bu.png")
+row = walk.crop((0, 192 * 2, 576, 192 * 3)).resize((3 * 128, 128), Image.LANCZOS)   # 朝右跑的那一列
+row.save(f"{out}/run_bu.png", optimize=True)
+Image.open(f"{root}/game/web/bu_faces.png").resize((6 * 128, 128), Image.LANCZOS).save(f"{out}/bu_faces.png", optimize=True)
+m = Image.open(f"{root}/game/art/item_stand_mayor.png")
+m.thumbnail((200, 200), Image.LANCZOS)
+m.save(f"{out}/mayor.png", optimize=True)
+PY
 cp "$ROOT/site/index.html" "$OUT/index.html"
 cp "$ROOT/site/_headers" "$OUT/_headers"
 python3 - "$ROOT" "$OUT" <<'PY'

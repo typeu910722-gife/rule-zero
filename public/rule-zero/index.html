@@ -162,7 +162,7 @@ body {
       face.style.setProperty('--pale', Math.max(0, (p - 0.5) / 0.5).toFixed(2));
       // 越接近終點：跑越快、越抖、終點的熊熊越清楚
       var stepMs = 150 - p * 90;
-      if (Date.now() - lastStep > stepMs) { lastStep = Date.now(); frame = (frame + 1) % 4; body.style.backgroundPosition = ([50, 0, 50, 100][frame]) + '% 66.667%'; }
+      if (Date.now() - lastStep > stepMs) { lastStep = Date.now(); frame = (frame + 1) % 4; body.style.backgroundPosition = ([50, 0, 50, 100][frame]) + '% 0'; }
       var shake = p > 0.8 ? (Math.random() - 0.5) * (p - 0.8) * 30 : 0;
       runner.style.transform = 'translate(-50%, ' + (frame % 2 ? -4 : 0) + 'px) translateX(' + shake.toFixed(1) + 'px)';
       runner.classList.toggle('yz-sweat', p > 0.55);
@@ -177,6 +177,8 @@ body {
   }
 
   function build() {
+    // 載入畫面的小圖先下載好（影片播放時就開始）
+    ['boot/run_bu.png', 'boot/bu_faces.png', 'boot/mayor.png'].forEach(function (src) { var i = new Image(); i.fetchPriority = 'high'; i.src = src; });
     boot = document.createElement('div');
     boot.id = 'yz-boot';
     document.body.appendChild(boot);
@@ -246,7 +248,7 @@ html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; ov
 .yz-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 999px; background: repeating-linear-gradient(-45deg, #e889ad 0 10px, #ef9fbd 10px 20px); background-size: 28px 28px; animation: yz-stripe 0.8s linear infinite; }
 @keyframes yz-stripe { to { background-position: 28px 0; } }
 .yz-runner { position: absolute; left: 0; bottom: 8px; width: clamp(80px, 17vh, 130px); height: clamp(80px, 17vh, 130px); transform: translateX(-50%); pointer-events: none; }
-.yz-body { position: absolute; inset: 0; background: url(boot/walk_bu.png) 50% 66.667% / 300% 400% no-repeat; }
+.yz-body { position: absolute; inset: 0; background: url(boot/run_bu.png) 50% 0 / 300% 100% no-repeat; }
 .yz-face { --pale: 0; position: absolute; left: 50%; bottom: 92%; width: 78%; height: 78%; transform: translateX(-62%); border-radius: 50%; background: #fff url(boot/bu_faces.png) 0 0 / 600% 100% no-repeat; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #e3a3bd; }
 .yz-face::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(180deg, rgba(90, 110, 190, .55) 0%, rgba(90, 110, 190, 0) 55%); opacity: var(--pale); mix-blend-mode: multiply; }
 .yz-face::after { content: ''; position: absolute; left: 66%; bottom: -12px; width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #e3a3bd; }
@@ -280,7 +282,7 @@ html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; ov
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125920,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125904,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
