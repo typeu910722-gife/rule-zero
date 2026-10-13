@@ -21,9 +21,11 @@ func _ready() -> void:
 	var found := GameState.secrets_found()
 	var stars := "★".repeat(found.size()) + "☆".repeat(GameState.SECRETS.size() - found.size())
 	var txt := "[center][font_size=36]第一章　歡迎回來　—　完[/font_size][/center]\n\n\n"
-	txt += "發現的秘密　　%s　(%d / %d)\n\n" % [stars, found.size(), GameState.SECRETS.size()]
-	txt += "帶走的線頭　　%d 條\n\n" % GameState.threads_earned()
-	txt += "懷疑值　　　　%d" % GameState.suspicion
+	txt += "發現的秘密　　%s　(%d / %d)\n" % [stars, found.size(), GameState.SECRETS.size()]
+	var names: Array = found.map(func(k): return GameState.SECRETS[k])
+	if not names.is_empty():
+		txt += "[font_size=20]%s[/font_size]\n" % "、".join(names)
+	txt += "\n鎮長懷疑值　　%d / 100" % GameState.suspicion
 	t.text = txt
 	add_child(t)
 

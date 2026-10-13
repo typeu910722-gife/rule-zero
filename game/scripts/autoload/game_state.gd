@@ -1,10 +1,10 @@
 extends Node
-## 全域遊戲狀態：天數、膽量、懷疑值、旗標。
+## 全域遊戲狀態：天數、膽量、鎮長懷疑值、旗標。
 ## 旗標同時用來記錄「秘密」與帶入下一章的選擇（見 docs/script/chapter1.md 附錄 A）。
 
 signal changed
 
-## 本章 8 個秘密（決定章末獲得的線頭數）
+## 本章的秘密（結算畫面直接列出名稱）
 const SECRETS := {
 	"got_button": "灰色鈕扣",
 	"mirror_1": "鏡中的人影",

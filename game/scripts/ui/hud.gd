@@ -52,7 +52,7 @@ func refresh() -> void:
 	var stars := "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)
 	_status.text = "%s　｜　膽量 %s" % [day_names[mini(GameState.day, 3)], stars]
 	if show_debug:
-		_status.text += "　｜　[debug] 懷疑值 %d" % GameState.suspicion
+		_status.text += "　｜　[debug] 鎮長懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
 	if menu_open:
 		_fill_menu()
