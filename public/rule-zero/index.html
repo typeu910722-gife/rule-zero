@@ -113,7 +113,7 @@ body {
 (function () {
   var FACES = [0, 1, 2, 3, 4, 5];   // boot/bu_faces.png：開心 → 平靜 → 疑惑 → 不安 → 害怕 → 驚嚇
   var boot, video, load, fill, runner, body, face, pct, mayor, skip, sound;
-  var stage = 'video', shown = 0, t0 = Date.now(), frame = 0, lastStep = 0, ready = false, doneAt = 0;
+  var stage = 'video', shown = 0, t0 = Date.now(), frame = 0, lastStep = 0, ready = false, doneAt = 0, lastT = Date.now();
 
   function el(tag, cls, parent) { var e = document.createElement(tag); if (cls) { e.className = cls; } (parent || boot).appendChild(e); return e; }
 
@@ -150,7 +150,11 @@ body {
     // 真的進度＋一點點「假」的前進，讓小布一直在跑
     var fake = Math.min(0.9, (Date.now() - t0) / 28000);
     var target = ready ? 1 : Math.max(real * 0.97, fake);
-    shown += (target - shown) * (stage === 'loading' ? 0.06 : 1);
+    // 用經過的時間來追進度（分頁在背景、畫面掉幀也不會卡住）
+    var now = Date.now(), dt = Math.min(0.5, (now - lastT) / 1000);
+    lastT = now;
+    shown = stage === 'loading' ? shown + (target - shown) * Math.min(1, dt * 2.5) : target;
+    if (ready && target - shown < 0.004) { shown = 1; }
     if (stage === 'loading') {
       var p = Math.max(0, Math.min(1, shown));
       fill.style.width = (p * 100).toFixed(1) + '%';
@@ -175,6 +179,8 @@ body {
     }
     requestAnimationFrame(tick);
   }
+  // 分頁在背景時 requestAnimationFrame 會停：另外用計時器補一下
+  setInterval(function () { if (boot && stage === 'loading' && document.hidden) { tick(); } }, 250);
 
   function build() {
     // 載入畫面的小圖先下載好（影片播放時就開始）
@@ -282,7 +288,7 @@ html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; ov
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125904,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125952,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
