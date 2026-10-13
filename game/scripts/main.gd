@@ -12,6 +12,7 @@ const Summary := preload("res://scripts/ui/summary.gd")
 const EndCard := preload("res://scripts/ui/end_card.gd")
 const EndingCard := preload("res://scripts/ui/ending_card.gd")
 const Intro := preload("res://scripts/ui/intro.gd")
+const Flash := preload("res://scripts/ui/flash.gd")
 const Title := preload("res://scripts/ui/title.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 
@@ -231,6 +232,15 @@ func _continue() -> void:
 func run_chapter() -> void:
 	_set_phase("prologue")
 	hud.set_status_visible(false)
+	# 第一次搭上列車前的一瞬間：閃過一段影片。之後再也不會出現。
+	if not GameState.meta.get("flash_seen", false) and not GameState.fast:
+		GameState.meta["flash_seen"] = true
+		GameState.save_meta()
+		Sound.duck(true)
+		var f := Flash.new()
+		add_child(f)
+		await f.done
+		Sound.duck(false)
 	_layout("arrival")
 	player.position = STATION_SPOT
 	player.face(Vector2.UP)
