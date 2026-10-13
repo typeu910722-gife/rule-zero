@@ -26,6 +26,8 @@ func _ready() -> void:
 	if not names.is_empty():
 		txt += "[font_size=20]%s[/font_size]\n" % "、".join(names)
 	txt += "\n鎮長懷疑值　　%d / 100" % GameState.suspicion
+	txt += "\n記憶碎片　　　%d / 10" % GameState.tuft_count()
+	txt += "\n用了幾輪　　　%d 輪" % (GameState.loop_number() - GameState.FIRST_LOOP + 1)
 	t.text = txt
 	add_child(t)
 

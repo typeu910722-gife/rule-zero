@@ -168,10 +168,15 @@ Fen：我是說，你「又」一個新來的。這個月第三個了。
 > Fen 翻下樹枝，拍拍尾巴上的灰。
 Fen：我叫 Fen。勸你一句——
 Fen：別笑得太認真。
+Fen：……對了。
+Fen：你有沒有看到幾張紙？我的筆記本被風吹散了。
+Fen：撿到的話，拿來還我。——不准看。
+@set q_notes
 @goto f1_check
 # f1_again
 Fen：幹嘛？我不陪乖寶寶玩喔。
 # f1_check
+[!notes_returned] @if notes>=3 f_return
 @if fen_mem_done f1_end
 [mem.knows_47] @goto f1_mem
 @end
@@ -190,6 +195,22 @@ Fen：你記得？
 Fen：從來沒有人記得過。從來沒有。
 Fen：……小聲一點。鎮長的耳朵很好。
 Fen：第三天，到樹屋來找我。這次，我們換一條路走。
+@end
+# f_return
+@set notes_returned
+> 你把三張紙還給 Fen。
+@if read_notes f_return_read
+Fen：……你真的沒看？
+> Fen 盯著你，看了好久好久。
+Fen：怪人。
+Fen：……謝啦。
+@set fen_trust
+@end
+# f_return_read
+Fen：……你看了吧。
+Fen：看了就看了。反正——你會忘記。
+> Fen 把紙塞進背心裡。他沒有再看你。
+@end
 # f1_end
 
 === mayor_door
@@ -211,6 +232,79 @@ Fen：第三天，到樹屋來找我。這次，我們換一條路走。
 > 玻璃裡面好像有人影——
 > 不，是你自己的倒影。
 > ……你的倒影，慢了半拍才轉過頭。
+[mem.knows_mirror_letter] > 門上的投信口，蓋子自己輕輕動了一下。好像在等你。
+
+=== mirror_house_day2_explore
+@set visited_mirror_house
+@if mirror_mail_done mh_after
+@if !q_letters mh_after
+@set mirror_mail_done
+@add letters
+> 玻璃圓頂的小屋。門上有一個小小的投信口。
+> 你把信投了進去。
+> ……
+> ……
+> 投信口裡，滑出了一張紙。
+> 上面的字是反過來的。你把紙翻過來，對著光看：
+> 「謝謝。我一直在等。」
+@set mirror_letter
+@sus 5
+@end
+# mh_after
+> 玻璃圓頂的小屋。門鎖著。
+> 玻璃裡，你的倒影對你揮了揮手。
+> 你沒有揮手。
+
+=== lulu_mailbox
+@if lulu_mail_done lm_after
+@if !q_letters lm_after
+@set lulu_mail_done
+@add letters
+> 你打開露露家的信箱。
+> 信箱裡已經塞滿了信。
+> 每一封的收件人，都是「露露」。
+> 寄件人，也是「露露」。
+> 你抽出一封。上面只寫了一句話：
+> 「今天也要笑嘻嘻喔！」
+> ……每一封，都一樣。
+> 你把波波的信放了進去。
+@end
+# lm_after
+> 粉紅色的信箱。塞得滿滿的。
+
+=== mayor_door_day2_explore
+@set visited_mayor_door
+@if mayor_mail_done md_after
+@if !q_letters md_after
+@set mayor_mail_done
+@add letters
+> 鎮長公館的大門關著。你把信從門縫塞了進去。
+> ……
+> 信，從門縫底下，被慢慢地推了回來。
+> 信封的背面，多了一行字：
+> 「熊熊已經讀過了。謝謝你，{name}。」
+> 信封從來沒有被拆開過。
+@end
+# md_after
+> 鎮長公館的大門關著。門上掛著一顆熊頭。
+> 鎮長不在家。他在廣場發糖果。
+
+=== mayor_door_day3_explore
+@if got_key md3_plain
+[read_note_2] @if mem.knows_bell md3_key
+[mem.knows_key_spot] @if mem.knows_bell md3_key
+# md3_plain
+> 鎮長公館的大門關著。門上掛著一顆熊頭。
+> 熊頭在笑。
+@end
+# md3_key
+> 門上的熊頭在笑。
+> Fen 的筆記上寫著：「鑰匙＝熊頭」。
+> 你把手伸進熊頭張開的嘴巴裡。
+> ……冰冰的。是一把舊鑰匙。
+@set got_key
+@sus 10
+> （三點以前，去鐘塔。）
 
 === clocktower
 @set visited_clocktower
@@ -329,8 +423,67 @@ Fen：第三天，到樹屋來找我。這次，我們換一條路走。
 小玉：……喵？我剛剛說了什麼？
 @end
 # t2_plain
-小玉：喵～{name}！今天的糖果吃了嗎？
-小玉：鎮長做的糖果最好吃了！吃了以後，就會覺得——什麼都不用想了！
+@if tama_done t2_after
+@if q_tama t2_progress
+小玉：喵嗚……{name}，糟糕了喵。
+小玉：我的糖果罐打翻了，糖果滾得到處都是。
+小玉：一顆滾到火車站、一顆滾到石橋那邊、一顆滾進露露家的花園……我記得是這樣喵。
+小玉：不吃糖的話，我會……會怎樣呢？喵？
+* 「我幫你找！」 -> t2_yes
+* 「……先不要。」 -> t2_no
+# t2_yes
+@set q_tama
+小玉：喵～！謝謝你！
+@end
+# t2_no
+小玉：喵……好吧。
+@end
+# t2_progress
+@if candies>=3 t2_return
+小玉：找到了嗎？還差一點喵～火車站、石橋、露露家的花園。
+@end
+# t2_return
+@set tama_done
+小玉：三顆！全部找到了喵！
+> 小玉剝開一顆，放進嘴裡。她的眼睛，慢慢地瞇了起來。
+小玉：嗯～……什麼都不用想了……
+小玉：這顆給你。謝謝你喵。
+> 她把一顆糖放在你的手心。包裝紙上，印著守則第一條：「每天都要笑嘻嘻！」
+* 吃掉。 -> t2_eat
+* 收進口袋。 -> t2_keep
+* 「謝謝，我不要。」 -> t2_refuse
+[mem.knows_candy] * 〔記得〕「Fen 說過，吃了糖，就會忘記。」 -> t2_mem
+# t2_eat
+@set ate_candy
+@unset lulu_slip
+@sus -10
+> 甜甜的。軟軟的。
+> ……你剛剛在想什麼？
+> 你想不起來了。
+> 心裡好安靜。
+@end
+# t2_keep
+@set kept_candy
+> 你把糖果收進口袋。
+> 隔著包裝紙，好像摸到裡面有一個硬硬的東西。
+@end
+# t2_refuse
+@set refused_candy
+小玉：……喵？
+小玉：不吃糖的孩子……會一直記得好多事情喔。
+小玉：好累的喵。
+@end
+# t2_mem
+@set refused_candy
+@sus 15
+小玉：Fen？……那隻壞孩子狐狸？
+> 小玉的笑容僵住了。她把手上的糖紙，揉成一團。
+小玉：……我、我不知道。我什麼都不知道喵。
+@end
+# t2_after
+[ate_candy] 小玉：糖果好吃吧？喵～
+[kept_candy] 小玉：糖果要趁甜甜的時候吃喵～
+[refused_candy] 小玉：……喵。
 
 === tama_d3
 [mochi_remembers] 小玉：麻糬？他昨天晚上，被鎮長牽走了喵。
@@ -545,18 +698,34 @@ Fen：第三天，到樹屋來找我。這次，我們換一條路走。
 === popo_d2
 @if asked_popo p2_silent
 @if letter_done p2_menu
-波波：{name}！可以幫我送一封信嗎？今天終於有信了！
-> 波波遞給你一個信封。信封上，沒有寫收件人。
-小布：要送給誰？
+@if q_letters p2_progress
+波波：{name}！可以幫我送信嗎？今天終於有信了！
+波波：一、二、三……三封！嘿咻！
+> 波波遞給你三封信：給露露家、給鎮長公館、給鏡之屋。
+> 還有第四封。信封上，沒有寫收件人。
+小布：這封要送給誰？
 波波：…………
 > 波波眨了眨眼。
 波波：咦？我剛剛要拜託你什麼？哈哈，波波老了老了！
-> 信留在你的手上。
+波波：總之，那三封拜託你囉！送完回來跟我說！
+> 沒有收件人的那一封，留在你的手上。
 @set blank_letter
+@set q_letters
+@end
+# p2_progress
+@if letters>=3 p2_done
+@goto p2_menu
+# p2_done
 @set letter_done
+波波：全部送完了？嘿咻！辛苦了！
+[mirror_letter] 波波：咦？鏡之屋……回信了？
+[mirror_letter] > 波波盯著那張反過來的紙，看了很久很久。
+[mirror_letter] 波波：……那間屋子，沒有人住喔。
+波波：這是謝禮！郵局的紀念郵票！上面是鐘塔喔～
 @end
 # p2_menu
-波波：今天的信都送完囉！
+[letter_done] 波波：今天的信都送完囉！
+[!letter_done] 波波：信送完了嗎？還差一點喔～加油！
 [!asked_popo] * 「波波，你以前是做什麼的？」 -> p2_past $1
 [mq_open_popo] * 「波波，有寄給麻糬的信嗎？」 -> p2_mq
 * 「辛苦了！」 -> p2_bye
@@ -584,6 +753,7 @@ Fen：第三天，到樹屋來找我。這次，我們換一條路走。
 > 波波在整理信件。他沒有看你。
 
 === fen_d2
+[!notes_returned] @if notes>=3 f_return
 @if fen_invited f2_after
 @if !mq_open_fen f2_sleep
 @unset mq_open_fen
@@ -721,6 +891,10 @@ Fen：走吧，回去睡覺。明天帶你去個地方。
 // ───────── 第三天 ─────────
 === day3_morning
 > 第三天的早上。天空藍得有點太藍了。
+[kept_candy] > 口袋裡的糖果融化了一點。黏黏的。
+[kept_candy] > 糖果的中間，包著一顆小小的、灰色的鈕扣。
+[kept_candy] > ……跟大家的眼睛，一模一樣。
+[kept_candy] @set candy_button
 [mem.knows_bell] > 你看了一眼鐘塔。指針停在三點。
 [mem.knows_bell] > ……下午三點，好像會發生什麼事。
 @event to_plaza
@@ -729,6 +903,7 @@ Fen：走吧，回去睡覺。明天帶你去個地方。
 熊熊鎮長：你和 Fen 變成好朋友了呀？真好。
 > 鎮長彎下腰。他的臉靠得好近。
 熊熊鎮長：好朋友，不可以一起做壞事喔。
+[ate_candy] 熊熊鎮長：你吃了小玉的糖呀。好孩子。
 @if sus>=41 m3_high
 @if sus>=21 m3_mid
 熊熊鎮長：來，今天的糖果。
@@ -846,6 +1021,9 @@ Fen：……先去看看露露吧。她今天怪怪的。
 > 牆上用好大好大的字，寫著一條守則。
 > 「第零條：不要想——」
 > 後面的字，被一塊新的布蓋住了。布上的縫線，還是濕的。
+[tufts>=10] > 棉花裡的那些畫面，在你的腦袋裡排成了一排。
+[tufts>=10] > 長長的走廊。小小的手。一首唱到一半的歌。
+[tufts>=10] > 你差一點點，就要想起來了。
 小布：……不要想……什麼？
 > 樓梯下面，傳來腳步聲。很慢。很重。
 熊熊鎮長：哎呀。
@@ -919,6 +1097,134 @@ Fen：……先去看看露露吧。她今天怪怪的。
 > 你不記得，自己是什麼時候學會這句話的。
 @bg black
 > ……
+
+=== candy_1
+@set candy_1_got
+@add candies
+> 一顆糖果，卡在月台的長椅下面。
+> 包裝紙上印著守則第一條：「每天都要笑嘻嘻！」
+> （小玉的糖果　{candies} / 3）
+
+=== candy_2
+@set candy_2_got
+@add candies
+> 一顆糖果，卡在石橋的縫裡。
+> 包裝紙上印著守則第二條：「晚上八點鐘聲響起前，要乖乖回家睡覺。」
+> （小玉的糖果　{candies} / 3）
+
+=== candy_3
+@set candy_3_got
+@add candies
+> 一顆糖果，掉在露露家的花圃裡。
+> 包裝紙上印著守則第七條：「不要問『以前』的事。」
+> （小玉的糖果　{candies} / 3）
+
+=== note_1
+@set note_1_got
+@add notes
+> 一張從筆記本撕下來的紙。邊緣被風吹得皺皺的。
+* 偷看。 -> n1_read
+* 不看，先收起來。 -> n1_keep
+# n1_read
+@set read_notes
+@set read_note_1
+> 一整頁，寫滿了「正」字。
+> 你數了數。四十六個。
+> 不對——最後一筆，墨水還是新的。
+@end
+# n1_keep
+> 你把紙摺好，收進口袋。
+
+=== note_2
+@set note_2_got
+@add notes
+> 一張從筆記本撕下來的紙。邊緣被風吹得皺皺的。
+* 偷看。 -> n2_read
+* 不看，先收起來。 -> n2_keep
+# n2_read
+@set read_notes
+@set read_note_2
+> 「鐘塔　三點　鑰匙＝熊頭」
+> 字跡很急。好像寫字的人，一直很怕自己會忘記。
+@end
+# n2_keep
+> 你把紙摺好，收進口袋。
+
+=== note_3
+@set note_3_got
+@add notes
+> 一張從筆記本撕下來的紙。邊緣被風吹得皺皺的。
+* 偷看。 -> n3_read
+* 不看，先收起來。 -> n3_keep
+# n3_read
+@set read_notes
+@set read_note_3
+> 「不要吃糖。吃了就會忘記。」
+> 「——給下一次的我」
+> 「下一次」那三個字，被圈了好幾圈。
+@end
+# n3_keep
+> 你把紙摺好，收進口袋。
+
+=== tuft_0
+> 一小團棉花，卡在草叢裡。
+> 你一碰，眼前就閃過一個畫面——
+> 一隻手，握著另一隻更小的手。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_1
+> 一小團棉花，被風吹得滾來滾去。
+> 你一碰，眼前就閃過一個畫面——
+> 雨聲。醫院的窗戶上，有人用手指畫了一隻小綿羊。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_2
+> 一小團棉花。是從誰的身體裡掉出來的？
+> 你一碰，眼前就閃過一個畫面——
+> 「這隻小綿羊叫什麼名字？」「……小布。」
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_3
+> 一小團棉花，卡在草叢裡。
+> 你一碰，眼前就閃過一個畫面——
+> 一首搖籃曲。唱到一半，就停了。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_4
+> 一小團棉花，被風吹得滾來滾去。
+> 你一碰，眼前就閃過一個畫面——
+> 白色的走廊。好長好長。走到盡頭，還是走廊。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_5
+> 一小團棉花。是從誰的身體裡掉出來的？
+> 你一碰，眼前就閃過一個畫面——
+> 一張火車票。目的地那一格，是空白的。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_6
+> 一小團棉花，卡在草叢裡。
+> 你一碰，眼前就閃過一個畫面——
+> 「遙，你要好好的喔。」
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_7
+> 一小團棉花，被風吹得滾來滾去。
+> 你一碰，眼前就閃過一個畫面——
+> 有人在哭。你想走過去，腳卻動不了。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_8
+> 一小團棉花。是從誰的身體裡掉出來的？
+> 你一碰，眼前就閃過一個畫面——
+> 一把剪刀。剪掉的，是一個名字。
+> （記憶碎片　{tufts} / 10）
+
+=== tuft_9
+> 一小團棉花，卡在草叢裡。
+> 你一碰，眼前就閃過一個畫面——
+> 「如果可以忘記就好了。」——那是你自己的聲音。
+> （記憶碎片　{tufts} / 10）
 
 === forest_enter
 > 樹林好安靜。連鳥叫聲都沒有。

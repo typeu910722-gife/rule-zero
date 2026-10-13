@@ -46,6 +46,25 @@ const OBJECTS := {
 	"forest": {"name": "森林小徑", "pos": Vector2(1470, 140)},
 	"station": {"name": "火車站", "pos": Vector2(1017, 1575)},
 	"home_door": {"name": "小布的家", "pos": Vector2(285, 850)},
+	# ── 支線物件：只在條件成立、而且還沒撿走時出現（"when"＝旗標條件）
+	"lulu_mailbox": {"name": "露露家的信箱", "pos": Vector2(390, 545), "when": "q_letters"},
+	"candy_1": {"name": "糖果", "pos": Vector2(1150, 1600), "when": "q_tama"},
+	"candy_2": {"name": "糖果", "pos": Vector2(1560, 985), "when": "q_tama"},
+	"candy_3": {"name": "糖果", "pos": Vector2(180, 570), "when": "q_tama"},
+	"note_1": {"name": "一張紙", "pos": Vector2(750, 380), "when": "q_notes"},
+	"note_2": {"name": "一張紙", "pos": Vector2(1320, 1590), "when": "q_notes"},
+	"note_3": {"name": "一張紙", "pos": Vector2(1350, 260), "when": "q_notes"},
+	# 散落在鎮上的棉花：每一團是一段記憶碎片，撿過的會跨輪保留（下一輪不再出現）
+	"tuft_0": {"name": "一小團棉花", "pos": Vector2(90, 960)},
+	"tuft_1": {"name": "一小團棉花", "pos": Vector2(705, 140)},
+	"tuft_2": {"name": "一小團棉花", "pos": Vector2(1680, 630)},
+	"tuft_3": {"name": "一小團棉花", "pos": Vector2(1470, 1290)},
+	"tuft_4": {"name": "一小團棉花", "pos": Vector2(60, 1575)},
+	"tuft_5": {"name": "一小團棉花", "pos": Vector2(1140, 1050)},
+	"tuft_6": {"name": "一小團棉花", "pos": Vector2(495, 930)},
+	"tuft_7": {"name": "一小團棉花", "pos": Vector2(1050, 705)},
+	"tuft_8": {"name": "一小團棉花", "pos": Vector2(1828, 990)},
+	"tuft_9": {"name": "一小團棉花", "pos": Vector2(705, 1590)},
 	# 小布的房間（地圖右邊，見 town.gd 的 ROOM）
 	"mirror": {"name": "鏡子", "pos": Vector2(2440, 360)},
 	"bed": {"name": "床", "pos": Vector2(2600, 380)},
@@ -62,6 +81,7 @@ const FOREST_BOUNDS := Rect2(560, 180, 480, 900)
 
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
 const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
+const DAY1_NEEDED := 4
 const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
 const HOUSE_BOUNDS := Town.ROOM_BOUNDS
 const HOME_SPOT := Vector2(2720, 470)
@@ -222,7 +242,7 @@ func run_chapter() -> void:
 func _after_interaction() -> void:
 	match phase:
 		"day1_explore":
-			if _visited_count() >= 2:
+			if _visited_count() >= DAY1_NEEDED:
 				await _day1_evening()
 		"day1_night":
 			if GameState.has("sleep_1"):
@@ -476,10 +496,15 @@ func interact(id: String) -> void:
 	elif id == "board":
 		Sound.sfx("menu")
 		await board.open()
+	elif id.begins_with("tuft_"):
+		Sound.sfx("strange")
+		GameState.collect_tuft(id)
+		await Dialogue.run(id)
 	else:
 		Sound.sfx("interact")
 		await Dialogue.run(_talk_label(id))
 	await _after_interaction()
+	_refresh_objects()
 	if phase != "ended":
 		busy = false
 		player.can_move = true
@@ -645,8 +670,21 @@ func _layout(mode: String) -> void:
 				a.follow_eyes = true
 			actors.mayor.visible = false
 			actors.fen.visible = false
+	_refresh_objects()
 	actors.mirror.covered = not GameState.has("mirror_open")
 	actors.mirror.queue_redraw()
+
+
+## 支線物件與棉花：條件成立、還沒撿走才出現
+func _refresh_objects() -> void:
+	if forest.visible:
+		return
+	for id in OBJECTS:
+		var data: Dictionary = OBJECTS[id]
+		if id.begins_with("tuft_"):
+			actors[id].visible = not GameState.has_tuft(id)
+		elif data.has("when"):
+			actors[id].visible = GameState.check(data.when) and not GameState.has(id + "_got")
 
 
 func _set_phase(p: String) -> void:
@@ -657,7 +695,7 @@ func _set_phase(p: String) -> void:
 func _refresh_objective() -> void:
 	match phase:
 		"day1_explore":
-			GameState.set_objective("逛逛小鎮，認識大家（%d / 2）" % mini(_visited_count(), 2))
+			GameState.set_objective("逛逛小鎮，認識大家（%d / %d）" % [mini(_visited_count(), DAY1_NEEDED), DAY1_NEEDED])
 		"day1_night":
 			GameState.set_objective("回家了。可以看看房間，或上床睡覺。")
 		"day2_explore":
@@ -665,7 +703,11 @@ func _refresh_objective() -> void:
 			if not GameState.has("bread_done"):
 				left.append("幫露露做麵包")
 			if not GameState.has("letter_done"):
-				left.append("幫波波的忙")
+				if GameState.has("q_letters"):
+					var n := int(GameState.flags.get("letters", 0))
+					left.append("幫波波送信（%d / 3）" % n if n < 3 else "回郵局找波波")
+				else:
+					left.append("幫波波的忙")
 			GameState.set_objective("、".join(left))
 		"day2_evening":
 			GameState.set_objective("八點鐘聲響起前，回家上床。")

@@ -17,6 +17,9 @@ const SECRETS := {
 	"mochi_remembers": "麻糬本來的名字",
 	"mirror_knock": "鏡子裡的回應",
 	"got_key": "鐘塔的鑰匙",
+	"mirror_letter": "鏡之屋的回信",
+	"candy_button": "糖果裡的鈕扣",
+	"read_notes": "Fen 的筆記",
 }
 
 ## 日記裡「記下的事」：謎題線索會自動記錄，玩家不用靠記憶力
@@ -30,7 +33,13 @@ const CLUES := {
 	"heard_47": "Fen 說：我是第四十幾個小布。",
 	"bell_heard": "第三天下午三點，鐘會響。鎮長會來。",
 	"mochi_remembers": "麻糬好像想起了自己名字的第一個音。",
-	"got_key": "Fen 給了我鐘塔的鑰匙。他說：三點以前。",
+	"got_key": "我拿到了鐘塔的鑰匙。三點以前。",
+	"mirror_letter": "鏡之屋的投信口回了一張紙，字是反的：「謝謝。我一直在等。」",
+	"read_note_1": "Fen 的筆記：一整頁的「正」字。最後一筆是新的。",
+	"read_note_2": "Fen 的筆記：「鐘塔　三點　鑰匙＝熊頭」",
+	"read_note_3": "Fen 的筆記：「不要吃糖。吃了就會忘記。——給下一次的我」",
+	"candy_button": "小玉的糖果裡，包著一顆小小的鈕扣。",
+	"ate_candy": "我吃了小玉的糖。好像忘了什麼。",
 }
 
 ## 第一章的結局。只有「第零條」會結束本章，其他結局都會回到火車上，開始下一輪。
@@ -56,6 +65,9 @@ const MEMORY_FROM_FLAGS := {
 	"bell_heard": "knows_bell",
 	"mochi_remembers": "knows_mochi",
 	"got_key": "knows_key",
+	"mirror_letter": "knows_mirror_letter",
+	"read_note_2": "knows_key_spot",
+	"read_note_3": "knows_candy",
 }
 ## 會被「修理」的結局：上一輪最後記下的事會被剪掉
 const REPAIR_ENDINGS := ["early", "brave", "betrayed", "mochi"]
@@ -80,7 +92,7 @@ const META_PATH := "user://meta.json"
 var save_dir := "user://"
 var checkpoint := ""
 var meta := {"runs": 0, "chapters_done": 0, "loop": FIRST_LOOP, "loops_done": 0,
-	"endings": [], "last_ending": "", "memory": {}, "past_clues": [], "cut_clues": []}
+	"endings": [], "last_ending": "", "memory": {}, "past_clues": [], "cut_clues": [], "tufts": []}
 ## 結局之後重新載入場景時，直接開始下一輪（不經過標題畫面）
 var pending_loop_start := false
 ## 開場 Logo 影片這次開啟遊戲是否已經播過
@@ -156,8 +168,44 @@ static func cn(n: int) -> String:
 ## 台詞裡的 {name}、{loop}（這一輪是第幾個）、{prev}（上一個）、{stamps}（車票上的戳章數）
 func fill(text: String) -> String:
 	var n := loop_number()
-	return text.replace("{name}", player_name()).replace("{loop}", cn(n)).replace("{prev}", cn(n - 1)) \
-		.replace("{stamps}", cn(n - FIRST_LOOP + 1))
+	text = text.replace("{name}", player_name()).replace("{loop}", cn(n)).replace("{prev}", cn(n - 1)) \
+		.replace("{stamps}", cn(n - FIRST_LOOP + 1)).replace("{tufts}", str(tuft_count()))
+	# 支線計數：{candies}、{letters}、{notes}、{mq_count}
+	for k in ["candies", "letters", "notes", "mq_count"]:
+		text = text.replace("{%s}" % k, str(int(flags.get(k, 0))))
+	return text
+
+
+## 記憶碎片（棉花）的內容，日記裡可以重看
+const TUFT_TEXT := {
+	"tuft_0": "一隻手，握著另一隻更小的手。",
+	"tuft_1": "雨聲。窗戶上畫著一隻小綿羊。",
+	"tuft_2": "「這隻小綿羊叫什麼名字？」「……小布。」",
+	"tuft_3": "一首搖籃曲。唱到一半就停了。",
+	"tuft_4": "白色的走廊。走到盡頭，還是走廊。",
+	"tuft_5": "一張火車票。目的地是空白的。",
+	"tuft_6": "「遙，你要好好的喔。」",
+	"tuft_7": "有人在哭。腳動不了。",
+	"tuft_8": "一把剪刀。剪掉的是一個名字。",
+	"tuft_9": "「如果可以忘記就好了。」",
+}
+
+## 記憶碎片（棉花）：跨輪保留
+func has_tuft(id: String) -> bool:
+	return id in meta.get("tufts", [])
+
+
+func collect_tuft(id: String) -> void:
+	var t: Array = meta.get("tufts", [])
+	if not id in t:
+		t.append(id)
+	meta.tufts = t
+	save_meta()
+	changed.emit()
+
+
+func tuft_count() -> int:
+	return meta.get("tufts", []).size()
 
 
 func loop_number() -> int:
@@ -310,6 +358,7 @@ func _value(key: String) -> int:
 		"courage": return courage
 		"day": return day
 		"loop": return int(meta.get("loop", FIRST_LOOP))
+		"tufts": return tuft_count()
 	return int(flags.get(key, 0))
 
 

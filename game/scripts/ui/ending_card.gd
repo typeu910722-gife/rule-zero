@@ -34,6 +34,7 @@ func _ready() -> void:
 		txt += "\n[font_size=18][color=#c9b3bf]%s[/color][/font_size]" % "、".join(found.map(func(k): return GameState.SECRETS[k]))
 	txt += "\n鎮長懷疑值　%d / 100" % GameState.suspicion
 	txt += "\n看過的結局　%d / %d" % [seen.size(), GameState.ENDING_ORDER.size()]
+	txt += "\n記憶碎片　　%d / 10" % GameState.tuft_count()
 	txt += "\n\n[center][color=#e8a0bf]車票上，多了一個戳章。[/color]\n"
 	txt += "[font_size=18][color=#a39ba8]你會記得一些事。不是全部。[/color][/font_size][/center]"
 	t.text = txt

@@ -37,6 +37,11 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 	return self
 
 
+func _glint(p: Vector2) -> void:
+	var a := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 250.0)
+	draw_circle(p, 3, Color(1, 1, 1, a))
+
+
 func reach() -> float:
 	return 80.0 * maxf(size, 1.0) if kind == "npc" else 90.0
 
@@ -61,7 +66,7 @@ func _process(delta: float) -> void:
 			_step = -1
 			queue_redraw()
 	_last_pos = position
-	if follow_eyes:
+	if follow_eyes or id.begins_with("tuft_") or id.begins_with("candy_") or id.begins_with("note_"):
 		queue_redraw()
 
 
@@ -79,6 +84,35 @@ func _draw() -> void:
 
 
 func _draw_object() -> void:
+	# 支線物件（素材還沒畫，先用簡單的形狀，外加一點閃光讓玩家找得到）
+	if id.begins_with("candy_"):
+		var c: Color = [Color("#ffb3c7"), Color("#b5e8d5"), Color("#ffe08a")][int(id.right(1)) % 3]
+		draw_circle(Vector2(0, -10), 9, c)
+		draw_colored_polygon(PackedVector2Array([Vector2(-9, -10), Vector2(-18, -16), Vector2(-18, -4)]), c)
+		draw_colored_polygon(PackedVector2Array([Vector2(9, -10), Vector2(18, -16), Vector2(18, -4)]), c)
+		_glint(Vector2(10, -22))
+		return
+	if id.begins_with("note_"):
+		draw_set_transform(Vector2(0, -8), 0.25, Vector2.ONE)
+		draw_rect(Rect2(-12, -15, 24, 30), Color("#fffaf0"))
+		for k in 4:
+			draw_line(Vector2(-8, -9 + k * 6), Vector2(7, -9 + k * 6), Color("#9b8b7a"), 1.5)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		_glint(Vector2(12, -24))
+		return
+	if id.begins_with("tuft_"):
+		var t := Time.get_ticks_msec() / 1000.0
+		var bob := sin(t * 2.0 + position.x) * 2.0
+		for o in [Vector2(-6, 0), Vector2(6, 0), Vector2(0, -6), Vector2(0, 4)]:
+			draw_circle(o + Vector2(0, -12 + bob), 8, Color(1, 1, 1, 0.92))
+		draw_circle(Vector2(0, -12 + bob), 18, Color(1, 0.85, 0.92, 0.18))
+		return
+	if id == "lulu_mailbox":
+		draw_rect(Rect2(-3, -30, 6, 30), Color("#8d6e63"))
+		draw_rect(Rect2(-16, -50, 32, 22), Color("#f4b6c2"))
+		draw_rect(Rect2(-16, -50, 32, 22), Color("#c27a8c"), false, 2)
+		draw_rect(Rect2(12, -56, 3, 12), Color("#e05780"))
+		return
 	match id:
 		"board":
 			draw_rect(Rect2(-36, -20, 6, 40), Color("#8d6e63"))

@@ -81,6 +81,21 @@ func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
 	t += "名字：%s\n膽量：%d / %d\n車票上的戳章：%d 個\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE,
 		GameState.loop_number() - GameState.FIRST_LOOP + 1]
+	# 進行中的委託（支線）
+	var quests := []
+	if GameState.has("q_letters") and not GameState.has("letter_done"):
+		quests.append("波波：送三封信（%d / 3）" % int(GameState.flags.get("letters", 0)))
+	if GameState.has("q_mochi") and not GameState.has("q_mochi_done"):
+		quests.append("麻糬：問大家他本來的名字（%d / 3）" % mini(int(GameState.flags.get("mq_count", 0)), 3))
+	if GameState.has("q_tama") and not GameState.has("tama_done"):
+		quests.append("小玉：找回三顆糖果（%d / 3）" % int(GameState.flags.get("candies", 0)))
+	if GameState.has("q_notes") and not GameState.has("notes_returned"):
+		quests.append("Fen：撿回被吹散的筆記（%d / 3）" % int(GameState.flags.get("notes", 0)))
+	if not quests.is_empty():
+		t += "[font_size=22]委託[/font_size]\n"
+		for q in quests:
+			t += "・%s\n" % q
+		t += "\n"
 	t += "[font_size=22]發現的事情[/font_size]\n"
 	for k in GameState.SECRETS:
 		t += ("・%s\n" % GameState.SECRETS[k]) if GameState.has(k) else "・？？？\n"
@@ -89,6 +104,12 @@ func _fill_menu() -> void:
 		t += "\n[font_size=22]記下的事[/font_size]\n"
 		for k in clues:
 			t += "・%s\n" % GameState.CLUES[k]
+	# 記憶碎片（棉花）：跨輪保留
+	var tufts: Array = GameState.meta.get("tufts", [])
+	t += "\n[font_size=22][color=#c2558a]記憶碎片　%d / 10[/color][/font_size]\n" % tufts.size()
+	for k in GameState.TUFT_TEXT:
+		if k in tufts:
+			t += "[color=#c2558a]・%s[/color]\n" % GameState.TUFT_TEXT[k]
 	# 上一輪記下的事：跨輪保留，但被修理過的那幾頁被剪掉了
 	var past: Array = GameState.meta.get("past_clues", [])
 	if GameState.is_repeat() and not past.is_empty():
@@ -126,7 +147,10 @@ func _build_menu() -> void:
 	_menu.add_child(v)
 	_menu_text = RichTextLabel.new()
 	_menu_text.bbcode_enabled = true
-	_menu_text.fit_content = true
+	# 內容會越來越多（委託、碎片、上一輪的事）：固定高度、可以捲動
+	_menu_text.fit_content = false
+	_menu_text.scroll_active = true
+	_menu_text.custom_minimum_size = Vector2(452, 400)
 	_menu_text.add_theme_color_override("default_color", Color("#4a3b47"))
 	v.add_child(_menu_text)
 	var board_btn := Button.new()

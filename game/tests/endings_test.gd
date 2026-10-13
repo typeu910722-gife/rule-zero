@@ -55,13 +55,17 @@ func _new_loop(fresh: bool) -> void:
 
 
 ## 第一天：拜訪兩個地方 → 睡覺 → 第二天：麵包、送信 → Fen 邀請
-func _days_1_2(day1: Array = ["lulu", "popo"]) -> void:
+func _days_1_2(day1: Array = ["lulu", "popo", "mayor_door", "repair_room"]) -> void:
 	for id in day1:
 		await _do(id)
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
 	await _do("lulu")
+	await _do("popo")
+	await _do("lulu_mailbox")
+	await _do("mayor_door")
+	await _do("mirror_house")
 	await _do("popo")
 	await _wait_phase("day2_evening")
 
@@ -114,12 +118,18 @@ func _run() -> void:
 	_check(gs.has("lulu_doubt") and gs.suspicion > before, "〔記得〕黃色蝴蝶結 → 露露動搖、鎮長懷疑值上升")
 	await _do("fen", [0])
 	_check(gs.has("fen_trust") and gs.has("fen_knows_you"), "〔記得〕第幾個小布 → Fen 相信你")
+	await _do("mayor_door")
+	await _do("repair_room")
 
 	print("[結局⑦第零條：用上一輪的記憶結束本章]")
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
 	await _do("lulu")
+	await _do("popo")
+	await _do("lulu_mailbox")
+	await _do("mayor_door")
+	await _do("mirror_house")
 	await _do("popo")
 	await _wait_phase("day2_evening")
 	await _do("bed", [1])
@@ -135,6 +145,8 @@ func _run() -> void:
 	await _new_loop(true)
 	await _do("lulu")
 	await _do("popo")
+	await _do("mayor_door")
+	await _do("repair_room")
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
@@ -147,6 +159,10 @@ func _run() -> void:
 	await _do("mochi", [1])
 	_check(gs.has("mochi_remembers"), "告訴麻糬：你本來有別的名字")
 	await _do("lulu")
+	await _do("popo")
+	await _do("lulu_mailbox")
+	await _do("mayor_door")
+	await _do("mirror_house")
 	await _do("popo")
 	await _wait_phase("day2_evening")
 	await _do("bed", [1])
