@@ -12,6 +12,8 @@ const CandyCatch := preload("res://scripts/minigames/candy_catch.gd")
 const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
 const Summary := preload("res://scripts/ui/summary.gd")
 const EndCard := preload("res://scripts/ui/end_card.gd")
+const Title := preload("res://scripts/ui/title.gd")
+const BreadKnead := preload("res://scripts/minigames/bread_knead.gd")
 const Forest := preload("res://scripts/world/forest.gd")
 const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
@@ -104,6 +106,9 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	hud.tag_toggle_requested.connect(_on_tag_toggle)
+	hud.title_requested.connect(func():
+		Dialogue.set_bg("none")
+		get_tree().reload_current_scene())
 	hud.board_requested.connect(func():
 		hud.toggle_menu(false)
 		await board.open())
@@ -119,8 +124,50 @@ func _ready() -> void:
 	fade_layer.add_child(fade)
 
 	Dialogue.event_requested.connect(_on_event)
-	GameState.reset()
-	run_chapter.call_deferred()
+	hud.set_status_visible(false)
+	if GameState.fast:
+		# 自動測試：跳過標題畫面
+		if GameState.resume_on_start:
+			_continue.call_deferred()
+		else:
+			GameState.reset()
+			run_chapter.call_deferred()
+	else:
+		_show_title.call_deferred()
+
+
+func _show_title() -> void:
+	var title := Title.new()
+	add_child(title)
+	title.new_game.connect(func():
+		title.queue_free()
+		GameState.reset()
+		GameState.meta.runs = int(GameState.meta.get("runs", 0)) + 1
+		GameState.save_meta()
+		run_chapter())
+	title.continue_game.connect(func():
+		title.queue_free()
+		_continue())
+
+
+## 從存檔繼續：每個檢查點都是某一天的早上
+func _continue() -> void:
+	if not GameState.load_game():
+		GameState.reset()
+		run_chapter()
+		return
+	var cp := GameState.checkpoint
+	Dialogue.set_bg("none")
+	town.clock_stopped = GameState.day >= 2
+	town.queue_redraw()
+	_set_tint("day")
+	player.bounds = WORLD_BOUNDS
+	player.position = Vector2(640, 700) if cp == "day1_explore" else HOME_SPOT
+	_layout("day")
+	hud.set_status_visible(true)
+	_set_phase(cp)
+	busy = false
+	player.can_move = true
 
 
 # ───────────────────────── 章節流程 ─────────────────────────
@@ -135,6 +182,7 @@ func run_chapter() -> void:
 	_layout("day")
 	hud.set_status_visible(true)
 	_set_phase("day1_explore")
+	GameState.save_game("day1_explore")
 	busy = false
 	player.can_move = true
 
@@ -205,6 +253,7 @@ func _day2_morning() -> void:
 	await _fade_to(0.0)
 	await Dialogue.run("day2_morning")
 	_set_phase("day2_explore")
+	GameState.save_game("day2_explore")
 
 
 func _night_out() -> void:
@@ -229,6 +278,7 @@ func _day3_morning() -> void:
 	await _fade_to(0.0)
 	await Dialogue.run("day3_morning")
 	_set_phase("day3_explore")
+	GameState.save_game("day3_explore")
 
 
 func _forest() -> void:
@@ -268,6 +318,10 @@ func _forest_climax() -> void:
 func _chapter_end() -> void:
 	_set_phase("ended")
 	GameState.set_flag("ticket_stamps", 2)
+	# 跨周目記錄：標題畫面的車票會多一個戳章
+	GameState.meta.chapters_done = maxi(int(GameState.meta.get("chapters_done", 0)), 1)
+	GameState.save_meta()
+	GameState.delete_save()
 	var s := Summary.new()
 	add_child(s)
 	Dialogue.set_bg("none")
@@ -377,6 +431,10 @@ func _on_event(event_name: String) -> void:
 			GameState.set_flag("candy_good", score >= 15)
 		"board":
 			await board.open()
+		"bread":
+			var bread := BreadKnead.new()
+			add_child(bread)
+			await bread.play()
 		"mirror_stare":
 			var m := MirrorStare.new()
 			add_child(m)

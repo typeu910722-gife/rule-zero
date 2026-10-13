@@ -3,6 +3,7 @@ extends CanvasLayer
 
 signal tag_toggle_requested
 signal board_requested
+signal title_requested
 
 var menu_open := false
 var show_debug := false
@@ -123,6 +124,10 @@ func _build_menu() -> void:
 	_tag_button = Button.new()
 	_tag_button.pressed.connect(func(): tag_toggle_requested.emit())
 	v.add_child(_tag_button)
+	var title_btn := Button.new()
+	title_btn.text = "回到標題（從今天早上的存檔繼續）"
+	title_btn.pressed.connect(func(): title_requested.emit())
+	v.add_child(title_btn)
 	var hint := Label.new()
 	hint.text = "Tab / Esc 關閉"
 	hint.add_theme_font_size_override("font_size", 16)

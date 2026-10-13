@@ -25,7 +25,7 @@ func _ready() -> void:
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	box.add_child(hint)
 	var again := Button.new()
-	again.text = "從第一章重新開始"
+	again.text = "回到標題"
 	again.pressed.connect(func():
 		Dialogue.set_bg("none")
 		get_tree().reload_current_scene())

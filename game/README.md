@@ -34,10 +34,19 @@
 
 ![森林](../docs/images/proto_forest.png)
 
+- 揉麵團節奏小遊戲：判定寬鬆，連續 8 個 Perfect 會讓露露哼起「另一首歌」（第 8 個秘密）；沒成功可以再找露露揉一次
+- 標題畫面：繼續／新遊戲／離開；車票上的戳章＝完成的章數＋1，玩完第一章後角落多一行「歡迎回來。」
+- 自動存檔：每天早上存一次（Tab 選單可回到標題）；完成一章會清掉當章存檔並記錄在跨周目資料
+
+![標題畫面](../docs/images/proto_title.png)
+
+## 存檔位置
+`user://save.json`（當章進度）與 `user://meta.json`（跨周目）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
+
 ## 尚未實作（下一步）
-- 揉麵團節奏小遊戲（「露露哼的另一首歌」秘密）
 - 第二章本體
-- 存檔、音效與音樂、正式美術（目前角色與地圖都是程式繪製的佔位圖）
+- 音樂、環境音（目前只有揉麵團的程式合成音樂盒音色）
+- 正式美術（目前角色與地圖都是程式繪製的佔位圖）
 - 牆壁碰撞（目前只限制地圖邊界）
 
 ## 專案結構
@@ -54,10 +63,13 @@ game/
 │   │   └── dialogue_parser.gd  # 對話腳本解析與檢查
 │   ├── world/                  # 小鎮、森林、玩家、角色繪製
 │   ├── ui/                     # 公告欄、HUD／日記、修理室、結算、結尾選單
-│   └── minigames/              # 接糖果、鏡子凝視
+│   ├── minigames/              # 接糖果、鏡子凝視、揉麵團
+│   └── audio/tones.gd          # 程式合成的音樂盒音色
 └── tests/
     ├── lint_dialogue.gd        # 檢查對話腳本
-    ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）
+    ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）、存檔讀檔
+    ├── rhythm_test.gd          # 揉麵團判定
+    ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     └── screenshots_day3.gd     # 第三天畫面截圖
 ```
@@ -66,6 +78,7 @@ game/
 ```
 godot --headless --path . -s tests/lint_dialogue.gd
 godot --headless --path . -s tests/smoke_test.gd
+godot --headless --path . -s tests/rhythm_test.gd
 ```
 
 ## 字型

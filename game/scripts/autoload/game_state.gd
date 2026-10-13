@@ -37,6 +37,15 @@ var objective := ""
 ## 自動測試用：跳過等待與小遊戲
 var fast := false
 var auto_choices: Array = []
+var fast_rhythm_streak := 0
+var resume_on_start := false
+
+## 存檔：每天早上自動存一次（檢查點）。meta 是跨周目的記錄，標題畫面會依它改變。
+const SAVE_PATH := "user://save.json"
+const META_PATH := "user://meta.json"
+var save_dir := "user://"
+var checkpoint := ""
+var meta := {"runs": 0, "chapters_done": 0}
 var font: SystemFont
 
 
@@ -44,6 +53,7 @@ func _ready() -> void:
 	_setup_input()
 	_setup_font()
 	reset()
+	load_meta()
 
 
 func reset() -> void:
@@ -119,6 +129,62 @@ func check(cond: String) -> bool:
 				">": return left > right
 				"<": return left < right
 	return has(cond)
+
+
+# ───────── 存檔 ─────────
+
+func _path(name: String) -> String:
+	return save_dir.path_join(name.get_file())
+
+
+func save_game(cp: String) -> void:
+	checkpoint = cp
+	var data := {"version": 1, "checkpoint": cp, "day": day, "courage": courage,
+		"suspicion": suspicion, "flags": flags}
+	var f := FileAccess.open(_path(SAVE_PATH), FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(data, "\t"))
+
+
+func has_save() -> bool:
+	return FileAccess.file_exists(_path(SAVE_PATH))
+
+
+func load_game() -> bool:
+	var f := FileAccess.open(_path(SAVE_PATH), FileAccess.READ)
+	if f == null:
+		return false
+	var data = JSON.parse_string(f.get_as_text())
+	if typeof(data) != TYPE_DICTIONARY:
+		return false
+	checkpoint = data.get("checkpoint", "")
+	day = int(data.get("day", 1))
+	courage = int(data.get("courage", MAX_COURAGE))
+	suspicion = int(data.get("suspicion", 0))
+	flags = data.get("flags", {"tag_on": true})
+	changed.emit()
+	return checkpoint != ""
+
+
+func delete_save() -> void:
+	if has_save():
+		DirAccess.remove_absolute(_path(SAVE_PATH))
+
+
+func load_meta() -> void:
+	var f := FileAccess.open(_path(META_PATH), FileAccess.READ)
+	if f == null:
+		return
+	var data = JSON.parse_string(f.get_as_text())
+	if typeof(data) == TYPE_DICTIONARY:
+		for k in data:
+			meta[k] = data[k]
+
+
+func save_meta() -> void:
+	var f := FileAccess.open(_path(META_PATH), FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(meta, "\t"))
 
 
 func _value(key: String) -> int:
