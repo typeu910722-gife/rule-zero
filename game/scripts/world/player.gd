@@ -23,6 +23,7 @@ var _facing := Vector2.DOWN
 var _step := -1
 var _step_t := 0.0
 var _foot_t := 0.0
+var _slide_side := 1.0
 var _cam: Camera2D
 
 
@@ -74,27 +75,31 @@ func _process(delta: float) -> void:
 	# 萬一被劇情放在路外面（例如草地上）：先移到最近的路上
 	if check and T.blocked(position):
 		position = T.nearest_walkable(position)
+	# 先試原本的方向；被擋住就往左右各偏 25°、50°、75° 找路，沿著路邊、轉角自然滑過去。
+	# 角色之間不會互相擋路（不會被 NPC 卡住）。
+	var step := move.length()
 	var moved_any := false
-	for axis in [Vector2(move.x, 0), Vector2(0, move.y)]:
-		if axis == Vector2.ZERO:
-			continue
-		var np: Vector2 = (position + axis).clamp(bounds.position, bounds.end)
-		if not (check and T.blocked(np)) and not _bumps_npc(np):
+	# 上一次往哪一邊繞，這次先試同一邊（沿著草地邊緣一路滑過去，不會左右抖）
+	var angs := [0.0, 0.44, -0.44, 0.87, -0.87, 1.31, -1.31, 1.57, -1.57]
+	if _slide_side < 0.0:
+		angs = [0.0, -0.44, 0.44, -0.87, 0.87, -1.31, 1.31, -1.57, 1.57]
+	for ang in angs:
+		var d: Vector2 = dir.normalized().rotated(ang) * step * (1.0 if ang == 0.0 else maxf(cos(ang), 0.35))
+		var np: Vector2 = (position + d).clamp(bounds.position, bounds.end)
+		if not (check and T.blocked(np)):
 			position = np
 			moved_any = true
-	# 卡在轉角時：看看旁邊一點點有沒有路，有的話順著滑過去（不用玩家對準縫隙）
-	if check and not moved_any:
-		var forward := move
-		var side := Vector2(-forward.y, forward.x).normalized()
-		for k in [6.0, 12.0, 18.0, 24.0]:
-			var found := false
-			for sgn in [1.0, -1.0]:
-				var off: Vector2 = side * k * sgn
-				if not T.blocked(position + off) and not T.blocked(position + off + forward) and not _bumps_npc(position + off + forward):
-					position += off.normalized() * minf(SPEED * delta, off.length())
-					found = true
-					break
-			if found:
+			if ang != 0.0:
+				_slide_side = signf(ang)
+			break
+	# 最後才試分軸（貼著直直的牆走）
+	if not moved_any:
+		for axis in [Vector2(move.x, 0), Vector2(0, move.y)]:
+			if axis == Vector2.ZERO:
+				continue
+			var np: Vector2 = (position + axis).clamp(bounds.position, bounds.end)
+			if not (check and T.blocked(np)):
+				position = np
 				break
 	_step_t += delta
 	if _step < 0 or _step_t >= STEP_TIME:

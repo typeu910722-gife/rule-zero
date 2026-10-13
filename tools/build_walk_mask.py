@@ -44,6 +44,9 @@ BLOCK = [
     (300, 725, 175, 128),  # 居民小屋（紫）
     (495, 895, 375, 128),  # 火車站
     (422, 1056, 196, 36),  # 月台的屋頂
+    (615, 215, 250, 150),  # 鎮長公館
+    (165, 160, 240, 168),  # 露露的家
+    (45, 405, 235, 138),   # 小布的住處
 ]
 # 從這裡開始找連通區域（火車站前月台）
 SEED = (678, 1080)
@@ -81,7 +84,8 @@ def main() -> None:
                 keep[ny, nx] = True
                 q.append((ny, nx))
     # 邊緣放寬一點（約 4 個原圖像素），轉角和窄路比較好走
-    keep_img = Image.fromarray((keep * 255).astype("uint8")).filter(ImageFilter.MaxFilter(9))
+    # 邊緣放寬（約 12 個原圖像素）：路邊的草地也可以走，轉角和窄路不會一直被卡住
+    keep_img = Image.fromarray((keep * 255).astype("uint8")).filter(ImageFilter.MaxFilter(25))
     for x, y, w, hh in BLOCK:
         keep_img.paste(0, (x, y, x + w, y + hh))
     # 一半解析度就夠了（每格 2 個原圖像素）

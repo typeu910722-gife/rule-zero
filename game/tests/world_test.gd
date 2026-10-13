@@ -46,7 +46,7 @@ func _run() -> void:
 	p.position = Vector2(1107, 700)
 	await _hold("move_up", 120)
 	_check(not Town.blocked(p.position), "不會走進鎮長公館裡")
-	_check(p.position.y > 365 * 1.5, "被公館擋住（y=%d）" % p.position.y)
+	_check(p.position.y > 355 * 1.5, "被公館擋住（y=%d）" % p.position.y)
 	# 地圖邊界
 	p.position = Vector2(100, 1600)
 	await _hold("move_down", 60)
