@@ -78,7 +78,190 @@ body {
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
-<script>(function(){var of=window.fetch.bind(window);window.fetch=function(input,init){var url=typeof input==='string'?input:((input&&input.url)||'');if(url.indexOf('index.wasm')!==-1&&url.indexOf('index.wasm.')===-1){return of('index.wasm.parts.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}).then(function(parts){if(!Array.isArray(parts)){return of(input,init);}return Promise.all(parts.map(function(p){return of(p).then(function(x){return x.arrayBuffer();});})).then(function(bufs){return new Response(new Blob(bufs),{status:200,headers:{'Content-Type':'application/wasm'}});});});}return of(input,init);};})();</script><style>body,#status{background:#000!important}#status-splash{max-width:min(90vw,1280px)!important;max-height:80vh!important;object-fit:contain}#status-progress{width:min(60vw,360px)!important;height:3px!important;appearance:none;-webkit-appearance:none;border:0;background:#2a2230;border-radius:2px}#status-progress::-webkit-progress-bar{background:#2a2230}#status-progress::-webkit-progress-value{background:#e8a0bf}#status-progress::-moz-progress-bar{background:#e8a0bf}#status::after{content:'\5217\8eca\5373\5c07\62b5\9054\68c9\82b1\7cd6\93ae\2026\2026\a \7b2c\4e00\6b21\8f09\5165\9700\8981\4e00\9ede\6642\9593\ff08\5927\7d04\534a\5206\9418\ff09';white-space:pre;position:absolute;bottom:12vh;left:0;right:0;text-align:center;color:#8e7d8a;font:14px/1.6 sans-serif;letter-spacing:.2em}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<script>
+// ── 1. 引擎 wasm 切成好幾塊（Cloudflare 單檔 25MB 上限），載入時再接回來 ──
+(function () {
+  var of = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    var url = typeof input === 'string' ? input : ((input && input.url) || '');
+    if (url.indexOf('index.wasm') !== -1 && url.indexOf('index.wasm.') === -1) {
+      return of('index.wasm.parts.json').then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (parts) {
+          if (!Array.isArray(parts)) { return of(input, init); }
+          return Promise.all(parts.map(function (p) { return of(p).then(function (x) { return x.arrayBuffer(); }); }))
+            .then(function (bufs) { return new Response(new Blob(bufs), { status: 200, headers: { 'Content-Type': 'application/wasm' } }); });
+        });
+    }
+    return of(input, init);
+  };
+})();
+
+// ── 2. 手機：畫面大小用「真的看得到的範圍」（網址列、側邊工具列不算進去）──
+(function () {
+  var vv = window.visualViewport;
+  if (!vv) { return; }
+  try {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, get: function () { return Math.round(vv.width); } });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, get: function () { return Math.round(vv.height); } });
+  } catch (e) {}
+  vv.addEventListener('resize', function () { window.dispatchEvent(new Event('resize')); });
+})();
+
+// ── 3. 開場：先播歪計劃 Logo 影片（遊戲在背後載入），播完才顯示載入畫面 ──
+(function () {
+  var FACES = [0, 1, 2, 3, 4, 5];   // boot/bu_faces.png：開心 → 平靜 → 疑惑 → 不安 → 害怕 → 驚嚇
+  var boot, video, load, fill, runner, body, face, pct, mayor, skip, sound;
+  var stage = 'video', shown = 0, t0 = Date.now(), frame = 0, lastStep = 0, ready = false, doneAt = 0;
+
+  function el(tag, cls, parent) { var e = document.createElement(tag); if (cls) { e.className = cls; } (parent || boot).appendChild(e); return e; }
+
+  function realProgress() {
+    var bar = document.getElementById('status-progress');
+    if (!document.getElementById('status')) { return 1; }
+    if (bar && bar.max > 0 && bar.hasAttribute('value')) { return Math.min(1, bar.value / bar.max); }
+    return 0;
+  }
+
+  function engineFailed() {
+    var n = document.getElementById('status-notice');
+    return n && n.textContent.trim() !== '' && getComputedStyle(n).display !== 'none';
+  }
+
+  function toLoading() {
+    if (stage !== 'video') { return; }
+    stage = 'loading';
+    try { video.pause(); } catch (e) {}
+    boot.classList.add('yz-loading');
+  }
+
+  function finish() {
+    stage = 'done';
+    boot.classList.add('yz-fade');
+    setTimeout(function () { if (boot.parentNode) { boot.parentNode.removeChild(boot); } var c = document.getElementById('canvas'); if (c) { c.focus(); } }, 650);
+  }
+
+  function tick() {
+    if (stage === 'done') { return; }
+    if (engineFailed()) { boot.parentNode && boot.parentNode.removeChild(boot); return; }
+    var real = realProgress();
+    if (real >= 1) { ready = true; }
+    // 真的進度＋一點點「假」的前進，讓小布一直在跑
+    var fake = Math.min(0.9, (Date.now() - t0) / 28000);
+    var target = ready ? 1 : Math.max(real * 0.97, fake);
+    shown += (target - shown) * (stage === 'loading' ? 0.06 : 1);
+    if (stage === 'loading') {
+      var p = Math.max(0, Math.min(1, shown));
+      fill.style.width = (p * 100).toFixed(1) + '%';
+      runner.style.left = (p * 100).toFixed(1) + '%';
+      pct.textContent = Math.floor(p * 100) + '%';
+      var fi = Math.min(FACES.length - 1, Math.floor(p * FACES.length));
+      face.style.backgroundPosition = (fi * 20) + '% 0';
+      // 臉色越來越青
+      face.style.setProperty('--pale', Math.max(0, (p - 0.5) / 0.5).toFixed(2));
+      // 越接近終點：跑越快、越抖、終點的熊熊越清楚
+      var stepMs = 150 - p * 90;
+      if (Date.now() - lastStep > stepMs) { lastStep = Date.now(); frame = (frame + 1) % 4; body.style.backgroundPosition = ([50, 0, 50, 100][frame]) + '% 66.667%'; }
+      var shake = p > 0.8 ? (Math.random() - 0.5) * (p - 0.8) * 30 : 0;
+      runner.style.transform = 'translate(-50%, ' + (frame % 2 ? -4 : 0) + 'px) translateX(' + shake.toFixed(1) + 'px)';
+      runner.classList.toggle('yz-sweat', p > 0.55);
+      runner.classList.toggle('yz-panic', p > 0.88);
+      mayor.style.opacity = Math.max(0, (p - 0.45) / 0.55).toFixed(2);
+      if (ready && p > 0.995) {
+        if (!doneAt) { doneAt = Date.now(); }
+        if (Date.now() - doneAt > 900) { finish(); return; }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function build() {
+    boot = document.createElement('div');
+    boot.id = 'yz-boot';
+    document.body.appendChild(boot);
+    video = el('video', 'yz-video');
+    // Chrome／Android 用 webm，Safari／iPhone 用 mp4
+    video.src = video.canPlayType('video/webm; codecs="vp9, opus"') ? 'boot/intro.webm' : 'boot/intro.mp4';
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.preload = 'auto';
+    sound = el('div', 'yz-sound');
+    sound.textContent = '點一下開啟聲音';
+    skip = el('button', 'yz-skip');
+    skip.textContent = '略過 ›';
+    skip.addEventListener('click', function (e) { e.stopPropagation(); toLoading(); });
+    boot.addEventListener('click', function () {
+      if (stage === 'video' && video.muted) { video.muted = false; sound.style.display = 'none'; video.play().catch(function () {}); }
+    });
+    video.addEventListener('ended', toLoading);
+    video.addEventListener('error', toLoading);
+    setTimeout(function () { if (stage === 'video' && video.currentTime === 0) { toLoading(); } }, 4000);
+    // 先試著有聲播放；瀏覽器不准的話改成靜音播放，點一下再開聲音
+    video.muted = false;
+    var pr = video.play();
+    if (pr && pr.catch) {
+      pr.catch(function () { video.muted = true; sound.style.display = 'block'; video.play().catch(toLoading); });
+    }
+
+    load = el('div', 'yz-load');
+    var track = el('div', 'yz-track', load);
+    fill = el('div', 'yz-fill', track);
+    mayor = el('div', 'yz-mayor', track);
+    runner = el('div', 'yz-runner', track);
+    face = el('div', 'yz-face', runner);
+    body = el('div', 'yz-body', runner);
+    el('i', 'yz-drop', runner);
+    el('i', 'yz-drop yz-drop2', runner);
+    el('b', 'yz-bang', runner).textContent = '！';
+    pct = el('div', 'yz-pct', load);
+    var title = el('div', 'yz-title', load);
+    title.textContent = '列車即將抵達棉花糖鎮……';
+    var note = el('div', 'yz-note', load);
+    note.textContent = '第一次載入需要一點時間（大約半分鐘）';
+    requestAnimationFrame(tick);
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', build); } else { build(); }
+})();
+</script>
+<style>
+html, body { position: fixed; inset: 0; width: 100%; height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; background: #000 !important; }
+#canvas { position: fixed; left: 0; top: 0; touch-action: none; }
+#status { background: #000 !important; }
+#status-splash, #status-progress { display: none !important; }
+
+#yz-boot { position: fixed; inset: 0; z-index: 9999; background: #000; overflow: hidden; transition: opacity .6s; font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; -webkit-user-select: none; user-select: none; }
+#yz-boot.yz-fade { opacity: 0; pointer-events: none; }
+.yz-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+#yz-boot.yz-loading .yz-video, #yz-boot.yz-loading .yz-skip, #yz-boot.yz-loading .yz-sound { display: none; }
+.yz-skip { position: absolute; right: max(16px, env(safe-area-inset-right)); bottom: 16px; background: rgba(255,255,255,.12); color: #ddd; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 6px 14px; font-size: 13px; letter-spacing: .1em; cursor: pointer; }
+.yz-sound { display: none; position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; color: #bbb; font-size: 13px; letter-spacing: .15em; }
+
+.yz-load { display: none; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, #ffeef4 0%, #f9d3e2 55%, #f2bdd2 100%); flex-direction: column; align-items: center; justify-content: center; }
+#yz-boot.yz-loading .yz-load { display: flex; }
+.yz-title { color: #8a5a72; font-size: clamp(15px, 2.4vw, 20px); letter-spacing: .25em; margin-top: 10px; }
+.yz-track { margin-top: clamp(120px, 30vh, 210px); position: relative; width: min(72vw, 640px); height: 14px; border-radius: 999px; background: #fff6f9; box-shadow: inset 0 0 0 2px #e3a3bd, 0 2px 0 rgba(160, 80, 110, .15); }
+.yz-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 999px; background: repeating-linear-gradient(-45deg, #e889ad 0 10px, #ef9fbd 10px 20px); background-size: 28px 28px; animation: yz-stripe 0.8s linear infinite; }
+@keyframes yz-stripe { to { background-position: 28px 0; } }
+.yz-runner { position: absolute; left: 0; bottom: 8px; width: clamp(80px, 17vh, 130px); height: clamp(80px, 17vh, 130px); transform: translateX(-50%); pointer-events: none; }
+.yz-body { position: absolute; inset: 0; background: url(boot/walk_bu.png) 50% 66.667% / 300% 400% no-repeat; }
+.yz-face { --pale: 0; position: absolute; left: 50%; bottom: 92%; width: 78%; height: 78%; transform: translateX(-62%); border-radius: 50%; background: #fff url(boot/bu_faces.png) 0 0 / 600% 100% no-repeat; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #e3a3bd; }
+.yz-face::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(180deg, rgba(90, 110, 190, .55) 0%, rgba(90, 110, 190, 0) 55%); opacity: var(--pale); mix-blend-mode: multiply; }
+.yz-face::after { content: ''; position: absolute; left: 66%; bottom: -12px; width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #e3a3bd; }
+.yz-bang { display: none; position: absolute; right: -8%; top: -78%; color: #d94b6e; font-size: clamp(22px, 5vh, 34px); font-weight: 900; text-shadow: 0 2px 0 #fff; animation: yz-bang .25s ease-in-out infinite alternate; }
+.yz-panic .yz-bang { display: block; }
+@keyframes yz-bang { from { transform: rotate(-12deg) scale(1); } to { transform: rotate(12deg) scale(1.2); } }
+.yz-drop { display: none; position: absolute; left: -2%; top: -58%; width: 9px; height: 13px; background: #9fd3f2; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: yz-drop .7s ease-in infinite; }
+.yz-sweat .yz-drop { display: block; }
+.yz-drop2 { left: 74%; top: -70%; animation-delay: .35s; }
+@keyframes yz-drop { from { transform: translate(0, 0); opacity: 1; } to { transform: translate(-10px, 18px); opacity: 0; } }
+.yz-mayor { position: absolute; right: -6px; bottom: 6px; width: clamp(90px, 20vh, 150px); height: clamp(90px, 20vh, 150px); transform: translateX(50%); background: url(boot/mayor.png) 50% 100% / contain no-repeat; opacity: 0; filter: drop-shadow(0 2px 2px rgba(0,0,0,.2)); }
+.yz-pct { margin-top: 18px; color: #b0607f; font-size: 15px; font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+.yz-note { position: absolute; bottom: max(14px, 4vh); left: 0; right: 0; text-align: center; color: #b78a9e; font-size: 12px; letter-spacing: .15em; }
+</style>
+
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -97,7 +280,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125600,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14125920,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

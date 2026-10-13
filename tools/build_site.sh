@@ -6,8 +6,36 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 GODOT="${GODOT:-godot}"
 OUT="$ROOT/public"
 rm -rf "$OUT"
-mkdir -p "$OUT/rule-zero"
+mkdir -p "$OUT/rule-zero/boot"
+# 開場（Logo 影片＋載入畫面）寫在 game/web/head_include.html，匯出前塞進匯出設定
+python3 - "$ROOT" <<'PY'
+import re, sys
+root = sys.argv[1]
+head = open(f"{root}/game/web/head_include.html", encoding="utf-8").read()
+cfg_path = f"{root}/game/export_presets.cfg"
+cfg = open(cfg_path, encoding="utf-8").read()
+esc = head.replace("\\", "\\\\").replace('"', '\\"')
+lines = cfg.split("\n")
+out, skip = [], False
+for ln in lines:
+    if ln.startswith('html/head_include="'):
+        out.append('html/head_include="' + esc + '"')
+        # 舊的值可能跨好幾行：一直跳到結尾的引號
+        skip = not (ln.endswith('"') and not ln.endswith('\\"') and len(ln) > len('html/head_include="'))
+        continue
+    if skip:
+        if ln.endswith('"') and not ln.endswith('\\"'):
+            skip = False
+        continue
+    out.append(ln)
+open(cfg_path, "w", encoding="utf-8").write("\n".join(out))
+PY
 "$GODOT" --headless --path "$ROOT/game" --export-release "Web" "$OUT/rule-zero/index.html"
+cp "$ROOT/game/web/intro.mp4" "$OUT/rule-zero/boot/intro.mp4"
+cp "$ROOT/game/art/walk_bu.png" "$OUT/rule-zero/boot/walk_bu.png"
+cp "$ROOT/game/web/intro.webm" "$OUT/rule-zero/boot/intro.webm"
+cp "$ROOT/game/web/bu_faces.png" "$OUT/rule-zero/boot/bu_faces.png"
+cp "$ROOT/game/art/item_stand_mayor.png" "$OUT/rule-zero/boot/mayor.png"
 cp "$ROOT/site/index.html" "$OUT/index.html"
 cp "$ROOT/site/_headers" "$OUT/_headers"
 python3 - "$ROOT" "$OUT" <<'PY'

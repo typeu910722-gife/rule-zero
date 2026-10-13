@@ -182,6 +182,9 @@ func _ready() -> void:
 
 func _show_title() -> void:
 	# 開場 Logo 影片：每次開啟遊戲只播一次（回到標題時不再播）
+	# 網頁版：Logo 影片在網頁載入時就播過了（game/web/head_include.html）
+	if OS.has_feature("web"):
+		GameState.intro_played = true
 	if not GameState.intro_played:
 		GameState.intro_played = true
 		var intro := Intro.new()
