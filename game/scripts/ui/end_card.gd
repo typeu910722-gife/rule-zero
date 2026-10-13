@@ -1,5 +1,5 @@
 extends CanvasLayer
-## 原型的最後：第二章開場後才出現選單。
+## 試玩版的最後：第一章結束的卡片。
 
 func _ready() -> void:
 	layer = 60
@@ -13,7 +13,7 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", 16)
 	add_child(box)
 	var t := Label.new()
-	t.text = "第二章「新的 Fen」\n（製作中）"
+	t.text = "第一章「歡迎回來」\n— 完 —"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	t.add_theme_font_size_override("font_size", 32)
 	t.add_theme_color_override("font_color", Color("#f3e9f1"))

@@ -352,14 +352,11 @@ func _chapter_end() -> void:
 	add_child(s)
 	Dialogue.set_bg("none")
 	await s.show_and_wait()
-	# 第二章自動開場：不給玩家按鍵，直接接下去
+	# 試玩版到第一章為止：結算之後直接收尾，不播第二章開場
 	s.queue_free()
 	repair_scene.queue_free()
-	GameState.set_flag("chapter2")
-	Sound.bgm("day")
-	town.visible = true
-	player.bounds = WORLD_BOUNDS
-	await Dialogue.run("ch2_opening")
+	GameState.set_flag("chapter_done")
+	Sound.bgm("memory")
 	add_child(EndCard.new())
 
 

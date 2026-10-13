@@ -91,7 +91,7 @@ func _run() -> void:
 	_check(main.phase == "forest", "只調查 2 個還不會觸發鐘聲")
 	await _do("forest_tags", [0])
 	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：第四十七個小布 → 衝出去")
-	_check(main.phase == "ended" and gs.has("chapter2"), "修理 → 結算 → 第二章開場")
+	_check(main.phase == "ended" and gs.has("chapter_done"), "修理 → 結算 → 第一章結束")
 	_check(not gs.has_save() and int(gs.meta.chapters_done) == 1, "章節完成：刪除當章存檔、標題畫面多一個戳章")
 	_check(gs.has("found_sheep") and gs.has("found_lulu_bow"), "線索記進日記")
 	print("  秘密：", gs.secrets_found(), "　懷疑值：", gs.suspicion)
@@ -126,7 +126,7 @@ func _run() -> void:
 	_check(main.phase == "forest", "沒看到小綿羊之前不會觸發鐘聲")
 	await _do("forest_sheep", [1])
 	_check(gs.has("lulu_betrayal") and not gs.has("brave_end"), "躲著不動 → 露露告發")
-	_check(main.phase == "ended" and gs.has("chapter2"), "第二章開場")
+	_check(main.phase == "ended" and gs.has("chapter_done"), "第一章結束")
 	for i in 5:
 		await process_frame
 
