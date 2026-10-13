@@ -52,10 +52,10 @@ func _draw_area() -> void:
 	for k in 6:
 		_area.draw_circle(Vector2(260 + k * 16, 490 - (k % 2) * 8), 14, Color("#fbfbfb"))
 	# 工作台上的小布
-	_area.draw_set_transform(Vector2(560, 380), -PI / 2.4, Vector2(2.2, 2.2))
+	_area.draw_set_transform(Vector2(560, 380), -PI / 2.4, Vector2(1.5, 1.5))
 	Critter.draw(_area, "sheep", Color("#fffdf8"), 1.0, Vector2.ZERO, false, false, true)
 	# 鎮長
-	_area.draw_set_transform(Vector2(1060, 560), 0.0, Vector2(4.2, 4.2))
+	_area.draw_set_transform(Vector2(1060, 600), 0.0, Vector2(2.9, 2.9))
 	Critter.draw(_area, "bear", Color("#c4894f"), 1.0, Vector2(-1, 0), true)
 	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 

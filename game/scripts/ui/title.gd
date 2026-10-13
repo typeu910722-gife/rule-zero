@@ -10,6 +10,7 @@ var _area: Control
 
 func _ready() -> void:
 	layer = 70
+	Sound.bgm("memory")
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -47,7 +48,9 @@ func _button(text: String, cb: Callable) -> Button:
 	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
 	b.add_theme_color_override("font_hover_color", Color("#c2558a"))
 	b.add_theme_color_override("font_disabled_color", Color("#c9bcc4"))
-	b.pressed.connect(cb)
+	b.pressed.connect(func():
+		Sound.sfx("choice")
+		cb.call())
 	return b
 
 
@@ -64,8 +67,8 @@ func _draw_area() -> void:
 	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#a38b98"))
 
 	# 小布
-	_area.draw_set_transform(Vector2(820, 560), 0.0, Vector2(6, 6))
-	Critter.draw(_area, "sheep", Color("#fffdf8"), 1.0, Vector2(-0.3, 0.2), true, false, true)
+	_area.draw_set_transform(Vector2(820, 640), 0.0, Vector2(4.2, 4.2))
+	Critter.draw(_area, "sheep", Color.WHITE, 1.0, Vector2.ZERO, true, false, true)
 	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 	# 車票：戳章會隨著完成的章數變多

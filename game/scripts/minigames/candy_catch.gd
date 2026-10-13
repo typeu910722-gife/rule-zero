@@ -13,6 +13,7 @@ var _score := 0
 var _time := 0.0
 var _spawn := 0.0
 var _basket_x := 640.0
+var _moving := false
 var _items: Array = []   # {pos, kind, speed}
 var _button_time := 0.0
 var _button_spawned := false
@@ -46,6 +47,7 @@ func _process(delta: float) -> void:
 	_time += delta
 	var dir := Input.get_axis("move_left", "move_right")
 	_basket_x = clampf(_basket_x + dir * 560.0 * delta, 70, 1210)
+	_moving = dir != 0.0
 	_spawn -= delta
 	if _spawn <= 0 and _time < DURATION - 1.5:
 		_spawn = randf_range(0.35, 0.6)
@@ -84,5 +86,14 @@ func _draw_area() -> void:
 			_area.draw_circle(it.pos, 11, Color("#8a8a8a"))
 			for o in [Vector2(-3, -3), Vector2(3, -3), Vector2(-3, 3), Vector2(3, 3)]:
 				_area.draw_circle(it.pos + o, 1.6, Color("#555"))
+	# 小布捧著籃子（背對畫面、朝上看糖果）
+	_area.draw_set_transform(Vector2(_basket_x, BASKET_Y + 76), 0.0, Vector2(1.5, 1.5))
+	Critter.draw(_area, "sheep", Color.WHITE, 1.0, Vector2.UP, true, false, false, int(_time * 8.0) if _moving else -1)
+	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	_area.draw_rect(Rect2(_basket_x - BASKET_W / 2, BASKET_Y, BASKET_W, 36), Color("#ddb892"))
 	_area.draw_rect(Rect2(_basket_x - BASKET_W / 2, BASKET_Y, BASKET_W, 8), Color("#b08968"))
+	# 竹籃的提把與編織紋
+	_area.draw_arc(Vector2(_basket_x, BASKET_Y + 2), BASKET_W / 2 - 8, PI, TAU, 24, Color("#b08968"), 5)
+	for k in 5:
+		var x := _basket_x - BASKET_W / 2 + 14 + k * 23
+		_area.draw_line(Vector2(x, BASKET_Y + 10), Vector2(x, BASKET_Y + 34), Color("#c9a27e"), 3)

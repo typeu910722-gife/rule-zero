@@ -16,8 +16,17 @@ const BG_COLORS := {
 	"dream": Color("#d8d4cc"),
 }
 
+## 說話者 → 表情圖（game/art/face_*.png，4 欄 × 2 列，每格 256px）
+const FACES := {
+	"小布": "bu", "熊熊鎮長": "mayor", "鎮長": "mayor", "露露": "lulu", "Fen": "fen",
+	"波波": "popo", "麻糬": "mochi", "小玉": "tama",
+}
+const FACE_CELL := 256.0
+
 var running := false
 var parser := DialogueParser.new()
+var _portrait: TextureRect
+var _face_tex := {}
 
 var _bg: ColorRect
 var _box: PanelContainer
@@ -81,6 +90,7 @@ func run(label: String) -> void:
 					break
 				i = next if next >= 0 else i + 1
 	_box.visible = false
+	_portrait.visible = false
 	running = false
 	finished.emit()
 
@@ -106,11 +116,13 @@ func _command(op: String, args: Array) -> int:
 		"wait":
 			if not GameState.fast:
 				_box.visible = false
+				_portrait.visible = false
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
 		"event":
 			_box.visible = false
+			_portrait.visible = false
 			event_requested.emit(args[0])
 			await event_done
 	return -1
@@ -120,6 +132,8 @@ func set_bg(mode: String) -> void:
 	_bg.visible = mode != "none"
 	if _bg.visible:
 		_bg.color = BG_COLORS[mode]
+	# 夢境時換成「記憶揭露」的音樂
+	Sound.override_bgm("memory" if mode == "dream" else "")
 
 
 func _say(who: String, text: String) -> void:
@@ -127,6 +141,9 @@ func _say(who: String, text: String) -> void:
 	_box.visible = true
 	_name.visible = who != ""
 	_name.text = who
+	_show_face(who, text)
+	if who != "" and not GameState.fast:
+		Sound.sfx("talk")
 	if who == "":
 		_text.text = "[color=#7a6a78]%s[/color]" % text
 	else:
@@ -188,7 +205,9 @@ func _choose(opts: Array) -> int:
 			if GameState.courage < o.cost:
 				b.text = "★ %s　（膽量不足）" % o.text
 				b.disabled = true
-		b.pressed.connect(func(): _chosen.emit(k))
+		b.pressed.connect(func():
+			Sound.sfx("choice")
+			_chosen.emit(k))
 		_choices.add_child(b)
 		if first == null and not b.disabled:
 			first = b
@@ -232,6 +251,22 @@ func _build_ui() -> void:
 	_box.visible = false
 	add_child(_box)
 
+	# 說話者的表情頭像，站在對話框左上角
+	_portrait = TextureRect.new()
+	_portrait.anchor_left = 0.0
+	_portrait.anchor_right = 0.0
+	_portrait.anchor_top = 1.0
+	_portrait.anchor_bottom = 1.0
+	_portrait.offset_left = 64
+	_portrait.offset_right = 64 + 220
+	_portrait.offset_top = -196 - 214
+	_portrait.offset_bottom = -192
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait.visible = false
+	add_child(_portrait)
+
 	var v := VBoxContainer.new()
 	_box.add_child(v)
 	_name = Label.new()
@@ -263,6 +298,60 @@ func _build_ui() -> void:
 	# 對話框本身不攔截點擊，讓「點畫面任何地方」都能前進（手機）
 	for c in [_box, v, _name, _text]:
 		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _show_face(who: String, text: String) -> void:
+	if not FACES.has(who):
+		_portrait.visible = false
+		return
+	var key: String = FACES[who]
+	if not _face_tex.has(key):
+		_face_tex[key] = load("res://art/face_%s.png" % key)
+	var idx := _expression(key, text)
+	var at := AtlasTexture.new()
+	at.atlas = _face_tex[key]
+	at.region = Rect2((idx % 4) * FACE_CELL, (idx / 4) * FACE_CELL, FACE_CELL, FACE_CELL)
+	_portrait.texture = at
+	_portrait.visible = true
+
+
+## 依台詞猜表情（表情圖的順序見 Expressions/表情索引.csv）：
+## 0 平靜 1 開心 2 疑問 3 不安 4 難過 5 驚嚇 6／7 角色特有（堅定、警告、恍惚…）
+func _expression(key: String, text: String) -> int:
+	var t := text.strip_edges()
+	if "！？" in t or "？！" in t or t.begins_with("咦") or t.begins_with("什") or t.begins_with("欸"):
+		return 5
+	match key:
+		"mayor":
+			if "壞掉" in t or "修理" in t:
+				return 6
+			if "守則" in t or "乖" in t:
+				return 7
+			if t.ends_with("？"):
+				return 2
+			return 1 if "！" in t else 0
+		"fen":
+			if "不准" in t or "快" in t or "別" in t or "不要" in t:
+				return 7
+			if "……" in t and ("對不起" in t or "沒辦法" in t):
+				return 4
+			if t.ends_with("？"):
+				return 2
+			if t.begins_with("……"):
+				return 3
+			return 0
+		"mochi", "tama":
+			if "不用想" in t or "好吃" in t or "笑嘻嘻" in t:
+				return 7
+	if "嗚" in t or "對不起" in t:
+		return 4
+	if t.begins_with("……"):
+		return 3
+	if t.ends_with("？"):
+		return 2
+	if "～" in t or "嘿嘿" in t or "哈" in t or "！" in t:
+		return 1
+	return 0
 
 
 func _style_button(b: Button) -> void:

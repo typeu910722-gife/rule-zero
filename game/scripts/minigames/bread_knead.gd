@@ -122,7 +122,7 @@ func _draw_area() -> void:
 	_area.draw_string(f, Vector2(0, 110), "連續 Perfect：%d" % _streak, HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color("#c2558a"))
 	# 麵團與露露
 	Critter.ellipse(_area, Vector2(330, 560), Vector2(120, 50), Color("#fff3d6"))
-	_area.draw_set_transform(Vector2(1000, 330), 0.0, Vector2(3.2, 3.2))
+	_area.draw_set_transform(Vector2(1000, 360), 0.0, Vector2(2.2, 2.2))
 	Critter.draw(_area, "rabbit", Color("#f4b6c2"), 1.0, Vector2(-1, 0), true)
 	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for h in _hums:

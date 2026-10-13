@@ -70,6 +70,7 @@ func set_status_visible(v: bool) -> void:
 func toggle_menu(allow_tag: bool) -> void:
 	menu_open = not menu_open
 	_menu.visible = menu_open
+	Sound.sfx("menu")
 	_tag_button.visible = allow_tag
 	if menu_open:
 		_fill_menu()

@@ -14,6 +14,13 @@ var stitched := false
 var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
 var target: Node2D
+## 面向（行走圖的方向）；follow_eyes 時改為看著玩家
+var facing := Vector2.DOWN
+var _last_pos := Vector2.INF
+var _step := -1
+var _step_t := 0.0
+
+const MIRROR_TEX := preload("res://art/mirror_states.png")
 
 
 func setup(p_id: String, data: Dictionary) -> Interactable:
@@ -31,22 +38,42 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 
 
 func reach() -> float:
-	return 70.0 * size
+	return 80.0 * maxf(size, 1.0) if kind == "npc" else 90.0
 
 
-func _process(_delta: float) -> void:
+func face_toward(p: Vector2) -> void:
+	facing = (p - global_position).normalized()
+	queue_redraw()
+
+
+func _process(delta: float) -> void:
+	# 被程式移動時（例如 Fen 跟在後面）播放走路動畫，朝移動方向
+	if _last_pos != Vector2.INF and kind == "npc":
+		var moved := position - _last_pos
+		if moved.length() > 0.6:
+			facing = moved.normalized()
+			_step_t += delta
+			if _step < 0 or _step_t > 0.14:
+				_step_t = 0.0
+				_step = (_step + 1) % 4
+			queue_redraw()
+		elif _step != -1:
+			_step = -1
+			queue_redraw()
+	_last_pos = position
 	if follow_eyes:
 		queue_redraw()
 
 
 func _draw() -> void:
 	if kind == "npc":
-		var look := Vector2.ZERO
+		var look := facing
 		if follow_eyes and target:
 			look = (target.global_position - global_position).normalized()
-		Critter.draw(self, species, body_color, size, look, smile, stitched)
+		Critter.draw(self, species, body_color, size * Critter.WORLD_SCALE, look, smile, stitched, false, _step)
 		var f: Font = GameState.font
-		draw_string(f, Vector2(-60, 22 * size), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
+		draw_string_outline(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, 5, Color(1, 1, 1, 0.85))
+		draw_string(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
 	else:
 		_draw_object()
 
@@ -61,16 +88,20 @@ func _draw_object() -> void:
 			for k in 5:
 				draw_line(Vector2(-36, -60 + k * 9), Vector2(30 - (k % 3) * 10, -60 + k * 9), Color("#bcaaa4"), 2)
 		"mirror":
-			Critter.ellipse(self, Vector2(0, -30), Vector2(18, 28), Color("#e9c46a"))
-			Critter.ellipse(self, Vector2(0, -30), Vector2(14, 24), Color("#cfe8ef"))
+			# 立鏡（鏡中的孩子素材第 1 格：空鏡）
+			draw_texture_rect_region(MIRROR_TEX, Rect2(-60, -150, 120, 150), Rect2(30, 0, 196, 256))
 			if covered:
-				draw_colored_polygon(PackedVector2Array([Vector2(-20, -60), Vector2(20, -60), Vector2(24, -2), Vector2(-24, -2)]), Color("#f7c5d3"))
-				for k in 6:
-					draw_circle(Vector2(-14 + (k % 3) * 14, -48 + (k / 3) * 22), 3, Color("#ffffff"))
+				draw_colored_polygon(PackedVector2Array([Vector2(-42, -150), Vector2(42, -150), Vector2(52, -30), Vector2(-52, -30)]), Color("#f7c5d3"))
+				for k in 9:
+					draw_circle(Vector2(-28 + (k % 3) * 28, -128 + (k / 3) * 34), 4, Color("#ffffff"))
 		"bed":
-			draw_rect(Rect2(-40, -50, 80, 60), Color("#bde0fe"))
-			draw_rect(Rect2(-36, -46, 72, 16), Color("#ffffff"))
-			draw_rect(Rect2(-40, -24, 80, 34), Color("#a2d2ff"))
+			draw_rect(Rect2(-80, -110, 160, 26), Color("#a47551"))
+			draw_rect(Rect2(-80, -90, 160, 100), Color("#fdf6ec"))
+			draw_rect(Rect2(-70, -84, 70, 30), Color("#ffffff"))
+			draw_rect(Rect2(-80, -48, 160, 58), Color("#a2d2ff"))
+			for k in 4:
+				draw_circle(Vector2(-55 + k * 36, -20), 5, Color("#ffffff"))
+			draw_rect(Rect2(-80, -110, 160, 120), Color("#7a5236"), false, 4)
 		"bakery_photo":
 			draw_rect(Rect2(-14, -40, 28, 22), Color("#ffffff"))
 			draw_rect(Rect2(-14, -40, 28, 22), Color("#8d6e63"), false, 2)
@@ -99,9 +130,10 @@ func _draw_object() -> void:
 				draw_line(Vector2(-14 + k * 8, -18), Vector2(-10 + k * 8, -6), Color("#4a2e1f"), 1.5)
 		"forest_sheep":
 			for k in 5:
-				var off := Vector2(-56 + k * 28, -8 - (k % 2) * 16)
+				var off := Vector2(-96 + k * 48, -6 - (k % 2) * 18)
 				draw_set_transform(off, 0.4 * (k - 2) * 0.3, Vector2(0.85, 0.85))
-				Critter.draw(self, "sheep", Color("#e9e4dc"), 1.0, Vector2.ZERO, k != 2, k == 2)
+				Critter.draw(self, "sheep", Color.WHITE, 0.8, Vector2.ZERO, k != 2, k == 2, false, -1,
+					Color(0.82, 0.8, 0.78, 0.95) if k != 2 else Color(0.95, 0.93, 0.9))
 			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 			draw_rect(Rect2(-8, 0, 30, 14), Color("#f6efe6"))
 			draw_string(GameState.font, Vector2(-8, 11), "No.46", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("#5c3d2e"))

@@ -1,10 +1,70 @@
 class_name Critter
 extends RefCounted
-## 用程式繪製的絨毛娃娃角色（原型用，正式版替換為美術素材）。
+## 絨毛娃娃角色。有行走圖的角色用美術素材（game/art/walk_*.png），
+## 沒有素材的（臨時居民）才退回程式繪製。
+
+## 行走圖：3 欄（步伐）× 4 列（朝下、朝左、朝右、朝上），每格 192px，腳底在格子底部
+const SHEETS := {
+	"sheep": "res://art/walk_bu.png",
+	"rabbit": "res://art/walk_lulu.png",
+	"fox": "res://art/walk_fen.png",
+	"bear": "res://art/walk_mayor.png",
+	"penguin": "res://art/walk_popo.png",
+	"hamster": "res://art/walk_mochi.png",
+	"calico": "res://art/walk_tama.png",
+}
+const CELL := 192.0
+## s = 1 時角色在畫面上的高度（像素）
+const BASE_HEIGHT := 84.0
+## 在小鎮地圖上再放大一點，和建築比例相稱
+const WORLD_SCALE := 1.3
+const WALK_CYCLE := [1, 0, 1, 2]
+
+static var _tex := {}
+
+
+static func has_sprite(species: String) -> bool:
+	return SHEETS.has(species)
+
+
+static func sheet(species: String) -> Texture2D:
+	if not _tex.has(species):
+		_tex[species] = load(SHEETS[species])
+	return _tex[species]
+
+
+## 依方向向量決定行走圖的列：0 下、1 左、2 右、3 上
+static func dir_row(look: Vector2) -> int:
+	if look.length() < 0.05:
+		return 0
+	if absf(look.x) > absf(look.y):
+		return 1 if look.x < 0 else 2
+	return 3 if look.y < 0 else 0
+
+
+## step：行走動畫的第幾步（-1 = 站著）
+static func draw_sprite(ci: CanvasItem, species: String, s: float, row: int, step := -1,
+		tint := Color.WHITE, tag := false) -> void:
+	var tex := sheet(species)
+	var col: int = 1 if step < 0 else WALK_CYCLE[step % WALK_CYCLE.size()]
+	var k := BASE_HEIGHT * s / (CELL * 0.94)
+	var size := Vector2(CELL, CELL) * k
+	ellipse(ci, Vector2(0, -2) * s, Vector2(22, 7) * s, Color(0, 0, 0, 0.16 * tint.a))
+	ci.draw_texture_rect_region(tex, Rect2(Vector2(-size.x / 2, -size.y + 4 * k), size),
+		Rect2(col * CELL, row * CELL, CELL, CELL), tint)
+	if tag:
+		# 名牌（拆下名牌是劇情機制，所以畫在胸前）
+		var c := Vector2(0, -BASE_HEIGHT * 0.36 * s)
+		ci.draw_rect(Rect2(c + Vector2(-8, -4) * s, Vector2(16, 9) * s), Color.WHITE)
+		ci.draw_rect(Rect2(c + Vector2(-8, -4) * s, Vector2(16, 9) * s), Color("#e8a0bf"), false, 1.2 * s)
+		ci.draw_line(c + Vector2(-5, 0.5) * s, c + Vector2(5, 0.5) * s, Color("#999"), 1.0 * s)
 
 
 static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := Vector2.ZERO,
-		smile := true, stitched := false, tag := false) -> void:
+		smile := true, stitched := false, tag := false, step := -1, tint := Color.WHITE) -> void:
+	if has_sprite(species):
+		draw_sprite(ci, species, s, dir_row(look), step, tint, tag)
+		return
 	var head := Vector2(0, -24) * s
 	var r := 20.0 * s
 	var dark := col.darkened(0.3)

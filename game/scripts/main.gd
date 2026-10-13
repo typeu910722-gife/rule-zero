@@ -20,30 +20,34 @@ const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "day2_eve
 const Forest := preload("res://scripts/world/forest.gd")
 const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
+## 位置都是世界座標＝地圖原圖座標 × 1.5（見 town.gd 的 at()）
 const ACTORS := {
-	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(390, 420)},
-	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(960, 700)},
-	"fen": {"name": "Fen", "species": "fox", "color": Color("#c8642b"), "pos": Vector2(1400, 740), "smile": false, "stitched": true},
-	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(740, 600), "size": 1.9},
-	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(230, 940)},
-	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(400, 960)},
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(435, 575)},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1290, 935)},
+	"fen": {"name": "Fen", "species": "fox", "color": Color("#c8642b"), "pos": Vector2(1815, 1000), "smile": false, "stitched": true},
+	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(1050, 905), "size": 1.6},
+	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(230, 1290)},
+	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(645, 1330)},
 	"extra1": {"name": "居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(-500, -500)},
 	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
 	"extra3": {"name": "居民", "species": "puppy", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
 }
 
 const OBJECTS := {
-	"board": {"name": "公告欄", "pos": Vector2(580, 580)},
-	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(470, 410)},
-	"mail_sack": {"name": "郵袋", "pos": Vector2(1040, 700)},
-	"mayor_door": {"name": "鎮長公館的門", "pos": Vector2(870, 430)},
-	"repair_room": {"name": "修理室", "pos": Vector2(1070, 250)},
-	"mirror_house": {"name": "鏡之屋", "pos": Vector2(1090, 485)},
-	"clocktower": {"name": "鐘塔大門", "pos": Vector2(700, 360)},
-	"forest": {"name": "森林小徑", "pos": Vector2(1260, 285)},
-	"station": {"name": "火車站", "pos": Vector2(760, 1020)},
-	"mirror": {"name": "鏡子", "pos": Vector2(120, 550)},
-	"bed": {"name": "床", "pos": Vector2(290, 550)},
+	"board": {"name": "公告欄", "pos": Vector2(915, 860)},
+	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(510, 525)},
+	"mail_sack": {"name": "郵袋", "pos": Vector2(1500, 900)},
+	"mayor_door": {"name": "鎮長公館的門", "pos": Vector2(1107, 590)},
+	"repair_room": {"name": "修理室", "pos": Vector2(1218, 300)},
+	"mirror_house": {"name": "鏡之屋", "pos": Vector2(1647, 495)},
+	"clocktower": {"name": "鐘塔大門", "pos": Vector2(867, 395)},
+	"forest": {"name": "森林小徑", "pos": Vector2(1470, 140)},
+	"station": {"name": "火車站", "pos": Vector2(1017, 1575)},
+	"home_door": {"name": "小布的家", "pos": Vector2(285, 850)},
+	# 小布的房間（地圖右邊，見 town.gd 的 ROOM）
+	"mirror": {"name": "鏡子", "pos": Vector2(2440, 360)},
+	"bed": {"name": "床", "pos": Vector2(2600, 380)},
+	"home_exit": {"name": "出門", "pos": Vector2(3040, 345)},
 	# 森林（第三天）
 	"forest_sheep": {"name": "小綿羊", "pos": Vector2(800, 320)},
 	"forest_bow": {"name": "長耳朵", "pos": Vector2(640, 380)},
@@ -57,9 +61,12 @@ const FOREST_BOUNDS := Rect2(560, 180, 480, 900)
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
 const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
 const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
-const HOUSE_BOUNDS := Rect2(85, 490, 255, 180)
-const HOME_SPOT := Vector2(220, 630)
-const WORLD_BOUNDS := Rect2(20, 40, 1560, 1000)
+const HOUSE_BOUNDS := Town.ROOM_BOUNDS
+const HOME_SPOT := Vector2(2720, 470)
+const WORLD_BOUNDS := Town.WORLD_BOUNDS
+## 走出家門時站的位置（門口）
+const OUTSIDE_HOME := Vector2(285, 880)
+const STATION_SPOT := Vector2(1017, 1625)
 
 const TINTS := {
 	"day": Color(1, 1, 1),
@@ -83,6 +90,8 @@ var repair_scene: CanvasLayer
 
 
 func _ready() -> void:
+	# 越下面的角色畫在越前面
+	y_sort_enabled = true
 	tint = CanvasModulate.new()
 	add_child(tint)
 	town = Town.new()
@@ -167,8 +176,11 @@ func _continue() -> void:
 	town.clock_stopped = GameState.day >= 2
 	town.queue_redraw()
 	_set_tint("day")
-	player.bounds = WORLD_BOUNDS
-	player.position = Vector2(640, 700) if cp == "day1_explore" else HOME_SPOT
+	if cp == "day1_explore":
+		player.bounds = WORLD_BOUNDS
+		player.position = Vector2(915, 960)
+	else:
+		_place_home()
 	_layout("day")
 	hud.set_status_visible(true)
 	_set_phase(cp)
@@ -182,7 +194,9 @@ func run_chapter() -> void:
 	_set_phase("prologue")
 	hud.set_status_visible(false)
 	_layout("arrival")
-	player.position = Vector2(700, 1030)
+	player.position = STATION_SPOT
+	player.face(Vector2.UP)
+	Sound.bgm("day")
 	await Dialogue.run("prologue")
 	await Dialogue.run("arrival")
 	_layout("day")
@@ -232,8 +246,10 @@ func _after_interaction() -> void:
 func _day1_evening() -> void:
 	await _fade_to(1.0)
 	_set_tint("sunset")
-	player.position = Vector2(470, 580)
-	actors.lulu.position = Vector2(530, 560)
+	player.position = Vector2(450, 640)
+	actors.lulu.position = Vector2(525, 630)
+	player.face(Vector2.RIGHT)
+	actors.lulu.face_toward(player.position)
 	await _fade_to(0.0)
 	await Dialogue.run("day1_evening")
 	await _fade_to(1.0)
@@ -252,11 +268,11 @@ func _day2_morning() -> void:
 	town.clock_stopped = true
 	town.queue_redraw()
 	_set_tint("day")
-	player.bounds = WORLD_BOUNDS
-	player.position = HOME_SPOT
+	_place_home()
 	_layout("day")
 	Dialogue.set_bg("none")
 	await _fade_to(0.0)
+	Sound.sfx("strange")
 	await Dialogue.run("day2_morning")
 	_set_phase("day2_explore")
 	GameState.save_game("day2_explore")
@@ -266,8 +282,10 @@ func _night_out() -> void:
 	await _fade_to(1.0)
 	_layout("night")
 	_set_tint("night")
-	player.position = Vector2(400, 600)
+	player.bounds = WORLD_BOUNDS
+	player.position = OUTSIDE_HOME
 	await _fade_to(0.0)
+	Sound.sfx("strange")
 	await Dialogue.run("night_intro")
 	_set_phase("night_out")
 
@@ -277,8 +295,7 @@ func _day3_morning() -> void:
 	await Dialogue.run("dream_2")
 	GameState.new_day()
 	_set_tint("day")
-	player.bounds = WORLD_BOUNDS
-	player.position = HOME_SPOT
+	_place_home()
 	_layout("day")
 	Dialogue.set_bg("none")
 	await _fade_to(0.0)
@@ -298,6 +315,7 @@ func _forest() -> void:
 	player.position = Vector2(800, 1030)
 	player.bounds = FOREST_BOUNDS
 	_set_phase("forest")
+	Sound.bgm("night")
 	await _fade_to(0.0)
 	await Dialogue.run("forest_enter")
 
@@ -306,6 +324,8 @@ func _forest() -> void:
 func _forest_climax() -> void:
 	var fen: Interactable = actors.fen
 	fen.position = player.position + Vector2(50, 10)
+	Sound.sfx("strange")
+	Sound.bgm("memory")
 	await Dialogue.run("forest_truth")
 	await Dialogue.run("bell_three")
 	await _fade_to(1.0)
@@ -315,7 +335,7 @@ func _forest_climax() -> void:
 	repair_scene = RepairScene.new()
 	add_child(repair_scene)
 	hud.set_status_visible(false)
-	_set_tint("day")
+	tint.color = TINTS.day
 	await _fade_to(0.0)
 	await Dialogue.run("repair")
 	await _chapter_end()
@@ -336,6 +356,7 @@ func _chapter_end() -> void:
 	s.queue_free()
 	repair_scene.queue_free()
 	GameState.set_flag("chapter2")
+	Sound.bgm("day")
 	town.visible = true
 	player.bounds = WORLD_BOUNDS
 	await Dialogue.run("ch2_opening")
@@ -364,15 +385,46 @@ func _unhandled_input(event: InputEvent) -> void:
 			interact(it.id)
 
 
+func _place_home() -> void:
+	player.bounds = HOUSE_BOUNDS
+	player.position = HOME_SPOT
+	player.face(Vector2.DOWN)
+
+
+func _place_outside() -> void:
+	player.bounds = WORLD_BOUNDS
+	player.position = OUTSIDE_HOME
+	player.face(Vector2.DOWN)
+
+
+## 小布家的門：進出房間（第一天晚上不能出門）
+func _use_door(id: String) -> void:
+	Sound.sfx("door")
+	await _fade_to(1.0)
+	if id == "home_door":
+		_place_home()
+	else:
+		_place_outside()
+	await _fade_to(0.0)
+
+
 func interact(id: String) -> void:
 	if busy:
 		return
 	busy = true
 	player.can_move = false
 	hud.set_prompt("")
-	if id == "board":
+	var it: Interactable = actors[id]
+	if it.kind == "npc":
+		it.face_toward(player.position)
+		player.face(it.position - player.position)
+	if id in ["home_door", "home_exit"] and phase != "day1_night":
+		await _use_door(id)
+	elif id == "board":
+		Sound.sfx("menu")
 		await board.open()
 	else:
+		Sound.sfx("interact")
 		await Dialogue.run(_talk_label(id))
 	await _after_interaction()
 	if phase != "ended":
@@ -449,18 +501,22 @@ func _on_event(event_name: String) -> void:
 		"bread":
 			var bread := BreadKnead.new()
 			add_child(bread)
+			Sound.duck(true)
 			await bread.play()
+			Sound.duck(false)
 		"mirror_stare":
 			var m := MirrorStare.new()
 			add_child(m)
 			await m.play()
 		"to_plaza":
-			player.position = Vector2(560, 660)
-			actors.mayor.position = Vector2(660, 620)
+			player.position = Vector2(885, 935)
+			actors.mayor.position = Vector2(985, 905)
+			player.face(Vector2.RIGHT)
+			actors.mayor.face_toward(player.position)
 		"mayor_appears":
 			actors.mayor.visible = true
 			actors.mayor.position = Vector2(800, 1060)
-			_set_tint("day")
+			tint.color = TINTS.day
 		"fen_taken":
 			actors.fen.visible = false
 		"lulu_appears":
@@ -475,14 +531,14 @@ func _on_event(event_name: String) -> void:
 		"ch2_arrival":
 			# 第二章：Fen 回來了。縫線整整齊齊的，在笑。
 			_layout("arrival")
-			player.position = Vector2(700, 1030)
+			player.position = STATION_SPOT
 			var fen: Interactable = actors.fen
 			fen.visible = true
 			fen.smile = true
 			fen.stitched = false
-			fen.position = Vector2(700, 975)
-			fen.queue_redraw()
-			actors.mayor.position = Vector2(640, 945)
+			fen.position = STATION_SPOT + Vector2(95, -15)
+			fen.face_toward(player.position)
+			actors.mayor.position = STATION_SPOT + Vector2(-170, -20)
 	Dialogue.event_done.emit()
 
 
@@ -494,26 +550,29 @@ func _layout(mode: String) -> void:
 		a.position = ACTORS[id].pos
 		a.visible = not id.begins_with("extra")
 		a.follow_eyes = false
+		a.facing = Vector2.DOWN
 	for id in OBJECTS:
 		actors[id].visible = not id.begins_with("forest_")
 	match mode:
 		"arrival":
-			var spots := [Vector2(580, 1010), Vector2(630, 990), Vector2(800, 990), Vector2(850, 1010),
-				Vector2(540, 1030), Vector2(890, 1030), Vector2(720, 975)]
-			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "mayor"]
+			# 火車站前：大家圍著剛下車的小布
+			var spots := [Vector2(-190, 5), Vector2(-105, -25), Vector2(105, -25), Vector2(190, 5), Vector2(-300, -15)]
+			var who := ["lulu", "popo", "mochi", "tama", "mayor"]
 			for k in who.size():
-				actors[who[k]].position = spots[k]
+				actors[who[k]].position = STATION_SPOT + spots[k]
 				actors[who[k]].visible = true
+				actors[who[k]].face_toward(STATION_SPOT)
 			actors.fen.visible = false
 		"day":
 			actors.mayor.visible = GameState.day >= 2
 		"night":
 			# 夜晚：居民們站在廣場，面朝鐘塔。一動也不動。鈕扣眼睛跟著小布轉。
-			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "extra3"]
+			var who := ["lulu", "popo", "mochi", "tama"]
 			for k in who.size():
 				var a: Interactable = actors[who[k]]
-				a.position = Vector2(545 + k * 40, 432 + (k % 2) * 38)
+				a.position = Vector2(800 + k * 75, 960 + (k % 2) * 40)
 				a.visible = true
+				a.facing = Vector2.UP
 				a.follow_eyes = true
 			actors.mayor.visible = false
 			actors.fen.visible = false
@@ -564,6 +623,7 @@ func _visited_count() -> int:
 
 func _set_tint(name: String) -> void:
 	tint.color = TINTS[name]
+	Sound.bgm("day" if name in ["day", "sunset"] else "night")
 
 
 func _fade_to(alpha: float) -> void:
