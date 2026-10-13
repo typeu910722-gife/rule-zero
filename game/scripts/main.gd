@@ -1,0 +1,378 @@
+extends Node2D
+## 第一章原型的流程導演：章節進行、場景配置、互動分派。
+##
+## 互動時依序尋找對話標籤：<id>_<phase> → <phase 預設> → <id>_d<day> → <id>
+## 劇情邏輯盡量寫在 dialogue/chapter1.txt，這裡只處理「世界」的變化。
+
+const Town := preload("res://scripts/world/town.gd")
+const Player := preload("res://scripts/world/player.gd")
+const Board := preload("res://scripts/ui/board.gd")
+const Hud := preload("res://scripts/ui/hud.gd")
+const CandyCatch := preload("res://scripts/minigames/candy_catch.gd")
+const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
+const Summary := preload("res://scripts/ui/summary.gd")
+
+const ACTORS := {
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#ffe5ec"), "pos": Vector2(410, 1010)},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#3d5a80"), "pos": Vector2(720, 1010)},
+	"fen": {"name": "Fen", "species": "fox", "color": Color("#f4a261"), "pos": Vector2(1150, 970), "smile": false, "stitched": true},
+	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c99a6b"), "pos": Vector2(900, 540), "size": 1.9},
+	"mochi": {"name": "麻糬", "species": "panda", "color": Color("#fbfbfb"), "pos": Vector2(1000, 740)},
+	"tama": {"name": "小玉", "species": "cat", "color": Color("#fde2a7"), "pos": Vector2(610, 700)},
+	"extra1": {"name": "居民", "species": "bear", "color": Color("#e6ccb2"), "pos": Vector2(-500, -500)},
+	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
+	"extra3": {"name": "居民", "species": "rabbit", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
+}
+
+const OBJECTS := {
+	"board": {"name": "公告欄", "pos": Vector2(720, 560)},
+	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(480, 990)},
+	"mail_sack": {"name": "郵袋", "pos": Vector2(800, 1000)},
+	"mayor_door": {"name": "鎮長辦公室的門", "pos": Vector2(1280, 700)},
+	"clocktower": {"name": "鐘塔大門", "pos": Vector2(800, 390)},
+	"forest": {"name": "森林入口", "pos": Vector2(440, 260)},
+	"station": {"name": "車站", "pos": Vector2(980, 1140)},
+	"mirror": {"name": "鏡子", "pos": Vector2(230, 560)},
+	"bed": {"name": "床", "pos": Vector2(400, 560)},
+}
+
+## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
+const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "clocktower"]
+const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
+const HOUSE_BOUNDS := Rect2(195, 490, 255, 190)
+const HOME_SPOT := Vector2(330, 640)
+
+const TINTS := {
+	"day": Color(1, 1, 1),
+	"sunset": Color(1.0, 0.86, 0.85),
+	"evening": Color(0.82, 0.78, 0.92),
+	"night": Color(0.5, 0.47, 0.62),
+}
+
+var phase := "prologue"
+var busy := true
+var actors := {}
+
+var town: Node2D
+var player: Node2D
+var hud: CanvasLayer
+var board: CanvasLayer
+var tint: CanvasModulate
+var fade: ColorRect
+
+
+func _ready() -> void:
+	tint = CanvasModulate.new()
+	add_child(tint)
+	town = Town.new()
+	add_child(town)
+	for id in ACTORS:
+		var a := Interactable.new().setup(id, ACTORS[id])
+		add_child(a)
+		actors[id] = a
+	for id in OBJECTS:
+		var data: Dictionary = OBJECTS[id].duplicate()
+		data["kind"] = "obj"
+		var o := Interactable.new().setup(id, data)
+		add_child(o)
+		actors[id] = o
+	player = Player.new()
+	player.can_move = false
+	add_child(player)
+	for a in actors.values():
+		a.target = player
+
+	hud = Hud.new()
+	add_child(hud)
+	hud.tag_toggle_requested.connect(_on_tag_toggle)
+	hud.board_requested.connect(func():
+		hud.toggle_menu(false)
+		await board.open())
+	board = Board.new()
+	add_child(board)
+	var fade_layer := CanvasLayer.new()
+	fade_layer.layer = 40
+	add_child(fade_layer)
+	fade = ColorRect.new()
+	fade.color = Color(0, 0, 0, 0)
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_layer.add_child(fade)
+
+	Dialogue.event_requested.connect(_on_event)
+	GameState.reset()
+	run_chapter.call_deferred()
+
+
+# ───────────────────────── 章節流程 ─────────────────────────
+
+func run_chapter() -> void:
+	_set_phase("prologue")
+	hud.set_status_visible(false)
+	_layout("arrival")
+	player.position = Vector2(900, 1190)
+	await Dialogue.run("prologue")
+	await Dialogue.run("arrival")
+	_layout("day")
+	hud.set_status_visible(true)
+	_set_phase("day1_explore")
+	busy = false
+	player.can_move = true
+
+
+func _after_interaction() -> void:
+	match phase:
+		"day1_explore":
+			if _visited_count() >= 2:
+				await _day1_evening()
+		"day1_night":
+			if GameState.has("sleep_1"):
+				await _day2_morning()
+		"day2_explore":
+			if GameState.has("bread_done") and GameState.has("letter_done") and not GameState.has("fen_invited"):
+				var fen: Interactable = actors.fen
+				var home := fen.position
+				fen.position = player.position + Vector2(90, -40)
+				await Dialogue.run("fen_invite")
+				fen.position = home
+				_set_phase("day2_evening")
+		"day2_evening":
+			if GameState.has("night_out"):
+				await _night_out()
+			elif GameState.has("fen_disappointed"):
+				await _end_prototype()
+		"night_out":
+			if GameState.has("saw_resident") and not GameState.has("fen_trust"):
+				var fen: Interactable = actors.fen
+				fen.position = player.position + Vector2(-70, 20)
+				fen.visible = true
+				await Dialogue.run("night_fen")
+				await _end_prototype()
+
+
+func _day1_evening() -> void:
+	await _fade_to(1.0)
+	_set_tint("sunset")
+	player.position = Vector2(560, 620)
+	actors.lulu.position = Vector2(620, 600)
+	await _fade_to(0.0)
+	await Dialogue.run("day1_evening")
+	await _fade_to(1.0)
+	_layout("day")
+	_set_tint("evening")
+	player.position = HOME_SPOT
+	player.bounds = HOUSE_BOUNDS
+	await _fade_to(0.0)
+	_set_phase("day1_night")
+
+
+func _day2_morning() -> void:
+	await _fade_to(1.0)
+	await Dialogue.run("dream_1")
+	GameState.new_day()
+	town.clock_stopped = true
+	town.queue_redraw()
+	_set_tint("day")
+	player.bounds = Rect2(20, 40, 1560, 1240)
+	player.position = HOME_SPOT
+	_layout("day")
+	Dialogue.set_bg("none")
+	await _fade_to(0.0)
+	await Dialogue.run("day2_morning")
+	_set_phase("day2_explore")
+
+
+func _night_out() -> void:
+	await _fade_to(1.0)
+	_layout("night")
+	_set_tint("night")
+	player.position = Vector2(500, 610)
+	await _fade_to(0.0)
+	await Dialogue.run("night_intro")
+	_set_phase("night_out")
+
+
+func _end_prototype() -> void:
+	_set_phase("ended")
+	await _fade_to(1.0)
+	await Dialogue.run("dream_2")
+	var s := Summary.new()
+	add_child(s)
+	Dialogue.set_bg("none")
+	s.restart.connect(func():
+		Dialogue.set_bg("none")
+		get_tree().reload_current_scene())
+
+
+# ───────────────────────── 互動 ─────────────────────────
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug"):
+		hud.show_debug = not hud.show_debug
+		hud.refresh()
+	if busy or Dialogue.running or board.visible:
+		return
+	if event.is_action_pressed("menu"):
+		get_viewport().set_input_as_handled()
+		hud.toggle_menu(GameState.day >= 2 and phase in ["day2_explore", "day2_evening"])
+		player.can_move = not hud.menu_open
+		return
+	if hud.menu_open:
+		return
+	if event.is_action_pressed("interact"):
+		var it: Interactable = player.nearest()
+		if it:
+			get_viewport().set_input_as_handled()
+			interact(it.id)
+
+
+func interact(id: String) -> void:
+	if busy:
+		return
+	busy = true
+	player.can_move = false
+	hud.set_prompt("")
+	if id == "board":
+		await board.open()
+	else:
+		await Dialogue.run(_talk_label(id))
+	await _after_interaction()
+	if phase != "ended":
+		busy = false
+		player.can_move = true
+		_refresh_objective()
+
+
+func _talk_label(id: String) -> String:
+	var candidates := ["%s_%s" % [id, phase]]
+	if PHASE_DEFAULT.has(phase) and actors[id].kind == "npc":
+		candidates.append(PHASE_DEFAULT[phase])
+	elif phase == "day1_night":
+		candidates.append("late")
+	candidates.append_array(["%s_d%d" % [id, GameState.day], id])
+	for c in candidates:
+		if Dialogue.has_label(c):
+			return c
+	return "nothing"
+
+
+func _process(_delta: float) -> void:
+	if busy or Dialogue.running or hud.menu_open or board.visible:
+		hud.set_prompt("")
+		return
+	var it: Interactable = player.nearest()
+	hud.set_prompt("E：%s" % it.display_name if it else "")
+
+
+func _on_tag_toggle() -> void:
+	hud.toggle_menu(false)
+	busy = true
+	player.can_move = false
+	if GameState.has("tag_on"):
+		if GameState.spend_courage(1):
+			GameState.set_flag("tag_on", false)
+			GameState.set_flag("tag_off")
+			GameState.add_suspicion(10)
+			await Dialogue.run("tag_off")
+	else:
+		GameState.set_flag("tag_on", true)
+		await Dialogue.run("tag_on")
+	busy = false
+	player.can_move = true
+
+
+## 對話腳本中的 @event
+func _on_event(event_name: String) -> void:
+	await get_tree().process_frame
+	match event_name:
+		"candy":
+			var game := CandyCatch.new()
+			add_child(game)
+			var score: int = await game.play()
+			GameState.set_flag("candy_good", score >= 15)
+		"board":
+			await board.open()
+		"mirror_stare":
+			var m := MirrorStare.new()
+			add_child(m)
+			await m.play()
+		"to_plaza":
+			player.position = Vector2(760, 640)
+			actors.mayor.position = Vector2(860, 580)
+	Dialogue.event_done.emit()
+
+
+# ───────────────────────── 場景配置 ─────────────────────────
+
+func _layout(mode: String) -> void:
+	for id in ACTORS:
+		var a: Interactable = actors[id]
+		a.position = ACTORS[id].pos
+		a.visible = not id.begins_with("extra")
+		a.follow_eyes = false
+	match mode:
+		"arrival":
+			var spots := [Vector2(780, 1110), Vector2(840, 1100), Vector2(960, 1100), Vector2(1020, 1110),
+				Vector2(720, 1130), Vector2(1080, 1130), Vector2(900, 1080)]
+			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "mayor"]
+			for k in who.size():
+				actors[who[k]].position = spots[k]
+				actors[who[k]].visible = true
+			actors.fen.visible = false
+		"day":
+			actors.mayor.visible = GameState.day >= 2
+		"night":
+			# 夜晚：居民們站在廣場，面朝鐘塔。一動也不動。鈕扣眼睛跟著小布轉。
+			var who := ["lulu", "popo", "mochi", "tama", "extra1", "extra2", "extra3"]
+			for k in who.size():
+				var a: Interactable = actors[who[k]]
+				a.position = Vector2(670 + k * 44, 425 + (k % 2) * 40)
+				a.visible = true
+				a.follow_eyes = true
+			actors.mayor.visible = false
+			actors.fen.visible = false
+	actors.mirror.covered = not GameState.has("mirror_open")
+	actors.mirror.queue_redraw()
+
+
+func _set_phase(p: String) -> void:
+	phase = p
+	_refresh_objective()
+
+
+func _refresh_objective() -> void:
+	match phase:
+		"day1_explore":
+			GameState.set_objective("逛逛小鎮，認識大家（%d / 2）" % mini(_visited_count(), 2))
+		"day1_night":
+			GameState.set_objective("回家了。可以看看房間，或上床睡覺。")
+		"day2_explore":
+			var left := []
+			if not GameState.has("bread_done"):
+				left.append("幫露露做麵包")
+			if not GameState.has("letter_done"):
+				left.append("幫波波的忙")
+			GameState.set_objective("、".join(left))
+		"day2_evening":
+			GameState.set_objective("八點鐘聲響起前，回家上床。")
+		"night_out":
+			GameState.set_objective("……廣場那邊，好像有人。")
+		_:
+			GameState.set_objective("")
+
+
+func _visited_count() -> int:
+	return DAY1_PLACES.filter(func(p): return GameState.has("visited_" + p)).size()
+
+
+func _set_tint(name: String) -> void:
+	tint.color = TINTS[name]
+
+
+func _fade_to(alpha: float) -> void:
+	if GameState.fast:
+		fade.color.a = alpha
+		return
+	var tw := create_tween()
+	tw.tween_property(fade, "color:a", alpha, 0.6)
+	await tw.finished
