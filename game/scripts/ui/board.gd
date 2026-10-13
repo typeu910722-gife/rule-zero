@@ -32,6 +32,8 @@ func _ready() -> void:
 	_text.add_theme_font_size_override("normal_font_size", 24)
 	_text.add_theme_font_size_override("bold_font_size", 24)
 	_panel.add_child(_text)
+	for c in [dim, _panel, _text]:
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func rules_bbcode() -> String:
@@ -52,7 +54,7 @@ func rules_bbcode() -> String:
 		"10. 守則永遠只有十條。",
 		"11. 不要和以前的朋友說話。" if GameState.has("chapter2") else "",
 		"",
-		"[center][color=#a1887f][font_size=18]（按 E / 空白鍵 關閉）[/font_size][/color][/center]",
+		"[center][color=#a1887f][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
 	]
 	return "\n".join(lines)
 
@@ -72,6 +74,7 @@ func close() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if visible and (event.is_action_pressed("interact") or event.is_action_pressed("menu")):
+	var tap: bool = event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT
+	if visible and (event.is_action_pressed("interact") or event.is_action_pressed("menu") or tap):
 		get_viewport().set_input_as_handled()
 		close()

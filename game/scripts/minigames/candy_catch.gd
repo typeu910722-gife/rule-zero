@@ -21,8 +21,10 @@ var _running := false
 
 func _ready() -> void:
 	layer = 30
+	add_to_group("touch_joystick")
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_area.draw.connect(_draw_area)
 	add_child(_area)
 	_button_time = randf_range(5.0, 14.0)

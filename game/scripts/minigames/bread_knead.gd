@@ -32,6 +32,7 @@ func _ready() -> void:
 	layer = 30
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_area.draw.connect(_draw_area)
 	add_child(_area)
 	for k in NOTES:
@@ -85,7 +86,8 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not _running or not event.is_action_pressed("interact"):
+	var tap: bool = event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT
+	if not _running or not (event.is_action_pressed("interact") or tap):
 		return
 	get_viewport().set_input_as_handled()
 	var best: Dictionary = {}
@@ -116,7 +118,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _draw_area() -> void:
 	var f: Font = GameState.font
 	_area.draw_rect(Rect2(0, 0, 1280, 720), Color("#ffe5ec"))
-	_area.draw_string(f, Vector2(0, 70), "揉麵團！音符碰到圓圈時按 E／空白鍵", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#b56576"))
+	_area.draw_string(f, Vector2(0, 70), "揉麵團！音符碰到圓圈時按 E／空白鍵（手機：點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#b56576"))
 	_area.draw_string(f, Vector2(0, 110), "連續 Perfect：%d" % _streak, HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color("#c2558a"))
 	# 麵團與露露
 	Critter.ellipse(_area, Vector2(330, 560), Vector2(120, 50), Color("#fff3d6"))

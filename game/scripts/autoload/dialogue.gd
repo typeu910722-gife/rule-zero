@@ -26,6 +26,7 @@ var _text: RichTextLabel
 var _choices: VBoxContainer
 var _typing := false
 var _choosing := false
+var _shown_at := 0
 
 
 func _ready() -> void:
@@ -134,6 +135,7 @@ func _say(who: String, text: String) -> void:
 		return
 	_text.visible_characters = 0
 	_typing = true
+	_shown_at = Time.get_ticks_msec()
 	await _advance
 
 
@@ -153,6 +155,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not pressed:
 		return
 	get_viewport().set_input_as_handled()
+	if Time.get_ticks_msec() - _shown_at < 120:
+		return  # 觸控時，同一下點擊會再送一次模擬滑鼠事件
 	if _typing:
 		_text.visible_characters = -1
 		_typing = false
@@ -256,6 +260,9 @@ func _build_ui() -> void:
 	_choices.add_theme_constant_override("separation", 8)
 	_choices.visible = false
 	add_child(_choices)
+	# 對話框本身不攔截點擊，讓「點畫面任何地方」都能前進（手機）
+	for c in [_box, v, _name, _text]:
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _style_button(b: Button) -> void:

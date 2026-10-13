@@ -14,6 +14,9 @@ const Summary := preload("res://scripts/ui/summary.gd")
 const EndCard := preload("res://scripts/ui/end_card.gd")
 const Title := preload("res://scripts/ui/title.gd")
 const BreadKnead := preload("res://scripts/minigames/bread_knead.gd")
+const TouchControls := preload("res://scripts/ui/touch_controls.gd")
+
+const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "day2_evening", "night_out", "day3_explore", "forest"]
 const Forest := preload("res://scripts/world/forest.gd")
 const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
@@ -123,6 +126,9 @@ func _ready() -> void:
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fade_layer.add_child(fade)
 
+	var touch := TouchControls.new()
+	touch.mode_provider = _touch_mode
+	add_child(touch)
 	Dialogue.event_requested.connect(_on_event)
 	hud.set_status_visible(false)
 	if GameState.fast:
@@ -400,7 +406,16 @@ func _process(_delta: float) -> void:
 		hud.set_prompt("")
 		return
 	var it: Interactable = player.nearest()
-	hud.set_prompt("E：%s" % it.display_name if it else "")
+	var key := "互動" if DisplayServer.is_touchscreen_available() else "E"
+	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
+
+
+func _touch_mode() -> String:
+	if hud.menu_open:
+		return "menu"
+	if busy or Dialogue.running or board.visible or not phase in EXPLORE_PHASES:
+		return ""
+	return "explore"
 
 
 func _on_tag_toggle() -> void:

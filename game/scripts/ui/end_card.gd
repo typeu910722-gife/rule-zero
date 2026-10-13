@@ -33,5 +33,6 @@ func _ready() -> void:
 	var quit := Button.new()
 	quit.text = "離開遊戲"
 	quit.pressed.connect(func(): get_tree().quit())
-	box.add_child(quit)
+	if not OS.has_feature("web"):
+		box.add_child(quit)
 	again.grab_focus.call_deferred()

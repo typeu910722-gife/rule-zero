@@ -12,6 +12,7 @@ func _ready() -> void:
 	layer = 70
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_area.draw.connect(_draw_area)
 	add_child(_area)
 
@@ -24,7 +25,8 @@ func _ready() -> void:
 	cont.disabled = not GameState.has_save()
 	box.add_child(cont)
 	box.add_child(_button("新遊戲", func(): new_game.emit()))
-	box.add_child(_button("離開", func(): get_tree().quit()))
+	if not OS.has_feature("web"):
+		box.add_child(_button("離開", func(): get_tree().quit()))
 	(cont if not cont.disabled else box.get_child(1)).grab_focus.call_deferred()
 
 

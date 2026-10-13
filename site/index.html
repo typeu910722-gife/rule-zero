@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>試玩測試頁</title>
+<style>
+  :root {
+    --bg: #fbe7ee; --card: #fffaf4; --ink: #4a3b47; --muted: #8e7d8a;
+    --accent: #c2558a; --line: #e8a0bf; --shadow: rgba(120, 60, 90, .12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    padding: max(24px, env(safe-area-inset-top)) 16px 40px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: clamp(26px, 6vw, 38px); margin: 8px 0 4px; letter-spacing: .04em; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  .gate {
+    background: var(--card); border: 3px solid var(--line); border-radius: 22px;
+    padding: 28px 24px; max-width: 420px; margin: 12vh auto 0; text-align: center;
+    box-shadow: 0 10px 30px var(--shadow);
+  }
+  .gate h1 { margin-top: 0; }
+  input[type=password] {
+    width: 100%; font-size: 18px; padding: 12px 14px; border-radius: 14px;
+    border: 2px solid var(--line); background: #fff; color: var(--ink); outline: none;
+  }
+  input[type=password]:focus { border-color: var(--accent); }
+  button {
+    margin-top: 14px; width: 100%; font-size: 18px; padding: 12px; border: 0; border-radius: 14px;
+    background: var(--accent); color: #fff; cursor: pointer;
+  }
+  label.remember { display: flex; gap: 8px; justify-content: center; margin-top: 12px; color: var(--muted); font-size: 14px; }
+  .err { color: #b23a48; min-height: 1.4em; margin-top: 10px; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .card {
+    display: block; text-decoration: none; color: inherit; background: var(--card);
+    border: 3px solid var(--line); border-radius: 20px; overflow: hidden;
+    box-shadow: 0 8px 22px var(--shadow); transition: transform .15s;
+  }
+  .card:hover, .card:focus-visible { transform: translateY(-3px); }
+  .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #f6d6e6; }
+  .card .body { padding: 14px 16px 16px; }
+  .card .no { color: var(--accent); font-size: 13px; font-weight: 700; }
+  .card h2 { margin: 2px 0 6px; font-size: 21px; }
+  .card p { margin: 0 0 10px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 12px; padding: 3px 9px; border-radius: 99px; background: #ffe1ec; color: #8a4b68; }
+  .play { margin-top: 12px; display: inline-block; font-weight: 700; color: var(--accent); }
+  .hidden { display: none; }
+  .foot { margin-top: 28px; color: var(--muted); font-size: 13px; }
+  .lock { background: none; color: var(--muted); width: auto; margin: 0; padding: 0; font-size: 13px; text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="gate" class="gate">
+    <h1>試玩測試頁</h1>
+    <p class="sub">請輸入密碼</p>
+    <form id="form">
+      <input id="pw" type="password" autocomplete="current-password" placeholder="密碼" aria-label="密碼">
+      <label class="remember"><input id="remember" type="checkbox"> 記住這台裝置</label>
+      <button type="submit">進入</button>
+      <div id="err" class="err" role="alert"></div>
+    </form>
+  </section>
+
+  <section id="list" class="hidden">
+    <h1>專案列表</h1>
+    <p class="sub">點開即可試玩。手機請橫放。</p>
+    <div id="grid" class="grid"></div>
+    <p class="foot">內部測試用，請勿外流。　<button class="lock" id="lock">登出</button></p>
+  </section>
+</div>
+<script>
+  // 新增專案：在這裡加一筆，並把專案資料夾放在同一層。
+  const PROJECTS = [
+    {
+      path: "rule-zero/",
+      cover: "rule-zero-cover.jpg",
+      title: "第零條規則 Rule Zero",
+      desc: "可愛畫風、背後藏著驚悚真相的劇情冒險。第一章「歡迎回來」原型（約 40–60 分鐘）。",
+      tags: ["第一章原型", "手機：橫放＋觸控", "電腦：WASD＋E"],
+    },
+  ];
+  // 只存密碼的 SHA-256，不存明文。注意：這是前端密碼，只能擋一般訪客。
+  const HASH = "3ee58cfb436075d43d91edcffdc9459ba335b24fbacf35a641ae8b247cd18476";
+  const KEY = "yzp_ok";
+
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+  function unlocked() {
+    try { return sessionStorage.getItem(KEY) === "1" || localStorage.getItem(KEY) === "1"; }
+    catch (e) { return false; }
+  }
+  function show() {
+    document.getElementById("gate").classList.add("hidden");
+    document.getElementById("list").classList.remove("hidden");
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    PROJECTS.forEach((p, i) => {
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = p.path;
+      a.innerHTML = `<img alt="" src="${p.cover}"><div class="body">
+        <div class="no">#${String(i + 1).padStart(2, "0")}</div><h2></h2><p></p>
+        <div class="tags"></div><span class="play">開始試玩 →</span></div>`;
+      a.querySelector("h2").textContent = p.title;
+      a.querySelector("p").textContent = p.desc;
+      const tags = a.querySelector(".tags");
+      p.tags.forEach(t => { const s = document.createElement("span"); s.className = "tag"; s.textContent = t; tags.append(s); });
+      grid.append(a);
+    });
+  }
+  document.getElementById("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pw = document.getElementById("pw").value;
+    if (await sha256(pw) === HASH) {
+      try {
+        sessionStorage.setItem(KEY, "1");
+        if (document.getElementById("remember").checked) localStorage.setItem(KEY, "1");
+      } catch (err) {}
+      show();
+    } else {
+      document.getElementById("err").textContent = "密碼不正確";
+    }
+  });
+  document.getElementById("lock").addEventListener("click", () => {
+    try { sessionStorage.removeItem(KEY); localStorage.removeItem(KEY); } catch (e) {}
+    location.reload();
+  });
+  if (unlocked()) show();
+</script>
+</body>
+</html>

@@ -46,7 +46,7 @@ const META_PATH := "user://meta.json"
 var save_dir := "user://"
 var checkpoint := ""
 var meta := {"runs": 0, "chapters_done": 0}
-var font: SystemFont
+var font: Font
 
 
 func _ready() -> void:
@@ -216,13 +216,29 @@ func _setup_input() -> void:
 
 
 func _setup_font() -> void:
-	# 原型階段使用系統中文字型；正式版請改為打包授權字型（例如 Noto Sans TC / 圓體）。
-	font = SystemFont.new()
-	font.font_names = PackedStringArray([
-		"Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC",
-		"Heiti TC", "Noto Sans CJK SC", "WenQuanYi Zen Hei", "sans-serif",
+	# 內建 Noto Sans TC（只含遊戲用到的字，tools/subset_font.py 產生）；缺字時退回系統字型。
+	var sys := SystemFont.new()
+	sys.font_names = PackedStringArray([
+		"Noto Sans CJK TC", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "sans-serif",
 	])
+	var bundled := load("res://fonts/NotoSansTC-Game.otf") as FontFile
+	if bundled:
+		bundled.fallbacks = [sys]
+		font = bundled
+	else:
+		font = sys
 	var theme := Theme.new()
 	theme.default_font = font
 	theme.default_font_size = 22
+	var bold := FontVariation.new()
+	bold.base_font = font
+	bold.variation_embolden = 0.9
+	theme.set_font("bold_font", "RichTextLabel", bold)
 	get_tree().root.theme = theme
+	# 網頁版沒有系統字型可借：所有 Control 的預設字型也改成內建字型
+	ThemeDB.fallback_font = font
+	ThemeDB.fallback_font_size = 22
+	var default_theme := ThemeDB.get_default_theme()
+	if default_theme:
+		default_theme.default_font = font
+		default_theme.set_font("bold_font", "RichTextLabel", bold)

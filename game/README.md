@@ -9,12 +9,24 @@
 1. 安裝 [Godot 4.3](https://godotengine.org/download)（標準版即可，不需要 .NET）。
 2. Godot → 匯入 → 選擇本資料夾的 `project.godot` → 按 F5。
 
+## 網頁版／手機試玩
+```
+GODOT=/path/to/godot tools/build_site.sh   # 需要 Godot 4.3 Web 匯出範本
+```
+產生 `build/web/`（密碼入口頁 `site/index.html` ＋ `rule-zero/` 遊戲）與 `build/try-site.zip`。
+把 `build/web/` 裡的所有檔案上傳到網站根目錄即可。
+- 使用單執行緒版本，不需要伺服器設定特殊標頭，一般靜態網站主機都能放。
+- 手機請橫放；左下搖桿移動、右下「互動」「日記」，對話點畫面任何地方前進。
+- 入口密碼是前端驗證（只存 SHA-256），只能擋一般訪客；需要真正保護請用主機的密碼保護功能。
+- 中文字型為內建的 Noto Sans TC 子集（`game/fonts/`，SIL OFL 1.1）。對話新增文字後要重跑 `python3 tools/subset_font.py <NotoSansCJK-Regular.ttc>`。
+
 ## 操作
 | 按鍵 | 功能 |
 |---|---|
 | WASD / 方向鍵 | 移動 |
 | E / 空白鍵 / Enter | 互動、下一句 |
 | Tab / Esc | 日記（守則、發現的事情、拆下名牌） |
+| 手機 | 左下搖桿、右下「互動」「日記」、點畫面前進對話 |
 | F3 | 除錯：顯示隱藏的懷疑值 |
 
 ## 已實作
