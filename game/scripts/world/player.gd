@@ -38,7 +38,7 @@ func _update_camera() -> void:
 		area = Rect2(0, 0, 1600, 1150)   # 森林
 	else:
 		var T := preload("res://scripts/world/town.gd")
-		area = Rect2(0, 0, T.W, T.H - 120)
+		area = Rect2(0, 0, T.W, T.H)
 	_cam.limit_left = int(area.position.x)
 	_cam.limit_top = int(area.position.y)
 	_cam.limit_right = int(area.end.x)
