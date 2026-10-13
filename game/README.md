@@ -13,12 +13,12 @@
 ```
 GODOT=/path/to/godot tools/build_site.sh   # 需要 Godot 4.3 Web 匯出範本
 ```
-產生 `public/`（密碼入口頁 `site/index.html` ＋ `rule-zero/` 遊戲），並推上 GitHub。
+產生 `public/`（專案列表 `site/index.html` ＋ `rule-zero/` 遊戲），並推上 GitHub。遊戲網址為 `<網站>/rule-zero/`。
 Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸出目錄：`public`」，推送後會自動更新網站。
 - Cloudflare Pages 單檔上限 25 MiB：引擎 `index.wasm`（約 35MB）會被切成 `index.wasm.part0/1`，頁面載入時再接回來。
 - 使用單執行緒版本，不需要伺服器設定特殊標頭，一般靜態網站主機都能放。
 - 手機請橫放；左下搖桿移動、右下「互動」「日記」，對話點畫面任何地方前進。
-- 入口密碼是前端驗證（只存 SHA-256），只能擋一般訪客；需要真正保護請用主機的密碼保護功能。
+- 網頁版本身沒有密碼；需要保護請用外層網站或 Cloudflare Access。
 - 中文字型為內建的 Noto Sans TC 子集（`game/fonts/`，SIL OFL 1.1）。對話新增文字後要重跑 `python3 tools/subset_font.py <NotoSansCJK-Regular.ttc>`。
 
 ## 操作

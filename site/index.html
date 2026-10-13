@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>試玩測試頁</title>
+<title>專案列表</title>
 <style>
   :root {
     --bg: #fbe7ee; --card: #fffaf4; --ink: #4a3b47; --muted: #8e7d8a;
@@ -58,22 +58,12 @@
 </head>
 <body>
 <div class="wrap">
-  <section id="gate" class="gate">
-    <h1>試玩測試頁</h1>
-    <p class="sub">請輸入密碼</p>
-    <form id="form">
-      <input id="pw" type="password" autocomplete="current-password" placeholder="密碼" aria-label="密碼">
-      <label class="remember"><input id="remember" type="checkbox"> 記住這台裝置</label>
-      <button type="submit">進入</button>
-      <div id="err" class="err" role="alert"></div>
-    </form>
-  </section>
 
-  <section id="list" class="hidden">
+  <section id="list">
     <h1>專案列表</h1>
     <p class="sub">點開即可試玩。手機請橫放。</p>
     <div id="grid" class="grid"></div>
-    <p class="foot">內部測試用，請勿外流。　<button class="lock" id="lock">登出</button></p>
+    <p class="foot">內部測試用，請勿外流。</p>
   </section>
 </div>
 <script>
@@ -87,21 +77,7 @@
       tags: ["第一章原型", "手機：橫放＋觸控", "電腦：WASD＋E"],
     },
   ];
-  // 只存密碼的 SHA-256，不存明文。注意：這是前端密碼，只能擋一般訪客。
-  const HASH = "3ee58cfb436075d43d91edcffdc9459ba335b24fbacf35a641ae8b247cd18476";
-  const KEY = "yzp_ok";
-
-  async function sha256(text) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
-  }
-  function unlocked() {
-    try { return sessionStorage.getItem(KEY) === "1" || localStorage.getItem(KEY) === "1"; }
-    catch (e) { return false; }
-  }
   function show() {
-    document.getElementById("gate").classList.add("hidden");
-    document.getElementById("list").classList.remove("hidden");
     const grid = document.getElementById("grid");
     grid.innerHTML = "";
     PROJECTS.forEach((p, i) => {
@@ -118,24 +94,7 @@
       grid.append(a);
     });
   }
-  document.getElementById("form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const pw = document.getElementById("pw").value;
-    if (await sha256(pw) === HASH) {
-      try {
-        sessionStorage.setItem(KEY, "1");
-        if (document.getElementById("remember").checked) localStorage.setItem(KEY, "1");
-      } catch (err) {}
-      show();
-    } else {
-      document.getElementById("err").textContent = "密碼不正確";
-    }
-  });
-  document.getElementById("lock").addEventListener("click", () => {
-    try { sessionStorage.removeItem(KEY); localStorage.removeItem(KEY); } catch (e) {}
-    location.reload();
-  });
-  if (unlocked()) show();
+  show();
 </script>
 </body>
 </html>
