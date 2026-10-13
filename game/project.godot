@@ -7,6 +7,9 @@ config/name="Rule Zero 第零條規則（原型）"
 config/description="第一章「歡迎回來」第一～二天可玩原型"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/image="res://art/boot_splash.png"
+boot_splash/fullsize=false
 
 [autoload]
 

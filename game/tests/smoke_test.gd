@@ -91,14 +91,15 @@ func _run() -> void:
 	_check(main.phase == "forest", "只調查 2 個還不會觸發鐘聲")
 	await _do("forest_tags", [0])
 	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：第四十七個小布 → 衝出去")
-	_check(main.phase == "ended" and gs.has("chapter_done"), "修理 → 結算 → 第一章結束")
-	_check(not gs.has_save() and int(gs.meta.chapters_done) == 1, "章節完成：刪除當章存檔、標題畫面多一個戳章")
+	_check(main.phase == "ended" and gs.has("loop_done") and gs.meta.last_ending == "brave", "修理 → 結局③勇敢 → 這一輪結束")
+	_check(not gs.has_save() and int(gs.meta.loops_done) == 1 and gs.remembers("knows_47"), "輪迴：刪除當輪存檔、記得「第幾個小布」")
 	_check(gs.has("found_sheep") and gs.has("found_lulu_bow"), "線索記進日記")
 	print("  秘密：", gs.secrets_found(), "　懷疑值：", gs.suspicion)
 
 	print("[第二天晚上：偷溜出門路線]")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
@@ -126,13 +127,14 @@ func _run() -> void:
 	_check(main.phase == "forest", "沒看到小綿羊之前不會觸發鐘聲")
 	await _do("forest_sheep", [1])
 	_check(gs.has("lulu_betrayal") and not gs.has("brave_end"), "躲著不動 → 露露告發")
-	_check(main.phase == "ended" and gs.has("chapter_done"), "第一章結束")
+	_check(main.phase == "ended" and gs.meta.last_ending == "betrayed", "結局④被出賣")
 	for i in 5:
 		await process_frame
 
 	print("[存檔與繼續、揉麵團秘密]")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
@@ -146,6 +148,7 @@ func _run() -> void:
 	_check(gs.checkpoint == "day2_explore", "第二天早上：自動存檔")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	gs.resume_on_start = true
 	main = load("res://scenes/main.tscn").instantiate()

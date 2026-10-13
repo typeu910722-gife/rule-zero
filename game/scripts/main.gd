@@ -12,11 +12,13 @@ const CandyCatch := preload("res://scripts/minigames/candy_catch.gd")
 const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
 const Summary := preload("res://scripts/ui/summary.gd")
 const EndCard := preload("res://scripts/ui/end_card.gd")
+const EndingCard := preload("res://scripts/ui/ending_card.gd")
+const Intro := preload("res://scripts/ui/intro.gd")
 const Title := preload("res://scripts/ui/title.gd")
 const BreadKnead := preload("res://scripts/minigames/bread_knead.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 
-const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "day2_evening", "night_out", "day3_explore", "forest"]
+const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "day2_evening", "night_out", "day3_explore", "day3_home", "forest"]
 const Forest := preload("res://scripts/world/forest.gd")
 const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
@@ -147,11 +149,21 @@ func _ready() -> void:
 		else:
 			GameState.reset()
 			run_chapter.call_deferred()
+	elif GameState.pending_loop_start:
+		# 結局之後：直接搭上下一班火車
+		GameState.pending_loop_start = false
+		run_chapter.call_deferred()
 	else:
 		_show_title.call_deferred()
 
 
 func _show_title() -> void:
+	# 開場 Logo 影片：每次開啟遊戲只播一次（回到標題時不再播）
+	if not GameState.intro_played:
+		GameState.intro_played = true
+		var intro := Intro.new()
+		add_child(intro)
+		await intro.done
 	var title := Title.new()
 	add_child(title)
 	title.new_game.connect(func():
@@ -224,20 +236,31 @@ func _after_interaction() -> void:
 				fen.position = home
 				_set_phase("day2_evening")
 		"day2_evening":
-			if GameState.has("night_out"):
+			if GameState.has("end_early"):
+				await _ending_scene("early_repair", "early")
+			elif GameState.has("night_out"):
 				await _night_out()
 			elif GameState.has("fen_disappointed"):
 				await _day3_morning()
 		"night_out":
-			if GameState.has("saw_resident") and not GameState.has("fen_trust"):
+			if GameState.has("saw_resident") and not GameState.has("met_night_fen"):
 				var fen: Interactable = actors.fen
 				fen.position = player.position + Vector2(-70, 20)
 				fen.visible = true
 				await Dialogue.run("night_fen")
 				await _day3_morning()
 		"day3_explore":
-			if GameState.has("go_forest"):
+			if GameState.has("end_zero"):
+				await _end_loop("zero")
+			elif GameState.has("end_mochi"):
+				await _end_loop("mochi")
+			elif GameState.has("go_forest"):
 				await _forest()
+			elif GameState.has("refuse_forest"):
+				_set_phase("day3_home")
+		"day3_home":
+			if GameState.has("sleep_3"):
+				await _ending_scene("good_kid_end", "good_kid")
 		"forest":
 			if GameState.has("found_sheep") and _forest_count() >= 3 and not GameState.has("heard_47"):
 				await _forest_climax()
@@ -327,7 +350,13 @@ func _forest_climax() -> void:
 	Sound.sfx("strange")
 	Sound.bgm("memory")
 	await Dialogue.run("forest_truth")
+	GameState.set_flag("bell_heard")
 	await Dialogue.run("bell_three")
+	if GameState.has("lulu_hesitated"):
+		# 露露沒有說出你在哪裡：被帶走的是她
+		await _fade_to(1.0)
+		await _end_loop("hesitate")
+		return
 	await _fade_to(1.0)
 	forest.visible = false
 	for a in actors.values():
@@ -338,26 +367,53 @@ func _forest_climax() -> void:
 	tint.color = TINTS.day
 	await _fade_to(0.0)
 	await Dialogue.run("repair")
-	await _chapter_end()
+	await _end_loop("brave" if GameState.has("brave_end") else "betrayed")
 
 
-func _chapter_end() -> void:
+## 只放一段結局對話（沒有修理室畫面）的結局
+func _ending_scene(label: String, ending: String) -> void:
+	busy = true
+	player.can_move = false
+	await Dialogue.run(label)
+	await _end_loop(ending)
+
+
+## 一輪結束。「第零條」結束本章；其他結局回到火車上，開始下一輪。
+func _end_loop(ending: String) -> void:
+	busy = true
+	player.can_move = false
 	_set_phase("ended")
-	GameState.set_flag("ticket_stamps", 2)
-	# 跨周目記錄：標題畫面的車票會多一個戳章
-	GameState.meta.chapters_done = maxi(int(GameState.meta.get("chapters_done", 0)), 1)
-	GameState.save_meta()
-	GameState.delete_save()
-	var s := Summary.new()
-	add_child(s)
+	hud.set_status_visible(false)
+	GameState.finish_loop(ending)
+	await _fade_to(1.0)
 	Dialogue.set_bg("none")
-	await s.show_and_wait()
-	# 試玩版到第一章為止：結算之後直接收尾，不播第二章開場
-	s.queue_free()
-	repair_scene.queue_free()
-	GameState.set_flag("chapter_done")
+	if repair_scene:
+		repair_scene.queue_free()
+		repair_scene = null
+	if ending == "zero":
+		Sound.bgm("memory")
+		var s := Summary.new()
+		add_child(s)
+		fade.color.a = 0.0
+		await s.show_and_wait()
+		s.queue_free()
+		GameState.set_flag("chapter_done")
+		add_child(EndCard.new())
+		return
 	Sound.bgm("memory")
-	add_child(EndCard.new())
+	var card := EndingCard.new()
+	card.ending = ending
+	add_child(card)
+	fade.color.a = 0.0
+	GameState.set_flag("loop_done")
+	if GameState.fast:
+		return
+	var go_on: bool = await card.chosen
+	GameState.start_next_loop()
+	if not go_on:
+		GameState.pending_loop_start = false
+	Dialogue.set_bg("none")
+	get_tree().reload_current_scene()
 
 
 # ───────────────────────── 互動 ─────────────────────────
@@ -525,6 +581,20 @@ func _on_event(event_name: String) -> void:
 			actors.mayor.position = player.position + Vector2(-20, 70)
 		"sew":
 			await repair_scene.sew()
+		"good_kid_station":
+			# 第四天：你站在歡迎的人群裡，看著新的小布下車
+			_layout("arrival")
+			_set_tint("day")
+			player.bounds = WORLD_BOUNDS
+			player.position = STATION_SPOT + Vector2(-20, -70)
+			player.face(Vector2.DOWN)
+			var newbie: Interactable = actors.extra1
+			newbie.species = "sheep"
+			newbie.display_name = "新來的小布"
+			newbie.position = STATION_SPOT + Vector2(0, 10)
+			newbie.facing = Vector2.UP
+			newbie.visible = true
+			newbie.queue_redraw()
 		"ch2_arrival":
 			# 第二章：Fen 回來了。縫線整整齊齊的，在笑。
 			_layout("arrival")
@@ -562,6 +632,8 @@ func _layout(mode: String) -> void:
 			actors.fen.visible = false
 		"day":
 			actors.mayor.visible = GameState.day >= 2
+			# 想起名字的麻糬，第三天已經被帶去修理了
+			actors.mochi.visible = not (GameState.day >= 3 and GameState.has("mochi_remembers"))
 		"night":
 			# 夜晚：居民們站在廣場，面朝鐘塔。一動也不動。鈕扣眼睛跟著小布轉。
 			var who := ["lulu", "popo", "mochi", "tama"]
@@ -600,10 +672,14 @@ func _refresh_objective() -> void:
 		"night_out":
 			GameState.set_objective("……廣場那邊，好像有人。")
 		"day3_explore":
-			if GameState.has("lulu_d3_done"):
+			if GameState.has("got_key"):
+				GameState.set_objective("下午三點以前，用鑰匙打開鐘塔。")
+			elif GameState.has("lulu_d3_done"):
 				GameState.set_objective("去樹屋找 Fen。")
 			else:
 				GameState.set_objective("去露露家看看。")
+		"day3_home":
+			GameState.set_objective("八點以前回家，上床睡覺。")
 		"forest":
 			GameState.set_objective("調查森林深處的東西（%d / 3）" % mini(_forest_count(), 3))
 		_:

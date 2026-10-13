@@ -79,7 +79,8 @@ func toggle_menu(allow_tag: bool) -> void:
 
 func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
-	t += "名字：%s\n膽量：%d / %d\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE]
+	t += "名字：%s\n膽量：%d / %d\n車票上的戳章：%d 個\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE,
+		GameState.loop_number() - GameState.FIRST_LOOP + 1]
 	t += "[font_size=22]發現的事情[/font_size]\n"
 	for k in GameState.SECRETS:
 		t += ("・%s\n" % GameState.SECRETS[k]) if GameState.has(k) else "・？？？\n"
@@ -88,6 +89,16 @@ func _fill_menu() -> void:
 		t += "\n[font_size=22]記下的事[/font_size]\n"
 		for k in clues:
 			t += "・%s\n" % GameState.CLUES[k]
+	# 上一輪記下的事：跨輪保留，但被修理過的那幾頁被剪掉了
+	var past: Array = GameState.meta.get("past_clues", [])
+	if GameState.is_repeat() and not past.is_empty():
+		var cut: Array = GameState.meta.get("cut_clues", [])
+		t += "\n[font_size=22][color=#7b4fa0]上一輪記得的事[/color][/font_size]\n"
+		for k in past:
+			if k in cut:
+				t += "[color=#b8aab4]・（這一頁被剪掉了一半）%s……[/color]\n" % GameState.CLUES[k].left(4)
+			else:
+				t += "[color=#7b4fa0]・%s[/color]\n" % GameState.CLUES[k]
 	_menu_text.text = t
 	if GameState.has("tag_on"):
 		_tag_button.text = "★ 拆下名牌　（違反守則 5・膽量 -1）"

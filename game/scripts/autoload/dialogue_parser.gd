@@ -2,7 +2,7 @@ class_name DialogueParser
 extends RefCounted
 ## 解析 res://dialogue/*.txt 的對話腳本。語法見 docs/dialogue-format.md。
 
-const KNOWN_OPS := ["set", "unset", "sus", "courage", "goto", "if", "end", "wait", "bg", "event"]
+const KNOWN_OPS := ["set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event"]
 const KNOWN_BG := ["none", "black", "train", "dream"]
 
 var cmds: Array = []
@@ -104,7 +104,7 @@ func validate(known_events: Array) -> Array:
 				"bg":
 					if c.args.size() != 1 or not c.args[0] in KNOWN_BG:
 						out.append("%s 未知背景 %s" % [c.where, c.args])
-				"set", "unset", "sus", "courage", "wait":
+				"set", "unset", "add", "sus", "courage", "wait":
 					if c.args.is_empty():
 						out.append("%s @%s 缺少參數" % [c.where, c.op])
 	return out

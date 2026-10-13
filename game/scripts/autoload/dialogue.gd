@@ -36,6 +36,8 @@ var _choices: VBoxContainer
 var _typing := false
 var _choosing := false
 var _shown_at := 0
+var _hold_t := 0.0
+var _skip_t := 0.0
 
 
 func _ready() -> void:
@@ -101,6 +103,9 @@ func _command(op: String, args: Array) -> int:
 			GameState.set_flag(args[0], true if args.size() < 2 else args[1])
 		"unset":
 			GameState.set_flag(args[0], false)
+		"add":
+			# @add 旗標 數字：計數用（例如麻糬的委託問了幾個人）
+			GameState.set_flag(args[0], int(GameState.flags.get(args[0], 0)) + (int(args[1]) if args.size() > 1 else 1))
 		"sus":
 			GameState.add_suspicion(int(args[0]))
 		"courage":
@@ -137,7 +142,7 @@ func set_bg(mode: String) -> void:
 
 
 func _say(who: String, text: String) -> void:
-	text = text.replace("{name}", GameState.player_name())
+	text = GameState.fill(text)
 	_box.visible = true
 	_name.visible = who != ""
 	_name.text = who
@@ -157,6 +162,17 @@ func _say(who: String, text: String) -> void:
 
 
 func _process(delta: float) -> void:
+	# 按住互動鍵（或按住畫面）超過 0.4 秒：快轉對話，重玩時不會煩
+	if running and _box.visible and not _choosing:
+		var held := Input.is_action_pressed("interact") or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+		_hold_t = _hold_t + delta if held else 0.0
+		if _hold_t > 0.4:
+			_skip_t += delta
+			if _skip_t > 0.07:
+				_skip_t = 0.0
+				_text.visible_characters = -1
+				_typing = false
+				_advance.emit()
 	if _typing:
 		_text.visible_characters += maxi(1, int(CHARS_PER_SEC * delta + 0.5))
 		if _text.visible_characters >= _text.get_total_character_count():
@@ -196,15 +212,19 @@ func _choose(opts: Array) -> int:
 	for k in opts.size():
 		var o: Dictionary = opts[k]
 		var b := Button.new()
-		b.text = o.text
+		b.text = GameState.fill(o.text)
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.add_theme_font_size_override("font_size", 22)
 		_style_button(b)
 		if o.cost > 0:
-			b.text = "★ %s　（違反守則・膽量 -%d）" % [o.text, o.cost]
+			b.text = "★ %s　（違反守則・膽量 -%d）" % [GameState.fill(o.text), o.cost]
 			if GameState.courage < o.cost:
-				b.text = "★ %s　（膽量不足）" % o.text
+				b.text = "★ %s　（膽量不足）" % GameState.fill(o.text)
 				b.disabled = true
+		if o.text.begins_with("〔記得〕"):
+			# 上一輪的記憶：紫色，提醒玩家這會讓鎮長起疑
+			b.add_theme_color_override("font_color", Color("#7b4fa0"))
+			b.text += "　（鎮長懷疑值↑）"
 		b.pressed.connect(func():
 			Sound.sfx("choice")
 			_chosen.emit(k))

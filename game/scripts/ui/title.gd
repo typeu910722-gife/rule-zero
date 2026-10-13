@@ -76,11 +76,16 @@ func _draw_area() -> void:
 	_area.draw_rect(ticket, Color("#fff8ec"))
 	_area.draw_rect(ticket, Color("#d4a373"), false, 3)
 	_area.draw_string(f, ticket.position + Vector2(18, 38), "棉花糖鎮　單程票", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7f5539"))
-	var stamps := clampi(int(GameState.meta.get("chapters_done", 0)) + 1, 1, 6)
+	# 戳章＝第幾輪（每一輪結束都多一個）
+	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP + 1, 1, 15)
 	for k in stamps:
-		var c := ticket.position + Vector2(40 + (k % 3) * 70, 75 + (k / 3) * 40)
-		_area.draw_arc(c, 18, 0, TAU, 24, Color(0.75, 0.2, 0.25, 0.75), 3)
-		_area.draw_circle(c, 4, Color(0.75, 0.2, 0.25, 0.6))
+		var c := ticket.position + Vector2(30 + (k % 5) * 46, 68 + (k / 5) * 30)
+		_area.draw_arc(c, 13, 0, TAU, 20, Color(0.75, 0.2, 0.25, 0.75), 2.5)
+		_area.draw_circle(c, 3, Color(0.75, 0.2, 0.25, 0.6))
+	var seen: Array = GameState.meta.get("endings", [])
+	if not seen.is_empty():
+		_area.draw_string(f, Vector2(116, 600), "看過的結局　%d / %d" % [seen.size(), GameState.ENDING_ORDER.size()],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#a38b98"))
 
-	if int(GameState.meta.get("chapters_done", 0)) >= 1:
+	if GameState.is_repeat():
 		_area.draw_string(f, Vector2(0, 690), "歡迎回來。", HORIZONTAL_ALIGNMENT_RIGHT, 1250, 18, Color("#c9b3bf"))
