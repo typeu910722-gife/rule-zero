@@ -11,6 +11,9 @@ const Hud := preload("res://scripts/ui/hud.gd")
 const CandyCatch := preload("res://scripts/minigames/candy_catch.gd")
 const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
 const Summary := preload("res://scripts/ui/summary.gd")
+const EndCard := preload("res://scripts/ui/end_card.gd")
+const Forest := preload("res://scripts/world/forest.gd")
+const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
 const ACTORS := {
 	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(390, 420)},
@@ -36,7 +39,15 @@ const OBJECTS := {
 	"station": {"name": "火車站", "pos": Vector2(760, 1020)},
 	"mirror": {"name": "鏡子", "pos": Vector2(120, 550)},
 	"bed": {"name": "床", "pos": Vector2(290, 550)},
+	# 森林（第三天）
+	"forest_sheep": {"name": "小綿羊", "pos": Vector2(800, 320)},
+	"forest_bow": {"name": "長耳朵", "pos": Vector2(640, 380)},
+	"forest_tags": {"name": "一堆名牌", "pos": Vector2(960, 380)},
+	"forest_tail": {"name": "狐狸尾巴", "pos": Vector2(880, 470)},
 }
+
+const FOREST_ITEMS := ["found_sheep", "found_lulu_bow", "seen_tags", "found_fox_tail"]
+const FOREST_BOUNDS := Rect2(560, 180, 480, 900)
 
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
 const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
@@ -62,6 +73,8 @@ var hud: CanvasLayer
 var board: CanvasLayer
 var tint: CanvasModulate
 var fade: ColorRect
+var forest: Node2D
+var repair_scene: CanvasLayer
 
 
 func _ready() -> void:
@@ -69,6 +82,9 @@ func _ready() -> void:
 	add_child(tint)
 	town = Town.new()
 	add_child(town)
+	forest = Forest.new()
+	forest.visible = false
+	add_child(forest)
 	for id in ACTORS:
 		var a := Interactable.new().setup(id, ACTORS[id])
 		add_child(a)
@@ -143,14 +159,20 @@ func _after_interaction() -> void:
 			if GameState.has("night_out"):
 				await _night_out()
 			elif GameState.has("fen_disappointed"):
-				await _end_prototype()
+				await _day3_morning()
 		"night_out":
 			if GameState.has("saw_resident") and not GameState.has("fen_trust"):
 				var fen: Interactable = actors.fen
 				fen.position = player.position + Vector2(-70, 20)
 				fen.visible = true
 				await Dialogue.run("night_fen")
-				await _end_prototype()
+				await _day3_morning()
+		"day3_explore":
+			if GameState.has("go_forest"):
+				await _forest()
+		"forest":
+			if GameState.has("found_sheep") and _forest_count() >= 3 and not GameState.has("heard_47"):
+				await _forest_climax()
 
 
 func _day1_evening() -> void:
@@ -195,16 +217,69 @@ func _night_out() -> void:
 	_set_phase("night_out")
 
 
-func _end_prototype() -> void:
-	_set_phase("ended")
+func _day3_morning() -> void:
 	await _fade_to(1.0)
 	await Dialogue.run("dream_2")
+	GameState.new_day()
+	_set_tint("day")
+	player.bounds = WORLD_BOUNDS
+	player.position = HOME_SPOT
+	_layout("day")
+	Dialogue.set_bg("none")
+	await _fade_to(0.0)
+	await Dialogue.run("day3_morning")
+	_set_phase("day3_explore")
+
+
+func _forest() -> void:
+	await _fade_to(1.0)
+	town.visible = false
+	forest.visible = true
+	for id in actors:
+		actors[id].visible = id.begins_with("forest_")
+	actors.fen.visible = true
+	actors.fen.position = Vector2(860, 1000)
+	player.position = Vector2(800, 1030)
+	player.bounds = FOREST_BOUNDS
+	_set_phase("forest")
+	await _fade_to(0.0)
+	await Dialogue.run("forest_enter")
+
+
+## 本章高潮：47、下午三點的鐘聲、Fen 被帶走、修理
+func _forest_climax() -> void:
+	var fen: Interactable = actors.fen
+	fen.position = player.position + Vector2(50, 10)
+	await Dialogue.run("forest_truth")
+	await Dialogue.run("bell_three")
+	await _fade_to(1.0)
+	forest.visible = false
+	for a in actors.values():
+		a.visible = false
+	repair_scene = RepairScene.new()
+	add_child(repair_scene)
+	hud.set_status_visible(false)
+	_set_tint("day")
+	await _fade_to(0.0)
+	await Dialogue.run("repair")
+	await _chapter_end()
+
+
+func _chapter_end() -> void:
+	_set_phase("ended")
+	GameState.set_flag("ticket_stamps", 2)
 	var s := Summary.new()
 	add_child(s)
 	Dialogue.set_bg("none")
-	s.restart.connect(func():
-		Dialogue.set_bg("none")
-		get_tree().reload_current_scene())
+	await s.show_and_wait()
+	# 第二章自動開場：不給玩家按鍵，直接接下去
+	s.queue_free()
+	repair_scene.queue_free()
+	GameState.set_flag("chapter2")
+	town.visible = true
+	player.bounds = WORLD_BOUNDS
+	await Dialogue.run("ch2_opening")
+	add_child(EndCard.new())
 
 
 # ───────────────────────── 互動 ─────────────────────────
@@ -217,7 +292,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("menu"):
 		get_viewport().set_input_as_handled()
-		hud.toggle_menu(GameState.day >= 2 and phase in ["day2_explore", "day2_evening"])
+		hud.toggle_menu(GameState.day >= 2 and phase in ["day2_explore", "day2_evening", "day3_explore"])
 		player.can_move = not hud.menu_open
 		return
 	if hud.menu_open:
@@ -260,6 +335,13 @@ func _talk_label(id: String) -> String:
 
 
 func _process(_delta: float) -> void:
+	if phase == "forest":
+		# 越往森林深處，顏色就越淡
+		var t := clampf((1030.0 - player.position.y) / 650.0, 0.0, 1.0)
+		tint.color = Color(0.85, 0.85, 0.9).lerp(Color(0.6, 0.6, 0.64), t)
+		if not busy:
+			var fen: Interactable = actors.fen
+			fen.position = fen.position.lerp(player.position + Vector2(55, 25), 0.04)
 	if busy or Dialogue.running or hud.menu_open or board.visible:
 		hud.set_prompt("")
 		return
@@ -302,6 +384,32 @@ func _on_event(event_name: String) -> void:
 		"to_plaza":
 			player.position = Vector2(560, 660)
 			actors.mayor.position = Vector2(660, 620)
+		"mayor_appears":
+			actors.mayor.visible = true
+			actors.mayor.position = Vector2(800, 1060)
+			_set_tint("day")
+		"fen_taken":
+			actors.fen.visible = false
+		"lulu_appears":
+			actors.mayor.visible = false
+			actors.lulu.visible = true
+			actors.lulu.position = player.position + Vector2(60, 30)
+		"mayor_shadow":
+			actors.mayor.visible = true
+			actors.mayor.position = player.position + Vector2(-20, 70)
+		"sew":
+			await repair_scene.sew()
+		"ch2_arrival":
+			# 第二章：Fen 回來了。縫線整整齊齊的，在笑。
+			_layout("arrival")
+			player.position = Vector2(700, 1030)
+			var fen: Interactable = actors.fen
+			fen.visible = true
+			fen.smile = true
+			fen.stitched = false
+			fen.position = Vector2(700, 975)
+			fen.queue_redraw()
+			actors.mayor.position = Vector2(640, 945)
 	Dialogue.event_done.emit()
 
 
@@ -313,6 +421,8 @@ func _layout(mode: String) -> void:
 		a.position = ACTORS[id].pos
 		a.visible = not id.begins_with("extra")
 		a.follow_eyes = false
+	for id in OBJECTS:
+		actors[id].visible = not id.begins_with("forest_")
 	match mode:
 		"arrival":
 			var spots := [Vector2(580, 1010), Vector2(630, 990), Vector2(800, 990), Vector2(850, 1010),
@@ -360,8 +470,19 @@ func _refresh_objective() -> void:
 			GameState.set_objective("八點鐘聲響起前，回家上床。")
 		"night_out":
 			GameState.set_objective("……廣場那邊，好像有人。")
+		"day3_explore":
+			if GameState.has("lulu_d3_done"):
+				GameState.set_objective("去樹屋找 Fen。")
+			else:
+				GameState.set_objective("去露露家看看。")
+		"forest":
+			GameState.set_objective("調查森林深處的東西（%d / 3）" % mini(_forest_count(), 3))
 		_:
 			GameState.set_objective("")
+
+
+func _forest_count() -> int:
+	return FOREST_ITEMS.filter(func(f): return GameState.has(f)).size()
 
 
 func _visited_count() -> int:

@@ -92,6 +92,9 @@ func _command(op: String, args: Array) -> int:
 			GameState.set_flag(args[0], false)
 		"sus":
 			GameState.add_suspicion(int(args[0]))
+		"courage":
+			GameState.courage = clampi(GameState.courage + int(args[0]), 0, GameState.MAX_COURAGE)
+			GameState.changed.emit()
 		"goto":
 			return parser.labels[args[0]]
 		"if":

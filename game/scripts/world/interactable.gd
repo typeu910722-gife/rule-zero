@@ -82,6 +82,29 @@ func _draw_object() -> void:
 		"mayor_door":
 			draw_rect(Rect2(-20, -60, 40, 60), Color("#8d5524"))
 			draw_circle(Vector2(12, -30), 3, Color("#ffd166"))
+		"forest_bow":
+			Critter.ellipse(self, Vector2(0, -14), Vector2(7, 22), Color("#c9a3aa"), 1.2)
+			draw_circle(Vector2(-14, -22), 6, Color("#f2d16b"))
+			draw_circle(Vector2(-4, -22), 6, Color("#f2d16b"))
+			draw_circle(Vector2(-9, -22), 3, Color("#c9a227"))
+		"forest_tags":
+			for k in 9:
+				var p := Vector2(-30 + (k % 3) * 20, -30 + (k / 3) * 12) + Vector2((k * 7) % 5, 0)
+				draw_rect(Rect2(p, Vector2(16, 9)), Color("#ece4da"))
+				draw_rect(Rect2(p, Vector2(16, 9)), Color("#b08d9a"), false, 1)
+		"forest_tail":
+			Critter.ellipse(self, Vector2(0, -12), Vector2(26, 9), Color("#a8552a"), -0.3)
+			draw_circle(Vector2(24, -20), 7, Color("#efe6da"))
+			for k in 4:
+				draw_line(Vector2(-14 + k * 8, -18), Vector2(-10 + k * 8, -6), Color("#4a2e1f"), 1.5)
+		"forest_sheep":
+			for k in 5:
+				var off := Vector2(-56 + k * 28, -8 - (k % 2) * 16)
+				draw_set_transform(off, 0.4 * (k - 2) * 0.3, Vector2(0.85, 0.85))
+				Critter.draw(self, "sheep", Color("#e9e4dc"), 1.0, Vector2.ZERO, k != 2, k == 2)
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			draw_rect(Rect2(-8, 0, 30, 14), Color("#f6efe6"))
+			draw_string(GameState.font, Vector2(-8, 11), "No.46", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("#5c3d2e"))
 		_:
 			# 鐘塔門、森林、車站等：只畫一個小小的閃光提示
 			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))

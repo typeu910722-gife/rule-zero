@@ -81,6 +81,11 @@ func _fill_menu() -> void:
 	t += "[font_size=22]發現的事情[/font_size]\n"
 	for k in GameState.SECRETS:
 		t += ("・%s\n" % GameState.SECRETS[k]) if GameState.has(k) else "・？？？\n"
+	var clues: Array = GameState.CLUES.keys().filter(func(k): return GameState.has(k))
+	if not clues.is_empty():
+		t += "\n[font_size=22]記下的事[/font_size]\n"
+		for k in clues:
+			t += "・%s\n" % GameState.CLUES[k]
 	_menu_text.text = t
 	if GameState.has("tag_on"):
 		_tag_button.text = "★ 拆下名牌　（違反守則 5・膽量 -1）"
@@ -92,8 +97,8 @@ func _fill_menu() -> void:
 
 func _build_menu() -> void:
 	_menu = PanelContainer.new()
-	_menu.position = Vector2(760, 60)
-	_menu.custom_minimum_size = Vector2(460, 560)
+	_menu.position = Vector2(740, 30)
+	_menu.custom_minimum_size = Vector2(500, 560)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color("#fffaf3")
 	sb.border_color = Color("#cdb4db")

@@ -16,6 +16,17 @@ const SECRETS := {
 	"lulu_song": "露露哼的另一首歌",
 }
 
+## 日記裡「記下的事」：謎題線索會自動記錄，玩家不用靠記憶力
+const CLUES := {
+	"lulu_slip": "露露叫我「小遙」，然後自己忘記了。",
+	"met_mochi": "麻糬的名牌是空白的。",
+	"tag_off": "名牌背面繡著一個被剪掉一半的字：「辶」。",
+	"blank_letter": "波波給了我一封沒有寫收件人的信。",
+	"found_lulu_bow": "森林裡有一隻垂耳，綁著黃色的蝴蝶結。露露現在的是綠色。",
+	"found_sheep": "森林裡，舊的小綿羊腳上掛著牌子：No.46。",
+	"heard_47": "Fen 說：「你是第四十七個小布。」",
+}
+
 const MAX_COURAGE := 2
 
 var day := 1
