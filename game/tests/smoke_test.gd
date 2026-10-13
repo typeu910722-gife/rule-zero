@@ -68,8 +68,8 @@ func _run() -> void:
 	for i in 10:
 		await process_frame
 	_check(gs.has("tag_off") and not gs.has("tag_on") and gs.courage == 1, "拆下名牌")
-	await _do("lulu")
-	_check(gs.has("bread_done") and not gs.has("lulu_song"), "揉麵團（沒有連續 Perfect → 沒有哼歌）")
+	await _do("lulu", [1])
+	_check(gs.has("bread_done") and not gs.has("lulu_song"), "揉麵團（照自己的速度 → 沒有哼歌）")
 	await _do("popo")
 	_check(gs.has("q_letters") and gs.has("blank_letter") and not gs.has("letter_done"), "波波給三封信＋一封沒有收件人的信")
 	await _do("lulu_mailbox")
@@ -172,9 +172,8 @@ func _run() -> void:
 	await _wait_phase("day2_explore")
 	gs.resume_on_start = false
 	_check(gs.day == 2 and gs.has("visited_lulu") and gs.has("lulu_slip"), "讀檔：回到第二天早上，旗標都還在")
-	gs.fast_rhythm_streak = 8
-	await _do("lulu")
-	_check(gs.has("lulu_song"), "連續 8 個 Perfect → 露露哼另一首歌（秘密）")
+	await _do("lulu", [0])
+	_check(gs.has("lulu_song"), "跟著露露的拍子揉 → 露露哼另一首歌（秘密）")
 	gs.delete_save()
 
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])

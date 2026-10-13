@@ -57,7 +57,7 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 `user://save.json`（當章進度）與 `user://meta.json`（跨周目）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
 
 ## 美術與音效（v2 素材包）
-- 小鎮：`art/town_map.png`（簡化地圖，世界座標＝原圖 × 1.5，見 `world/town.gd` 的 `at()`）；建築與河流有碰撞（`BLOCKERS`）
+- 小鎮：`art/town_map.png`（簡化地圖，世界座標＝原圖 × 1.5，見 `world/town.gd` 的 `at()`）；只能走在石板路、樓梯、橋上（`art/walk_mask.png`，由 `tools/build_walk_mask.py` 從地圖產生；換地圖後重跑一次）
 - 小布的房間：獨立的室內（地圖右側），由「小布的家」門口進出；第一天晚上不能出門
 - 角色行走圖：`art/walk_*.png`（3 步 × 4 方向，每格 192px），NPC 會轉頭看說話的對象；夜晚的居民會一直盯著小布
 - 對話頭像：`art/face_*.png`（每人 8 種表情），依台詞自動挑表情（`dialogue.gd` 的 `_expression()`）
@@ -85,13 +85,15 @@ game/
 │   │   └── dialogue_parser.gd  # 對話腳本解析與檢查
 │   ├── world/                  # 小鎮、森林、玩家、角色繪製
 │   ├── ui/                     # 公告欄、HUD／日記、修理室、結算、結尾選單
-│   ├── minigames/              # 接糖果、鏡子凝視、揉麵團
-│   └── audio/tones.gd          # 程式合成的音樂盒音色（揉麵團）
+│   └── audio/tones.gd          # 程式合成的音樂盒音色
 └── tests/
     ├── lint_dialogue.gd        # 檢查對話腳本
     ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）、存檔讀檔
-    ├── rhythm_test.gd          # 揉麵團判定
-    ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
+    ├── world_test.gd           # 走路、碰撞（只能走在路上）、互動點都站得到
+    ├── endings_test.gd         # 各結局與輪迴記憶
+    ├── quests_test.gd          # 支線委託
+    ├── idle_test.gd            # 閒聊輪替（驚悚的那段只出現一次）
+    ├── screenshots_ui.gd       # 標題畫面截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     └── screenshots_day3.gd     # 第三天畫面截圖
 ```
@@ -100,7 +102,10 @@ game/
 ```
 godot --headless --path . -s tests/lint_dialogue.gd
 godot --headless --path . -s tests/smoke_test.gd
-godot --headless --path . -s tests/rhythm_test.gd
+godot --headless --path . -s tests/world_test.gd
+godot --headless --path . -s tests/endings_test.gd
+godot --headless --path . -s tests/quests_test.gd
+godot --headless --path . -s tests/idle_test.gd
 ```
 
 ## 字型

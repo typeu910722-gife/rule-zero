@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""從小鎮地圖產生「可以走的地方」遮罩：game/art/walk_mask.png
+
+規則：米色的石板路＝可以走；草地、花圃、樹、房子、圍籬、河＝不能走。
+另外手動補上顏色抓不到、但應該可以走的地方（樓梯、橋）。
+只保留跟火車站連通的那一大塊，避免地圖邊緣零碎的米色區域。
+
+用法：python3 tools/build_walk_mask.py
+"""
+import sys
+from collections import deque
+
+import numpy as np
+from PIL import Image, ImageFilter
+
+SRC = "game/art/town_map.png"
+OUT = "game/art/walk_mask.png"
+
+# 手動補上可以走的地方（地圖原圖座標：x, y, w, h）
+EXTRA = [
+    (703, 374, 74, 102),   # 鎮長公館的樓梯與門前平台
+    (555, 198, 44, 72),    # 鐘塔的樓梯
+    (995, 658, 228, 42),   # 石橋
+    (615, 150, 290, 52),   # 鎮長公館後面的空地（修理室門前）
+    (585, 182, 45, 30),    # 鐘塔樓梯頂端 → 空地
+    (183, 560, 60, 32),    # 小布家門口的台階
+    (430, 1040, 500, 22),  # 火車站前的走道（月台屋頂上方，接到左邊的路）
+]
+# 強制不能走的地方（地圖上是石板，但走進去會站到物件「後面」，看起來像踩在上面）
+BLOCK = [
+    (556, 492, 114, 84),   # 公告欄與後面的小石板
+    (512, 540, 58, 66),    # 公告欄左邊的熊雕像
+    (656, 540, 58, 66),    # 公告欄右邊的熊雕像
+    (590, 378, 113, 26),   # 鎮長公館前的矮牆頂（樓梯左邊）
+    (777, 378, 113, 26),   # 鎮長公館前的矮牆頂（樓梯右邊）
+    (112, 328, 218, 48),   # 露露家前面的白色圍籬
+]
+# 從這裡開始找連通區域（火車站前月台）
+SEED = (678, 1080)
+
+
+def main() -> None:
+    im = np.asarray(Image.open(SRC).convert("RGB")).astype(float) / 255
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    mx = im.max(-1)
+    mn = im.min(-1)
+    d = mx - mn + 1e-6
+    h = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) * 60
+    s = d / (mx + 1e-6)
+    m = (h >= 18) & (h <= 50) & (s > 0.10) & (s < 0.5) & (mx > 0.80)
+    img = Image.fromarray((m * 255).astype("uint8"))
+    img = img.filter(ImageFilter.MedianFilter(5)).filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.MinFilter(5))
+    a = np.asarray(img) > 127
+    a = a.copy()
+    for x, y, w, hh in EXTRA:
+        a[y:y + hh, x:x + w] = True
+    for x, y, w, hh in BLOCK:
+        a[y:y + hh, x:x + w] = False
+    # 連通區域
+    H, W = a.shape
+    keep = np.zeros_like(a)
+    q = deque([SEED[::-1]])
+    if not a[SEED[1], SEED[0]]:
+        sys.exit("起點不在路上")
+    keep[SEED[1], SEED[0]] = True
+    while q:
+        y, x = q.popleft()
+        for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < H and 0 <= nx < W and a[ny, nx] and not keep[ny, nx]:
+                keep[ny, nx] = True
+                q.append((ny, nx))
+    # 邊緣放寬一點（約 4 個原圖像素），轉角和窄路比較好走
+    keep_img = Image.fromarray((keep * 255).astype("uint8")).filter(ImageFilter.MaxFilter(9))
+    for x, y, w, hh in BLOCK:
+        keep_img.paste(0, (x, y, x + w, y + hh))
+    # 一半解析度就夠了（每格 2 個原圖像素）
+    out = keep_img.resize((W // 2, H // 2), Image.NEAREST)
+    out.save(OUT, optimize=True)
+    print("寫入", OUT, out.size, "可走比例 %.1f%%" % (100 * keep.mean()))
+
+
+if __name__ == "__main__":
+    main()

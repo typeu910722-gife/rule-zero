@@ -13,6 +13,8 @@ var stitched := false
 ## 夜晚異常：鈕扣眼睛跟著玩家轉
 var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
+## 頭上的「！」：今天可以去的地方（main.gd 的 _refresh_objective 設定）
+var marked := false
 var target: Node2D
 ## 面向（行走圖的方向）；follow_eyes 時改為看著玩家
 var facing := Vector2.DOWN
@@ -43,7 +45,8 @@ func _glint(p: Vector2) -> void:
 
 
 func reach() -> float:
-	return 80.0 * maxf(size, 1.0) if kind == "npc" else 90.0
+	# 角色的圖比較寬：站在旁邊（不用正對）就能說話
+	return 110.0 * maxf(size, 1.0) if kind == "npc" else 95.0
 
 
 func face_toward(p: Vector2) -> void:
@@ -66,7 +69,7 @@ func _process(delta: float) -> void:
 			_step = -1
 			queue_redraw()
 	_last_pos = position
-	if follow_eyes or id.begins_with("tuft_") or id.begins_with("candy_") or id.begins_with("note_"):
+	if marked or follow_eyes or id.begins_with("tuft_") or id.begins_with("candy_") or id.begins_with("note_") or kind == "obj":
 		queue_redraw()
 
 
@@ -81,6 +84,21 @@ func _draw() -> void:
 		draw_string(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
 	else:
 		_draw_object()
+	if marked:
+		_draw_mark()
+
+
+## 頭上的「！」小泡泡
+func _draw_mark() -> void:
+	var top := -Critter.BASE_HEIGHT * Critter.WORLD_SCALE * size - 22.0 if kind == "npc" else -70.0
+	if id == "bed":
+		top = -140.0
+	var bob := sin(Time.get_ticks_msec() / 220.0) * 4.0
+	var c := Vector2(0, top + bob)
+	draw_circle(c, 15, Color("#ffffff"))
+	draw_arc(c, 15, 0, TAU, 24, Color("#e05780"), 3)
+	draw_colored_polygon(PackedVector2Array([c + Vector2(-5, 12), c + Vector2(5, 12), c + Vector2(0, 21)]), Color("#ffffff"))
+	draw_string(GameState.font, c + Vector2(-15, 8), "！", HORIZONTAL_ALIGNMENT_CENTER, 30, 20, Color("#e05780"))
 
 
 func _draw_object() -> void:
@@ -115,12 +133,8 @@ func _draw_object() -> void:
 		return
 	match id:
 		"board":
-			draw_rect(Rect2(-36, -20, 6, 40), Color("#8d6e63"))
-			draw_rect(Rect2(30, -20, 6, 40), Color("#8d6e63"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#fff3e0"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#a1887f"), false, 3)
-			for k in 5:
-				draw_line(Vector2(-36, -60 + k * 9), Vector2(30 - (k % 3) * 10, -60 + k * 9), Color("#bcaaa4"), 2)
+			# 地圖上已經畫了公告欄，這裡不再疊一張（以前會擋住小布）
+			_glint_ring(Vector2(0, -6))
 		"mirror":
 			# 立鏡（鏡中的孩子素材第 1 格：空鏡）
 			draw_texture_rect_region(MIRROR_TEX, Rect2(-60, -150, 120, 150), Rect2(30, 0, 196, 256))
@@ -141,12 +155,21 @@ func _draw_object() -> void:
 			draw_rect(Rect2(-14, -40, 28, 22), Color("#8d6e63"), false, 2)
 			draw_rect(Rect2(-12, -38, 12, 18), Color("#e0d6cc"))
 		"mail_sack":
-			Critter.ellipse(self, Vector2(0, -14), Vector2(18, 16), Color("#c9a37a"))
-			draw_line(Vector2(-8, -22), Vector2(8, -6), Color("#5c3d2e"), 2)
-			draw_line(Vector2(8, -22), Vector2(-8, -6), Color("#5c3d2e"), 2)
+			# 鼓鼓的帆布郵袋：袋口用繩子綁起來，露出一角信封
+			Critter.ellipse(self, Vector2(0, -2), Vector2(22, 6), Color(0, 0, 0, 0.15))
+			draw_colored_polygon(PackedVector2Array([Vector2(-20, -2), Vector2(-24, -20), Vector2(-14, -36),
+				Vector2(-6, -38), Vector2(6, -38), Vector2(14, -36), Vector2(24, -20), Vector2(20, -2)]), Color("#d8b98f"))
+			draw_polyline(PackedVector2Array([Vector2(-20, -2), Vector2(-24, -20), Vector2(-14, -36),
+				Vector2(-6, -38), Vector2(6, -38), Vector2(14, -36), Vector2(24, -20), Vector2(20, -2), Vector2(-20, -2)]), Color("#8d6e4a"), 2)
+			draw_colored_polygon(PackedVector2Array([Vector2(-7, -38), Vector2(7, -38), Vector2(10, -50), Vector2(-10, -50)]), Color("#d8b98f"))
+			draw_line(Vector2(-9, -40), Vector2(9, -40), Color("#7a4e2d"), 3)
+			draw_rect(Rect2(-4, -56, 16, 10), Color("#fffaf0"))
+			draw_rect(Rect2(-4, -56, 16, 10), Color("#c27a8c"), false, 1)
+			draw_string(GameState.font, Vector2(-14, -12), "郵", HORIZONTAL_ALIGNMENT_CENTER, 28, 14, Color("#8d6e4a"))
+			_glint_ring(Vector2(0, -20))
 		"mayor_door":
-			draw_rect(Rect2(-20, -60, 40, 60), Color("#8d5524"))
-			draw_circle(Vector2(12, -30), 3, Color("#ffd166"))
+			# 門是地圖原圖上的；這裡只在門框外加一圈淡淡的光
+			_glint_ring(Vector2(0, -34))
 		"forest_bow":
 			Critter.ellipse(self, Vector2(0, -14), Vector2(7, 22), Color("#c9a3aa"), 1.2)
 			draw_circle(Vector2(-14, -22), 6, Color("#f2d16b"))
@@ -172,6 +195,14 @@ func _draw_object() -> void:
 			draw_rect(Rect2(-8, 0, 30, 14), Color("#f6efe6"))
 			draw_string(GameState.font, Vector2(-8, 11), "No.46", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("#5c3d2e"))
 		_:
-			# 鐘塔門、森林、車站等：只畫一個小小的閃光提示
-			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
-			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
+			# 鐘塔門、森林、車站等：一圈會呼吸的光圈
+			_glint_ring(Vector2(0, -10))
+
+
+## 可以調查的地方：一圈慢慢呼吸的白色光圈
+func _glint_ring(c: Vector2) -> void:
+	var t := Time.get_ticks_msec() / 1000.0
+	var a := 0.55 + 0.35 * sin(t * 2.4 + position.x * 0.01)
+	var r := 10.0 + 3.0 * sin(t * 2.4 + position.x * 0.01)
+	draw_circle(c, 5, Color(1, 1, 1, a))
+	draw_arc(c, r, 0, TAU, 20, Color(1, 0.82, 0.9, a), 2.5)

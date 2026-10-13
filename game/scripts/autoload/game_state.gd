@@ -42,6 +42,18 @@ const CLUES := {
 	"ate_candy": "我吃了小玉的糖。好像忘了什麼。",
 }
 
+## 第一天拜訪大家時收到的東西（日記「口袋裡的東西」）
+const GIFTS := {
+	"gift_bread": "露露的棉花糖麵包。跟昨天的一模一樣。",
+	"gift_stamp": "波波給的郵票。上面沒有面額，也沒有圖案。",
+	"gift_candy": "從鎮長家門縫底下滑出來的糖果。",
+	"gift_thread": "修理室門口撿到的一截紅線。",
+	"gift_glass": "鏡之屋門口的一小片玻璃。照不出你。",
+	"gift_rust": "鐘塔大鎖上掉下來的一點點鐵鏽。鎖明明是新的。",
+	"gift_leaf": "Fen 丟給你的一片葉子。背面用指甲刻了一個「笑」，又被劃掉了。",
+	"got_button": "一顆灰色的舊鈕扣。",
+}
+
 ## 第一章的結局。只有「第零條」會結束本章，其他結局都會回到火車上，開始下一輪。
 const ENDINGS := {
 	"good_kid": {"title": "好孩子", "desc": "你守住了每一條守則。第四天早上，你站在月台上，和大家一起對新來的小布說：「歡迎回來。」"},
@@ -83,7 +95,6 @@ var objective := ""
 ## 自動測試用：跳過等待與小遊戲
 var fast := false
 var auto_choices: Array = []
-var fast_rhythm_streak := 0
 var resume_on_start := false
 
 ## 存檔：每天早上自動存一次（檢查點）。meta 是跨周目的記錄，標題畫面會依它改變。
@@ -270,6 +281,21 @@ func threads_earned() -> int:
 
 
 ## 條件語法：flag、!flag、sus>=40、sus<20、courage>=1、day==2
+## 閒聊用的對話標籤：idle_<角色>_1～4 輪流；第 3 次閒聊換成 idle_<角色>_x（驚悚，只出現一次）
+func idle_label(who: String) -> String:
+	var n := int(flags.get("idle_" + who, 0)) + 1
+	flags["idle_" + who] = n
+	var seen: Array = meta.get("creepy_seen", [])
+	if n == 3 and not who in seen:
+		seen.append(who)
+		meta["creepy_seen"] = seen
+		save_meta()
+		return "idle_%s_x" % who
+	var k := int(flags.get("idle_norm_" + who, 0))
+	flags["idle_norm_" + who] = k + 1
+	return "idle_%s_%d" % [who, k % 4 + 1]
+
+
 func check(cond: String) -> bool:
 	cond = cond.strip_edges()
 	if cond == "":

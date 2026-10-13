@@ -8,14 +8,11 @@ const Town := preload("res://scripts/world/town.gd")
 const Player := preload("res://scripts/world/player.gd")
 const Board := preload("res://scripts/ui/board.gd")
 const Hud := preload("res://scripts/ui/hud.gd")
-const CandyCatch := preload("res://scripts/minigames/candy_catch.gd")
-const MirrorStare := preload("res://scripts/minigames/mirror_stare.gd")
 const Summary := preload("res://scripts/ui/summary.gd")
 const EndCard := preload("res://scripts/ui/end_card.gd")
 const EndingCard := preload("res://scripts/ui/ending_card.gd")
 const Intro := preload("res://scripts/ui/intro.gd")
 const Title := preload("res://scripts/ui/title.gd")
-const BreadKnead := preload("res://scripts/minigames/bread_knead.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 
 const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "day2_evening", "night_out", "day3_explore", "day3_home", "forest"]
@@ -38,28 +35,28 @@ const ACTORS := {
 const OBJECTS := {
 	"board": {"name": "公告欄", "pos": Vector2(915, 860)},
 	"bakery_photo": {"name": "櫥窗裡的照片", "pos": Vector2(510, 525)},
-	"mail_sack": {"name": "郵袋", "pos": Vector2(1500, 900)},
+	"mail_sack": {"name": "郵袋", "pos": Vector2(1470, 963)},
 	"mayor_door": {"name": "鎮長公館的門", "pos": Vector2(1107, 590)},
-	"repair_room": {"name": "修理室", "pos": Vector2(1218, 300)},
+	"repair_room": {"name": "修理室", "pos": Vector2(1222, 277)},
 	"mirror_house": {"name": "鏡之屋", "pos": Vector2(1647, 495)},
 	"clocktower": {"name": "鐘塔大門", "pos": Vector2(867, 395)},
 	"forest": {"name": "森林小徑", "pos": Vector2(1470, 140)},
 	"station": {"name": "火車站", "pos": Vector2(1017, 1575)},
-	"home_door": {"name": "小布的家", "pos": Vector2(285, 850)},
+	"home_door": {"name": "小布的家", "pos": Vector2(292, 850)},
 	# ── 支線物件：只在條件成立、而且還沒撿走時出現（"when"＝旗標條件）
 	"lulu_mailbox": {"name": "露露家的信箱", "pos": Vector2(390, 545), "when": "q_letters"},
 	"candy_1": {"name": "糖果", "pos": Vector2(1150, 1600), "when": "q_tama"},
 	"candy_2": {"name": "糖果", "pos": Vector2(1560, 985), "when": "q_tama"},
-	"candy_3": {"name": "糖果", "pos": Vector2(180, 570), "when": "q_tama"},
+	"candy_3": {"name": "糖果", "pos": Vector2(318, 578), "when": "q_tama"},
 	"note_1": {"name": "一張紙", "pos": Vector2(750, 380), "when": "q_notes"},
 	"note_2": {"name": "一張紙", "pos": Vector2(1320, 1590), "when": "q_notes"},
-	"note_3": {"name": "一張紙", "pos": Vector2(1350, 260), "when": "q_notes"},
+	"note_3": {"name": "一張紙", "pos": Vector2(1350, 262), "when": "q_notes"},
 	# 散落在鎮上的棉花：每一團是一段記憶碎片，撿過的會跨輪保留（下一輪不再出現）
-	"tuft_0": {"name": "一小團棉花", "pos": Vector2(90, 960)},
-	"tuft_1": {"name": "一小團棉花", "pos": Vector2(705, 140)},
+	"tuft_0": {"name": "一小團棉花", "pos": Vector2(174, 1122)},
+	"tuft_1": {"name": "一小團棉花", "pos": Vector2(810, 250)},
 	"tuft_2": {"name": "一小團棉花", "pos": Vector2(1680, 630)},
-	"tuft_3": {"name": "一小團棉花", "pos": Vector2(1470, 1290)},
-	"tuft_4": {"name": "一小團棉花", "pos": Vector2(60, 1575)},
+	"tuft_3": {"name": "一小團棉花", "pos": Vector2(1494, 1065)},
+	"tuft_4": {"name": "一小團棉花", "pos": Vector2(290, 1386)},
 	"tuft_5": {"name": "一小團棉花", "pos": Vector2(1140, 1050)},
 	"tuft_6": {"name": "一小團棉花", "pos": Vector2(495, 930)},
 	"tuft_7": {"name": "一小團棉花", "pos": Vector2(1050, 705)},
@@ -82,12 +79,16 @@ const FOREST_BOUNDS := Rect2(560, 180, 480, 900)
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
 const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
 const DAY1_NEEDED := 4
+const PLACE_NAMES := {"lulu": "麵包店", "popo": "郵局", "fen": "石橋的 Fen", "mayor_door": "鎮長公館",
+	"repair_room": "公館後的小屋", "mirror_house": "鏡之屋", "clocktower": "鐘塔"}
+## 互動結束後，這段時間內再按 E 不會馬上又開啟對話（避免連按重播）
+const TALK_COOLDOWN_MS := 350
 const PHASE_DEFAULT := {"day1_night": "late", "night_out": "night_resident"}
 const HOUSE_BOUNDS := Town.ROOM_BOUNDS
 const HOME_SPOT := Vector2(2720, 470)
 const WORLD_BOUNDS := Town.WORLD_BOUNDS
 ## 走出家門時站的位置（門口）
-const OUTSIDE_HOME := Vector2(285, 880)
+const OUTSIDE_HOME := Vector2(300, 872)
 const STATION_SPOT := Vector2(1017, 1625)
 
 const TINTS := {
@@ -99,6 +100,7 @@ const TINTS := {
 
 var phase := "prologue"
 var busy := true
+var _talk_end_ms := 0
 var actors := {}
 
 var town: Node2D
@@ -210,7 +212,7 @@ func _continue() -> void:
 	_set_tint("day")
 	if cp == "day1_explore":
 		player.bounds = WORLD_BOUNDS
-		player.position = Vector2(915, 960)
+		player.position = Vector2(915, 1060)
 	else:
 		_place_home()
 	_layout("day")
@@ -237,6 +239,11 @@ func run_chapter() -> void:
 	GameState.save_game("day1_explore")
 	busy = false
 	player.can_move = true
+	if DisplayServer.is_touchscreen_available():
+		hud.toast("用左下角的方向鍵走路，靠近有「！」的地方按「互動」。", 7.0)
+	else:
+		hud.toast("WASD／方向鍵走路　·　靠近按 E 互動　·　Tab 打開日記", 7.0)
+	hud.toast("頭上有「！」的地方，就是今天可以去的地方。", 5.0)
 
 
 func _after_interaction() -> void:
@@ -452,6 +459,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if hud.menu_open:
 		return
 	if event.is_action_pressed("interact"):
+		if Time.get_ticks_msec() - _talk_end_ms < TALK_COOLDOWN_MS:
+			get_viewport().set_input_as_handled()
+			return
 		var it: Interactable = player.nearest()
 		if it:
 			get_viewport().set_input_as_handled()
@@ -509,6 +519,7 @@ func interact(id: String) -> void:
 		busy = false
 		player.can_move = true
 		_refresh_objective()
+	_talk_end_ms = Time.get_ticks_msec()
 
 
 func _talk_label(id: String) -> String:
@@ -538,6 +549,32 @@ func _process(_delta: float) -> void:
 	var it: Interactable = player.nearest()
 	var key := "互動" if DisplayServer.is_touchscreen_available() else "E"
 	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
+	if it:
+		_first_time_tip(it)
+
+
+## 第一次靠近某種東西時，上方跳出一句說明（整個存檔只說一次）
+func _first_time_tip(it: Interactable) -> void:
+	var kind := ""
+	var text := ""
+	if it.id.begins_with("tuft_"):
+		kind = "tuft"
+		text = "飄浮的棉花團是「記憶碎片」。撿起來的話，下一輪也會記得。"
+	elif it.id.begins_with("candy_") or it.id.begins_with("note_"):
+		kind = "quest_item"
+		text = "閃閃發亮的小東西，可能是誰在找的東西。"
+	elif it.kind == "obj" and it.id != "board":
+		kind = "spot"
+		text = "有白色光圈的地方，可以按 E 調查。"
+	if kind == "":
+		return
+	var tips: Array = GameState.meta.get("tips", [])
+	if kind in tips:
+		return
+	tips.append(kind)
+	GameState.meta["tips"] = tips
+	GameState.save_meta()
+	hud.toast(text.replace("按 E", "按「互動」") if DisplayServer.is_touchscreen_available() else text, 5.0)
 
 
 func _touch_mode() -> String:
@@ -569,23 +606,8 @@ func _on_tag_toggle() -> void:
 func _on_event(event_name: String) -> void:
 	await get_tree().process_frame
 	match event_name:
-		"candy":
-			var game := CandyCatch.new()
-			add_child(game)
-			var score: int = await game.play()
-			GameState.set_flag("candy_good", score >= 15)
 		"board":
 			await board.open()
-		"bread":
-			var bread := BreadKnead.new()
-			add_child(bread)
-			Sound.duck(true)
-			await bread.play()
-			Sound.duck(false)
-		"mirror_stare":
-			var m := MirrorStare.new()
-			add_child(m)
-			await m.play()
 		"to_plaza":
 			player.position = Vector2(885, 935)
 			actors.mayor.position = Vector2(985, 905)
@@ -693,39 +715,70 @@ func _set_phase(p: String) -> void:
 
 
 func _refresh_objective() -> void:
+	var marks := []
+	hud.checklist = []
 	match phase:
 		"day1_explore":
-			GameState.set_objective("逛逛小鎮，認識大家（%d / %d）" % [mini(_visited_count(), DAY1_NEEDED), DAY1_NEEDED])
+			var left := []
+			for id in DAY1_PLACES:
+				var done := GameState.has("visited_" + id)
+				hud.checklist.append([PLACE_NAMES[id], done])
+				if not done:
+					left.append(PLACE_NAMES[id])
+					marks.append(id)
+			GameState.set_objective("逛逛小鎮，認識大家（%d / %d）\n還沒去：%s" % [mini(_visited_count(), DAY1_NEEDED), DAY1_NEEDED, "、".join(left)])
 		"day1_night":
 			GameState.set_objective("回家了。可以看看房間，或上床睡覺。")
+			marks.append("bed")
 		"day2_explore":
 			var left := []
 			if not GameState.has("bread_done"):
 				left.append("幫露露做麵包")
+				marks.append("lulu")
 			if not GameState.has("letter_done"):
 				if GameState.has("q_letters"):
 					var n := int(GameState.flags.get("letters", 0))
 					left.append("幫波波送信（%d / 3）" % n if n < 3 else "回郵局找波波")
+					if n >= 3:
+						marks.append("popo")
+					else:
+						for pair in [["lulu_mailbox", "lulu_mail_done"], ["mayor_door", "mayor_mail_done"], ["mirror_house", "mirror_mail_done"]]:
+							if not GameState.has(pair[1]):
+								marks.append(pair[0])
 				else:
 					left.append("幫波波的忙")
+					marks.append("popo")
+			hud.checklist = [["幫露露做麵包", GameState.has("bread_done")], ["幫波波送信", GameState.has("letter_done")]]
 			GameState.set_objective("、".join(left))
 		"day2_evening":
 			GameState.set_objective("八點鐘聲響起前，回家上床。")
+			marks.append("home_door")
 		"night_out":
 			GameState.set_objective("……廣場那邊，好像有人。")
 		"day3_explore":
 			if GameState.has("got_key"):
 				GameState.set_objective("下午三點以前，用鑰匙打開鐘塔。")
+				marks.append("clocktower")
 			elif GameState.has("lulu_d3_done"):
 				GameState.set_objective("去樹屋找 Fen。")
+				marks.append("fen")
 			else:
 				GameState.set_objective("去露露家看看。")
+				marks.append("lulu")
 		"day3_home":
 			GameState.set_objective("八點以前回家，上床睡覺。")
+			marks.append("home_door")
 		"forest":
 			GameState.set_objective("調查森林深處的東西（%d / 3）" % mini(_forest_count(), 3))
 		_:
 			GameState.set_objective("")
+	for id in actors:
+		var a: Interactable = actors[id]
+		var m: bool = id in marks
+		if a.marked != m:
+			a.marked = m
+			a.queue_redraw()
+	hud.refresh()
 
 
 func _forest_count() -> int:

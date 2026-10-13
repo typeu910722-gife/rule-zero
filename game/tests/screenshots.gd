@@ -95,15 +95,4 @@ func _run() -> void:
 	await _frames(40)
 	await _shot("05_night")
 
-	var m = main.MirrorStare.new()
-	main.add_child(m)
-	await create_timer(8.0).timeout
-	await _shot("06_mirror")
-	m.queue_free()
-
-	var c = main.CandyCatch.new()
-	main.add_child(c)
-	c.play()
-	await create_timer(4.0).timeout
-	await _shot("07_candy")
 	quit()

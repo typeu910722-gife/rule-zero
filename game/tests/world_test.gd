@@ -46,7 +46,7 @@ func _run() -> void:
 	p.position = Vector2(1107, 700)
 	await _hold("move_up", 120)
 	_check(not Town.blocked(p.position), "不會走進鎮長公館裡")
-	_check(p.position.y > 380 * 1.5 - 5, "被公館擋住（y=%d）" % p.position.y)
+	_check(p.position.y > 365 * 1.5, "被公館擋住（y=%d）" % p.position.y)
 	# 地圖邊界
 	p.position = Vector2(100, 1600)
 	await _hold("move_down", 60)
@@ -68,9 +68,12 @@ func _run() -> void:
 	_check(p.bounds == main.HOUSE_BOUNDS, "第一天晚上：門打不開，還在房間")
 
 	print("[互動點都站得到]")
-	for id in main.OBJECTS:
-		var pos: Vector2 = main.OBJECTS[id].pos
-		if id.begins_with("forest_") or pos.x > Town.W:
+	var spots := {}
+	spots.merge(main.OBJECTS)
+	spots.merge(main.ACTORS)
+	for id in spots:
+		var pos: Vector2 = spots[id].pos
+		if id.begins_with("forest_") or id.begins_with("extra") or pos.x > Town.W:
 			continue
 		var ok := false
 		for dx in range(-80, 81, 10):

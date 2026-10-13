@@ -16,22 +16,11 @@ const ROOM := Rect2(2300, 120, 840, 480)
 const ROOM_BOUNDS := Rect2(2340, 330, 760, 240)
 const ROOM_VIEW := Rect2(ROOM.position.x + ROOM.size.x / 2 - 640, 0, 1280, 720)
 
-## 擋路的東西（地圖原圖座標）：建築、公告欄、河
-const BLOCKERS := [
-	Rect2(535, 20, 90, 170),     # 鐘塔
-	Rect2(700, 80, 180, 108),    # 修理室
-	Rect2(615, 215, 250, 165),   # 鎮長公館
-	Rect2(1040, 190, 120, 128),  # 鏡之屋
-	Rect2(165, 160, 240, 180),   # 露露的家
-	Rect2(45, 405, 235, 150),    # 小布的住處
-	Rect2(865, 470, 145, 118),   # 郵局
-	Rect2(70, 700, 165, 122),    # 居民小屋（紅）
-	Rect2(300, 735, 175, 122),   # 居民小屋（紫）
-	Rect2(495, 895, 375, 138),   # 火車站
-	Rect2(562, 495, 100, 62),    # 公告欄
-	Rect2(1165, 0, 90, 600),     # 河（上游）
-	Rect2(995, 690, 260, 430),   # 河（瀑布、水車）
-]
+## 可以走的地方：石板路、樓梯、橋（由 tools/build_walk_mask.py 從地圖產生）。
+## 遮罩是原圖的一半解析度：白＝可以走。草地、花圃、圍籬、房子、河都不能走。
+const WALK_MASK := preload("res://art/walk_mask.png")
+const MASK_SCALE := 2.0
+static var _mask: Image
 
 ## 鐘塔的鐘面（原圖座標）
 const CLOCK := Vector2(578, 124)
@@ -44,15 +33,33 @@ static func at(x: float, y: float) -> Vector2:
 	return Vector2(x, y) * SCALE
 
 
-## 世界座標 p 是否被建築或河擋住
+## 離 p 最近、可以走的位置（由內往外一圈一圈找）
+static func nearest_walkable(p: Vector2) -> Vector2:
+	if not blocked(p):
+		return p
+	for r in range(6, 400, 6):
+		var steps := maxi(8, int(r / 4.0))
+		for k in steps:
+			var q := p + Vector2.from_angle(TAU * k / steps) * r
+			if not blocked(q):
+				return q
+	return p
+
+
+## 世界座標 p 是否走不過去（不在路上）
 static func blocked(p: Vector2) -> bool:
 	if p.x > W:
 		return false  # 室內
-	var q := p / SCALE
-	for r in BLOCKERS:
-		if (r as Rect2).has_point(q):
-			return true
-	return false
+	if _mask == null:
+		_mask = WALK_MASK.get_image()
+		if _mask.is_compressed():
+			_mask.decompress()
+	var q := p / SCALE / MASK_SCALE
+	var x := int(q.x)
+	var y := int(q.y)
+	if x < 0 or y < 0 or x >= _mask.get_width() or y >= _mask.get_height():
+		return true
+	return _mask.get_pixel(x, y).r < 0.5
 
 
 func _draw() -> void:

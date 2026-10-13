@@ -29,6 +29,11 @@ var _portrait: TextureRect
 var _face_tex := {}
 
 var _bg: ColorRect
+var _train: Control
+var _train_t := 0.0
+var _more: Label
+var _hint: Label
+var _tip: Label
 var _box: PanelContainer
 var _name: Label
 var _text: RichTextLabel
@@ -93,6 +98,8 @@ func run(label: String) -> void:
 				i = next if next >= 0 else i + 1
 	_box.visible = false
 	_portrait.visible = false
+	_more.visible = false
+	_hint.visible = false
 	running = false
 	finished.emit()
 
@@ -125,9 +132,16 @@ func _command(op: String, args: Array) -> int:
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
+		"idle":
+			# 閒聊：輪流出現 4 句普通的，第 3 次會出現一次驚悚的（整個存檔只一次）
+			return parser.labels[GameState.idle_label(args[0])]
+		"sfx":
+			if not GameState.fast:
+				Sound.sfx(args[0])
 		"event":
 			_box.visible = false
 			_portrait.visible = false
+			_more.visible = false
 			event_requested.emit(args[0])
 			await event_done
 	return -1
@@ -137,6 +151,7 @@ func set_bg(mode: String) -> void:
 	_bg.visible = mode != "none"
 	if _bg.visible:
 		_bg.color = BG_COLORS[mode]
+	_train.visible = mode == "train"
 	# 夢境時換成「記憶揭露」的音樂
 	Sound.override_bgm("memory" if mode == "dream" else "")
 
@@ -157,11 +172,23 @@ func _say(who: String, text: String) -> void:
 		return
 	_text.visible_characters = 0
 	_typing = true
+	_more.visible = false
 	_shown_at = Time.get_ticks_msec()
 	await _advance
+	_more.visible = false
 
 
 func _process(delta: float) -> void:
+	if _train.visible:
+		_train_t += delta
+		_train.queue_redraw()
+	# 一句話打完了：右下角的 ▼ 輕輕跳動，告訴玩家可以按下一句
+	_hint.visible = running and _box.visible and not _choosing and not DisplayServer.is_touchscreen_available()
+	if running and _box.visible and not _typing and not _choosing:
+		_more.visible = true
+		var bob := sin(Time.get_ticks_msec() / 160.0) * 3.0
+		_more.offset_top = -76 + bob
+		_more.offset_bottom = -50 + bob
 	# 按住互動鍵（或按住畫面）超過 0.4 秒：快轉對話，重玩時不會煩
 	if running and _box.visible and not _choosing:
 		var held := Input.is_action_pressed("interact") or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
@@ -181,6 +208,13 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# 選項出現時：E（互動鍵）也可以確定目前選中的選項，不只是 Enter
+	if running and _choosing and event.is_action_pressed("interact") and not event.is_action_pressed("ui_accept"):
+		var f := get_viewport().gui_get_focus_owner()
+		if f is Button and f.get_parent() == _choices and not (f as Button).disabled:
+			get_viewport().set_input_as_handled()
+			(f as Button).pressed.emit()
+		return
 	if not running or _choosing or not _box.visible:
 		return
 	var pressed: bool = event.is_action_pressed("interact") or \
@@ -231,11 +265,18 @@ func _choose(opts: Array) -> int:
 		_choices.add_child(b)
 		if first == null and not b.disabled:
 			first = b
+	# 第一次看到要用膽量的選項：在選項上面說明一次
+	var has_cost := opts.any(func(o): return o.cost > 0)
+	_tip.visible = has_cost and not GameState.meta.get("tip_courage", false)
+	if _tip.visible:
+		GameState.meta["tip_courage"] = true
+		GameState.save_meta()
 	_choices.visible = true
 	if first:
 		first.grab_focus.call_deferred()
 	var idx: int = await _chosen
 	_choices.visible = false
+	_tip.visible = false
 	_choosing = false
 	return idx
 
@@ -270,6 +311,62 @@ func _build_ui() -> void:
 	_box.add_theme_stylebox_override("panel", sb)
 	_box.visible = false
 	add_child(_box)
+
+	# 火車車廂（序章）：粉紅色的牆、兩扇窗、窗外的雲慢慢往後跑
+	_train = Control.new()
+	_train.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_train.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_train.visible = false
+	_train.draw.connect(_draw_train)
+	add_child(_train)
+	move_child(_train, _bg.get_index() + 1)
+
+	# ▼（下一句）與「按住快轉」提示，貼在對話框右下角
+	_more = Label.new()
+	_more.text = "▼"
+	_more.add_theme_font_size_override("font_size", 20)
+	_more.add_theme_color_override("font_color", Color("#e8a0bf"))
+	_more.anchor_left = 1.0
+	_more.anchor_right = 1.0
+	_more.anchor_top = 1.0
+	_more.anchor_bottom = 1.0
+	_more.offset_left = -100
+	_more.offset_right = -76
+	_more.offset_top = -76
+	_more.offset_bottom = -50
+	_more.visible = false
+	_more.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_more)
+	_hint = Label.new()
+	_hint.text = "按住 E 快轉"
+	_hint.add_theme_font_size_override("font_size", 14)
+	_hint.add_theme_color_override("font_color", Color("#c9b3bf"))
+	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_hint.anchor_left = 1.0
+	_hint.anchor_right = 1.0
+	_hint.anchor_top = 1.0
+	_hint.anchor_bottom = 1.0
+	_hint.offset_left = -300
+	_hint.offset_right = -110
+	_hint.offset_top = -72
+	_hint.offset_bottom = -52
+	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_hint)
+	_tip = Label.new()
+	_tip.text = "★ 是違反守則的選項，要用掉左上角的「膽量」。\n會知道更多事情——但也會有人注意到你。膽量睡一覺就會恢復。"
+	_tip.add_theme_font_size_override("font_size", 17)
+	_tip.add_theme_color_override("font_color", Color("#fff3f8"))
+	_tip.add_theme_color_override("font_outline_color", Color("#7b4f6e"))
+	_tip.add_theme_constant_override("outline_size", 6)
+	_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_tip.anchor_left = 0.5
+	_tip.anchor_right = 0.5
+	_tip.offset_left = -420
+	_tip.offset_right = 420
+	_tip.offset_top = 150
+	_tip.visible = false
+	_tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_tip)
 
 	# 說話者的表情頭像，站在對話框左上角
 	_portrait = TextureRect.new()
@@ -307,8 +404,9 @@ func _build_ui() -> void:
 	_choices.anchor_right = 0.5
 	_choices.anchor_top = 1.0
 	_choices.anchor_bottom = 1.0
-	_choices.offset_left = -360
-	_choices.offset_right = 360
+	# 往右偏一點，不要擋住左邊的表情頭像
+	_choices.offset_left = -290
+	_choices.offset_right = 430
 	_choices.offset_top = -420
 	_choices.offset_bottom = -215
 	_choices.alignment = BoxContainer.ALIGNMENT_END
@@ -333,6 +431,8 @@ func _show_face(who: String, text: String) -> void:
 	at.region = Rect2((idx % 4) * FACE_CELL, (idx / 4) * FACE_CELL, FACE_CELL, FACE_CELL)
 	_portrait.texture = at
 	_portrait.visible = true
+	# 隔著門說話：只看得到剪影
+	_portrait.modulate = Color(0.16, 0.12, 0.18, 0.9) if text.begins_with("（門內）") else Color.WHITE
 
 
 ## 依台詞猜表情（表情圖的順序見 Expressions/表情索引.csv）：
@@ -390,3 +490,29 @@ func _style_button(b: Button) -> void:
 	b.add_theme_color_override("font_hover_color", Color("#c2558a"))
 	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
 	b.add_theme_color_override("font_disabled_color", Color("#b8aab4"))
+
+
+func _draw_train() -> void:
+	var c := _train
+	c.draw_rect(Rect2(0, 0, 1280, 720), Color("#f6d6e6"))
+	# 牆上的條紋壁紙
+	for k in 32:
+		c.draw_rect(Rect2(k * 40, 0, 18, 720), Color("#f2cadc"))
+	for w: Rect2 in [Rect2(130, 90, 420, 300), Rect2(730, 90, 420, 300)]:
+		# 窗外：粉紅色的天空與一直往後跑的雲
+		c.draw_rect(w, Color("#fbe3ee"))
+		c.draw_rect(Rect2(w.position + Vector2(0, w.size.y * 0.55), Vector2(w.size.x, w.size.y * 0.45)), Color("#f9d3e3"))
+		for k in 6:
+			var x: float = fposmod(w.position.x + k * 120 - _train_t * 60.0 - w.position.x * 0.3, w.size.x + 160) + w.position.x - 80
+			var y: float = w.position.y + 50 + (k * 47) % 170
+			for o: Vector2 in [Vector2(-22, 6), Vector2(0, 0), Vector2(24, 6), Vector2(4, 12)]:
+				var p: Vector2 = Vector2(x, y) + o
+				if Rect2(w.position + Vector2(18, 18), w.size - Vector2(36, 36)).has_point(p):
+					c.draw_circle(p, 18, Color(1, 1, 1, 0.95))
+		c.draw_rect(w, Color("#b07a8e"), false, 14)
+		c.draw_line(w.position + Vector2(w.size.x / 2, 0), w.position + Vector2(w.size.x / 2, w.size.y), Color("#b07a8e"), 8)
+	# 椅背
+	for x: float in [80.0, 680.0]:
+		c.draw_rect(Rect2(x, 430, 520, 140), Color("#c76d8f"))
+		c.draw_rect(Rect2(x, 430, 520, 24), Color("#d98aa7"))
+	c.draw_rect(Rect2(0, 570, 1280, 150), Color("#8e5a74"))

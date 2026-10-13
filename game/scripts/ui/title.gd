@@ -77,7 +77,10 @@ func _draw_area() -> void:
 	_area.draw_rect(ticket, Color("#d4a373"), false, 3)
 	_area.draw_string(f, ticket.position + Vector2(18, 38), "棉花糖鎮　單程票", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7f5539"))
 	# 戳章＝第幾輪（每一輪結束都多一個）
-	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP + 1, 1, 15)
+	# 還沒搭過火車：一個戳章都沒有。每結束一輪，就多一個。
+	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP, 0, 15)
+	if stamps == 0:
+		_area.draw_string(f, ticket.position + Vector2(18, 92), "（還沒有戳章）", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("#c4a98f"))
 	for k in stamps:
 		var c := ticket.position + Vector2(30 + (k % 5) * 46, 68 + (k / 5) * 30)
 		_area.draw_arc(c, 13, 0, TAU, 20, Color(0.75, 0.2, 0.25, 0.75), 2.5)

@@ -2,7 +2,7 @@ class_name DialogueParser
 extends RefCounted
 ## 解析 res://dialogue/*.txt 的對話腳本。語法見 docs/dialogue-format.md。
 
-const KNOWN_OPS := ["set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event"]
+const KNOWN_OPS := ["set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event", "idle", "sfx"]
 const KNOWN_BG := ["none", "black", "train", "dream"]
 
 var cmds: Array = []

@@ -60,10 +60,31 @@ func _process(delta: float) -> void:
 	var check: bool = collide and bounds.position.x < 2000 and bounds.end.x > 1600
 	var move := dir * SPEED * delta
 	# 分軸移動：碰到建築時可以沿著牆滑過去
+	# 萬一被劇情放在路外面（例如草地上）：先移到最近的路上
+	if check and T.blocked(position):
+		position = T.nearest_walkable(position)
+	var moved_any := false
 	for axis in [Vector2(move.x, 0), Vector2(0, move.y)]:
+		if axis == Vector2.ZERO:
+			continue
 		var np: Vector2 = (position + axis).clamp(bounds.position, bounds.end)
-		if not (check and T.blocked(np)):
+		if not (check and T.blocked(np)) and not _bumps_npc(np):
 			position = np
+			moved_any = true
+	# 卡在轉角時：看看旁邊一點點有沒有路，有的話順著滑過去（不用玩家對準縫隙）
+	if check and not moved_any:
+		var forward := move
+		var side := Vector2(-forward.y, forward.x).normalized()
+		for k in [6.0, 12.0, 18.0, 24.0]:
+			var found := false
+			for sgn in [1.0, -1.0]:
+				var off: Vector2 = side * k * sgn
+				if not T.blocked(position + off) and not T.blocked(position + off + forward):
+					position += off.normalized() * minf(SPEED * delta, off.length())
+					found = true
+					break
+			if found:
+				break
 	_step_t += delta
 	if _step < 0 or _step_t >= STEP_TIME:
 		_step_t = 0.0
@@ -97,3 +118,16 @@ func nearest(max_dist := -1.0) -> Interactable:
 			best = it
 			best_d = d
 	return best
+
+
+## 不要穿過其他角色（只擋「越走越近」的方向，所以永遠不會被卡住）
+func _bumps_npc(np: Vector2) -> bool:
+	for n in get_tree().get_nodes_in_group("interactable"):
+		var it := n as Interactable
+		if it.kind != "npc" or not it.visible:
+			continue
+		var d_new := (np - it.position) * Vector2(1.0, 1.8)
+		var d_old := (position - it.position) * Vector2(1.0, 1.8)
+		if d_new.length() < 64.0 and d_new.length() < d_old.length():
+			return true
+	return false

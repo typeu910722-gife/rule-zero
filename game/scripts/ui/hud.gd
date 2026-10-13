@@ -10,7 +10,14 @@ var show_debug := false
 
 var _status: Label
 var _objective: Label
+var _status_panel: PanelContainer
 var _prompt: Label
+var _toast: PanelContainer
+var _toast_text: Label
+var _toast_queue: Array = []
+var _toast_busy := false
+## 今天要做的事（main.gd 設定）：[[名稱, 是否完成], …]
+var checklist: Array = []
 var _menu: PanelContainer
 var _menu_text: RichTextLabel
 var _tag_button: Button
@@ -18,9 +25,29 @@ var _tag_button: Button
 
 func _ready() -> void:
 	layer = 20
-	_status = _label(Vector2(24, 18), 24, Color("#6d597a"))
-	_objective = _label(Vector2(24, 54), 18, Color("#8e7d8a"))
-	_prompt = _label(Vector2(0, 0), 20, Color("#ffffff"))
+	# 左上角：半透明的小卡片墊在字後面，地圖再花也看得清楚
+	_status_panel = PanelContainer.new()
+	_status_panel.position = Vector2(14, 10)
+	var psb := StyleBoxFlat.new()
+	psb.bg_color = Color(1.0, 0.98, 0.95, 0.86)
+	psb.border_color = Color("#e8c4d4")
+	psb.set_border_width_all(2)
+	psb.set_corner_radius_all(14)
+	psb.content_margin_left = 16
+	psb.content_margin_right = 18
+	psb.content_margin_top = 8
+	psb.content_margin_bottom = 10
+	_status_panel.add_theme_stylebox_override("panel", psb)
+	_status_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_status_panel)
+	var sv := VBoxContainer.new()
+	sv.add_theme_constant_override("separation", 2)
+	_status_panel.add_child(sv)
+	_status = _label(Vector2.ZERO, 22, Color("#6d597a"), sv)
+	_objective = _label(Vector2.ZERO, 17, Color("#7a6576"), sv)
+	_objective.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	_objective.custom_minimum_size = Vector2(380, 0)
+	_prompt = _label(Vector2(0, 0), 22, Color("#ffffff"))
 	_prompt.anchor_left = 0.5
 	_prompt.anchor_right = 0.5
 	_prompt.anchor_top = 1.0
@@ -32,19 +59,72 @@ func _ready() -> void:
 	_prompt.add_theme_color_override("font_outline_color", Color("#b56576"))
 	_prompt.add_theme_constant_override("outline_size", 6)
 	_build_menu()
+	_build_toast()
 	GameState.changed.connect(refresh)
 	refresh()
 
 
-func _label(pos: Vector2, font_size: int, col: Color) -> Label:
+func _label(pos: Vector2, font_size: int, col: Color, parent: Node = null) -> Label:
 	var l := Label.new()
 	l.position = pos
 	l.add_theme_font_size_override("font_size", font_size)
 	l.add_theme_color_override("font_color", col)
 	l.add_theme_color_override("font_outline_color", Color(1, 1, 1, 0.9))
 	l.add_theme_constant_override("outline_size", 5)
-	add_child(l)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	(parent if parent else self).add_child(l)
 	return l
+
+
+## 畫面上方中間跳出的小提示（第一次看到某樣東西時），幾秒後自己消失
+func toast(text: String, seconds := 5.0) -> void:
+	_toast_queue.append([text, seconds])
+	if not _toast_busy:
+		_next_toast()
+
+
+func _next_toast() -> void:
+	if _toast_queue.is_empty():
+		_toast_busy = false
+		return
+	_toast_busy = true
+	var item: Array = _toast_queue.pop_front()
+	_toast_text.text = item[0]
+	_toast.visible = true
+	_toast.modulate.a = 0.0
+	_toast.reset_size()
+	_toast.position = Vector2(640 - _toast.size.x / 2, 18)
+	if GameState.fast:
+		_toast.visible = false
+		_next_toast()
+		return
+	var tw := create_tween()
+	tw.tween_property(_toast, "modulate:a", 1.0, 0.25)
+	tw.tween_interval(item[1])
+	tw.tween_property(_toast, "modulate:a", 0.0, 0.4)
+	await tw.finished
+	_toast.visible = false
+	_next_toast()
+
+
+func _build_toast() -> void:
+	_toast = PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("#4a3b47", 0.88)
+	sb.set_corner_radius_all(16)
+	sb.content_margin_left = 22
+	sb.content_margin_right = 22
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 12
+	_toast.add_theme_stylebox_override("panel", sb)
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.visible = false
+	add_child(_toast)
+	_toast_text = Label.new()
+	_toast_text.add_theme_font_size_override("font_size", 19)
+	_toast_text.add_theme_color_override("font_color", Color("#fff3f8"))
+	_toast_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.add_child(_toast_text)
 
 
 func refresh() -> void:
@@ -54,6 +134,7 @@ func refresh() -> void:
 	if show_debug:
 		_status.text += "　｜　[debug] 鎮長懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
+	_objective.visible = _status_panel.visible and GameState.objective != ""
 	if menu_open:
 		_fill_menu()
 
@@ -63,8 +144,8 @@ func set_prompt(text: String) -> void:
 
 
 func set_status_visible(v: bool) -> void:
-	_status.visible = v
-	_objective.visible = v
+	_status_panel.visible = v
+	_objective.visible = v and GameState.objective != ""
 
 
 func toggle_menu(allow_tag: bool) -> void:
@@ -81,6 +162,19 @@ func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
 	t += "名字：%s\n膽量：%d / %d\n車票上的戳章：%d 個\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE,
 		GameState.loop_number() - GameState.FIRST_LOOP + 1]
+	# 今天要做的事
+	if GameState.objective != "":
+		t += "[font_size=22]今天要做的事[/font_size]\n%s\n" % GameState.objective.split("\n")[0]
+		for item in checklist:
+			t += ("[color=#9bb59a]　✓ %s[/color]\n" % item[0]) if item[1] else ("　□ %s\n" % item[0])
+		t += "\n"
+	# 收到的東西
+	var gifts: Array = GameState.GIFTS.keys().filter(func(k): return GameState.has(k))
+	if not gifts.is_empty():
+		t += "[font_size=22]口袋裡的東西[/font_size]\n"
+		for k in gifts:
+			t += "・%s\n" % GameState.GIFTS[k]
+		t += "\n"
 	# 進行中的委託（支線）
 	var quests := []
 	if GameState.has("q_letters") and not GameState.has("letter_done"):
@@ -155,13 +249,16 @@ func _build_menu() -> void:
 	v.add_child(_menu_text)
 	var board_btn := Button.new()
 	board_btn.text = "看守則"
+	_style_button(board_btn)
 	board_btn.pressed.connect(func(): board_requested.emit())
 	v.add_child(board_btn)
 	_tag_button = Button.new()
+	_style_button(_tag_button)
 	_tag_button.pressed.connect(func(): tag_toggle_requested.emit())
 	v.add_child(_tag_button)
 	var title_btn := Button.new()
 	title_btn.text = "回到標題（從今天早上的存檔繼續）"
+	_style_button(title_btn)
 	title_btn.pressed.connect(func(): title_requested.emit())
 	v.add_child(title_btn)
 	var hint := Label.new()
@@ -169,3 +266,20 @@ func _build_menu() -> void:
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)
+
+
+func _style_button(b: Button) -> void:
+	b.add_theme_font_size_override("font_size", 18)
+	for state in ["normal", "hover", "focus", "pressed", "disabled"]:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color("#fff8f0") if state in ["normal", "disabled"] else Color("#ffe1ec")
+		sb.border_color = Color("#e8a0bf") if state != "disabled" else Color("#d9cfd6")
+		sb.set_border_width_all(3 if state in ["hover", "focus"] else 2)
+		sb.set_corner_radius_all(12)
+		sb.content_margin_top = 6
+		sb.content_margin_bottom = 6
+		b.add_theme_stylebox_override(state, sb)
+	b.add_theme_color_override("font_color", Color("#4a3b47"))
+	b.add_theme_color_override("font_hover_color", Color("#c2558a"))
+	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
+	b.add_theme_color_override("font_disabled_color", Color("#b8aab4"))

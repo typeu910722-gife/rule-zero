@@ -54,10 +54,18 @@ static func draw_sprite(ci: CanvasItem, species: String, s: float, row: int, ste
 		Rect2(col * CELL, row * CELL, CELL, CELL), tint)
 	if tag:
 		# 名牌（拆下名牌是劇情機制，所以畫在胸前）
-		var c := Vector2(0, -BASE_HEIGHT * 0.36 * s)
-		ci.draw_rect(Rect2(c + Vector2(-8, -4) * s, Vector2(16, 9) * s), Color.WHITE)
-		ci.draw_rect(Rect2(c + Vector2(-8, -4) * s, Vector2(16, 9) * s), Color("#e8a0bf"), false, 1.2 * s)
-		ci.draw_line(c + Vector2(-5, 0.5) * s, c + Vector2(5, 0.5) * s, Color("#999"), 1.0 * s)
+		# 小小的布標：奶油色、粉紅縫線，稍微歪一點，像是別針別上去的
+		# （不用 draw_set_transform：外層可能已經有縮放，例如標題畫面）
+		var c := Vector2(4, -BASE_HEIGHT * 0.37) * s
+		var tf := func(p: Vector2) -> Vector2: return c + (p * s).rotated(-0.12)
+		var body := PackedVector2Array([tf.call(Vector2(-5.5, -3.5)), tf.call(Vector2(5.5, -3.5)),
+			tf.call(Vector2(5.5, 3.5)), tf.call(Vector2(-5.5, 3.5))])
+		ci.draw_colored_polygon(body, Color("#fbeee2"))
+		var inner := PackedVector2Array([tf.call(Vector2(-4.5, -2.5)), tf.call(Vector2(4.5, -2.5)),
+			tf.call(Vector2(4.5, 2.5)), tf.call(Vector2(-4.5, 2.5)), tf.call(Vector2(-4.5, -2.5))])
+		ci.draw_polyline(inner, Color("#e8a0bf"), 0.6 * s)
+		ci.draw_line(tf.call(Vector2(-3, 0.3)), tf.call(Vector2(3, 0.3)), Color("#b9868f"), 0.7 * s)
+		ci.draw_circle(tf.call(Vector2(-4.2, -3.5)), 0.9 * s, Color("#d9a441"))
 
 
 static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := Vector2.ZERO,
