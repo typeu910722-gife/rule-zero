@@ -90,7 +90,7 @@ func _process(delta: float) -> void:
 			var found := false
 			for sgn in [1.0, -1.0]:
 				var off: Vector2 = side * k * sgn
-				if not T.blocked(position + off) and not T.blocked(position + off + forward):
+				if not T.blocked(position + off) and not T.blocked(position + off + forward) and not _bumps_npc(position + off + forward):
 					position += off.normalized() * minf(SPEED * delta, off.length())
 					found = true
 					break
@@ -139,6 +139,6 @@ func _bumps_npc(np: Vector2) -> bool:
 			continue
 		var d_new := (np - it.position) * Vector2(1.0, 1.8)
 		var d_old := (position - it.position) * Vector2(1.0, 1.8)
-		if d_new.length() < 64.0 and d_new.length() < d_old.length():
+		if d_new.length() < 40.0 and d_new.length() < d_old.length():
 			return true
 	return false

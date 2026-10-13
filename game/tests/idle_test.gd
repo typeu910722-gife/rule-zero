@@ -23,11 +23,11 @@ func _run() -> void:
 	gs.fast = true
 	gs.save_dir = "user://test_saves"
 	gs.meta = {"runs": 0, "chapters_done": 0}
-	for who in ["lulu", "popo", "fen", "mayor", "mochi", "tama", "puppy"]:
+	for who in ["lulu", "popo", "fen", "mayor", "mochi", "tama", "puppy", "conductor"]:
 		gs.reset()
 		var got := []
 		for i in 8:
-			got.append(gs.idle_label(who))
+			got.append(gs.idle_label(who, 4))
 		var labels_ok := got.all(func(l): return dlg.has_label(l))
 		_check(labels_ok, "%s：閒聊標籤都存在" % who)
 		_check(got.count("idle_%s_x" % who) == 1 and got[2] == "idle_%s_x" % who, "%s：第 3 次是驚悚的，只有一次" % who)
@@ -38,7 +38,7 @@ func _run() -> void:
 		gs.reset()
 		var again := []
 		for i in 6:
-			again.append(gs.idle_label(who))
+			again.append(gs.idle_label(who, 4))
 		_check(not again.has("idle_%s_x" % who), "%s：驚悚的那段不會再出現" % who)
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures > 0 else 0)

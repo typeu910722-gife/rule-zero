@@ -281,8 +281,9 @@ func threads_earned() -> int:
 
 
 ## 條件語法：flag、!flag、sus>=40、sus<20、courage>=1、day==2
-## 閒聊用的對話標籤：idle_<角色>_1～4 輪流；第 3 次閒聊換成 idle_<角色>_x（驚悚，只出現一次）
-func idle_label(who: String) -> String:
+## 閒聊用的對話標籤：idle_<角色>_1～N 依序輪流（跨輪記住看到第幾句，不會一直重複同一句）；
+## 第 3 次閒聊換成 idle_<角色>_x（驚悚，整個存檔只出現一次）
+func idle_label(who: String, pool := 4) -> String:
 	var n := int(flags.get("idle_" + who, 0)) + 1
 	flags["idle_" + who] = n
 	var seen: Array = meta.get("creepy_seen", [])
@@ -291,9 +292,11 @@ func idle_label(who: String) -> String:
 		meta["creepy_seen"] = seen
 		save_meta()
 		return "idle_%s_x" % who
-	var k := int(flags.get("idle_norm_" + who, 0))
-	flags["idle_norm_" + who] = k + 1
-	return "idle_%s_%d" % [who, k % 4 + 1]
+	var counts: Dictionary = meta.get("idle_norm", {})
+	var k := int(counts.get(who, 0))
+	counts[who] = k + 1
+	meta["idle_norm"] = counts
+	return "idle_%s_%d" % [who, k % maxi(pool, 1) + 1]
 
 
 func check(cond: String) -> bool:

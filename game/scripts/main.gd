@@ -13,6 +13,7 @@ const EndCard := preload("res://scripts/ui/end_card.gd")
 const EndingCard := preload("res://scripts/ui/ending_card.gd")
 const Intro := preload("res://scripts/ui/intro.gd")
 const Flash := preload("res://scripts/ui/flash.gd")
+const MirrorStare := preload("res://scripts/ui/mirror_stare.gd")
 const Title := preload("res://scripts/ui/title.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 
@@ -22,14 +23,14 @@ const RepairScene := preload("res://scripts/ui/repair_scene.gd")
 
 ## 位置都是世界座標＝地圖原圖座標 × 1.5（見 town.gd 的 at()）
 const ACTORS := {
-	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(435, 575)},
-	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1290, 935)},
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(445, 625)},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1290, 985)},
 	"fen": {"name": "Fen", "species": "fox", "color": Color("#c8642b"), "pos": Vector2(1815, 1000), "smile": false, "stitched": true},
-	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(1050, 905), "size": 1.6},
-	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(230, 1290)},
+	"mayor": {"name": "熊熊鎮長", "species": "bear", "color": Color("#c4894f"), "pos": Vector2(1050, 930), "size": 1.6},
+	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(215, 1330)},
 	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(645, 1330)},
 	"conductor": {"name": "車掌", "species": "conductor", "color": Color("#4a2a32"), "pos": Vector2(1260, 1620), "size": 1.5},
-	"extra1": {"name": "小狗居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(1400, 660)},
+	"extra1": {"name": "小狗居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(645, 940)},
 	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
 	"extra3": {"name": "居民", "species": "puppy", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
 }
@@ -46,7 +47,7 @@ const OBJECTS := {
 	"station": {"name": "火車站", "pos": Vector2(1017, 1575)},
 	"home_door": {"name": "小布的家", "pos": Vector2(292, 850)},
 	# ── 支線物件：只在條件成立、而且還沒撿走時出現（"when"＝旗標條件）
-	"lulu_mailbox": {"name": "露露家的信箱", "pos": Vector2(390, 545), "when": "q_letters"},
+	"lulu_mailbox": {"name": "露露家的信箱", "pos": Vector2(372, 606), "when": "q_letters"},
 	"candy_1": {"name": "糖果", "pos": Vector2(1150, 1600), "when": "q_tama"},
 	"candy_2": {"name": "糖果", "pos": Vector2(1560, 985), "when": "q_tama"},
 	"candy_3": {"name": "糖果", "pos": Vector2(318, 578), "when": "q_tama"},
@@ -54,16 +55,16 @@ const OBJECTS := {
 	"note_2": {"name": "一張紙", "pos": Vector2(1320, 1590), "when": "q_notes"},
 	"note_3": {"name": "一張紙", "pos": Vector2(1350, 262), "when": "q_notes"},
 	# 散落在鎮上的棉花：每一團是一段記憶碎片，撿過的會跨輪保留（下一輪不再出現）
-	"tuft_0": {"name": "一小團棉花", "pos": Vector2(174, 1122)},
-	"tuft_1": {"name": "一小團棉花", "pos": Vector2(810, 250)},
-	"tuft_2": {"name": "一小團棉花", "pos": Vector2(1680, 630)},
+	"tuft_0": {"name": "一小團棉花", "pos": Vector2(162, 1251)},
+	"tuft_1": {"name": "一小團棉花", "pos": Vector2(837, 312)},
+	"tuft_2": {"name": "一小團棉花", "pos": Vector2(1650, 660)},
 	"tuft_3": {"name": "一小團棉花", "pos": Vector2(1494, 1065)},
 	"tuft_4": {"name": "一小團棉花", "pos": Vector2(290, 1386)},
 	"tuft_5": {"name": "一小團棉花", "pos": Vector2(1140, 1050)},
-	"tuft_6": {"name": "一小團棉花", "pos": Vector2(495, 930)},
+	"tuft_6": {"name": "一小團棉花", "pos": Vector2(492, 957)},
 	"tuft_7": {"name": "一小團棉花", "pos": Vector2(1050, 705)},
 	"tuft_8": {"name": "一小團棉花", "pos": Vector2(1828, 990)},
-	"tuft_9": {"name": "一小團棉花", "pos": Vector2(705, 1590)},
+	"tuft_9": {"name": "一小團棉花", "pos": Vector2(705, 1557)},
 	# 小布的房間（地圖右邊，見 town.gd 的 ROOM）
 	"mirror": {"name": "鏡子", "pos": Vector2(3080, 375)},
 	"bed": {"name": "床", "pos": Vector2(2425, 470)},
@@ -76,7 +77,7 @@ const OBJECTS := {
 }
 
 const FOREST_ITEMS := ["found_sheep", "found_lulu_bow", "seen_tags", "found_fox_tail"]
-const FOREST_BOUNDS := Rect2(560, 180, 480, 900)
+const FOREST_BOUNDS := Forest.BOUNDS
 
 ## 第一天要拜訪的地點（至少 2 個才會進入傍晚）
 const DAY1_PLACES := ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"]
@@ -103,6 +104,11 @@ const TINTS := {
 var phase := "prologue"
 var busy := true
 var _talk_end_ms := 0
+## 說過、而且沒改變任何事的對話標籤 → 接下來改聊閒聊幾次
+var _stale := {}
+## 角色 → 閒聊台詞（dialogue 的 idle_<名字>_N）
+const IDLE_KEY := {"lulu": "lulu", "popo": "popo", "fen": "fen", "mayor": "mayor", "mochi": "mochi",
+	"tama": "tama", "extra1": "puppy", "conductor": "conductor"}
 var actors := {}
 
 var town: Node2D
@@ -528,7 +534,21 @@ func interact(id: String) -> void:
 		await Dialogue.run(id)
 	else:
 		Sound.sfx("interact")
-		await Dialogue.run(_talk_label(id))
+		var label := _talk_label(id)
+		var who: String = IDLE_KEY.get(id, "")
+		if who != "" and (label == "nothing" or int(_stale.get(label, 0)) > 0):
+			# 這段話已經說過、而且什麼都沒改變：換成閒聊（每個人都有一大堆台詞）
+			if label != "nothing":
+				_stale[label] = int(_stale[label]) - 1
+			await Dialogue.run("chat_" + who)
+		else:
+			var before := _state_snapshot()
+			await Dialogue.run(label)
+			if who != "":
+				if _state_snapshot() == before:
+					_stale[label] = 2   # 接下來兩次先聊別的
+				else:
+					_stale.clear()      # 有事情改變了：大家的話也可能不一樣了
 	await _after_interaction()
 	_refresh_objects()
 	if phase != "ended":
@@ -536,6 +556,14 @@ func interact(id: String) -> void:
 		player.can_move = true
 		_refresh_objective()
 	_talk_end_ms = Time.get_ticks_msec()
+
+
+func _state_snapshot() -> String:
+	var f := {}
+	for k in GameState.flags:
+		if not str(k).begins_with("idle_"):
+			f[k] = GameState.flags[k]
+	return JSON.stringify([f, GameState.suspicion, GameState.courage, GameState.day])
 
 
 func _talk_label(id: String) -> String:
@@ -624,6 +652,13 @@ func _on_event(event_name: String) -> void:
 	match event_name:
 		"board":
 			await board.open()
+		"mirror_stare":
+			# 盯著鏡子 10 秒：第 7 秒，鏡子裡浮現一個人類小孩
+			var m := MirrorStare.new()
+			add_child(m)
+			Sound.duck(true)
+			await m.play()
+			Sound.duck(false)
 		"to_plaza":
 			player.position = Vector2(885, 935)
 			actors.mayor.position = Vector2(985, 905)

@@ -145,7 +145,10 @@ func _command(op: String, args: Array) -> int:
 			show_item(args[0])
 		"idle":
 			# 閒聊：輪流出現 4 句普通的，第 3 次會出現一次驚悚的（整個存檔只一次）
-			return parser.labels[GameState.idle_label(args[0])]
+			var pool := 0
+			while has_label("idle_%s_%d" % [args[0], pool + 1]):
+				pool += 1
+			return parser.labels[GameState.idle_label(args[0], pool)]
 		"sfx":
 			if not GameState.fast:
 				Sound.sfx(args[0])
