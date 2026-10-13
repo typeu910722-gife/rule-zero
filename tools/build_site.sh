@@ -1,20 +1,34 @@
 #!/usr/bin/env bash
-# 產生試玩網站：build/web/（入口頁＋各專案）
+# 產生試玩網站：public/（入口頁＋各專案），Cloudflare Pages 直接發布這個資料夾。
 # 需要 Godot 4.3 與 Web 匯出範本（web_nothreads_release.zip）。
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 GODOT="${GODOT:-godot}"
-OUT="$ROOT/build/web"
+OUT="$ROOT/public"
+rm -rf "$OUT"
 mkdir -p "$OUT/rule-zero"
 "$GODOT" --headless --path "$ROOT/game" --export-release "Web" "$OUT/rule-zero/index.html"
 cp "$ROOT/site/index.html" "$OUT/index.html"
+cp "$ROOT/site/_headers" "$OUT/_headers"
 python3 - "$ROOT" "$OUT" <<'PY'
-import sys
+import json, sys
 from PIL import Image
 root, out = sys.argv[1], sys.argv[2]
 im = Image.open(f"{root}/docs/images/proto_title.png").convert("RGB")
 im.thumbnail((640, 360))
 im.save(f"{out}/rule-zero-cover.jpg", quality=82)
+# Cloudflare Pages 單檔上限 25 MiB：把引擎 wasm 切塊，頁面載入時再接回來（見 export_presets.cfg 的 head_include）
+wasm = f"{out}/rule-zero/index.wasm"
+data = open(wasm, "rb").read()
+size = 20 * 1024 * 1024
+parts = []
+for i in range(0, len(data), size):
+    name = f"index.wasm.part{len(parts)}"
+    open(f"{out}/rule-zero/{name}", "wb").write(data[i:i + size])
+    parts.append(name)
+json.dump(parts, open(f"{out}/rule-zero/index.wasm.parts.json", "w"))
+import os
+os.remove(wasm)
+print("wasm 切成", len(parts), "塊")
 PY
-(cd "$ROOT/build" && rm -f try-site.zip && zip -qr try-site.zip web)
-echo "完成：$OUT（壓縮檔 build/try-site.zip）"
+echo "完成：$OUT"
