@@ -276,10 +276,10 @@ static func endings_text() -> String:
 const CHAPTERS := [
 	["第一章　歡迎回來", "重新回到棉花糖鎮。記得的事，都會留著。"],
 	["第二章　黑色的鎮", "製作中。"],
-	["第三章", "？？？"],
-	["第四章", "？？？"],
-	["第五章", "？？？"],
-	["第六章", "？？？"],
+	["第三章", "製作中。"],
+	["第四章", "製作中。"],
+	["第五章", "製作中。"],
+	["第六章", "製作中。"],
 ]
 
 
@@ -294,7 +294,8 @@ func _open_chapters() -> void:
 		c.queue_free()
 	var done := int(GameState.meta.get("chapters_done", 0))
 	var first: Button = null
-	for i in CHAPTERS.size():
+	# 只顯示玩過的章節＋下一章（還沒玩到的章節不出現）
+	for i in mini(done + 1, CHAPTERS.size()):
 		var label: String = CHAPTERS[i][0]
 		if i < done:
 			label += "　✓"
