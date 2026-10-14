@@ -130,7 +130,12 @@ func nearest(max_dist := -1.0) -> Interactable:
 			continue
 		var d := position.distance_to(it.position)
 		var limit := it.reach() if max_dist < 0 else max_dist
-		if d < limit and d < best_d:
+		if d >= limit:
+			continue
+		# 森林裡 Fen 一直跟在旁邊：附近有東西時，先調查東西，不要每次都跟 Fen 說話
+		if in_forest and it.id == "fen":
+			d += 1000.0
+		if d < best_d:
 			best = it
 			best_d = d
 	return best

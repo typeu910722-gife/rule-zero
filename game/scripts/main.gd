@@ -70,10 +70,10 @@ const OBJECTS := {
 	"bed": {"name": "床", "pos": Vector2(2425, 470)},
 	"home_exit": {"name": "出門", "pos": Vector2(3290, 470)},
 	# 森林（第三天）
-	"forest_sheep": {"name": "小綿羊", "pos": Vector2(800, 320)},
-	"forest_bow": {"name": "長耳朵", "pos": Vector2(640, 380)},
-	"forest_tags": {"name": "一堆名牌", "pos": Vector2(960, 380)},
-	"forest_tail": {"name": "狐狸尾巴", "pos": Vector2(880, 470)},
+	"forest_sheep": {"name": "小綿羊", "pos": Vector2(1192, 250)},
+	"forest_bow": {"name": "長耳朵", "pos": Vector2(365, 815)},
+	"forest_tags": {"name": "一堆名牌", "pos": Vector2(1725, 650)},
+	"forest_tail": {"name": "狐狸尾巴", "pos": Vector2(1915, 845)},
 }
 
 const FOREST_ITEMS := ["found_sheep", "found_lulu_bow", "seen_tags", "found_fox_tail"]

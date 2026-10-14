@@ -98,6 +98,7 @@ game/
     ├── endings_test.gd         # 各結局與輪迴記憶
     ├── quests_test.gd          # 支線委託
     ├── idle_test.gd            # 閒聊輪替（驚悚的那段只出現一次）
+    ├── forest_test.gd          # 森林：每樣東西都走得到、按得到
     ├── walk_routes_test.gd     # 模擬玩家用方向鍵走遍小鎮／森林，找出會卡住的地方（路線：tools/make_routes.py → tests/data/）
     ├── screenshots_ui.gd       # 標題畫面截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
@@ -112,6 +113,7 @@ godot --headless --path . -s tests/world_test.gd
 godot --headless --path . -s tests/endings_test.gd
 godot --headless --path . -s tests/quests_test.gd
 godot --headless --path . -s tests/idle_test.gd
+godot --headless --path . -s tests/forest_test.gd
 ```
 
 ## 字型

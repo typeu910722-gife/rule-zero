@@ -108,7 +108,11 @@ def forest() -> None:
     img = Image.fromarray((m * 255).astype("uint8")).filter(ImageFilter.MedianFilter(7))
     img = img.filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.MinFilter(5))
     a = (np.asarray(img) > 127).copy()
-    for x, y, w, hh in [(500, 370, 80, 70)]:   # 往左的岔路接回主路
+    for x, y, w, hh in [
+        (500, 370, 80, 70),    # 往左的岔路接回主路
+        (280, 410, 110, 50),   # 左邊沙土小路（被木頭擋斷）接回主路
+        (815, 290, 140, 55),   # 右上沙土小路（被樹擋斷）接回主路
+    ]:
         a[y:y + hh, x:x + w] = True
     H, W = a.shape
     seed = (770, 1050)
