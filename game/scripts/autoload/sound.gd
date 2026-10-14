@@ -49,24 +49,16 @@ var _amb_active := 0
 var _amb_current := ""
 ## 記憶深度（0～5）：越深，音樂越慢、越走音、越悶（像被水泡過的錄音帶）
 var _wear := 0
-var _lowpass: AudioEffectLowPassFilter
 var _t := 0.0
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	# 音樂專用的 bus：低通濾波（記憶越深越悶）
-	var bus := AudioServer.bus_count
-	AudioServer.add_bus(bus)
-	AudioServer.set_bus_name(bus, "Music")
-	AudioServer.set_bus_send(bus, "Master")
-	_lowpass = AudioEffectLowPassFilter.new()
-	_lowpass.cutoff_hz = 20000.0
-	AudioServer.add_bus_effect(bus, _lowpass)
+	# 注意：網頁版（Godot 4.3）預設用瀏覽器的 Web Audio 播放，執行中才新增的 bus 會沒有聲音，
+	# 所以音樂一律走 Master，「磨損」只用速度／音高／音量來做，不用 bus 效果。
 	for i in 2:
 		var p := AudioStreamPlayer.new()
 		p.volume_db = SILENT
-		p.bus = "Music"
 		add_child(p)
 		_players.append(p)
 	for i in 6:
@@ -83,7 +75,9 @@ func _ready() -> void:
 ## 記憶深度改變音樂的「磨損」程度
 func set_wear(depth: int) -> void:
 	_wear = clampi(depth, 0, 5)
-	_lowpass.cutoff_hz = [20000.0, 9000.0, 5200.0, 3400.0, 2300.0, 1700.0][_wear]
+	var p := _players[_active]
+	if p.playing:
+		p.volume_db = _target_db()
 
 
 func wear() -> int:
@@ -166,7 +160,8 @@ func sfx(name: String) -> void:
 
 
 func _target_db() -> float:
-	return DUCK_DB if _ducked else BGM_DB
+	# 記憶越深，音樂越遠、越小聲
+	return (DUCK_DB if _ducked else BGM_DB) - 1.2 * _wear
 
 
 func _apply() -> void:

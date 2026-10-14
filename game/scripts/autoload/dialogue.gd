@@ -128,6 +128,9 @@ func _command(op: String, args: Array) -> int:
 		"add":
 			# @add 旗標 數字：計數用（例如麻糬的委託問了幾個人）
 			GameState.set_flag(args[0], int(GameState.flags.get(args[0], 0)) + (int(args[1]) if args.size() > 1 else 1))
+		"roll":
+			# @roll N：擲一個 0～N-1 的隨機數，存在旗標 roll（台詞用 [roll==1] 判斷），讓同一段每次有點不一樣
+			GameState.set_flag("roll", randi() % maxi(int(args[0]), 1))
 		"mem":
 			# @mem key：跨輪記住（例如這一層的過去已經想起來了）
 			GameState.remember(args[0])
