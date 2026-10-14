@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>歪計劃 Try</title>
+<style>
+  :root {
+    --bg: #14131a; --panel: #1d1c26; --line: #2e2c3b; --text: #ecebf3;
+    --muted: #9a98ad; --accent: #ffb3c7; --accent2: #a8c8ff; --err: #ff7a8a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f5fa; --panel: #ffffff; --line: #e2e0ec; --text: #1c1b26;
+      --muted: #6b6980; --accent: #d9577f; --accent2: #3b6fd4; --err: #c8323f;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 56px 16px 64px; }
+  header h1 { margin: 0; font-size: 1.6rem; letter-spacing: .08em; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: .92rem; }
+  .panel {
+    margin-top: 28px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 16px; padding: 22px;
+  }
+  .panel h2 { margin: 0 0 6px; font-size: 1rem; }
+  .panel > p { margin: 0 0 14px; color: var(--muted); font-size: .9rem; }
+  form { display: flex; gap: 10px; flex-wrap: wrap; }
+  input[type=password] {
+    flex: 1 1 200px; min-width: 0; padding: 12px 14px; font-size: 1rem; color: var(--text);
+    background: transparent; border: 1px solid var(--line); border-radius: 10px; outline: none;
+  }
+  input[type=password]:focus { border-color: var(--accent2); }
+  button {
+    padding: 12px 20px; font-size: 1rem; cursor: pointer; border: 0; border-radius: 10px;
+    background: var(--accent); color: #1a1220; font-weight: 600;
+  }
+  button:hover { filter: brightness(1.06); }
+  button:disabled { opacity: .6; cursor: default; }
+  .msg { min-height: 1.4em; margin-top: 10px; font-size: .88rem; color: var(--err); }
+  .msg.ok { color: var(--accent2); }
+  ul.links { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  ul.links a {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px;
+    color: var(--text); text-decoration: none; font-size: .95rem; word-break: break-all;
+  }
+  ul.links a:hover { border-color: var(--accent); }
+  ul.links a span { color: var(--muted); flex: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>歪計劃 TRY</h1>
+    <p>try.yzprojecttw.com — 測試與實驗場</p>
+  </header>
+
+  <section class="panel">
+    <h2>輸入測試密碼</h2>
+    <p>不同的密碼會帶你到不同的測試內容。</p>
+    <form id="form" autocomplete="off">
+      <input id="pw" type="password" placeholder="輸入密碼" aria-label="密碼" required>
+      <button id="go" type="submit">進入</button>
+    </form>
+    <div class="msg" id="msg" role="alert"></div>
+  </section>
+
+  <section class="panel">
+    <h2>目前可用的網站</h2>
+    <ul class="links" id="links"></ul>
+  </section>
+</div>
+
+<script>
+  // ── 密碼 → 目的地 ─────────────────────────────────────────
+  // 頁面只存密碼的 SHA-256 雜湊,不含明文密碼。
+  // 新增一組:在瀏覽器 Console 執行下面這行算出雜湊,再加一筆到 ROUTES:
+  //   [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("新密碼")))].map(b=>b.toString(16).padStart(2,"0")).join("")
+  const ROUTES = [
+    { hash: "e45e96f917a0677aa803ea0b7e1b8cb2b18136686face0a1532bb454ba43267f", url: "rule-zero/", name: "第零條規則 Rule Zero" }
+  ];
+
+  // ── 密碼框下方的公開連結 ───────────────────────────────────
+  const LINKS = [
+    "yzprojecttw.com",
+    "vip.yzprojecttw.com",
+    "yourzone.yzprojecttw.com",
+    "beastidal.yzprojecttw.com",
+    "yingrisuo.yzprojecttw.com",
+    "eroom.yzprojecttw.com"
+  ];
+
+  const $ = (id) => document.getElementById(id);
+
+  for (const host of LINKS) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = "https://" + host + "/";
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = host;
+    const arrow = document.createElement("span");
+    arrow.textContent = "↗";
+    a.appendChild(arrow);
+    li.appendChild(a);
+    $("links").appendChild(li);
+  }
+
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  $("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = $("msg");
+    msg.className = "msg";
+    msg.textContent = "";
+    let h;
+    try {
+      h = await sha256($("pw").value.trim());
+    } catch (_) {
+      msg.textContent = "此瀏覽器無法驗證,請用 HTTPS 開啟";
+      return;
+    }
+    const route = ROUTES.find(r => r.hash === h);
+    if (!route) {
+      msg.textContent = "密碼不正確";
+      $("pw").select();
+      return;
+    }
+    // 測試頁(例如遊戲)會檢查這個通行標記
+    try { sessionStorage.setItem("yzp_ok", "1"); } catch (_) {}
+    msg.className = "msg ok";
+    msg.textContent = "前往「" + route.name + "」…";
+    $("go").disabled = true;
+    location.href = route.url;
+  });
+</script>
+</body>
+</html>
