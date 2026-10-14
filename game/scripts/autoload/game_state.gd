@@ -86,6 +86,31 @@ const MEMORY_FROM_FLAGS := {
 ## 會被「修理」的結局：上一輪最後記下的事會被剪掉
 const REPAIR_ENDINGS := ["early", "brave", "betrayed", "mochi"]
 const FIRST_LOOP := 47
+## 記憶深度：每多走完一輪，就多想起一層（0＝第一輪，最多 4）。
+## 對話裡用 depth>=2 判斷；每一層在火車上會想起一段「遙」的過去（story_1～4）。
+const MAX_DEPTH := 4
+const DEPTH_NAMES := ["", "好像來過", "記得順序", "記得大家", "記得自己"]
+## 開頭的固定任務：每走完三輪，小鎮就「改一次劇本」，越改越短（最多 10 種）。
+## places＝第一天要去的地方（從裡面去 need 個）；day2＝第二天要做的事（bread 做麵包、letter 送信）
+const OPENINGS := [
+	{"places": ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"], "need": 4, "day2": ["bread", "letter"]},
+	{"places": ["lulu", "popo", "fen", "mayor_door", "mirror_house"], "need": 3, "day2": ["bread", "letter"]},
+	{"places": ["lulu", "popo", "fen"], "need": 3, "day2": ["bread"]},
+	{"places": ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"], "need": 2, "day2": ["letter"]},
+	{"places": ["fen", "mirror_house"], "need": 2, "day2": ["bread"]},
+	{"places": ["mayor_door", "repair_room"], "need": 2, "day2": ["letter"]},
+	{"places": ["lulu"], "need": 1, "day2": ["bread"]},
+	{"places": ["fen"], "need": 1, "day2": ["letter"]},
+	{"places": ["clocktower"], "need": 1, "day2": ["bread"]},
+	{"places": ["lulu", "popo", "fen", "mayor_door", "repair_room", "mirror_house", "clocktower"], "need": 1, "day2": ["letter"]},
+]
+## 每一層想起來的過去（日記「想起來的事」）
+const STORY_TEXT := {
+	"story_1": "我叫遙。我從有海的小鎮轉學過來。媽媽幫我把新制服的領子翻好。",
+	"story_2": "三年二班。教室後面貼著班規。老師說：「在這個班上，不會有人受傷。」",
+	"story_3": "廁所的門外，有人在把風。走廊的盡頭，老師看到了。他在發抖。他沒有進來。",
+	"story_4": "醫院。穿白外套的人說：「我們會讓你忘記。」有人在我的車票上，蓋了第一個戳章。",
+}
 
 const MAX_COURAGE := 2
 
@@ -172,7 +197,9 @@ func player_name() -> String:
 static func cn(n: int) -> String:
 	const D := ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
 	if n < 10:
-		return D[n]
+		return D[maxi(n, 0)]
+	if n >= 100:
+		return cn(n / 100) + "百" + ("" if n % 100 == 0 else ("零" if n % 100 < 10 else "") + cn(n % 100)) if n < 1000 else "好多"
 	var tens := n / 10
 	var ones := n % 10
 	return ("" if tens == 1 else D[tens]) + "十" + ("" if ones == 0 else D[ones])
@@ -214,6 +241,9 @@ func collect_tuft(id: String) -> void:
 	var t: Array = meta.get("tufts", [])
 	if not id in t:
 		t.append(id)
+		var got: Array = flags.get("got_tufts", [])
+		got.append(id)
+		flags["got_tufts"] = got
 	meta.tufts = t
 	save_meta()
 	changed.emit()
@@ -249,6 +279,35 @@ func remembers(key: String) -> bool:
 	return bool(meta.get("memory", {}).get(key, false))
 
 
+## 跨輪記住一件事（對話裡的 @mem）
+func remember(key: String) -> void:
+	var memory: Dictionary = meta.get("memory", {})
+	memory[key] = true
+	meta.memory = memory
+	save_meta()
+
+
+## 記憶深度：走完幾輪，就想起幾層
+func memory_depth() -> int:
+	return clampi(int(meta.get("loops_done", 0)), 0, MAX_DEPTH)
+
+
+## 這一輪開頭的固定任務是第幾版（0～9）：每走完三輪換一版
+func opening_index() -> int:
+	return clampi(int(meta.get("loops_done", 0)) / 3, 0, OPENINGS.size() - 1)
+
+
+func opening() -> Dictionary:
+	return OPENINGS[opening_index()]
+
+
+## 上一輪「才剛」記住的事（記憶的 key、棉花 id）：火車上會先想起這些
+func is_fresh(key: String) -> bool:
+	if key == "any":
+		return not meta.get("fresh", []).is_empty()
+	return key in meta.get("fresh", [])
+
+
 ## 一輪結束：記下結局、把這一輪看到的事帶到下一輪
 func finish_loop(ending: String) -> void:
 	var endings: Array = meta.get("endings", [])
@@ -258,11 +317,16 @@ func finish_loop(ending: String) -> void:
 	meta.last_ending = ending
 	meta.loops_done = int(meta.get("loops_done", 0)) + 1
 	var memory: Dictionary = meta.get("memory", {})
+	var fresh: Array = []
 	for f in MEMORY_FROM_FLAGS:
 		if has(f):
+			if not memory.get(MEMORY_FROM_FLAGS[f], false):
+				fresh.append(MEMORY_FROM_FLAGS[f])
 			memory[MEMORY_FROM_FLAGS[f]] = true
 	memory["end_" + ending] = true
 	meta.memory = memory
+	fresh.append_array(flags.get("got_tufts", []))
+	meta.fresh = fresh
 	var past: Array = meta.get("past_clues", [])
 	var new_clues: Array = []
 	for k in CLUES:
@@ -324,6 +388,8 @@ func check(cond: String) -> bool:
 		return not check(cond.substr(1))
 	if cond.begins_with("mem."):
 		return remembers(cond.substr(4))
+	if cond.begins_with("fresh."):
+		return is_fresh(cond.substr(6))
 	if cond.begins_with("last."):
 		return str(meta.get("last_ending", "")) == cond.substr(5)
 	if cond.begins_with("end."):
@@ -405,6 +471,8 @@ func _value(key: String) -> int:
 		"day": return day
 		"loop": return int(meta.get("loop", FIRST_LOOP))
 		"tufts": return tuft_count()
+		"depth": return memory_depth()
+		"opening": return opening_index()
 	return int(flags.get(key, 0))
 
 

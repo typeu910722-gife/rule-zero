@@ -162,6 +162,11 @@ func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
 	t += "名字：%s\n膽量：%d / %d\n車票上的戳章：%d 個\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE,
 		GameState.loop_number() - GameState.FIRST_LOOP + 1]
+	# 記憶深度：每走完一輪多想起一層
+	var depth := GameState.memory_depth()
+	if depth > 0:
+		var dots := "●".repeat(depth) + "○".repeat(GameState.MAX_DEPTH - depth)
+		t += "[color=#7b4fa0]記憶　%s　%s[/color]\n\n" % [dots, GameState.DEPTH_NAMES[depth]]
 	# 今天要做的事
 	if GameState.objective != "":
 		t += "[font_size=22]今天要做的事[/font_size]\n%s\n" % GameState.objective.split("\n")[0]
@@ -204,6 +209,12 @@ func _fill_menu() -> void:
 	for k in GameState.TUFT_TEXT:
 		if k in tufts:
 			t += "[color=#c2558a]・%s[/color]\n" % GameState.TUFT_TEXT[k]
+	# 想起來的事：「遙」的過去，每一層一頁
+	var pages: Array = GameState.STORY_TEXT.keys().filter(func(k): return GameState.remembers(k))
+	if not pages.is_empty():
+		t += "\n[font_size=22][color=#3f6f8f]想起來的事　%d / %d[/color][/font_size]\n" % [pages.size(), GameState.STORY_TEXT.size()]
+		for k in pages:
+			t += "[color=#3f6f8f]・%s[/color]\n" % GameState.STORY_TEXT[k]
 	# 上一輪記下的事：跨輪保留，但被修理過的那幾頁被剪掉了
 	var past: Array = GameState.meta.get("past_clues", [])
 	if GameState.is_repeat() and not past.is_empty():

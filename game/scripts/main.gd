@@ -308,13 +308,18 @@ func run_chapter() -> void:
 	Sound.bgm("day")
 	await Dialogue.run("prologue")
 	await Dialogue.run("arrival")
+	if Dialogue.has_label("opening_%d" % GameState.opening_index()):
+		await Dialogue.run("opening_%d" % GameState.opening_index())
 	_layout("day")
 	hud.set_status_visible(true)
 	_set_phase("day1_explore")
 	GameState.save_game("day1_explore")
 	busy = false
 	player.can_move = true
-	if DisplayServer.is_touchscreen_available():
+	var depth := GameState.memory_depth()
+	if depth > 0:
+		hud.toast("記憶加深了：%s　%s（Tab 打開日記）" % ["●".repeat(depth) + "○".repeat(GameState.MAX_DEPTH - depth), GameState.DEPTH_NAMES[depth]], 6.0)
+	elif DisplayServer.is_touchscreen_available():
 		hud.toast("用左下角的方向鍵走路，靠近有「！」的地方按「互動」。", 7.0)
 	else:
 		hud.toast("WASD／方向鍵走路　·　靠近按 E 互動　·　Tab 打開日記", 7.0)
@@ -324,7 +329,7 @@ func run_chapter() -> void:
 func _after_interaction() -> void:
 	match phase:
 		"day1_explore":
-			if _visited_count() >= DAY1_NEEDED:
+			if _visited_count() >= int(GameState.opening().need):
 				await _day1_evening()
 		"day1_night":
 			if GameState.has("sleep_1"):
@@ -390,6 +395,14 @@ func _day2_morning() -> void:
 	await _fade_to(1.0)
 	await Dialogue.run("dream_1")
 	GameState.new_day()
+	# 開頭固定任務的版本：這一版不用做的事，直接算完成（台詞裡用 skip_bread／skip_letter）
+	var chores: Array = GameState.opening().day2
+	if not "bread" in chores:
+		GameState.set_flag("skip_bread")
+		GameState.set_flag("bread_done")
+	if not "letter" in chores:
+		GameState.set_flag("skip_letter")
+		GameState.set_flag("letter_done")
 	town.clock_stopped = true
 	town.queue_redraw()
 	_set_tint("day")
@@ -957,13 +970,18 @@ func _refresh_objective() -> void:
 	match phase:
 		"day1_explore":
 			var left := []
-			for id in DAY1_PLACES:
+			var need := int(GameState.opening().need)
+			for id in GameState.opening().places:
 				var done := GameState.has("visited_" + id)
 				hud.checklist.append([PLACE_NAMES[id], done])
 				if not done:
 					left.append(PLACE_NAMES[id])
 					marks.append(id)
-			GameState.set_objective("逛逛小鎮，認識大家（%d / %d）\n還沒去：%s" % [mini(_visited_count(), DAY1_NEEDED), DAY1_NEEDED, "、".join(left)])
+			var goal := "逛逛小鎮，認識大家" if GameState.opening_index() == 0 else "今天的功課"
+			GameState.set_objective("%s（%d / %d）\n還沒去：%s" % [goal, mini(_visited_count(), need), need, "、".join(left)])
+			# 記得鑰匙在哪裡（第三輪起）：樹屋上會出現標記
+			if GameState.memory_depth() >= 2 and GameState.remembers("knows_key") and not GameState.has("got_key"):
+				marks.append("fen_tree")
 		"day1_night":
 			GameState.set_objective("回家了。可以看看房間，或上床睡覺。")
 			marks.append("bed")
@@ -985,7 +1003,11 @@ func _refresh_objective() -> void:
 				else:
 					left.append("幫波波的忙")
 					marks.append("popo")
-			hud.checklist = [["幫露露做麵包", GameState.has("bread_done")], ["幫波波送信", GameState.has("letter_done")]]
+			hud.checklist = []
+			if not GameState.has("skip_bread"):
+				hud.checklist.append(["幫露露做麵包", GameState.has("bread_done")])
+			if not GameState.has("skip_letter"):
+				hud.checklist.append(["幫波波送信", GameState.has("letter_done")])
 			GameState.set_objective("、".join(left))
 		"day2_evening":
 			GameState.set_objective("八點鐘聲響起前，回家上床。")
@@ -1029,7 +1051,7 @@ func _forest_count() -> int:
 
 
 func _visited_count() -> int:
-	return DAY1_PLACES.filter(func(p): return GameState.has("visited_" + p)).size()
+	return GameState.opening().places.filter(func(p): return GameState.has("visited_" + p)).size()
 
 
 func _set_tint(name: String) -> void:

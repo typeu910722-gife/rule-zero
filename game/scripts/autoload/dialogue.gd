@@ -125,6 +125,9 @@ func _command(op: String, args: Array) -> int:
 		"add":
 			# @add 旗標 數字：計數用（例如麻糬的委託問了幾個人）
 			GameState.set_flag(args[0], int(GameState.flags.get(args[0], 0)) + (int(args[1]) if args.size() > 1 else 1))
+		"mem":
+			# @mem key：跨輪記住（例如這一層的過去已經想起來了）
+			GameState.remember(args[0])
 		"sus":
 			GameState.add_suspicion(int(args[0]))
 		"courage":
