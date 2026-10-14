@@ -55,18 +55,20 @@ root, out = sys.argv[1], sys.argv[2]
 im = Image.open(f"{root}/docs/images/proto_title.png").convert("RGB")
 im.thumbnail((640, 360))
 im.save(f"{out}/rule-zero-cover.jpg", quality=82)
-# Cloudflare Pages 單檔上限 25 MiB：把引擎 wasm 切塊，頁面載入時再接回來（見 export_presets.cfg 的 head_include）
-wasm = f"{out}/rule-zero/index.wasm"
-data = open(wasm, "rb").read()
-size = 20 * 1024 * 1024
-parts = []
-for i in range(0, len(data), size):
-    name = f"index.wasm.part{len(parts)}"
-    open(f"{out}/rule-zero/{name}", "wb").write(data[i:i + size])
-    parts.append(name)
-json.dump(parts, open(f"{out}/rule-zero/index.wasm.parts.json", "w"))
+# Cloudflare Pages 單檔上限 25 MiB：引擎 wasm 和遊戲內容 pck 都切成 20 MiB 一塊，
+# 頁面載入時再接回來（見 game/web/head_include.html 的第 1 段）。內容再多也只是多幾塊。
 import os
-os.remove(wasm)
-print("wasm 切成", len(parts), "塊")
+size = 20 * 1024 * 1024
+for kind in ["wasm", "pck"]:
+    path = f"{out}/rule-zero/index.{kind}"
+    data = open(path, "rb").read()
+    parts = []
+    for i in range(0, len(data), size):
+        name = f"index.{kind}.part{len(parts)}"
+        open(f"{out}/rule-zero/{name}", "wb").write(data[i:i + size])
+        parts.append(name)
+    json.dump(parts, open(f"{out}/rule-zero/index.{kind}.parts.json", "w"))
+    os.remove(path)
+    print(f"{kind}：{len(data) / 1048576:.1f} MB，切成 {len(parts)} 塊")
 PY
 echo "完成：$OUT"
