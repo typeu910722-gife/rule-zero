@@ -26,10 +26,15 @@ func _run() -> void:
 	root.add_child(sc)
 	for i in 30:
 		await process_frame
-	sc._cut = 3
-	sc._t = 2.6
-	sc._jab = 0.8
-	await _shot("end_1_scissors")
+	for k in [0, 10, 22, 30, 40]:
+		while sc._hits < k:
+			sc.stab(Vector2(600 + randf_range(-80, 80), 380))
+		sc._puffs.clear()
+		sc.stab(Vector2(640, 380))
+		sc._shake = 0.0
+		sc._stage_flash = 0.0
+		sc._flash = 0.0
+		await _shot("end_1_scissors_%02d" % k)
 	sc.queue_free()
 	dlg.set_bg("classroom")
 	dlg.run("showdown")
