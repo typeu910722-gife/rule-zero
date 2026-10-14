@@ -29,7 +29,7 @@ const BU_Z := 2.5          # 小布離鏡頭多遠（公尺）
 const BU_H := 1.15         # 小布多高
 const MAYOR_H := 2.5
 const LANE_W := 1.1
-const DIST := 110.0        # 要跑多遠
+const DIST := 130.0        # 要跑多遠
 const SPEED := 5.0
 const SPRINT := 1.3        # 衝刺多快多少
 const DEPTH_SHADER := """
@@ -216,7 +216,7 @@ func _reset_run() -> void:
 	_lunge = {}
 	_state = "start"
 	_state_t = 0.0
-	_next_throw = 3.2
+	_next_throw = 2.2
 	_props.clear()
 	_next_prop = 0.0
 	_next_tags = 5.0
@@ -226,6 +226,15 @@ func _reset_run() -> void:
 		_spawn_prop(z)
 		z += _rng.randf_range(2.6, 4.0)
 	_say("熊熊鎮長：……老師來了喔。")
+
+
+## 鎮長越追越瘋（0～1）：跑得越遠，出招越頻繁、預告越短、針越快
+func _rage() -> float:
+	return clampf(_run / DIST, 0.0, 1.0) * (1.0 - 0.5 * _ease())
+
+
+func _needle_speed() -> float:
+	return lerpf(15.0, 22.0, _rage())
 
 
 ## 難度：被抓越多次越簡單（0～1）
@@ -335,7 +344,8 @@ func _update_run(delta: float) -> void:
 		_mayor_pose = "twitch"
 		if _tele.t <= 0.0:
 			if _tele.kind == "needle":
-				_needles.append({"x": _mayor_x, "tx": float(_tele.lane) * LANE_W, "z": BU_Z + _gap, "z0": BU_Z + _gap, "y": 1.6, "hit": false})
+				for ln in _tele.get("lanes", [_tele.lane]):
+					_needles.append({"x": _mayor_x, "tx": float(ln) * LANE_W, "z": BU_Z + _gap, "z0": BU_Z + _gap, "y": 1.6, "hit": false, "spd": _needle_speed()})
 				Sound.sfx("interact")
 			else:
 				_lunge = {"lane": _tele.lane, "t": 0.0, "x0": _mayor_x, "gap0": _gap}
@@ -345,12 +355,19 @@ func _update_run(delta: float) -> void:
 	elif _lunge.is_empty():
 		_next_throw -= delta
 		if _gap < 2.4:
-			_tele = {"kind": "lunge", "lane": _lane, "t": 0.75 + 0.3 * _ease()}
+			_tele = {"kind": "lunge", "lane": _lane, "lanes": [_lane], "t": lerpf(0.75, 0.5, _rage()) + 0.3 * _ease()}
 			_say(GameState.fill("熊熊鎮長：{name}……"))
 		elif _next_throw <= 0.0:
-			_next_throw = _rng.randf_range(2.4, 3.4) + 1.2 * _ease()
+			# 越跑越快：一開始 2～2.8 秒丟一次，最後 0.6～0.9 秒就丟一次
+			var r := _rage()
+			_next_throw = _rng.randf_range(lerpf(2.0, 0.6, r), lerpf(2.8, 0.9, r)) + 1.2 * _ease()
 			var lane := _lane if _rng.randf() < 0.7 else clampi(_lane + (1 if _rng.randf() < 0.5 else -1), -1, 1)
-			_tele = {"kind": "needle", "lane": lane, "t": 0.6 + 0.25 * _ease()}
+			var lanes := [lane]
+			# 後半段：一次丟兩根（一定留一道可以躲）
+			if r > 0.45 and _rng.randf() < lerpf(0.25, 0.7, (r - 0.45) / 0.55):
+				var others := [-1, 0, 1].filter(func(l): return l != lane)
+				lanes.append(others[_rng.randi() % others.size()])
+			_tele = {"kind": "needle", "lane": lane, "lanes": lanes, "t": lerpf(0.6, 0.38, r) + 0.25 * _ease()}
 	# 撲過來
 	if not _lunge.is_empty():
 		_lunge.t += delta
@@ -368,7 +385,7 @@ func _update_run(delta: float) -> void:
 			_mayor_pose = "rise"
 	# 縫衣針：飛向小布那一道，飛過小布之後衝出畫面
 	for n in _needles:
-		n.z -= (15.0 + v) * delta
+		n.z -= (float(n.get("spd", 15.0)) + v) * delta
 		var span: float = maxf(n.z0 - BU_Z, 0.1)
 		var k2 := clampf(1.0 - (n.z - BU_Z) / span, 0.0, 1.0)
 		if k2 < 1.0:
@@ -483,18 +500,19 @@ func _draw_world(pop: bool, c: CanvasItem) -> void:
 		mz = BU_Z - 0.9
 	items.append({"z": mz, "d": "mayor"})
 	items.sort_custom(func(a, b): return a.z > b.z)
-	# 預告：地上一條閃爍的紅色虛線，從鎮長指向小布那一道
+	# 預告：地上閃爍的紅色虛線，從鎮長指向他要攻擊的那一道（兩根針就兩條）
 	if not pop and not _tele.is_empty():
 		var a := 0.45 + 0.4 * sin(_t * 22.0)
-		var lx: float = float(_tele.lane) * LANE_W
 		var zz := BU_Z + _gap
-		var prev := _proj(_mayor_x, 0.02, zz)
-		for i in range(1, 11):
-			var k := float(i) / 10.0
-			var q := _proj(lerpf(_mayor_x, lx, k), 0.02, lerpf(zz, BU_Z - 0.3, k))
-			if i % 2 == 1:
-				c.draw_line(prev, q, Color(1, 0.15, 0.25, a), 6.0)
-			prev = q
+		for ln in _tele.get("lanes", [_tele.lane]):
+			var lx: float = float(ln) * LANE_W
+			var prev := _proj(_mayor_x, 0.02, zz)
+			for i in range(1, 11):
+				var k := float(i) / 10.0
+				var q := _proj(lerpf(_mayor_x, lx, k), 0.02, lerpf(zz, BU_Z - 0.3, k))
+				if i % 2 == 1:
+					c.draw_line(prev, q, Color(1, 0.15, 0.25, a), 6.0)
+				prev = q
 	for it in items:
 		var is_pop: bool = it.z < BU_Z - 0.01 or it.d == "bu" or (it.d == "mayor" and _state == "caught")
 		if is_pop != pop:

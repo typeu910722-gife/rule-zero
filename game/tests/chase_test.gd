@@ -38,28 +38,42 @@ func _run() -> void:
 	var t := 0.0
 	var dodged := 0
 	var last_tele := {}
+	var doubles := 0
+	var times: Array = []
 	Input.action_press("move_up")
 	while t < 120.0 and not c._done:
 		await process_frame
 		t += c.get_process_delta_time()
 		if c._state != "run":
 			continue
-		var threat := -99
+		var threats: Array = []
 		if not c._tele.is_empty():
-			threat = int(c._tele.lane)
+			threats = c._tele.get("lanes", [c._tele.lane]).duplicate()
 			if c._tele != last_tele:
 				dodged += 1
+				if threats.size() > 1:
+					doubles += 1
 				last_tele = c._tele
+				times.append("%.1fs/%dm%s" % [t, int(c._run), "×2" if threats.size() > 1 else ""])
 		elif not c._lunge.is_empty():
-			threat = int(c._lunge.lane)
-		if threat != -99 and c._lane == threat:
-			var go := 1 if threat <= 0 else -1
-			await _tap("move_right" if go > 0 else "move_left")
+			threats = [int(c._lunge.lane)]
+		for n in c._needles:
+			if not n.hit:
+				threats.append(int(roundf(n.tx / c.LANE_W)))
+		if c._lane in threats:
+			var best := 99
+			for l in [-1, 0, 1]:
+				if not l in threats and absi(l - c._lane) < absi(best - c._lane):
+					best = l
+			if best != 99:
+				await _tap("move_right" if best > c._lane else "move_left")
 	Input.action_release("move_up")
 	_check(c._done, "跑到修理室（%.1f 秒）" % t)
 	_check(c._attempts == 0, "看到預告就換道：不會被抓（被抓 %d 次）" % c._attempts)
 	_check(c._hits <= 1, "被針打中 %d 次" % c._hits)
-	_check(dodged >= 3, "鎮長真的有出招（%d 次預告）" % dodged)
+	_check(dodged >= 8, "越跑越多次出招（%d 次預告）" % dodged)
+	print("       出招時間：", " ".join(times))
+	_check(doubles >= 1, "後半段會一次丟兩根針（%d 次）" % doubles)
 	c.queue_free()
 	await process_frame
 
