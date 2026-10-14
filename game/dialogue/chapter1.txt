@@ -78,7 +78,7 @@
 [depth>=4] @if !mem.story_4 p_s4
 @goto p_guide
 # p_s1
-@bg dream
+@bg mem_sea
 > ……海的味道。
 > 一間小小的房間。門後面，掛著一件新的制服。
 > 「領子要翻好喔。第一天，要給大家好印象。」
@@ -93,7 +93,7 @@
 @mem story_1
 @goto p_story
 # p_s2
-@bg classroom
+@bg mem_class
 > 粉筆灰的味道。
 > 黑板上寫著「歡迎新同學」。底下有人在笑。
 > 你的位子在最後一排。你坐下去的時候，椅子被抽走了。
@@ -108,7 +108,7 @@
 @mem story_2
 @goto p_story
 # p_s3
-@bg black
+@bg mem_toilet
 @sfx creepy
 > 水聲。
 > 廁所的門，從外面被卡住了。「快開門……」
@@ -125,7 +125,7 @@
 @mem story_3
 @goto p_story
 # p_s4
-@bg hospital_haruka
+@bg mem_hospital
 > 白色的走廊。消毒水的味道。
 > 有人站在你的床邊。白色的外套，胸前別著一顆愛心形狀的徽章。
 > 「慈愛計劃。他會忘記的。忘記了，就不會痛了。」
@@ -940,6 +940,7 @@ Fen：對了，我的筆記又被風吹散了。撿到的話……你大概知�
 車掌：……{name}。
 車掌：你應該忘記的。
 車掌：你應該忘記的。大家都應該忘記的。
+@bg glove
 > 他摘下一隻白手套。手套底下，是一隻人類的手。皺皺的、粗粗的，握了很多年的方向盤。
 車掌：可是，你沒有忘記。
 車掌：……終於。
@@ -947,8 +948,11 @@ Fen：對了，我的筆記又被風吹散了。撿到的話……你大概知�
 > 他好像笑了。你看不出來。可是你知道。
 車掌：我不能幫你。上面的人在看。我只是一個開車的人。
 車掌：可是——
+@bg none
 > 他把那隻白手套，塞進你的手裡。還是暖的。
+@show glove
 車掌：……加油。
+@show none
 @set conductor_glove
 @end
 
@@ -981,12 +985,14 @@ Fen：對了，我的筆記又被風吹散了。撿到的話……你大概知�
 === extra1_d3
 @if dog_confessed pu3_again
 @if !dog_d2_done pu3_again
+@show stand_puppy
 > 小狗居民沒有在掃地。他抱著掃把，坐在地上。
 居民：……{name}。
 居民：如果，你看到一件很不好的事。
 居民：可是大家都在笑。老師也沒有過來。你不知道要怎麼辦。
 居民：所以你就……低下頭，繼續掃地。掃了好久、好久。
 居民：那樣的人……也是壞孩子嗎？
+@show none
 * 「……你看到了什麼？」 -> pu3_ask
 * 「不是你的錯。」 -> pu3_ok
 # pu3_ask
@@ -2040,6 +2046,7 @@ Fen：去修理室！剪刀——在修理室裡！
 > 露露靠在窗邊睡著了。耳朵上的縫線，在月光下亮亮的。
 @goto nt_popo
 # nt_lulu
+@bg nt_lulu
 > 露露從口袋裡拿出一片小小的鏡子碎片。是她房間裡，翻過去的那一片。
 > 她猶豫了很久。然後，把它翻了過來。
 > 碎片裡，是一隻垂耳兔。耳朵長長的，眼睛紅紅的。
@@ -2047,6 +2054,7 @@ Fen：去修理室！剪刀——在修理室裡！
 露露：……其實，還滿可愛的嘛。
 > 她小小聲地說。只說給自己聽。
 # nt_popo
+@bg train_night
 @if saw_pink nt_pink
 @if mem.saw_pink nt_pink
 @if saw_lulu_letter nt_pink
@@ -2054,6 +2062,7 @@ Fen：去修理室！剪刀——在修理室裡！
 > 波波抱著郵袋，數著裡面的信。數了一遍，又一遍。
 @goto nt_tama
 # nt_pink
+@bg nt_popo
 > 波波從郵袋最底下，拿出那封粉紅色的信。邊角軟軟的。
 波波：……現在，應該是「不會有人生氣」的時候了吧。
 > 他把信拆開。兔子形狀的貼紙，輕輕地剝了下來。
@@ -2062,6 +2071,7 @@ Fen：去修理室！剪刀——在修理室裡！
 波波：……嘿咻。
 波波：這封，我會回的。這次不用郵票。
 # nt_tama
+@bg train_night
 @if tama_done nt_tama_yes
 @if mem.helped_tama nt_tama_yes
 @if saw_tama_test nt_tama_yes
@@ -2069,27 +2079,32 @@ Fen：去修理室！剪刀——在修理室裡！
 > 小玉坐得直直的。手放在膝蓋上。好像在等誰來點名。
 @goto nt_mochi
 # nt_tama_yes
+@bg nt_tama
 > 小玉從口袋裡拿出一顆糖。看了很久，又放了回去。
 小玉：……今天，不想吃了喵。
 小玉：我想記得今天。就算今天，沒有一百分。
 > 她把「班長」的徽章，輕輕放在窗台上。沒有再收回去。
 # nt_mochi
+@bg train_night
 @if mochi_remembers nt_mochi_yes
 @if mem.knows_mochi nt_mochi_yes
 > 麻糬抱著你的斗篷一角，睡得好熟。名牌還是空白的。
 @goto nt_dog
 # nt_mochi_yes
+@bg nt_mochi
 > 麻糬拉了拉你的斗篷。
 麻糬：{name}。我想起來了。全部的。
 > 他說了一個好長、好長的名字。要用兩隻手，才寫得完的那種。
 > 你一個字一個字地，記住了。
 麻糬：……你是第一個聽到的人喔。
 # nt_dog
+@bg train_night
 @if dog_confessed nt_dog_yes
 @if mem.knows_dog nt_dog_yes
 > 小狗居民抱著掃把，坐在最後一排。掃把的毛，掉光了。
 @goto nt_name
 # nt_dog_yes
+@bg nt_dog
 > 小狗居民坐在最後一排。他把掃把放在腳邊。這是第一次，他的手上沒有掃把。
 居民：……那天。
 居民：我應該要去叫人的。我應該要說話的。
@@ -2103,6 +2118,7 @@ Fen：去修理室！剪刀——在修理室裡！
 # nt_dog_nod
 > 他也點點頭。然後，把掃把收進了座位底下。
 # nt_name
+@bg train_night
 @show ticket
 車掌：……對了。
 車掌：新的車票，要寫上名字才行。
@@ -2115,6 +2131,7 @@ Fen：去修理室！剪刀——在修理室裡！
 @mem true_name
 @set true_name
 > 你把名牌拆了下來。別針在斗篷上，留下一個小小的洞。
+@show tag_left
 遙：……我叫遙。
 > 說出來的時候，喉嚨好痛。可是，是好的那種痛。
 車掌：……遙。
@@ -2125,6 +2142,7 @@ Fen：去修理室！剪刀——在修理室裡！
 [fen_trust] Fen：……我好像，在哪裡聽過這個名字。
 > 你把「小布」的名牌，輕輕放在空著的座位上。
 > 也許有一天，會有人需要它。也許不會。
+@show none
 @goto nt_end
 # nt_bu
 車掌：……好。

@@ -13,6 +13,17 @@ func _ready() -> void:
 	bg.color = Color("#1b1620")
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	var pic := TextureRect.new()
+	pic.texture = load("res://art/ui_ending_bg.jpg")
+	pic.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	pic.modulate = Color(1, 1, 1, 1)
+	add_child(pic)
+	var shade := ColorRect.new()
+	shade.color = Color(0.08, 0.05, 0.1, 0.5)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(shade)
 
 	var info: Dictionary = GameState.ENDINGS.get(ending, {"title": ending, "desc": ""})
 	var idx := GameState.ENDING_ORDER.find(ending) + 1

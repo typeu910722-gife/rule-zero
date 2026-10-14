@@ -9,14 +9,25 @@ const HOLD := 4.0
 func _ready() -> void:
 	layer = 60
 	var bg := ColorRect.new()
-	bg.color = Color("#2a2230")
+	bg.color = Color("#1b1620")
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	var pic := TextureRect.new()
+	pic.texture = load("res://art/ui_chapter_end_bg.jpg")
+	pic.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	pic.modulate = Color(1, 1, 1, 1)
+	add_child(pic)
+	var shade := ColorRect.new()
+	shade.color = Color(0.1, 0.06, 0.1, 0.12)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(shade)
 	var t := RichTextLabel.new()
 	t.position = Vector2(340, 150)
 	t.size = Vector2(600, 420)
 	t.bbcode_enabled = true
-	t.add_theme_color_override("default_color", Color("#f3e9f1"))
+	t.add_theme_color_override("default_color", Color("#4a3b47"))
 	t.add_theme_font_size_override("normal_font_size", 24)
 	var found := GameState.secrets_found()
 	var stars := "★".repeat(found.size()) + "☆".repeat(GameState.SECRETS.size() - found.size())

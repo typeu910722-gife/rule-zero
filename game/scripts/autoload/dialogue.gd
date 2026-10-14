@@ -17,9 +17,12 @@ const BG_COLORS := {
 }
 ## 有美術的背景（game/art/bg_*.jpg）。@bg 名稱 → 全畫面背景圖
 const BG_IMAGES := ["train", "platform", "plaza", "bakery", "repair", "clocktower", "room_night",
-	"hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2"]
+	"hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2",
+	"mem_sea", "mem_class", "mem_toilet", "mem_hospital",
+	"nt_lulu", "nt_popo", "nt_tama", "nt_mochi", "nt_dog", "glove"]
 ## 夢境（醫院）時換成「記憶揭露」的音樂
-const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka", "classroom"]
+const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka", "classroom",
+	"mem_sea", "mem_class", "mem_toilet", "mem_hospital"]
 
 ## 說話者 → 表情圖（game/art/face_*.png，4 欄 × 2 列，每格 256px）
 const FACES := {
@@ -508,6 +511,14 @@ func _expression(key: String, text: String) -> int:
 			if t.begins_with("……"):
 				return 3
 			return 0
+		"puppy":
+			# 小狗居民：0 釋然 1 平常的笑 2 傾聽 3 低著頭 4 快哭了 5 驚訝 6 愧疚 7 說出對不起
+			if "對不起" in t:
+				return 7
+			if "看到" in t or "沒有說" in t or "壞孩子" in t or "應該要" in t:
+				return 6
+			if "謝謝" in t:
+				return 0
 		"mochi", "tama":
 			if "不用想" in t or "好吃" in t or "笑嘻嘻" in t:
 				return 7

@@ -4,15 +4,18 @@ extends CanvasLayer
 ##   第一章通關後：繼續／選擇篇章／蒐集過的東西
 ## 月台上的小布（遙）會隨著記憶越深、越接近真相，變得越來越沉重：
 ## 天空褪色、變冷、變暗，只剩他身上還有一點光；棉花像雪一樣落下來；
-## 拿回名字以後，「小布」的名牌掉在他的腳邊。
+## 拿回名字以後，小布抱著拆下來的「小布」名牌。
 
 signal new_game
 signal continue_game
 
-const BG := preload("res://art/bg_platform.jpg")
+const BG := preload("res://art/title_platform.jpg")
+## 月台上的小布：期待 → 疑惑 → 沉重 → 記起自己（抱著拆下來的名牌）
+const BU_POSES := [preload("res://art/title_bu_1.png"), preload("res://art/title_bu_2.png"),
+	preload("res://art/title_bu_3.png"), preload("res://art/title_bu_4.png")]
+const BU_RECT := Rect2(723, 291, 366, 366)
 const TICKET := preload("res://art/item_ticket.png")
 const TICKET_STAMPED := preload("res://art/item_ticket_stamped.png")
-const TAG := preload("res://art/item_tag.png")
 const SUBTITLES := [
 	"一個溫柔的世界，藏著被遺忘的規則。",
 	"……好像，來過這裡。",
@@ -24,7 +27,7 @@ const SUBTITLES := [
 const SHADER := """
 shader_type canvas_item;
 uniform float heavy : hint_range(0.0, 1.0) = 0.0;
-uniform vec2 focus = vec2(0.816, 0.62);
+uniform vec2 focus = vec2(0.708, 0.72);
 void fragment() {
 	vec4 c = texture(TEXTURE, UV);
 	float l = dot(c.rgb, vec3(0.299, 0.587, 0.114));
@@ -38,6 +41,7 @@ void fragment() {
 """
 
 var _area: Control
+var _bu: TextureRect
 var _bg: TextureRect
 var _heavy := 0
 var _flakes: Array = []
@@ -67,6 +71,17 @@ func _ready() -> void:
 	mat.set_shader_parameter("heavy", _heavy / 5.0)
 	_bg.material = mat
 	add_child(_bg)
+	_bu = TextureRect.new()
+	_bu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_bu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_bu.texture = BU_POSES[bu_pose()]
+	_bu.position = BU_RECT.position
+	_bu.size = BU_RECT.size
+	_bu.pivot_offset = Vector2(BU_RECT.size.x / 2, BU_RECT.size.y * 0.9)
+	_bu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# 他身上一直留著一點光，只是越來越冷
+	_bu.modulate = Color(1, 1, 1).lerp(Color(0.8, 0.8, 0.9), _heavy / 5.0 * 0.7)
+	add_child(_bu)
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -97,6 +112,15 @@ func _ready() -> void:
 	_build_panel()
 
 
+## 小布的姿態：還沒想起來（期待）→ 開始懷疑 → 沉重 → 拿回名字（抱著名牌）
+func bu_pose() -> int:
+	if GameState.remembers("true_name"):
+		return 3
+	if _heavy == 0:
+		return 0
+	return 1 if _heavy <= 2 else 2
+
+
 func _button(text: String, cb: Callable, size := 24) -> Button:
 	var b := Button.new()
 	b.text = text
@@ -114,6 +138,9 @@ func _new_flake(anywhere := false) -> Dictionary:
 
 func _process(delta: float) -> void:
 	_t += delta
+	# 呼吸：越沉重，越慢、越淺
+	var breath := sin(_t * (1.6 - _heavy * 0.18)) * (0.012 - _heavy * 0.0016)
+	_bu.scale = Vector2(1.0 - breath * 0.4, 1.0 + breath)
 	for f in _flakes:
 		f.p.y += f.v * delta
 		f.p.x += sin(_t * 0.7 + f.ph) * 10.0 * delta
@@ -129,22 +156,20 @@ func _draw_area() -> void:
 	# 落下來的棉花（越重越多）
 	for fl in _flakes:
 		_area.draw_circle(fl.p, fl.r, Color(0.95, 0.93, 0.95, fl.a * (0.5 + 0.5 * h)))
-	# 拿回名字以後：「小布」的名牌掉在腳邊
-	if GameState.remembers("true_name"):
-		_area.draw_set_transform(Vector2(1090, 652), 0.5, Vector2.ONE)
-		_area.draw_texture_rect(TAG, Rect2(-34, -34, 68, 68), false, Color(0.85, 0.82, 0.86, 0.95))
-		_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	# 左邊淡淡的一層，讓標題字看得清楚（越重越暗）
 	var veil := Color(1, 0.95, 0.96).lerp(Color(0.16, 0.13, 0.18), h)
 	for k in 40:
-		_area.draw_rect(Rect2(k * 14, 0, 14, 720), Color(veil.r, veil.g, veil.b, 0.62 * (1.0 - k / 40.0)))
+		_area.draw_rect(Rect2(k * 14, 0, 14, 720), Color(veil.r, veil.g, veil.b, 0.8 * (1.0 - k / 40.0)))
 	var ink := Color("#6d4c5c").lerp(Color("#e9dde6"), h)
 	_area.draw_string_outline(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, 10, Color(1, 0.97, 0.97, 0.9 * (1.0 - h)))
 	_area.draw_string(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, ink)
+	var halo := Color(1, 0.97, 0.97, 0.75 * (1.0 - h))
+	_area.draw_string_outline(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, 6, halo)
 	_area.draw_string(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576").lerp(Color("#c9a3b8"), h))
 	var sub: String = SUBTITLES[_heavy]
 	if _heavy >= 5 and GameState.remembers("true_name"):
 		sub = "我叫遙。"
+	_area.draw_string_outline(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, halo)
 	_area.draw_string(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e").lerp(Color("#d8c6d2"), h))
 
 	# 車票：結束過一輪以上，背面就蓋著戳章
