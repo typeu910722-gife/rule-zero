@@ -1,10 +1,10 @@
 extends SceneTree
-## 追逐戰：用跟玩家一樣的操作（前進＋左右轉）沿著正確的路跑，
-## 確認跑得到修理室、而且正常跑的話不會被鎮長抓到；停下來不動的話會被抓到。
+## 追逐戰（裸眼 3D 版）：
+##   會躲的玩家（看到紅線預告就換到別的道、一直按住 ↑ 衝刺）→ 跑得到修理室、不會被抓；
+##   不動的玩家 → 會被抓住，然後重跑。
 ## godot --headless -s tests/chase_test.gd
 
 var failures := 0
-var closest := INF
 
 
 func _init() -> void:
@@ -19,39 +19,11 @@ func _check(cond: bool, msg: String) -> void:
 		printerr("  FAIL ", msg)
 
 
-func _release() -> void:
-	for a in ["move_left", "move_right", "move_up", "move_down"]:
-		Input.action_release(a)
-
-
-## 開著車跑：朝下一個格子中心轉過去、往前走
-func _drive(c, max_time: float) -> float:
-	var t := 0.0
-	var idx := 1
-	while t < max_time and not c._done:
-		var route: Array = c._route
-		var here: Vector2i = c._cell_of(c._bu.position)
-		var k := route.find(here)
-		if k >= 0:
-			idx = maxi(idx, k + 1)
-		idx = mini(idx, route.size() - 1)
-		var target: Vector3 = c.cell_center(route[idx])
-		var to: Vector3 = target - c._bu.position
-		var want := atan2(-to.x, -to.z)
-		var diff := wrapf(want - c._heading, -PI, PI)
-		_release()
-		if diff > 0.08:
-			Input.action_press("move_left", clampf(absf(diff) * 2.0, 0.3, 1.0))
-		elif diff < -0.08:
-			Input.action_press("move_right", clampf(absf(diff) * 2.0, 0.3, 1.0))
-		if absf(diff) < 0.7:
-			Input.action_press("move_up", 1.0)
+func _tap(action: String) -> void:
+	Input.action_press(action)
+	for i in 3:
 		await process_frame
-		t += c.get_process_delta_time()
-		if c._mayor_on and c._rise <= 0.0:
-			closest = minf(closest, c._mayor.position.distance_to(c._bu.position))
-	_release()
-	return t
+	Input.action_release(action)
 
 
 func _run() -> void:
@@ -60,26 +32,45 @@ func _run() -> void:
 	gs.fast = false
 	var Chase = load("res://scripts/chase/chase.gd")
 
-	print("[正常跑]")
+	print("[會躲的玩家]")
 	var c = Chase.new()
 	root.add_child(c)
-	await process_frame
-	_check(c._route.size() > 10, "迷宮有路可以到修理室（%d 格）" % c._route.size())
-	var t: float = await _drive(c, 90.0)
+	var t := 0.0
+	var dodged := 0
+	var last_tele := {}
+	Input.action_press("move_up")
+	while t < 120.0 and not c._done:
+		await process_frame
+		t += c.get_process_delta_time()
+		if c._state != "run":
+			continue
+		var threat := -99
+		if not c._tele.is_empty():
+			threat = int(c._tele.lane)
+			if c._tele != last_tele:
+				dodged += 1
+				last_tele = c._tele
+		elif not c._lunge.is_empty():
+			threat = int(c._lunge.lane)
+		if threat != -99 and c._lane == threat:
+			var go := 1 if threat <= 0 else -1
+			await _tap("move_right" if go > 0 else "move_left")
+	Input.action_release("move_up")
 	_check(c._done, "跑到修理室（%.1f 秒）" % t)
-	_check(c._attempts == 0, "一路跑的話，不會被鎮長抓到（被抓 %d 次）" % c._attempts)
-	print("       鎮長最近的時候，距離 %.1f 公尺" % closest)
+	_check(c._attempts == 0, "看到預告就換道：不會被抓（被抓 %d 次）" % c._attempts)
+	_check(c._hits <= 1, "被針打中 %d 次" % c._hits)
+	_check(dodged >= 3, "鎮長真的有出招（%d 次預告）" % dodged)
 	c.queue_free()
 	await process_frame
 
-	print("[站著不動]")
+	print("[不動的玩家]")
 	c = Chase.new()
 	root.add_child(c)
-	var waited := 0.0
-	while waited < 20.0 and c._attempts == 0:
+	t = 0.0
+	while t < 60.0 and c._attempts == 0:
 		await process_frame
-		waited += c.get_process_delta_time()
-	_check(c._attempts >= 1 and waited > 9.0, "站著不動 → 一段時間後被抓到（%.1f 秒）" % waited)
+		t += c.get_process_delta_time()
+	_check(c._attempts >= 1 and c._hits >= 1, "一直站在同一道 → 被針打中、被抓住（%.1f 秒，中了 %d 針）" % [t, c._hits])
 	c.queue_free()
 	Engine.time_scale = 1.0
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])

@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctptre17by3mo"
-path="res://.godot/imported/chase_wall.png-486027a149fe58a3557de679c7a0bdb0.ctex"
+uid="uid://dwe8wfnyxwvjk"
+path="res://.godot/imported/lamp.png-07d9912c2d0c7a450d261c1bcb0c2426.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/chase_wall.png"
-dest_files=["res://.godot/imported/chase_wall.png-486027a149fe58a3557de679c7a0bdb0.ctex"]
+source_file="res://art/chase2d/lamp.png"
+dest_files=["res://.godot/imported/lamp.png-07d9912c2d0c7a450d261c1bcb0c2426.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.85
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

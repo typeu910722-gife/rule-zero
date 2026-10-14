@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1wcmy4mujrck"
-path="res://.godot/imported/chase_tags.png-622ee484dcc1b526e7bf489c63fa996a.ctex"
+uid="uid://bmkye2q2lfipf"
+path="res://.godot/imported/mayor_twitch.png-c806c633bbddcd06ba3814a1e15abb7c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/chase_tags.png"
-dest_files=["res://.godot/imported/chase_tags.png-622ee484dcc1b526e7bf489c63fa996a.ctex"]
+source_file="res://art/chase2d/mayor_twitch.png"
+dest_files=["res://.godot/imported/mayor_twitch.png-c806c633bbddcd06ba3814a1e15abb7c.ctex"]
 
 [params]
 

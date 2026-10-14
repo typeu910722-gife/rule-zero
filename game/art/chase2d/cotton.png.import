@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pl1txll6pbx"
-path="res://.godot/imported/chase_cotton.png-c1796f360fae592e64771ff209ac9e6a.ctex"
+uid="uid://8di1xx7abn5l"
+path="res://.godot/imported/cotton.png-7c88b3ac171d1eb9ef74906e7387c267.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/chase_cotton.png"
-dest_files=["res://.godot/imported/chase_cotton.png-c1796f360fae592e64771ff209ac9e6a.ctex"]
+source_file="res://art/chase2d/cotton.png"
+dest_files=["res://.godot/imported/cotton.png-7c88b3ac171d1eb9ef74906e7387c267.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.85
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5aj6th87kg6g"
-path="res://.godot/imported/chase_sky.png-58740f2fdfa79121dfd7df0dbbe6f7f5.ctex"
+uid="uid://wugvnme787ul"
+path="res://.godot/imported/bu_run_01.png-a7a20b4f55d6e5272cc6e523d27eea18.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/chase_sky.png"
-dest_files=["res://.godot/imported/chase_sky.png-58740f2fdfa79121dfd7df0dbbe6f7f5.ctex"]
+source_file="res://art/chase2d/bu_run_01.png"
+dest_files=["res://.godot/imported/bu_run_01.png-a7a20b4f55d6e5272cc6e523d27eea18.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.82
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

@@ -1,639 +1,425 @@
 class_name ChaseScene
 extends CanvasLayer
-## 第一章結尾：鎮長崩潰後的 3D 追逐戰。
-## 小鎮被扭曲成縫線圍牆的迷宮。小布要在被抓到之前，跑到修理室的門口。
+## 第一章結尾：鎮長崩潰後的追逐戰（裸眼 3D 版）。
 ##
-## 操作：↑ 前進、↓ 後退、← → 轉彎（手機：左下的方向鍵，往上推前進、左右推轉彎）
-## 美術還沒有 3D 模型：牆是程式產生的布紋，角色用原本的 2D 行走圖（永遠面向鏡頭）。
-## 被抓到 → 從頭再跑一次（被抓兩次以上，鎮長會變慢一點）。
+## 畫面是一個「框」：街道在框裡，比小布更靠近鏡頭的東西（飛過來的縫衣針、擦身而過的路燈、
+## 撲上來的鎮長）會衝出框外——跟街上的裸眼 3D 看板一樣。
+## 背景是一張手繪圖＋深度圖（art/chase2d/bg_z.png，tools/prep_chase2d.py 產生）：
+## 鏡頭跟著小布左右換道、上下晃動（手機也會跟著傾斜），近的東西動得多、遠的動得少。
+##
+## 玩法：小布朝鏡頭跑，鎮長從後面的學校追出來。
+##   ← → 換道（三條）：躲開鎮長丟過來的縫衣針、躲開他撲過來的方向
+##   按住 ↑ 衝刺：拉開距離
+##   被針打中會踉蹌、鎮長會追近；被撲中 → 被抓住，從頭再跑（被抓越多次越簡單）
+##   跑完 DIST 公尺 → 修理室的門（在鏡頭這一邊）
 
 signal finished
 
-const MAZE := [
-	"###############",
-	"#S....#.......#",
-	"####.##.#####.#",
-	"#....#..#...#.#",
-	"#.####.##.#.#.#",
-	"#.#....#..#...#",
-	"#.#.####.######",
-	"#...#....#....#",
-	"###.#.####.##.#",
-	"#...#....#..#.#",
-	"#.######.##.#.#",
-	"#......#....#.#",
-	"######.######.#",
-	"#E.....#......#",
-	"###############",
-]
-const CELL := 3.0
-const WALL_H := 3.6
-const BU_SPEED := 4.6
-const TURN_SPEED := 2.8
-const RADIUS := 0.42
-const CATCH_DIST := 1.0
-const START_DELAY := 2.6
-const RULES := ["每天都要笑嘻嘻", "不要問以前的事", "壞掉的東西　交給老師修理", "老師會保護你們",
-	"好孩子不可以哭", "不要想起來", "名牌要一直戴好", "放學鐘響了　要乖乖回家"]
+const DIR := "res://art/chase2d/"
+const W := 1280.0
+const H := 720.0
+## 框（街道畫在框裡面）
+const FRAME := Rect2(40, 74, 1200, 584)
+## 背景的一點透視（跟 tools/prep_chase2d.py 一致）
+const VP := Vector2(877, 466)
+const F := 425.0
+const CAM_H := 1.3
+const CAM_X := 1.41
+const BU_Z := 2.5          # 小布離鏡頭多遠（公尺）
+const BU_H := 1.15         # 小布多高
+const MAYOR_H := 2.5
+const LANE_W := 1.1
+const DIST := 110.0        # 要跑多遠
+const SPEED := 5.0
+const SPRINT := 1.3        # 衝刺多快多少
+const DEPTH_SHADER := """
+shader_type canvas_item;
+uniform sampler2D bg : filter_linear, repeat_disable;
+uniform sampler2D depth : filter_linear, repeat_disable;
+uniform vec2 vp;
+uniform float focal;
+uniform vec3 cam; // x：左右移、y：上下、z：往前
+uniform float danger;
+void fragment() {
+	vec2 size = vec2(1280.0, 720.0);
+	vec2 q = UV * size;
+	vec2 p = q;
+	for (int i = 0; i < 4; i++) {
+		float inv = texture(depth, clamp(p / size, 0.0, 1.0)).r * 0.6;
+		float scale = 1.0 / max(1.0 - cam.z * inv, 0.2);
+		vec2 shift = vec2(-focal * cam.x * inv, focal * cam.y * inv);
+		p = vp + (q - vp - shift) / scale;
+	}
+	vec3 c = texture(bg, clamp(p / size, 0.001, 0.999)).rgb;
+	// 越危險越紅、越暗
+	float g = dot(c, vec3(0.3, 0.59, 0.11));
+	c = mix(c, vec3(g * 1.25, g * 0.55, g * 0.6), danger * 0.45);
+	c *= 1.0 - danger * 0.25;
+	COLOR = vec4(c, 1.0);
+}
+"""
 const MAYOR_LINES := ["老師會保護你們……", "壞掉的東西……要修理……", "不要跑……老師不會生氣的……",
 	"想起來的事情，才會痛喔……", "{name}……過來……", "好孩子……好孩子……好孩子……"]
 
-var _vp: SubViewport
-var _world: Node3D
-var _cam: Camera3D
-var _bu: Sprite3D
-var _mayor: Sprite3D
-var _route: Array = []        # 起點 → 修理室的格子
-var _start := Vector2i.ZERO
-var _exit := Vector2i.ZERO
-var _heading := 0.0
-var _start_heading := 0.0
-var _mayor_on := false
-var _rise := 0.0
-var _t := 0.0
-var _mayor_path: Array = []
-var _repath_t := 0.0
-var _step_t := 0.0
-var _step := 0
-var _beat_t := 0.0
-var _line_t := 5.0
-var _attempts := 0
-var _done := false
-var _frozen := false
-var _hud: Label
+var tex := {}
+var _bg_mat: ShaderMaterial
+var _bg_tex: Texture2D
+var _world: Node2D      # 框裡面（會被框切掉）
+var _frame: Node2D      # 框
+var _pop: Node2D        # 框外面（衝出畫面的東西）
+var _hud: Node2D
 var _sub: Label
 var _sub_a := 0.0
-var _hud_a := 1.0
+
+# 狀態
+var _lane := 0                 # -1 / 0 / 1
+var _bu_x := 0.0
+var _cam := Vector3.ZERO
+var _tilt := Vector2.ZERO
+var _t := 0.0
+var _run := 0.0                # 跑了幾公尺
+var _gap := 12.0               # 鎮長在小布後面幾公尺
+var _mayor_x := 0.0
+var _mayor_pose := "rise"
+var _stumble := 0.0
+var _props: Array = []
+var _needles: Array = []
+var _puffs: Array = []
+var _next_prop := 0.0
+var _next_tags := 6.0
+var _next_throw := 3.0
+var _tele := {}                # 預告：{"kind": "needle"/"lunge", "lane": int, "t": float}
+var _lunge := {}               # 撲過來
+var _beat_t := 0.0
+var _line_t := 4.0
+var _attempts := 0
+var _hits := 0
+var _state := "start"          # start / run / caught / door
+var _state_t := 0.0
+var _done := false
+var _flash := 0.0
+var _door_a := 0.0
+var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
 	layer = 2
 	add_to_group("touch_joystick")
-	_find_cells()
+	_rng.seed = 47
+	for n in ["bu_run_00", "bu_run_01", "bu_run_02", "bu_run_03", "mayor_run_00", "mayor_run_01", "mayor_run_02", "mayor_run_03",
+			"bu_caught", "bu_idle", "bu_open_door", "mayor_grab", "mayor_twitch", "mayor_rise", "needle", "lamp", "cotton",
+			"nametags", "bench", "noticeboard", "door"]:
+		tex[n] = load(DIR + n + ".png")
 	_build()
 	_reset_run()
+	_start_tilt()
 	if GameState.fast:
 		_finish.call_deferred()
 
 
-func _find_cells() -> void:
-	for y in MAZE.size():
-		for x in MAZE[y].length():
-			if MAZE[y][x] == "S":
-				_start = Vector2i(x, y)
-			elif MAZE[y][x] == "E":
-				_exit = Vector2i(x, y)
-	_route = _bfs(_start, _exit)
-
-
-func _open(c: Vector2i) -> bool:
-	return c.y >= 0 and c.y < MAZE.size() and c.x >= 0 and c.x < MAZE[c.y].length() and MAZE[c.y][c.x] != "#"
-
-
-func _bfs(a: Vector2i, b: Vector2i) -> Array:
-	var prev := {a: a}
-	var q: Array = [a]
-	while not q.is_empty():
-		var c: Vector2i = q.pop_front()
-		if c == b:
-			break
-		for d in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
-			var n: Vector2i = c + d
-			if _open(n) and not prev.has(n):
-				prev[n] = c
-				q.append(n)
-	if not prev.has(b):
-		return []
-	var path: Array = [b]
-	while path[0] != a:
-		path.push_front(prev[path[0]])
-	return path
-
-
-static func cell_center(c: Vector2i) -> Vector3:
-	return Vector3(c.x * CELL, 0, c.y * CELL)
-
-
-func _cell_of(p: Vector3) -> Vector2i:
-	return Vector2i(roundi(p.x / CELL), roundi(p.z / CELL))
-
-
-func _blocked(p: Vector3) -> bool:
-	for o in [Vector3(RADIUS, 0, 0), Vector3(-RADIUS, 0, 0), Vector3(0, 0, RADIUS), Vector3(0, 0, -RADIUS)]:
-		if not _open(_cell_of(p + o)):
-			return true
-	return false
-
-
-# ───────── 建場景 ─────────
+# ───────── 建畫面 ─────────
 
 func _build() -> void:
-	var box := SubViewportContainer.new()
-	box.stretch = true
-	box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(box)
-	_vp = SubViewport.new()
-	_vp.own_world_3d = true
-	_vp.size = Vector2i(1280, 720)
-	box.add_child(_vp)
-	_world = Node3D.new()
-	_vp.add_child(_world)
-
-	var env := Environment.new()
-	# 天空：紫紅色的霧、遠方的城堡（art/chase_sky.png）
-	var sky_mat := PanoramaSkyMaterial.new()
-	sky_mat.panorama = load("res://art/chase_sky.png")
-	var sky := Sky.new()
-	sky.sky_material = sky_mat
-	env.background_mode = Environment.BG_SKY
-	env.sky = sky
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.62, 0.42, 0.55)
-	env.ambient_light_energy = 0.42
-	env.fog_enabled = true
-	env.fog_light_color = Color(0.32, 0.14, 0.2)
-	env.fog_density = 0.042
-	env.fog_sky_affect = 0.25
-	var we := WorldEnvironment.new()
-	we.environment = env
-	_world.add_child(we)
-	# 月光（很淡的冷色，讓牆的邊緣看得出來）
-	var moon := DirectionalLight3D.new()
-	moon.light_color = Color(0.6, 0.55, 0.85)
-	moon.light_energy = 0.35
-	moon.rotation_degrees = Vector3(-50, 30, 0)
-	_world.add_child(moon)
-
-	var w := MAZE[0].length()
-	var h := MAZE.size()
-	# 地板：石板路（貼圖 3 公尺一張，照世界座標鋪）
-	var floor_mesh := PlaneMesh.new()
-	floor_mesh.size = Vector2(w * CELL, h * CELL)
-	var fm := StandardMaterial3D.new()
-	fm.albedo_texture = load("res://art/chase_floor.png")
-	fm.uv1_triplanar = true
-	fm.uv1_world_triplanar = true
-	fm.uv1_scale = Vector3.ONE / CELL
-	fm.roughness = 0.85
-	floor_mesh.material = fm
-	var floor := MeshInstance3D.new()
-	floor.mesh = floor_mesh
-	floor.position = Vector3((w - 1) * CELL / 2, 0, (h - 1) * CELL / 2)
-	_world.add_child(floor)
-
-	# 牆：拼布＋黃銅色的縫線，高高低低（像被縫起來的房子）
-	var wm := StandardMaterial3D.new()
-	wm.albedo_texture = load("res://art/chase_wall.png")
-	wm.uv1_triplanar = true
-	wm.uv1_world_triplanar = true
-	wm.uv1_scale = Vector3.ONE / CELL
-	wm.roughness = 0.95
-	wm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 47
-	for y in h:
-		for x in w:
-			var c := Vector2i(x, y)
-			if _open(c):
-				continue
-			var near := false
-			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)]:
-				if _open(c + d):
-					near = true
-			if not near:
-				continue
-			var hh := WALL_H + (rng.randf() * 2.6 if rng.randf() < 0.45 else 0.0)
-			var bm := BoxMesh.new()
-			bm.size = Vector3(CELL, hh, CELL)
-			bm.material = wm
-			var mi := MeshInstance3D.new()
-			mi.mesh = bm
-			mi.position = cell_center(c) + Vector3(0, hh / 2, 0)
-			_world.add_child(mi)
-			# 有些牆上有發光的窗戶
-			if rng.randf() < 0.22:
-				for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-					if _open(c + d):
-						var win := Sprite3D.new()
-						win.texture = load("res://art/chase_window.png")
-						win.pixel_size = 0.0068
-						var dv := Vector3(d.x, 0, d.y)
-						win.position = cell_center(c) + dv * (CELL / 2 + 0.02) + Vector3(rng.randf_range(-0.7, 0.7), rng.randf_range(2.2, hh - 0.7), 0).rotated(Vector3.UP, 0)
-						win.basis = Basis.looking_at(-dv, Vector3.UP)
-						_world.add_child(win)
-						break
-	_dress(rng)
-
-	# 沿著正確的路，牆上貼著發光的守則（也是路標）
-	for i in range(2, _route.size() - 1, 3):
-		var c: Vector2i = _route[i]
-		var along: Vector2i = _route[i + 1] - c
-		for side in [Vector2i(along.y, -along.x), Vector2i(-along.y, along.x)]:
-			if not _open(c + side):
-				var d := Vector3(side.x, 0, side.y)
-				var lab := Label3D.new()
-				lab.text = RULES[(i / 3) % RULES.size()]
-				lab.font = GameState.font
-				lab.font_size = 72
-				lab.pixel_size = 0.0055
-				lab.outline_size = 10
-				lab.modulate = Color(1, 0.86, 0.92)
-				lab.outline_modulate = Color(0.35, 0.08, 0.2)
-				lab.position = cell_center(c) + d * (CELL / 2 - 0.04) + Vector3(0, 2.0, 0)
-				lab.basis = Basis.looking_at(d, Vector3.UP)
-				_world.add_child(lab)
-				break
-
-	# 修理室的門
-	var door_dir := Vector3.ZERO
-	for d in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
-		if not _open(_exit + d):
-			door_dir = Vector3(d.x, 0, d.y)
-			break
-	var door := MeshInstance3D.new()
-	var dm := BoxMesh.new()
-	dm.size = Vector3(1.6, 2.6, 0.2)
-	var dmat := StandardMaterial3D.new()
-	dmat.albedo_color = Color(0.55, 0.32, 0.22)
-	dmat.emission_enabled = true
-	dmat.emission = Color(0.35, 0.2, 0.1)
-	dm.material = dmat
-	door.mesh = dm
-	door.position = cell_center(_exit) + door_dir * (CELL / 2 - 0.12) + Vector3(0, 1.3, 0)
-	door.basis = Basis.looking_at(door_dir, Vector3.UP)
-	_world.add_child(door)
-	var sign := Label3D.new()
-	sign.text = "修理室"
-	sign.font = GameState.font
-	sign.font_size = 96
-	sign.pixel_size = 0.006
-	sign.outline_size = 12
-	sign.modulate = Color(1, 0.95, 0.8)
-	sign.position = door.position + Vector3(0, 1.75, 0) - door_dir * 0.2
-	sign.basis = door.basis
-	_world.add_child(sign)
-	var dl := OmniLight3D.new()
-	dl.light_color = Color(1, 0.8, 0.55)
-	dl.omni_range = 7.0
-	dl.light_energy = 1.4
-	dl.position = cell_center(_exit) + Vector3(0, 2.4, 0)
-	_world.add_child(dl)
-
-	# 小布（背影）＋提燈
-	_bu = _sprite("res://art/walk_bu.png", 1.35)
-	_world.add_child(_bu)
-	var lamp := OmniLight3D.new()
-	lamp.light_color = Color(1, 0.86, 0.7)
-	lamp.omni_range = 9.0
-	lamp.light_energy = 1.5
-	lamp.position = Vector3(0, 1.6, 0)
-	_bu.add_child(lamp)
-	# 鎮長＋眼睛的紅光
-	# 鎮長：崩潰版的立繪（縫線繃開、棉花跑出來），永遠正面朝著鏡頭
-	_mayor = Sprite3D.new()
-	_mayor.texture = load("res://art/item_stand_mayor_broken.png")
-	_mayor.pixel_size = 3.0 / 560.0
-	_mayor.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	_mayor.offset = Vector2(0, 268)
-	_mayor.modulate = Color(1, 0.88, 0.88)
-	_world.add_child(_mayor)
-	_mayor.add_child(_blob(1.7))
-	_bu.add_child(_blob(0.9))
-	var glow := OmniLight3D.new()
-	glow.light_color = Color(1, 0.25, 0.3)
-	glow.omni_range = 5.5
-	glow.light_energy = 1.8
-	glow.position = Vector3(0, 2.4, 0)
-	_mayor.add_child(glow)
-
-	_cam = Camera3D.new()
-	_cam.fov = 72
-	_cam.current = true
-	_world.add_child(_cam)
-
-	# 字幕與提示
-	_hud = _label(30, Vector2(0, 30))
-	_hud.text = "逃到修理室！\n" + ("左下的方向鍵：往上推前進，左右推轉彎" if DisplayServer.is_touchscreen_available() else "↑ 前進　↓ 後退　← → 轉彎　·　跟著牆上發光的字走")
-	_sub = _label(28, Vector2(0, 600))
+	var back := ColorRect.new()
+	back.color = Color(0.05, 0.025, 0.05)
+	back.size = Vector2(W, H)
+	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(back)
+	var clip := Control.new()
+	clip.position = FRAME.position
+	clip.size = FRAME.size
+	clip.clip_contents = true
+	clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(clip)
+	var bg := ColorRect.new()
+	bg.position = -FRAME.position
+	bg.size = Vector2(W, H)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bg_mat = ShaderMaterial.new()
+	_bg_mat.shader = Shader.new()
+	_bg_mat.shader.code = DEPTH_SHADER
+	_bg_tex = load(DIR + "bg.jpg")
+	_bg_mat.set_shader_parameter("bg", _bg_tex)
+	_bg_mat.set_shader_parameter("depth", load(DIR + "bg_z.png"))
+	_bg_mat.set_shader_parameter("vp", VP)
+	_bg_mat.set_shader_parameter("focal", F)
+	bg.material = _bg_mat
+	clip.add_child(bg)
+	_world = Node2D.new()
+	_world.position = -FRAME.position
+	_world.draw.connect(func(): _draw_world(false, _world))
+	clip.add_child(_world)
+	_frame = Node2D.new()
+	_frame.draw.connect(_draw_frame)
+	add_child(_frame)
+	_pop = Node2D.new()
+	_pop.draw.connect(func(): _draw_world(true, _pop))
+	add_child(_pop)
+	_hud = Node2D.new()
+	_hud.draw.connect(_draw_hud)
+	add_child(_hud)
+	_sub = Label.new()
+	_sub.position = Vector2(0, 674)
+	_sub.size = Vector2(W, 40)
+	_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_sub.add_theme_font_size_override("font_size", 26)
+	_sub.add_theme_color_override("font_color", Color("#fff0f5"))
+	_sub.add_theme_color_override("font_outline_color", Color("#3a1426"))
+	_sub.add_theme_constant_override("outline_size", 10)
+	add_child(_sub)
 
 
-## 場景佈置：路燈（暖光）、橫跨走廊的名牌串、牆腳的棉花、插在地上的大縫衣針
-func _dress(rng: RandomNumberGenerator) -> void:
-	var iron := StandardMaterial3D.new()
-	iron.albedo_color = Color(0.16, 0.12, 0.14)
-	iron.metallic = 0.6
-	var glass := StandardMaterial3D.new()
-	glass.albedo_color = Color(1, 0.8, 0.5)
-	glass.emission_enabled = true
-	glass.emission = Color(1, 0.7, 0.4)
-	glass.emission_energy_multiplier = 2.0
-	var steel := StandardMaterial3D.new()
-	steel.albedo_color = Color(0.78, 0.8, 0.86)
-	steel.metallic = 0.9
-	steel.roughness = 0.25
-	for i in range(1, _route.size() - 1):
-		var c: Vector2i = _route[i]
-		var along: Vector2i = _route[i + 1] - c
-		var side := Vector2i(along.y, -along.x)
-		var sv := Vector3(side.x, 0, side.y)
-		# 路燈：每 6 格一盞，靠牆
-		if i % 6 == 4:
-			var pole := MeshInstance3D.new()
-			var cm := CylinderMesh.new()
-			cm.top_radius = 0.05
-			cm.bottom_radius = 0.08
-			cm.height = 3.0
-			cm.material = iron
-			pole.mesh = cm
-			pole.position = cell_center(c) + sv * 1.15 + Vector3(0, 1.5, 0)
-			_world.add_child(pole)
-			var lamp := MeshInstance3D.new()
-			var lm := BoxMesh.new()
-			lm.size = Vector3(0.3, 0.42, 0.3)
-			lm.material = glass
-			lamp.mesh = lm
-			lamp.position = pole.position + Vector3(0, 1.6, 0)
-			_world.add_child(lamp)
-			var l := OmniLight3D.new()
-			l.light_color = Color(1, 0.72, 0.45)
-			l.omni_range = 6.5
-			l.light_energy = 1.3
-			l.position = lamp.position
-			_world.add_child(l)
-		# 名牌串：橫跨走廊
-		if i % 5 == 2:
-			var t := Sprite3D.new()
-			t.texture = load("res://art/chase_tags.png")
-			t.pixel_size = CELL / 768.0
-			t.position = cell_center(c) + Vector3(0, 3.1, 0)
-			t.basis = Basis.looking_at(Vector3(along.x, 0, along.y), Vector3.UP)
-			t.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-			_world.add_child(t)
-	# 牆腳的棉花、插在地上的大縫衣針（隨機放在走廊邊）
-	var open_cells: Array = []
-	for y in MAZE.size():
-		for x in MAZE[y].length():
-			var c := Vector2i(x, y)
-			if _open(c) and c != _start and c != _exit:
-				open_cells.append(c)
-	for k in 16:
-		var c: Vector2i = open_cells[rng.randi() % open_cells.size()]
-		var cot := Sprite3D.new()
-		cot.texture = load("res://art/chase_cotton.png")
-		cot.pixel_size = rng.randf_range(0.0035, 0.006)
-		cot.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-		cot.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-		cot.offset = Vector2(0, 90)
-		cot.shaded = true
-		cot.position = cell_center(c) + Vector3(rng.randf_range(-1.1, 1.1), 0, rng.randf_range(-1.1, 1.1))
-		_world.add_child(cot)
-	for k in 4:
-		var c: Vector2i = open_cells[rng.randi() % open_cells.size()]
-		if c in _route:
-			continue
-		var needle := MeshInstance3D.new()
-		var nm := CylinderMesh.new()
-		nm.top_radius = 0.015
-		nm.bottom_radius = 0.06
-		nm.height = 3.4
-		nm.material = steel
-		needle.mesh = nm
-		needle.position = cell_center(c) + Vector3(rng.randf_range(-0.6, 0.6), 1.3, rng.randf_range(-0.6, 0.6))
-		needle.rotation = Vector3(rng.randf_range(-0.45, 0.45), rng.randf() * TAU, rng.randf_range(-0.45, 0.45))
-		_world.add_child(needle)
+## 手機：裝置傾斜也會帶動視差（iOS 要在使用者點一下之後才能要求權限）
+func _start_tilt() -> void:
+	if not OS.has_feature("web"):
+		return
+	JavaScriptBridge.eval("""
+	(function(){
+	  if (window.__rzTilt) return; window.__rzTilt = {x:0, y:0, on:false};
+	  function listen(){ window.addEventListener('deviceorientation', function(e){
+	    if (e.gamma == null) return; window.__rzTilt.on = true;
+	    window.__rzTilt.x = Math.max(-1, Math.min(1, e.gamma / 25));
+	    window.__rzTilt.y = Math.max(-1, Math.min(1, ((e.beta || 45) - 45) / 25)); }); }
+	  if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) {
+	    window.addEventListener('touchend', function once(){ window.removeEventListener('touchend', once);
+	      DeviceOrientationEvent.requestPermission().then(function(r){ if (r === 'granted') listen(); }).catch(function(){}); });
+	  } else { listen(); }
+	})();
+	""", true)
 
 
-## 腳底下一塊淡淡的影子（角色才不會像飄在空中）
-func _blob(size: float) -> MeshInstance3D:
-	var m := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(size, size * 0.6)
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	var g := GradientTexture2D.new()
-	g.fill = GradientTexture2D.FILL_RADIAL
-	g.fill_from = Vector2(0.5, 0.5)
-	g.fill_to = Vector2(0.5, 0.0)
-	var gr := Gradient.new()
-	gr.set_color(0, Color(0, 0, 0, 0.55))
-	gr.set_color(1, Color(0, 0, 0, 0))
-	g.gradient = gr
-	mat.albedo_texture = g
-	pm.material = mat
-	m.mesh = pm
-	m.position = Vector3(0, 0.02, 0)
-	return m
-
-
-func _label(size: int, pos: Vector2) -> Label:
-	var l := Label.new()
-	l.position = pos
-	l.size = Vector2(1280, 100)
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.add_theme_font_size_override("font_size", size)
-	l.add_theme_color_override("font_color", Color("#fff0f5"))
-	l.add_theme_color_override("font_outline_color", Color("#3a1426"))
-	l.add_theme_constant_override("outline_size", 10)
-	add_child(l)
-	return l
-
-
-func _sprite(path: String, height: float) -> Sprite3D:
-	var s := Sprite3D.new()
-	s.texture = load(path)
-	s.region_enabled = true
-	s.region_rect = Rect2(192, 0, 192, 192)
-	s.pixel_size = height / 192.0
-	s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
-	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
-	s.offset = Vector2(0, 92)
-	return s
-
-
-func _checker() -> ImageTexture:
-	var img := Image.create(16, 16, false, Image.FORMAT_RGB8)
-	for y in 16:
-		for x in 16:
-			var a := (x / 8 + y / 8) % 2 == 0
-			img.set_pixel(x, y, Color(0.2, 0.14, 0.22) if a else Color(0.13, 0.09, 0.15))
-	return ImageTexture.create_from_image(img)
-
-
-func _fabric() -> ImageTexture:
-	var n := 128
-	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 6
-	for y in n:
-		for x in n:
-			var base := Color(0.58, 0.4, 0.52).darkened(rng.randf() * 0.08 + (0.12 if (x + y) % 6 < 2 else 0.0))
-			base = base.darkened(clampf((y - 90) / 60.0, 0, 0.35))
-			img.set_pixel(x, y, base)
-	# 縫線：直的一條、橫的一條（虛線）
-	for y in n:
-		if y % 10 < 6:
-			for k in 2:
-				img.set_pixel(63 + k, y, Color(0.95, 0.88, 0.9))
-	for x in n:
-		if x % 10 < 6:
-			for k in 2:
-				img.set_pixel(x, 30 + k, Color(0.95, 0.88, 0.9))
-	img.generate_mipmaps()
-	return ImageTexture.create_from_image(img)
+func _read_tilt() -> Vector2:
+	if OS.has_feature("web") and DisplayServer.is_touchscreen_available():
+		var s = JavaScriptBridge.eval("window.__rzTilt && window.__rzTilt.on ? (window.__rzTilt.x + ',' + window.__rzTilt.y) : ''", true)
+		var parts := str(s).split(",")
+		if parts.size() == 2:
+			return Vector2(float(parts[0]), float(parts[1]))
+		return Vector2.ZERO
+	if DisplayServer.is_touchscreen_available() or GameState.fast:
+		return Vector2.ZERO
+	var m := get_viewport().get_mouse_position()
+	return Vector2(clampf((m.x - W / 2) / (W / 2), -1, 1), clampf((m.y - H / 2) / (H / 2), -1, 1)) * 0.6
 
 
 # ───────── 遊戲 ─────────
 
 func _reset_run() -> void:
-	_bu.position = cell_center(_start)
-	var first: Vector2i = _route[1] - _route[0]
-	_heading = atan2(-first.x, -first.y)
-	_mayor.position = cell_center(_start) - _fwd() * 0.1
-	_mayor.visible = false
-	_mayor_on = false
-	_rise = 0.0
-	_t = 0.0
-	_frozen = false
-	_cam.position = _bu.position - _fwd() * 3.2 + Vector3(0, 1.9, 0)
-	_cam_update(1.0)
+	_lane = 0
+	_bu_x = 0.0
+	_run = 0.0
+	_gap = 12.0
+	_mayor_x = 0.0
+	_mayor_pose = "rise"
+	_stumble = 0.0
+	_needles.clear()
+	_tele = {}
+	_lunge = {}
+	_state = "start"
+	_state_t = 0.0
+	_next_throw = 3.2
+	_props.clear()
+	_next_prop = 0.0
+	_next_tags = 5.0
+	# 一開始街上就有東西
+	var z := 3.0
+	while z < 40.0:
+		_spawn_prop(z)
+		z += _rng.randf_range(2.6, 4.0)
+	_say("熊熊鎮長：……老師來了喔。")
 
 
-func _fwd() -> Vector3:
-	return Vector3(-sin(_heading), 0, -cos(_heading))
+## 難度：被抓越多次越簡單（0～1）
+func _ease() -> float:
+	return clampf(_attempts * 0.35, 0.0, 1.0)
+
+
+func _spawn_prop(z: float) -> void:
+	var left := _rng.randf() < 0.5
+	var kinds := ["lamp", "lamp", "bench", "cotton", "cotton", "needle", "noticeboard"]
+	var k: String = kinds[_rng.randi() % kinds.size()]
+	var x := _rng.randf_range(-3.6, -2.4) if left else _rng.randf_range(1.8, 2.8)
+	var size: float = {"lamp": 3.4, "bench": 1.9, "cotton": 1.5, "needle": 2.6, "noticeboard": 2.3}[k]
+	_props.append({"k": k, "x": x, "z": z, "s": size, "flip": not left, "rot": _rng.randf_range(-0.35, 0.35)})
 
 
 func _process(delta: float) -> void:
 	if _done:
 		return
-	_hud_a = maxf(_hud_a - delta * 0.12, 0.0)
-	_hud.modulate.a = clampf(_hud_a * 1.6, 0.0, 1.0)
-	_sub_a = maxf(_sub_a - delta * 0.4, 0.0)
-	_sub.modulate.a = clampf(_sub_a, 0.0, 1.0)
-	if _frozen:
-		return
 	_t += delta
-	# 小布
-	var turn := Input.get_axis("move_right", "move_left")
-	var go := Input.get_axis("move_down", "move_up")
-	_heading += turn * TURN_SPEED * delta
-	# 跑步時，方向自動對齊走廊（快要正對的時候吸過去），不用很準也能直直地跑
-	if go > 0.1 and absf(turn) < 0.1:
-		var snap := roundf(_heading / (PI / 2)) * (PI / 2)
-		if absf(snap - _heading) < 0.35:
-			_heading = lerpf(_heading, snap, clampf(delta * 6.0, 0.0, 1.0))
-	var move := _fwd() * go * (BU_SPEED if go > 0 else BU_SPEED * 0.5) * delta
-	for axis in [Vector3(move.x, 0, 0), Vector3(0, 0, move.z)]:
-		if not _blocked(_bu.position + axis):
-			_bu.position += axis
-	var moving := absf(go) > 0.1
-	if moving:
-		_step_t += delta
-		if _step_t > 0.12:
-			_step_t = 0.0
-			_step = (_step + 1) % 4
-			if _step % 2 == 0:
-				Sound.sfx("step")
-	else:
-		_step = 1
-	var col: int = [1, 0, 1, 2][_step] if moving else 1
-	_bu.region_rect = Rect2(col * 192, (3 if go >= 0 else 0) * 192, 192, 192)
-	_cam_update(delta)
-	# 到了修理室
-	if _bu.position.distance_to(cell_center(_exit)) < 1.3:
-		_finish()
-		return
-	# 鎮長
-	if not _mayor_on:
-		# 小布跑離起點幾步之後（或一直不動超過 8 秒），鎮長才從起點爬起來
-		var away := _bu.position.distance_to(cell_center(_start)) > 4.5
-		if (_t > START_DELAY and away) or _t > 8.0:
-			_mayor_on = true
-			_rise = 2.2
-			_mayor.position = cell_center(_start)
-			_mayor.visible = true
-			Sound.sfx("creepy")
-			_say("熊熊鎮長：……老師來了喔。")
-		return
-	if _rise > 0.0:
-		# 慢慢站起來（這段時間不會動、不會抓人）
-		_rise -= delta
-		_mayor.scale = Vector3.ONE * lerpf(1.0, 0.55, clampf(_rise / 2.2, 0.0, 1.0))
-		return
-	_mayor.scale = Vector3.ONE
-	_move_mayor(delta)
-	var dist := _mayor.position.distance_to(_bu.position)
-	var near := clampf(1.0 - dist / 14.0, 0.0, 1.0)
-	# 鎮長從鏡頭後面追上來時，不要整張臉糊在鏡頭上
-	var to_cam := _mayor.position.distance_to(Vector3(_cam.position.x, 0, _cam.position.z))
-	_mayor.modulate.a = clampf((to_cam - 0.9) / 1.4, 0.0, 1.0)
-	Dialogue.fx.vignette = 0.2 + 0.75 * near
+	_state_t += delta
+	_sub_a = maxf(_sub_a - delta * 0.45, 0.0)
+	_sub.modulate.a = clampf(_sub_a, 0.0, 1.0)
+	_flash = maxf(_flash - delta * 2.0, 0.0)
+	_tilt = _tilt.lerp(_read_tilt(), clampf(delta * 4.0, 0, 1))
+	match _state:
+		"start":
+			_bu_x = lerpf(_bu_x, 0.0, clampf(delta * 5, 0, 1))
+			if _state_t > 1.6:
+				_state = "run"
+				_mayor_pose = "run"
+		"run":
+			_update_run(delta)
+		"caught":
+			if _state_t > 1.9:
+				_attempts += 1
+				_reset_run()
+		"door":
+			_door_a = minf(_door_a + delta * 0.9, 1.0)
+			if _state_t > 3.4:
+				_finish()
+	# 鏡頭：跟著小布換道、跑步時上下晃、手機傾斜／滑鼠
+	var bob := sin(_t * 11.0) * 0.035 if _state == "run" else 0.0
+	var want := Vector3(_bu_x * 0.42 + _tilt.x * 0.35, bob - _tilt.y * 0.15, 0.0)
+	_cam = _cam.lerp(want, clampf(delta * 6.0, 0, 1))
+	_bg_mat.set_shader_parameter("cam", _cam)
+	_bg_mat.set_shader_parameter("danger", danger())
+	Dialogue.fx.vignette = 0.15 + 0.6 * danger()
+	_world.queue_redraw()
+	_pop.queue_redraw()
+	_hud.queue_redraw()
+
+
+func danger() -> float:
+	if _state == "caught":
+		return 1.0
+	if _state != "run":
+		return 0.0
+	return clampf(1.0 - (_gap - 1.0) / 8.0, 0.0, 1.0)
+
+
+func _speed() -> float:
+	var sprint := Input.is_action_pressed("move_up")
+	return SPEED * (SPRINT if sprint else 1.0) * (0.45 if _stumble > 0.0 else 1.0)
+
+
+func _update_run(delta: float) -> void:
+	# 換道
+	if Input.is_action_just_pressed("move_left") and _lane > -1:
+		_lane -= 1
+	if Input.is_action_just_pressed("move_right") and _lane < 1:
+		_lane += 1
+	_bu_x = move_toward(_bu_x, _lane * LANE_W, delta * 7.5)
+	var v := _speed()
+	_stumble = maxf(_stumble - delta, 0.0)
+	_run += v * delta
+	# 世界往後退（小布朝鏡頭跑，鏡頭也一起往後）
+	for p in _props:
+		p.z += v * delta
+	_props = _props.filter(func(p): return p.z < 45.0)
+	_next_prop -= v * delta
+	if _next_prop <= 0.0:
+		_next_prop = _rng.randf_range(2.6, 4.0)
+		_spawn_prop(0.55)
+	_next_tags -= v * delta
+	if _next_tags <= 0.0:
+		_next_tags = _rng.randf_range(18.0, 26.0)
+		_props.append({"k": "nametags", "x": -0.3, "z": 0.55, "s": 7.5, "flip": false, "rot": 0.0})
+	# 棉絮
+	if _rng.randf() < delta * 6.0:
+		_puffs.append({"x": _rng.randf_range(-3, 3), "y": _rng.randf_range(0.2, 3.2), "z": _rng.randf_range(1.0, 12.0), "life": 1.0})
+	for p in _puffs:
+		p.z += v * delta * 0.6
+		p.y -= delta * 0.15
+		p.life -= delta * 0.35
+	_puffs = _puffs.filter(func(p): return p.life > 0.0)
+	# 鎮長：慢慢追近；衝刺可以拉開
+	var close := 0.55 - 0.3 * _ease()
+	_gap += (v - SPEED - close) * delta
+	_gap = clampf(_gap, 0.0, 11.0)
+	if _lunge.is_empty():
+		_mayor_x = lerpf(_mayor_x, _bu_x, clampf(delta * 1.6, 0, 1))
+		_mayor_pose = "run"
+	# 預告 → 丟針／撲過來
+	if not _tele.is_empty():
+		_tele.t -= delta
+		_mayor_pose = "twitch"
+		if _tele.t <= 0.0:
+			if _tele.kind == "needle":
+				_needles.append({"x": _mayor_x, "tx": float(_tele.lane) * LANE_W, "z": BU_Z + _gap, "z0": BU_Z + _gap, "y": 1.6, "hit": false})
+				Sound.sfx("interact")
+			else:
+				_lunge = {"lane": _tele.lane, "t": 0.0, "x0": _mayor_x, "gap0": _gap}
+				_mayor_pose = "grab"
+				Sound.sfx("creepy")
+			_tele = {}
+	elif _lunge.is_empty():
+		_next_throw -= delta
+		if _gap < 2.4:
+			_tele = {"kind": "lunge", "lane": _lane, "t": 0.75 + 0.3 * _ease()}
+			_say(GameState.fill("熊熊鎮長：{name}……"))
+		elif _next_throw <= 0.0:
+			_next_throw = _rng.randf_range(2.4, 3.4) + 1.2 * _ease()
+			var lane := _lane if _rng.randf() < 0.7 else clampi(_lane + (1 if _rng.randf() < 0.5 else -1), -1, 1)
+			_tele = {"kind": "needle", "lane": lane, "t": 0.6 + 0.25 * _ease()}
+	# 撲過來
+	if not _lunge.is_empty():
+		_lunge.t += delta
+		var k: float = clampf(_lunge.t / 0.4, 0.0, 1.0)
+		_gap = lerpf(_lunge.gap0, 0.5, k)
+		_mayor_x = lerpf(_lunge.x0, float(_lunge.lane) * LANE_W, k)
+		if k >= 1.0:
+			if absf(_bu_x - float(_lunge.lane) * LANE_W) < LANE_W * 0.55:
+				_caught()
+				return
+			# 撲空：跌倒，拉開距離
+			_say("熊熊鎮長：……")
+			_lunge = {}
+			_gap = 6.5
+			_mayor_pose = "rise"
+	# 縫衣針：飛向小布那一道，飛過小布之後衝出畫面
+	for n in _needles:
+		n.z -= (15.0 + v) * delta
+		var span: float = maxf(n.z0 - BU_Z, 0.1)
+		var k2 := clampf(1.0 - (n.z - BU_Z) / span, 0.0, 1.0)
+		if k2 < 1.0:
+			n.x = lerpf(n.x, n.tx, clampf(delta * 8.0, 0, 1))
+		if not n.hit and n.z <= BU_Z + 0.15:
+			n.hit = true
+			if absf(n.x - _bu_x) < LANE_W * 0.55:
+				_hits += 1
+				_stumble = 0.8
+				_gap = maxf(_gap - (2.6 - 1.0 * _ease()), 0.6)
+				_flash = 0.7
+				Dialogue.fx.scare()
+				_say("……！")
+	_needles = _needles.filter(func(n): return n.z > 0.25)
+	# 心跳
 	_beat_t -= delta
 	if _beat_t <= 0.0:
-		_beat_t = lerpf(1.2, 0.36, near)
+		_beat_t = lerpf(1.1, 0.34, danger())
 		Sound.sfx("heartbeat")
+	if _gap <= 0.4 and _lunge.is_empty():
+		_caught()
+		return
 	_line_t -= delta
 	if _line_t <= 0.0:
-		_line_t = randf_range(5.0, 8.0)
-		_say("熊熊鎮長：" + GameState.fill(MAYOR_LINES[randi() % MAYOR_LINES.size()]))
-	if dist < CATCH_DIST:
-		_caught()
-
-
-func _cam_update(delta: float) -> void:
-	var back := -_fwd()
-	var dist := 3.0
-	var k := 0.6
-	while k <= 3.0:
-		if not _open(_cell_of(_bu.position + back * k)):
-			dist = maxf(k - 0.45, 0.5)
-			break
-		k += 0.2
-	# 後面是牆、鏡頭只能靠近時：鏡頭往上抬，從上往下看（小布不會塞滿畫面）
-	var height := 2.0 + (3.0 - dist) * 0.9
-	var want := _bu.position + back * dist + Vector3(0, height, 0)
-	_cam.position = _cam.position.lerp(want, clampf(delta * 9.0, 0.0, 1.0))
-	_cam.look_at(_bu.position + _fwd() * 2.8 + Vector3(0, 0.7, 0), Vector3.UP)
-
-
-func _move_mayor(delta: float) -> void:
-	_repath_t -= delta
-	if _repath_t <= 0.0:
-		_repath_t = 0.25
-		_mayor_path = _bfs(_cell_of(_mayor.position), _cell_of(_bu.position))
-	var target := _bu.position
-	if _mayor_path.size() > 1:
-		target = cell_center(_mayor_path[1])
-	var speed := minf(2.9 + _t * 0.03, 3.6) - (0.6 if _attempts >= 2 else 0.0)
-	if _mayor_path.size() > 8:
-		speed = 4.4  # 離得太遠：追上來
-	var to := target - _mayor.position
-	to.y = 0
-	if to.length() > 0.05:
-		var stepv := to.normalized() * minf(speed * delta, to.length())
-		_mayor.position += stepv
-		# 一拐一拐地撲過來（上下晃）
-		_mayor.offset.y = 268 + absf(sin(_t * 6.5)) * 12.0
-
-
-func _say(text: String) -> void:
-	_sub.text = text
-	_sub_a = 2.5
+		_line_t = _rng.randf_range(4.5, 7.0)
+		_say("熊熊鎮長：" + GameState.fill(MAYOR_LINES[_rng.randi() % MAYOR_LINES.size()]))
+	if _run >= DIST:
+		_reach_door()
 
 
 func _caught() -> void:
-	_frozen = true
-	_attempts += 1
+	_state = "caught"
+	_state_t = 0.0
+	_lunge = {}
+	_tele = {}
+	_mayor_pose = "grab"
+	_gap = 0.0
+	_flash = 1.0
 	Dialogue.fx.scare()
-	_say("……被抓住了。")
-	_hud.text = "再跑一次！"
-	_hud_a = 1.0
-	await get_tree().create_timer(1.6).timeout
-	if not is_inside_tree():
-		return
-	_reset_run()
+	Sound.sfx("glitch")
+	_say("……被抓住了。再跑一次！")
+
+
+func _reach_door() -> void:
+	_state = "door"
+	_state_t = 0.0
+	_tele = {}
+	_lunge = {}
+	_needles.clear()
+	Sound.sfx("door")
+	_say("修理室的門——！")
 
 
 func _finish() -> void:
@@ -642,3 +428,232 @@ func _finish() -> void:
 	_done = true
 	Dialogue.fx.vignette = 0.0
 	finished.emit()
+
+
+func _say(text: String) -> void:
+	_sub.text = text
+	_sub_a = 2.6
+
+
+# ───────── 投影與繪圖 ─────────
+
+func _proj(x: float, y: float, z: float) -> Vector2:
+	var cx := CAM_X + _cam.x
+	var ch := CAM_H + _cam.y
+	return Vector2(VP.x + F * (x - cx) / z, VP.y + F * (ch - y) / z)
+
+
+## 畫一張站在地上的圖：腳底中心在 (x, y, z)；h＝高（by_width 時＝寬），單位公尺
+func _sprite(c: CanvasItem, t: Texture2D, x: float, z: float, h: float, anchor := 0.9375, flip := false,
+		by_width := false, y := 0.0, rot := 0.0, mod := Color.WHITE) -> void:
+	var foot := _proj(x, y, z)
+	var px := F * h / z
+	var size: Vector2
+	if by_width:
+		size = Vector2(px, px * t.get_height() / t.get_width())
+	else:
+		size = Vector2(px * t.get_width() / t.get_height() / anchor, px / anchor)
+	c.draw_set_transform(foot, rot, Vector2(-1 if flip else 1, 1))
+	c.draw_texture_rect(t, Rect2(Vector2(-size.x / 2, -size.y * anchor), size), false, mod)
+	c.draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
+func _shadow(c: CanvasItem, x: float, z: float, w: float) -> void:
+	var p := _proj(x, 0, z)
+	var r := F * w / z
+	c.draw_set_transform(p, 0, Vector2(1, 0.28))
+	for i in 4:
+		c.draw_circle(Vector2.ZERO, r * (1.0 - i * 0.18), Color(0, 0, 0, 0.12))
+	c.draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
+func _draw_world(pop: bool, c: CanvasItem) -> void:
+	if _state == "door" and _door_a >= 1.0:
+		return
+	var items: Array = []
+	for p in _props:
+		items.append({"z": p.z, "d": "prop", "o": p})
+	for n in _needles:
+		items.append({"z": n.z, "d": "needle", "o": n})
+	for p in _puffs:
+		items.append({"z": p.z, "d": "puff", "o": p})
+	items.append({"z": BU_Z, "d": "bu"})
+	var mz := BU_Z + maxf(_gap, 0.35)
+	if _state == "caught":
+		mz = BU_Z - 0.9
+	items.append({"z": mz, "d": "mayor"})
+	items.sort_custom(func(a, b): return a.z > b.z)
+	# 預告：地上一條閃爍的紅色虛線，從鎮長指向小布那一道
+	if not pop and not _tele.is_empty():
+		var a := 0.45 + 0.4 * sin(_t * 22.0)
+		var lx: float = float(_tele.lane) * LANE_W
+		var zz := BU_Z + _gap
+		var prev := _proj(_mayor_x, 0.02, zz)
+		for i in range(1, 11):
+			var k := float(i) / 10.0
+			var q := _proj(lerpf(_mayor_x, lx, k), 0.02, lerpf(zz, BU_Z - 0.3, k))
+			if i % 2 == 1:
+				c.draw_line(prev, q, Color(1, 0.15, 0.25, a), 6.0)
+			prev = q
+	for it in items:
+		var is_pop: bool = it.z < BU_Z - 0.01 or it.d == "bu" or (it.d == "mayor" and _state == "caught")
+		if is_pop != pop:
+			continue
+		match it.d:
+			"prop":
+				_draw_prop(c, it.o)
+			"puff":
+				var pf: Dictionary = it.o
+				c.draw_circle(_proj(pf.x, pf.y, pf.z), F * 0.05 / pf.z + 1.5, Color(1, 0.97, 0.94, pf.life * 0.8))
+			"needle":
+				_draw_needle(c, it.o)
+			"bu":
+				_draw_bu(c)
+			"mayor":
+				_draw_mayor(c, it.z)
+
+
+func _draw_prop(c: CanvasItem, p: Dictionary) -> void:
+	var t: Texture2D = tex[p.k]
+	var m := Color(1, 1, 1, clampf((44.0 - p.z) / 6.0, 0.0, 1.0))
+	match p.k:
+		"lamp":
+			_sprite(c, t, p.x, p.z, p.s, 0.99, p.flip, false, 0.0, 0.0, m)
+		"needle":
+			_sprite(c, t, p.x, p.z, p.s, 0.98, p.flip, false, -0.3, p.rot, m)
+		"nametags":
+			_sprite(c, t, p.x, p.z, p.s, 0.0, false, true, 4.6, 0.0, m)
+		_:
+			_shadow(c, p.x, p.z, p.s * 0.4)
+			_sprite(c, t, p.x, p.z, p.s, 0.97, p.flip, true, 0.0, 0.0, m)
+
+
+func _draw_needle(c: CanvasItem, n: Dictionary) -> void:
+	var q: Vector2 = _proj(n.x, n.y, n.z)
+	var tail: Vector2 = _proj(n.x, n.y, n.z + 2.2)
+	c.draw_line(tail, q, Color(1, 0.75, 0.85, 0.35), maxf(F * 0.05 / n.z, 2.0))
+	var ang := (q - VP).angle() - PI / 2
+	var len: float = F * 1.5 / float(n.z)
+	var t: Texture2D = tex.needle
+	var sz := Vector2(len * t.get_width() / t.get_height(), len)
+	c.draw_set_transform(q, ang, Vector2.ONE)
+	c.draw_texture_rect(t, Rect2(Vector2(-sz.x / 2, -sz.y * 0.85), sz), false)
+	c.draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+
+
+func _draw_bu(c: CanvasItem) -> void:
+	if _state == "door":
+		return
+	var t: Texture2D
+	var anchor := 0.9375
+	if _state == "caught" or _stumble > 0.4:
+		t = tex.bu_caught
+		anchor = 0.97
+	elif _state == "start":
+		t = tex.bu_idle
+		anchor = 0.97
+	else:
+		t = tex["bu_run_%02d" % (int(_t * 10.0) % 4)]
+	var hop := absf(sin(_t * 10.0 * PI / 2)) * 0.05 if _state == "run" else 0.0
+	_shadow(c, _bu_x, BU_Z, 0.42)
+	_sprite(c, t, _bu_x, BU_Z, BU_H, anchor, _bu_x < -0.3, false, hop)
+
+
+func _draw_mayor(c: CanvasItem, z: float) -> void:
+	if _state == "door":
+		return
+	var t: Texture2D
+	var anchor := 0.97
+	match _mayor_pose:
+		"rise":
+			t = tex.mayor_rise
+		"twitch":
+			t = tex.mayor_twitch
+		"grab":
+			t = tex.mayor_grab
+		_:
+			t = tex["mayor_run_%02d" % (int(_t * 8.0) % 4)]
+			anchor = 0.9375
+	var x := _mayor_x
+	var tw := float(_mayor_pose == "twitch")
+	if tw > 0.0:
+		x += sin(_t * 60.0) * 0.06
+	_shadow(c, x, z, 0.8)
+	_sprite(c, t, x, z, MAYOR_H, anchor, x < _bu_x - 0.2, false, 0.0, 0.0, Color(1, 0.86 - 0.2 * tw, 0.86 - 0.2 * tw))
+	# 眼睛的紅光
+	if _mayor_pose != "rise":
+		var e := _proj(x + 0.12, MAYOR_H * 0.74, z)
+		var r := F * 0.18 / z
+		for i in 3:
+			c.draw_circle(e, r * (1.0 - i * 0.3), Color(1, 0.15, 0.2, 0.18))
+
+
+func _draw_frame() -> void:
+	var c := _frame
+	var r := FRAME
+	# 框：深色布＋黃銅色的縫線
+	c.draw_rect(Rect2(r.position - Vector2(12, 12), r.size + Vector2(24, 24)), Color("#2a1220"), false, 24.0)
+	c.draw_rect(r.grow(1), Color("#120810"), false, 3.0)
+	var stitch := Color("#c9a46a")
+	var o := r.grow(10)
+	var x := o.position.x
+	while x < o.end.x:
+		c.draw_line(Vector2(x, o.position.y), Vector2(x + 9, o.position.y), stitch, 2.0)
+		c.draw_line(Vector2(x, o.end.y), Vector2(x + 9, o.end.y), stitch, 2.0)
+		x += 16
+	var y := o.position.y
+	while y < o.end.y:
+		c.draw_line(Vector2(o.position.x, y), Vector2(o.position.x, y + 9), stitch, 2.0)
+		c.draw_line(Vector2(o.end.x, y), Vector2(o.end.x, y + 9), stitch, 2.0)
+		y += 16
+	# 框的內陰影（畫面像是凹進去的）
+	for i in 8:
+		c.draw_rect(r.grow(-i * 3), Color(0, 0, 0, 0.09 - i * 0.01), false, 3.0)
+
+
+func _draw_hud() -> void:
+	var c := _hud
+	var f: Font = GameState.font
+	if _state == "door":
+		_draw_door(c)
+	var left := maxf(DIST - _run, 0.0)
+	var bar := Rect2(340, 32, 600, 12)
+	c.draw_rect(bar, Color(0.1, 0.04, 0.08, 0.85))
+	c.draw_rect(Rect2(bar.position, Vector2(bar.size.x * clampf(_run / DIST, 0, 1), bar.size.y)), Color("#e8a0bf"))
+	c.draw_rect(bar, Color("#c9a46a"), false, 2.0)
+	var label := "修理室　還有 %d 公尺" % int(ceil(left))
+	c.draw_string_outline(f, Vector2(0, 24), label, HORIZONTAL_ALIGNMENT_CENTER, W, 20, 7, Color("#3a1426"))
+	c.draw_string(f, Vector2(0, 24), label, HORIZONTAL_ALIGNMENT_CENTER, W, 20, Color("#fff0f5"))
+	if _run < 20.0 and _attempts < 2 and _state != "door":
+		var hint := "左右推：換道躲開　·　往上推：衝刺" if DisplayServer.is_touchscreen_available() else "← → 換道躲開　·　按住 ↑ 衝刺"
+		# 提示放在框的右下角外面（不擋畫面、不擋字幕）
+		c.draw_string_outline(f, Vector2(W - 560, 708), hint, HORIZONTAL_ALIGNMENT_RIGHT, 520, 16, 6, Color("#3a1426"))
+		c.draw_string(f, Vector2(W - 560, 708), hint, HORIZONTAL_ALIGNMENT_RIGHT, 520, 16, Color("#ffd9e6"))
+	if _flash > 0.0:
+		c.draw_rect(Rect2(0, 0, W, H), Color(0.7, 0.05, 0.15, _flash * 0.45))
+
+
+## 終點：鏡頭轉過來——修理室的門就在眼前；小布伸手開門（手伸出框外）
+func _draw_door(c: CanvasItem) -> void:
+	var a := _door_a
+	# 鏡頭轉過來：背後的街道變暗、糊掉，修理室的門在眼前
+	c.draw_rect(FRAME, Color(0.06, 0.03, 0.04, a))
+	c.draw_texture_rect_region(_bg_tex, FRAME, Rect2(FRAME.position * 1.5 + Vector2(160, 40), FRAME.size * 1.2), Color(0.42, 0.28, 0.3, a * 0.7))
+	var t: Texture2D = tex.door
+	var h := lerpf(420.0, 560.0, ease(a, 0.6))
+	var size := Vector2(h * t.get_width() / t.get_height(), h)
+	var pos := Vector2(W / 2 - size.x / 2, FRAME.end.y - size.y + 6)
+	c.draw_texture_rect(t, Rect2(pos, size), false, Color(1, 1, 1, a))
+	if a > 0.5:
+		var bt: Texture2D = tex.bu_open_door
+		var bh := 340.0
+		var bs := Vector2(bh * bt.get_width() / bt.get_height(), bh)
+		c.draw_set_transform(Vector2(W / 2 + 40, H + 30), 0, Vector2(-1, 1))
+		c.draw_texture_rect(bt, Rect2(Vector2(-bs.x / 2, -bs.y), bs), false, Color(1, 1, 1, clampf((a - 0.5) * 3, 0, 1)))
+		c.draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
+	var glow := clampf((_state_t - 1.8) / 1.4, 0.0, 1.0)
+	if glow > 0.0:
+		var ctr := Vector2(W / 2, FRAME.end.y - size.y * 0.35)
+		for i in 6:
+			c.draw_circle(ctr, 80.0 + i * 70.0 * glow, Color(1, 0.85, 0.55, 0.08 * glow))
+		c.draw_rect(Rect2(0, 0, W, H), Color(1, 0.92, 0.8, glow * glow * 0.9))

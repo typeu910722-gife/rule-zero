@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm8dyiurvshoe"
-path="res://.godot/imported/chase_window.png-0496a9de4d3fb49a50711b8e5f7d413a.ctex"
+uid="uid://co14b8dg0tp25"
+path="res://.godot/imported/mayor_run.png-15419ab19235d5b3b4773d8657d10e61.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/chase_window.png"
-dest_files=["res://.godot/imported/chase_window.png-0496a9de4d3fb49a50711b8e5f7d413a.ctex"]
+source_file="res://art/chase2d/mayor_run.png"
+dest_files=["res://.godot/imported/mayor_run.png-15419ab19235d5b3b4773d8657d10e61.ctex"]
 
 [params]
 
