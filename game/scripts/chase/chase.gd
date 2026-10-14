@@ -141,40 +141,57 @@ func _build() -> void:
 	_vp.add_child(_world)
 
 	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.07, 0.04, 0.09)
+	# 天空：紫紅色的霧、遠方的城堡（art/chase_sky.png）
+	var sky_mat := PanoramaSkyMaterial.new()
+	sky_mat.panorama = load("res://art/chase_sky.png")
+	var sky := Sky.new()
+	sky.sky_material = sky_mat
+	env.background_mode = Environment.BG_SKY
+	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.42, 0.3, 0.48)
-	env.ambient_light_energy = 0.55
+	env.ambient_light_color = Color(0.62, 0.42, 0.55)
+	env.ambient_light_energy = 0.42
 	env.fog_enabled = true
-	env.fog_light_color = Color(0.08, 0.05, 0.1)
-	env.fog_density = 0.045
+	env.fog_light_color = Color(0.32, 0.14, 0.2)
+	env.fog_density = 0.042
+	env.fog_sky_affect = 0.25
 	var we := WorldEnvironment.new()
 	we.environment = env
 	_world.add_child(we)
+	# 月光（很淡的冷色，讓牆的邊緣看得出來）
+	var moon := DirectionalLight3D.new()
+	moon.light_color = Color(0.6, 0.55, 0.85)
+	moon.light_energy = 0.35
+	moon.rotation_degrees = Vector3(-50, 30, 0)
+	_world.add_child(moon)
 
-	# 地板
-	var floor_mesh := PlaneMesh.new()
 	var w := MAZE[0].length()
 	var h := MAZE.size()
+	# 地板：石板路（貼圖 3 公尺一張，照世界座標鋪）
+	var floor_mesh := PlaneMesh.new()
 	floor_mesh.size = Vector2(w * CELL, h * CELL)
 	var fm := StandardMaterial3D.new()
-	fm.albedo_texture = _checker()
-	fm.uv1_scale = Vector3(w, h, 1)
-	fm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	fm.albedo_texture = load("res://art/chase_floor.png")
+	fm.uv1_triplanar = true
+	fm.uv1_world_triplanar = true
+	fm.uv1_scale = Vector3.ONE / CELL
+	fm.roughness = 0.85
 	floor_mesh.material = fm
 	var floor := MeshInstance3D.new()
 	floor.mesh = floor_mesh
 	floor.position = Vector3((w - 1) * CELL / 2, 0, (h - 1) * CELL / 2)
 	_world.add_child(floor)
 
-	# 牆：縫線布紋
+	# 牆：拼布＋黃銅色的縫線，高高低低（像被縫起來的房子）
 	var wm := StandardMaterial3D.new()
-	wm.albedo_texture = _fabric()
+	wm.albedo_texture = load("res://art/chase_wall.png")
+	wm.uv1_triplanar = true
+	wm.uv1_world_triplanar = true
+	wm.uv1_scale = Vector3.ONE / CELL
+	wm.roughness = 0.95
 	wm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	var wall_mesh := BoxMesh.new()
-	wall_mesh.size = Vector3(CELL, WALL_H, CELL)
-	wall_mesh.material = wm
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 47
 	for y in h:
 		for x in w:
 			var c := Vector2i(x, y)
@@ -186,10 +203,27 @@ func _build() -> void:
 					near = true
 			if not near:
 				continue
+			var hh := WALL_H + (rng.randf() * 2.6 if rng.randf() < 0.45 else 0.0)
+			var bm := BoxMesh.new()
+			bm.size = Vector3(CELL, hh, CELL)
+			bm.material = wm
 			var mi := MeshInstance3D.new()
-			mi.mesh = wall_mesh
-			mi.position = cell_center(c) + Vector3(0, WALL_H / 2, 0)
+			mi.mesh = bm
+			mi.position = cell_center(c) + Vector3(0, hh / 2, 0)
 			_world.add_child(mi)
+			# 有些牆上有發光的窗戶
+			if rng.randf() < 0.22:
+				for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					if _open(c + d):
+						var win := Sprite3D.new()
+						win.texture = load("res://art/chase_window.png")
+						win.pixel_size = 0.0068
+						var dv := Vector3(d.x, 0, d.y)
+						win.position = cell_center(c) + dv * (CELL / 2 + 0.02) + Vector3(rng.randf_range(-0.7, 0.7), rng.randf_range(2.2, hh - 0.7), 0).rotated(Vector3.UP, 0)
+						win.basis = Basis.looking_at(-dv, Vector3.UP)
+						_world.add_child(win)
+						break
+	_dress(rng)
 
 	# 沿著正確的路，牆上貼著發光的守則（也是路標）
 	for i in range(2, _route.size() - 1, 3):
@@ -256,9 +290,16 @@ func _build() -> void:
 	lamp.position = Vector3(0, 1.6, 0)
 	_bu.add_child(lamp)
 	# 鎮長＋眼睛的紅光
-	_mayor = _sprite("res://art/walk_mayor.png", 3.0)
-	_mayor.modulate = Color(1, 0.86, 0.86)
+	# 鎮長：崩潰版的立繪（縫線繃開、棉花跑出來），永遠正面朝著鏡頭
+	_mayor = Sprite3D.new()
+	_mayor.texture = load("res://art/item_stand_mayor_broken.png")
+	_mayor.pixel_size = 3.0 / 560.0
+	_mayor.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+	_mayor.offset = Vector2(0, 268)
+	_mayor.modulate = Color(1, 0.88, 0.88)
 	_world.add_child(_mayor)
+	_mayor.add_child(_blob(1.7))
+	_bu.add_child(_blob(0.9))
 	var glow := OmniLight3D.new()
 	glow.light_color = Color(1, 0.25, 0.3)
 	glow.omni_range = 5.5
@@ -275,6 +316,115 @@ func _build() -> void:
 	_hud = _label(30, Vector2(0, 30))
 	_hud.text = "逃到修理室！\n" + ("左下的方向鍵：往上推前進，左右推轉彎" if DisplayServer.is_touchscreen_available() else "↑ 前進　↓ 後退　← → 轉彎　·　跟著牆上發光的字走")
 	_sub = _label(28, Vector2(0, 600))
+
+
+## 場景佈置：路燈（暖光）、橫跨走廊的名牌串、牆腳的棉花、插在地上的大縫衣針
+func _dress(rng: RandomNumberGenerator) -> void:
+	var iron := StandardMaterial3D.new()
+	iron.albedo_color = Color(0.16, 0.12, 0.14)
+	iron.metallic = 0.6
+	var glass := StandardMaterial3D.new()
+	glass.albedo_color = Color(1, 0.8, 0.5)
+	glass.emission_enabled = true
+	glass.emission = Color(1, 0.7, 0.4)
+	glass.emission_energy_multiplier = 2.0
+	var steel := StandardMaterial3D.new()
+	steel.albedo_color = Color(0.78, 0.8, 0.86)
+	steel.metallic = 0.9
+	steel.roughness = 0.25
+	for i in range(1, _route.size() - 1):
+		var c: Vector2i = _route[i]
+		var along: Vector2i = _route[i + 1] - c
+		var side := Vector2i(along.y, -along.x)
+		var sv := Vector3(side.x, 0, side.y)
+		# 路燈：每 6 格一盞，靠牆
+		if i % 6 == 4:
+			var pole := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = 0.05
+			cm.bottom_radius = 0.08
+			cm.height = 3.0
+			cm.material = iron
+			pole.mesh = cm
+			pole.position = cell_center(c) + sv * 1.15 + Vector3(0, 1.5, 0)
+			_world.add_child(pole)
+			var lamp := MeshInstance3D.new()
+			var lm := BoxMesh.new()
+			lm.size = Vector3(0.3, 0.42, 0.3)
+			lm.material = glass
+			lamp.mesh = lm
+			lamp.position = pole.position + Vector3(0, 1.6, 0)
+			_world.add_child(lamp)
+			var l := OmniLight3D.new()
+			l.light_color = Color(1, 0.72, 0.45)
+			l.omni_range = 6.5
+			l.light_energy = 1.3
+			l.position = lamp.position
+			_world.add_child(l)
+		# 名牌串：橫跨走廊
+		if i % 5 == 2:
+			var t := Sprite3D.new()
+			t.texture = load("res://art/chase_tags.png")
+			t.pixel_size = CELL / 768.0
+			t.position = cell_center(c) + Vector3(0, 3.1, 0)
+			t.basis = Basis.looking_at(Vector3(along.x, 0, along.y), Vector3.UP)
+			t.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+			_world.add_child(t)
+	# 牆腳的棉花、插在地上的大縫衣針（隨機放在走廊邊）
+	var open_cells: Array = []
+	for y in MAZE.size():
+		for x in MAZE[y].length():
+			var c := Vector2i(x, y)
+			if _open(c) and c != _start and c != _exit:
+				open_cells.append(c)
+	for k in 16:
+		var c: Vector2i = open_cells[rng.randi() % open_cells.size()]
+		var cot := Sprite3D.new()
+		cot.texture = load("res://art/chase_cotton.png")
+		cot.pixel_size = rng.randf_range(0.0035, 0.006)
+		cot.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		cot.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		cot.offset = Vector2(0, 90)
+		cot.shaded = true
+		cot.position = cell_center(c) + Vector3(rng.randf_range(-1.1, 1.1), 0, rng.randf_range(-1.1, 1.1))
+		_world.add_child(cot)
+	for k in 4:
+		var c: Vector2i = open_cells[rng.randi() % open_cells.size()]
+		if c in _route:
+			continue
+		var needle := MeshInstance3D.new()
+		var nm := CylinderMesh.new()
+		nm.top_radius = 0.015
+		nm.bottom_radius = 0.06
+		nm.height = 3.4
+		nm.material = steel
+		needle.mesh = nm
+		needle.position = cell_center(c) + Vector3(rng.randf_range(-0.6, 0.6), 1.3, rng.randf_range(-0.6, 0.6))
+		needle.rotation = Vector3(rng.randf_range(-0.45, 0.45), rng.randf() * TAU, rng.randf_range(-0.45, 0.45))
+		_world.add_child(needle)
+
+
+## 腳底下一塊淡淡的影子（角色才不會像飄在空中）
+func _blob(size: float) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(size, size * 0.6)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var g := GradientTexture2D.new()
+	g.fill = GradientTexture2D.FILL_RADIAL
+	g.fill_from = Vector2(0.5, 0.5)
+	g.fill_to = Vector2(0.5, 0.0)
+	var gr := Gradient.new()
+	gr.set_color(0, Color(0, 0, 0, 0.55))
+	gr.set_color(1, Color(0, 0, 0, 0))
+	g.gradient = gr
+	mat.albedo_texture = g
+	pm.material = mat
+	m.mesh = pm
+	m.position = Vector3(0, 0.02, 0)
+	return m
 
 
 func _label(size: int, pos: Vector2) -> Label:
@@ -297,7 +447,7 @@ func _sprite(path: String, height: float) -> Sprite3D:
 	s.region_rect = Rect2(192, 0, 192, 192)
 	s.pixel_size = height / 192.0
 	s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
 	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	s.offset = Vector2(0, 92)
 	return s
@@ -416,6 +566,9 @@ func _process(delta: float) -> void:
 	_move_mayor(delta)
 	var dist := _mayor.position.distance_to(_bu.position)
 	var near := clampf(1.0 - dist / 14.0, 0.0, 1.0)
+	# 鎮長從鏡頭後面追上來時，不要整張臉糊在鏡頭上
+	var to_cam := _mayor.position.distance_to(Vector3(_cam.position.x, 0, _cam.position.z))
+	_mayor.modulate.a = clampf((to_cam - 0.9) / 1.4, 0.0, 1.0)
 	Dialogue.fx.vignette = 0.2 + 0.75 * near
 	_beat_t -= delta
 	if _beat_t <= 0.0:
@@ -461,17 +614,8 @@ func _move_mayor(delta: float) -> void:
 	if to.length() > 0.05:
 		var stepv := to.normalized() * minf(speed * delta, to.length())
 		_mayor.position += stepv
-		# 依移動方向和鏡頭，選行走圖的方向
-		var to_cam := (_cam.position - _mayor.position)
-		to_cam.y = 0
-		var a := stepv.normalized().signed_angle_to(to_cam.normalized(), Vector3.UP)
-		var row := 0
-		if absf(a) > PI * 0.75:
-			row = 3
-		elif absf(a) > PI * 0.25:
-			row = 1 if a > 0 else 2
-		var col: int = [1, 0, 1, 2][int(_t * 6.0) % 4]
-		_mayor.region_rect = Rect2(col * 192, row * 192, 192, 192)
+		# 一拐一拐地撲過來（上下晃）
+		_mayor.offset.y = 268 + absf(sin(_t * 6.5)) * 12.0
 
 
 func _say(text: String) -> void:

@@ -31,14 +31,16 @@ func _run() -> void:
 		await process_frame
 	Input.action_release("move_up")
 	await _shot("chase_2_run")
-	# 鎮長出現後，回頭看（轉 180 度）
-	c._t = 10.0
+	# 回頭看：鎮長在 5 公尺外追過來
 	c._mayor_on = true
+	c._rise = 0.0
+	c._attempts = 0
+	c._frozen = false
 	c._mayor.visible = true
-	c._mayor.position = c._bu.position - c._fwd() * 4.0
 	c._heading += PI
+	c._mayor.position = c._bu.position + c._fwd() * 5.0
 	c._cam_update(1.0)
-	for i in 10:
+	for i in 4:
 		await process_frame
 	await _shot("chase_3_mayor")
 	quit()

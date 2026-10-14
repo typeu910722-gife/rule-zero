@@ -24,7 +24,7 @@ var _tries := 0
 func _ready() -> void:
 	layer = 51
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_mayor = load("res://art/item_stand_mayor.png")
+	_mayor = load("res://art/item_stand_mayor_broken.png")
 	_scissors = load("res://art/item_scissors.png")
 	_area = Control.new()
 	_area.set_anchors_preset(Control.PRESET_FULL_RECT)

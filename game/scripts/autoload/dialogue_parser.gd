@@ -3,7 +3,7 @@ extends RefCounted
 ## 解析 res://dialogue/*.txt 的對話腳本。語法見 docs/dialogue-format.md。
 
 const KNOWN_OPS := ["set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event", "idle", "sfx", "show", "scare"]
-const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bakery", "repair", "clocktower", "room_night", "hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night"]
+const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bakery", "repair", "clocktower", "room_night", "hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2"]
 
 var cmds: Array = []
 var labels := {}

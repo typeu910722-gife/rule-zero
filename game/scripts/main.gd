@@ -49,7 +49,7 @@ const OBJECTS := {
 	# 每個人的小屋：進去以後用點擊調查（scripts/world/interiors.gd）
 	"lulu_house": {"name": "露露的家", "pos": Vector2(515, 505)},
 	"popo_house": {"name": "郵局", "pos": Vector2(1402, 925)},
-	"fen_tree": {"name": "Fen 的樹屋", "pos": Vector2(1850, 945)},
+	"fen_tree": {"name": "Fen 的樹屋", "pos": Vector2(1800, 965)},
 	"mochi_house": {"name": "麻糬的小屋", "pos": Vector2(183, 1232)},
 	"tama_house": {"name": "小玉的小屋", "pos": Vector2(618, 1272)},
 	"station_office": {"name": "站務室", "pos": Vector2(1240, 1572)},
