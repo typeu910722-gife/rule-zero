@@ -61,11 +61,12 @@ func _run() -> void:
 	await _do("note_1", [1])
 	await _do("note_2", [0])
 	await _do("note_3", [0])
-	_check(gs.has("read_note_2") and gs.has("read_notes") and not main.actors.note_2.visible, "偷看了第二張（鑰匙＝熊頭）")
+	_check(gs.has("read_note_2") and gs.has("read_notes") and not main.actors.note_2.visible, "偷看了第二張（鑰匙＝樹屋的地板）")
 	await _do("fen")
 	_check(gs.has("notes_returned") and not gs.has("fen_trust"), "偷看過 → Fen 不信任你")
+	_check(main.actors.tuft_0.visible and main.actors.tuft_2.visible and not main.actors.tuft_3.visible, "每一輪只散落三團棉花")
 	await _do("tuft_0")
-	await _do("tuft_5")
+	await _do("tuft_1")
 	_check(gs.tuft_count() == 2 and not main.actors.tuft_0.visible, "撿到兩團棉花")
 	_check(main.phase == "day1_explore", "只拜訪 1 處（Fen），還在第一天")
 	await _do("lulu")
@@ -96,8 +97,8 @@ func _run() -> void:
 	await _do("bed", [1])
 	await _wait_phase("day3_explore")
 	_check(gs.has("candy_button"), "第三天：糖果裡包著鈕扣（秘密）")
-	await _do("mayor_door")
-	_check(not gs.has("got_key"), "第一輪：沒聽過三點的鐘聲，熊頭裡拿不到鑰匙")
+	await _do("mayor_door", [1])
+	_check(not gs.has("got_key"), "鎮長公館的熊頭裡沒有鑰匙（鑰匙在 Fen 的樹屋）")
 	await _do("lulu", [0])
 	await _do("fen", [0])
 	await _wait_phase("forest")
@@ -108,8 +109,9 @@ func _run() -> void:
 
 	print("[下一輪：棉花保留、熊頭裡的鑰匙]")
 	await _new_loop(false)
-	_check(gs.tuft_count() == 2 and not main.actors.tuft_0.visible and main.actors.tuft_1.visible, "撿過的棉花不會再出現")
-	_check(gs.remembers("knows_key_spot") and gs.remembers("knows_bell"), "記得：鑰匙在熊頭、三點的鐘聲")
+	_check(gs.tuft_count() == 2 and not main.actors.tuft_0.visible and not main.actors.tuft_1.visible, "撿過的棉花不會再出現")
+	_check(main.actors.tuft_2.visible and main.actors.tuft_4.visible and not main.actors.tuft_5.visible, "下一輪：再散落三團新的")
+	_check(gs.remembers("knows_key_spot") and gs.remembers("knows_bell"), "記得：鑰匙在樹屋、三點的鐘聲")
 	for id in ["lulu", "popo", "mayor_door", "repair_room"]:
 		await _do(id)
 	await _wait_phase("day1_night")
@@ -128,10 +130,16 @@ func _run() -> void:
 	await _wait_phase("day2_evening")
 	await _do("bed", [1])
 	await _wait_phase("day3_explore")
-	await _do("mayor_door")
-	_check(gs.has("got_key"), "記得鑰匙在熊頭 → 第三天拿到鐘塔鑰匙（不靠 Fen）")
+	main.hold_interior = true
+	await _do("fen_tree")
+	if main.interior:
+		gs.auto_choices = [0]
+		await main.interior.inspect("int_fen_plank")
+		await main._exit_interior()
+	main.hold_interior = false
+	_check(gs.has("got_key"), "記得鑰匙在樹屋 → 自己去拿（不靠 Fen）")
 	await _do("clocktower")
-	_check(gs.meta.last_ending == "zero", "結局⑦第零條")
+	_check(main.phase == "day3_explore", "修理室的鑰匙打不開鐘塔（第零條留到最後）")
 
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures > 0 else 0)

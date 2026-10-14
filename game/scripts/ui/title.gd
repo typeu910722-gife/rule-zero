@@ -56,16 +56,14 @@ func _draw_area() -> void:
 	_area.draw_string(f, Vector2(116, 270), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576"))
 	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e"))
 
-	# 車票：每結束一輪，背面就多一個戳章
+	# 車票：結束過一輪以上，背面就蓋著戳章
 	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP, 0, 15)
 	var tk: Texture2D = TICKET_STAMPED if stamps > 0 else TICKET
 	var ticket := Rect2(560, 560, 240, 240.0 * tk.get_height() / tk.get_width())
 	_area.draw_set_transform(ticket.get_center(), -0.08, Vector2.ONE)
 	_area.draw_texture_rect(tk, Rect2(-ticket.size / 2, ticket.size), false)
 	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	if stamps > 1:
-		_area.draw_string_outline(f, ticket.position + Vector2(150, 0), "×%d" % stamps, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 6, Color(1, 1, 1, 0.9))
-		_area.draw_string(f, ticket.position + Vector2(150, 0), "×%d" % stamps, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("#a3343c"))
+	# 不寫次數：數不清，才有失憶感
 	var seen: Array = GameState.meta.get("endings", [])
 	if not seen.is_empty():
 		_area.draw_string(f, Vector2(116, 640), "看過的結局　%d / %d" % [seen.size(), GameState.ENDING_ORDER.size()],

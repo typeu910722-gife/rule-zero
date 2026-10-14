@@ -29,8 +29,8 @@ const CLUES := {
 	"tag_off": "名牌背面繡著一個被剪掉一半的字：「辶」。",
 	"blank_letter": "波波給了我一封沒有寫收件人的信。",
 	"found_lulu_bow": "森林裡有一隻垂耳，綁著黃色的蝴蝶結。露露現在的是綠色。",
-	"found_sheep": "森林裡，舊的小綿羊腳上掛著牌子：No.46。",
-	"heard_47": "Fen 說：我是第四十幾個小布。",
+	"found_sheep": "森林裡，舊的小綿羊腳上掛著牌子。號碼被剪掉了。",
+	"heard_47": "Fen 說：這已經不是第一次了。他也數不清了。",
 	"bell_heard": "第三天下午三點，鐘會響。鎮長會來。",
 	"mochi_remembers": "麻糬好像想起了自己名字的第一個音。",
 	"got_key": "我拿到了鐘塔的鑰匙。三點以前。",
@@ -63,8 +63,9 @@ const ENDINGS := {
 	"hesitate": {"title": "露露猶豫了", "desc": "露露沒有說出你在哪裡。被帶走的，是她。"},
 	"mochi": {"title": "麻糬的名字", "desc": "麻糬想起了自己的名字。修理室的門，為你們兩個打開了。"},
 	"zero": {"title": "第零條", "desc": "鐘塔的牆上，寫著第零條。你只看到了一半。"},
+	"truth": {"title": "老師", "desc": "你想起了一個人。鎮長也是。那天晚上，一班不在時刻表上的火車開走了。"},
 }
-const ENDING_ORDER := ["good_kid", "early", "brave", "betrayed", "hesitate", "mochi", "zero"]
+const ENDING_ORDER := ["good_kid", "early", "brave", "betrayed", "hesitate", "mochi", "truth"]
 ## 這一輪看到的事 → 下一輪「記得」的事（對話裡用 mem.xxx 判斷）
 const MEMORY_FROM_FLAGS := {
 	"heard_47": "knows_47",
@@ -80,6 +81,7 @@ const MEMORY_FROM_FLAGS := {
 	"mirror_letter": "knows_mirror_letter",
 	"read_note_2": "knows_key_spot",
 	"read_note_3": "knows_candy",
+	"found_class_rules": "knows_teacher",
 }
 ## 會被「修理」的結局：上一輪最後記下的事會被剪掉
 const REPAIR_ENDINGS := ["early", "brave", "betrayed", "mochi"]
@@ -189,17 +191,19 @@ func fill(text: String) -> String:
 
 ## 記憶碎片（棉花）的內容，日記裡可以重看
 const TUFT_TEXT := {
-	"tuft_0": "一隻手，握著另一隻更小的手。",
-	"tuft_1": "雨聲。窗戶上畫著一隻小綿羊。",
-	"tuft_2": "「這隻小綿羊叫什麼名字？」「……小布。」",
-	"tuft_3": "一首搖籃曲。唱到一半就停了。",
-	"tuft_4": "白色的走廊。走到盡頭，還是走廊。",
-	"tuft_5": "一張火車票。目的地是空白的。",
-	"tuft_6": "「遙，你要好好的喔。」",
-	"tuft_7": "有人在哭。腳動不了。",
-	"tuft_8": "一把剪刀。剪掉的是一個名字。",
+	"tuft_0": "新的制服。「轉學生？從哪裡來的啊？」",
+	"tuft_1": "撕成一條一條的課本。後面有人在笑。",
+	"tuft_2": "「外來的，不准坐那裡。」椅子被抽走了。",
+	"tuft_3": "廁所的門被卡住了。「快開門……」沒有人來。",
+	"tuft_4": "冷水。後腦勺被按住。笑聲好遠。",
+	"tuft_5": "有人在耳邊說：「別出聲。」",
+	"tuft_6": "走廊盡頭，一個高高的大人在發抖。",
+	"tuft_7": "被丟進垃圾桶的小綿羊玩偶。它叫「小布」。",
+	"tuft_8": "「慈愛……計劃……他會忘記的。」",
 	"tuft_9": "「如果可以忘記就好了。」",
 }
+## 每一輪只會出現幾團（撿過的不會再出現），照這個順序
+const TUFTS_PER_LOOP := 3
 
 ## 記憶碎片（棉花）：跨輪保留
 func has_tuft(id: String) -> bool:
@@ -213,6 +217,19 @@ func collect_tuft(id: String) -> void:
 	meta.tufts = t
 	save_meta()
 	changed.emit()
+
+
+## 這一輪會出現的棉花：還沒撿過的，照順序取前三團（一輪開始時決定，存在旗標裡）
+func loop_tufts() -> Array:
+	if flags.has("loop_tufts"):
+		return flags.loop_tufts
+	var left: Array = []
+	for i in TUFT_TEXT.size():
+		var id := "tuft_%d" % i
+		if not has_tuft(id):
+			left.append(id)
+	flags["loop_tufts"] = left.slice(0, TUFTS_PER_LOOP)
+	return flags.loop_tufts
 
 
 func tuft_count() -> int:
@@ -258,7 +275,7 @@ func finish_loop(ending: String) -> void:
 		var cut: Array = meta.get("cut_clues", [])
 		cut.append(new_clues[-1])
 		meta.cut_clues = cut
-	if ending == "zero":
+	if ending in ["zero", "truth"]:
 		meta.chapters_done = maxi(int(meta.get("chapters_done", 0)), 1)
 	save_meta()
 	delete_save()

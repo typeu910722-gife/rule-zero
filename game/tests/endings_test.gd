@@ -117,11 +117,13 @@ func _run() -> void:
 	await _do("lulu", [0])
 	_check(gs.has("lulu_doubt") and gs.suspicion > before, "〔記得〕黃色蝴蝶結 → 露露動搖、鎮長懷疑值上升")
 	await _do("fen", [0])
-	_check(gs.has("fen_trust") and gs.has("fen_knows_you"), "〔記得〕第幾個小布 → Fen 相信你")
+	_check(gs.has("fen_trust") and gs.has("fen_knows_you"), "〔記得〕這是第幾次了 → Fen 相信你")
 	await _do("mayor_door")
 	await _do("repair_room")
 
-	print("[結局⑦第零條：用上一輪的記憶結束本章]")
+	print("[結局⑦老師（真結局）：鑰匙＋六團棉花＋知道「老師」→ 鎮長崩潰 → 追逐戰 → 剪刀 → 第一章完]")
+	# 前幾輪撿到的棉花（每一輪三團）
+	gs.meta.tufts = ["tuft_0", "tuft_1", "tuft_2", "tuft_3", "tuft_4", "tuft_5"]
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
@@ -129,6 +131,14 @@ func _run() -> void:
 	await _do("popo")
 	await _do("lulu_mailbox")
 	await _do("mayor_door")
+	main.hold_interior = true
+	await _do("mayor_door", [0])
+	_check(main.interior != null and main.interior.room_id == "mayor", "第二天：鎮長不在家 → 偷偷進公館")
+	if main.interior:
+		await main.interior.inspect("int_mayor_rules")
+		await main._exit_interior()
+	main.hold_interior = false
+	_check(gs.has("found_class_rules"), "抽屜裡的班規 →「老師」")
 	await _do("mirror_house")
 	await _do("popo")
 	await _wait_phase("day2_evening")
@@ -136,9 +146,22 @@ func _run() -> void:
 	await _wait_phase("day3_explore")
 	await _do("lulu", [0])
 	await _do("fen", [2])
-	_check(gs.has("got_key"), "〔記得〕三點的鐘聲 → Fen 給鑰匙")
-	await _do("clocktower")
-	_check(gs.meta.last_ending == "zero" and gs.has("chapter_done"), "結局⑦第零條 → 第一章完")
+	_check(gs.has("fen_plan") and not gs.has("go_forest"), "〔記得〕三點的鐘聲 → Fen：鑰匙在樹屋，去拿")
+	main.hold_interior = true
+	await _do("fen_tree")
+	if main.interior:
+		gs.auto_choices = [0]
+		await main.interior.inspect("int_fen_plank")
+		await main._exit_interior()
+	main.hold_interior = false
+	_check(gs.has("got_key"), "樹屋的地板下 → 修理室的鑰匙")
+	await _do("fen")
+	await _wait_phase("forest")
+	await _do("forest_sheep")
+	await _do("forest_bow")
+	await _do("forest_tags")
+	_check(gs.has("breakdown"), "鐘聲：小布叫了「老師」→ 鎮長崩潰")
+	_check(gs.meta.last_ending == "truth" and gs.has("chapter_done"), "追逐戰 → 剪刀 → 車掌 → 第一章完")
 	_check(int(gs.meta.chapters_done) == 1, "章節完成記錄")
 
 	print("[結局⑥麻糬的名字]")

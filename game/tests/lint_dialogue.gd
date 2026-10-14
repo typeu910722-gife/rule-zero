@@ -2,7 +2,8 @@ extends SceneTree
 ## 對話腳本檢查：godot --headless -s tests/lint_dialogue.gd
 
 const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", "fen_taken",
-	"lulu_appears", "mayor_shadow", "sew", "bread", "good_kid_station"]
+	"lulu_appears", "mayor_shadow", "sew", "bread", "good_kid_station",
+	"jumpscare_fen", "jumpscare_mayor", "breakdown", "chase", "scissors", "mayor_falls", "conductor_enters", "night_train"]
 
 
 func _init() -> void:

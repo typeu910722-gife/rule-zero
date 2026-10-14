@@ -46,6 +46,13 @@ const OBJECTS := {
 	"forest": {"name": "森林小徑", "pos": Vector2(1470, 140)},
 	"station": {"name": "火車站", "pos": Vector2(1017, 1575)},
 	"home_door": {"name": "小布的家", "pos": Vector2(292, 850)},
+	# 每個人的小屋：進去以後用點擊調查（scripts/world/interiors.gd）
+	"lulu_house": {"name": "露露的家", "pos": Vector2(515, 505)},
+	"popo_house": {"name": "郵局", "pos": Vector2(1402, 925)},
+	"fen_tree": {"name": "Fen 的樹屋", "pos": Vector2(1850, 945)},
+	"mochi_house": {"name": "麻糬的小屋", "pos": Vector2(183, 1232)},
+	"tama_house": {"name": "小玉的小屋", "pos": Vector2(618, 1272)},
+	"station_office": {"name": "站務室", "pos": Vector2(1240, 1572)},
 	# ── 支線物件：只在條件成立、而且還沒撿走時出現（"when"＝旗標條件）
 	"lulu_mailbox": {"name": "露露家的信箱", "pos": Vector2(372, 606), "when": "q_letters"},
 	"candy_1": {"name": "糖果", "pos": Vector2(1150, 1600), "when": "q_tama"},
@@ -120,6 +127,9 @@ var fade: ColorRect
 var forest: Node2D
 var repair_scene: CanvasLayer
 var guide: GuideArrow
+var interior: InteriorScene
+## 自動測試用：進到小屋後先不要出來
+var hold_interior := false
 ## 森林和夜晚：每隔一陣子，遠處傳來鈴聲
 var _bell_t := 25.0
 
@@ -190,8 +200,46 @@ func _ready() -> void:
 		# 結局之後：直接搭上下一班火車
 		GameState.pending_loop_start = false
 		run_chapter.call_deferred()
+	elif _dev_preview() != "":
+		_run_dev_preview.call_deferred(_dev_preview())
 	else:
 		_show_title.call_deferred()
+
+
+## 網頁版預覽用：網址加上 ?dev=chase（追逐戰）、?dev=ending（修理室之後）、?dev=room_mayor（某間小屋）
+func _dev_preview() -> String:
+	if not OS.has_feature("web"):
+		return ""
+	var q: String = str(JavaScriptBridge.eval("location.search", true))
+	var i := q.find("dev=")
+	return q.substr(i + 4).split("&")[0] if i >= 0 else ""
+
+
+func _run_dev_preview(what: String) -> void:
+	GameState.reset()
+	_layout("day")
+	_set_tint("day")
+	player.bounds = WORLD_BOUNDS
+	player.position = Vector2(915, 1060)
+	hud.set_status_visible(true)
+	_set_phase("day2_explore")
+	GameState.day = 2
+	match what:
+		"chase":
+			GameState.set_flag("breakdown")
+			await _true_ending()
+		"ending":
+			GameState.set_flag("fen_trust")
+			busy = true
+			Sound.bgm("memory")
+			await Dialogue.run("showdown")
+			await _end_loop("truth")
+		_:
+			if what.begins_with("room_") and Interiors.ROOMS.has(what.substr(5)):
+				busy = true
+				await _enter_interior(what.substr(5))
+			busy = false
+			player.can_move = true
 
 
 func _show_title() -> void:
@@ -399,7 +447,7 @@ func _forest() -> void:
 	await Dialogue.run("forest_enter")
 
 
-## 本章高潮：47、下午三點的鐘聲、Fen 被帶走、修理
+## 本章高潮：「第幾次了」、下午三點的鐘聲、Fen 被帶走（條件成立 → 鎮長崩潰）
 func _forest_climax() -> void:
 	var fen: Interactable = actors.fen
 	fen.position = player.position + Vector2(50, 10)
@@ -408,6 +456,9 @@ func _forest_climax() -> void:
 	await Dialogue.run("forest_truth")
 	GameState.set_flag("bell_heard")
 	await Dialogue.run("bell_three")
+	if GameState.has("breakdown"):
+		await _true_ending()
+		return
 	if GameState.has("lulu_hesitated"):
 		# 露露沒有說出你在哪裡：被帶走的是她
 		await _fade_to(1.0)
@@ -427,6 +478,36 @@ func _forest_climax() -> void:
 	await _fade_to(0.0)
 	await Dialogue.run("repair")
 	await _end_loop("brave" if GameState.has("brave_end") else "betrayed")
+
+
+## 真結局：鎮長崩潰 → 3D 追逐戰 → 修理室的剪刀 → 鎮長想起來 → 車掌 → 前往第二章
+func _true_ending() -> void:
+	busy = true
+	player.can_move = false
+	_set_phase("chase")
+	await _fade_to(1.0)
+	forest.visible = false
+	town.visible = false
+	player.in_forest = false
+	player.sway = 0.0
+	player.visible = false
+	for a in actors.values():
+		a.visible = false
+	hud.set_status_visible(false)
+	Sound.ambience("")
+	Sound.bgm("night")
+	var chase := ChaseScene.new()
+	add_child(chase)
+	await _fade_to(0.0)
+	await chase.finished
+	await _fade_to(1.0)
+	chase.queue_free()
+	Dialogue.fx.vignette = 0.0
+	tint.color = TINTS.day
+	Sound.bgm("memory")
+	await _fade_to(0.0)
+	await Dialogue.run("showdown")
+	await _end_loop("truth")
 
 
 ## 只放一段結局對話（沒有修理室畫面）的結局
@@ -449,7 +530,7 @@ func _end_loop(ending: String) -> void:
 	if repair_scene:
 		repair_scene.queue_free()
 		repair_scene = null
-	if ending == "zero":
+	if ending in ["zero", "truth"]:
 		Sound.bgm("memory")
 		var s := Summary.new()
 		add_child(s)
@@ -559,6 +640,11 @@ func interact(id: String) -> void:
 					_stale[label] = 2   # 接下來兩次先聊別的
 				else:
 					_stale.clear()      # 有事情改變了：大家的話也可能不一樣了
+	# 小屋：對話裡 @set want_enter_<房間> → 進去
+	for room in Interiors.ROOMS:
+		if GameState.has("want_enter_" + room):
+			GameState.set_flag("want_enter_" + room, false)
+			await _enter_interior(room)
 	await _after_interaction()
 	_refresh_objects()
 	if phase != "ended":
@@ -566,6 +652,36 @@ func interact(id: String) -> void:
 		player.can_move = true
 		_refresh_objective()
 	_talk_end_ms = Time.get_ticks_msec()
+
+
+## 進到小屋裡（點擊調查），按「離開」回到門口
+func _enter_interior(room: String) -> void:
+	Sound.sfx("door")
+	await _fade_to(1.0)
+	var scene := InteriorScene.new()
+	scene.room_id = room
+	add_child(scene)
+	interior = scene
+	hud.set_status_visible(false)
+	guide.point_to(null)
+	await _fade_to(0.0)
+	if GameState.fast:
+		# 自動測試：hold_interior 時由測試自己調查、離開（tests/interiors_test.gd），否則直接出來
+		if not hold_interior:
+			await _exit_interior()
+		return
+	await scene.closed
+	await _exit_interior()
+
+
+func _exit_interior() -> void:
+	await _fade_to(1.0)
+	if interior:
+		interior.queue_free()
+		interior = null
+	hud.set_status_visible(true)
+	_refresh_objective()
+	await _fade_to(0.0)
 
 
 func _state_snapshot() -> String:
@@ -720,6 +836,25 @@ func _on_event(event_name: String) -> void:
 			actors.mayor.position = player.position + Vector2(-20, 70)
 		"sew":
 			await repair_scene.sew()
+		"scissors":
+			var sc := ScissorsScene.new()
+			add_child(sc)
+			await sc.play()
+			sc.queue_free()
+		"mayor_falls":
+			Sound.sfx("strange")
+		"conductor_enters":
+			Sound.sfx("door")
+		"night_train":
+			Sound.bgm("night")
+		"jumpscare_fen", "jumpscare_mayor":
+			var j := JumpScare.new()
+			j.who = event_name.trim_prefix("jumpscare_")
+			add_child(j)
+			Sound.duck(true)
+			await j.play()
+			Sound.duck(false)
+			j.queue_free()
 		"good_kid_station":
 			# 第四天：你站在歡迎的人群裡，看著新的小布下車
 			_layout("arrival")
@@ -805,7 +940,8 @@ func _refresh_objects() -> void:
 	for id in OBJECTS:
 		var data: Dictionary = OBJECTS[id]
 		if id.begins_with("tuft_"):
-			actors[id].visible = not GameState.has_tuft(id)
+			# 每一輪只散落三團（撿過的不會再出現）
+			actors[id].visible = not GameState.has_tuft(id) and id in GameState.loop_tufts()
 		elif data.has("when"):
 			actors[id].visible = GameState.check(data.when) and not GameState.has(id + "_got")
 
@@ -857,9 +993,12 @@ func _refresh_objective() -> void:
 		"night_out":
 			GameState.set_objective("……廣場那邊，好像有人。")
 		"day3_explore":
-			if GameState.has("got_key"):
-				GameState.set_objective("下午三點以前，用鑰匙打開鐘塔。")
-				marks.append("clocktower")
+			if GameState.has("fen_plan") and not GameState.has("got_key"):
+				GameState.set_objective("去 Fen 的樹屋，拿地板下面的鑰匙。")
+				marks.append("fen_tree")
+			elif GameState.has("fen_plan"):
+				GameState.set_objective("回去找 Fen。")
+				marks.append("fen")
 			elif GameState.has("lulu_d3_done"):
 				GameState.set_objective("去樹屋找 Fen。")
 				marks.append("fen")

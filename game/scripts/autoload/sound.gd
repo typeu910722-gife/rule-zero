@@ -22,6 +22,7 @@ const SFX := {
 	"bell_far": "res://audio/sfx_bell_far.ogg",
 	"creepy": "res://audio/sfx_creepy.wav",
 	"glitch": "res://audio/sfx_glitch.wav",
+	"heartbeat": "res://audio/sfx_heartbeat.wav",
 }
 const AMB := {
 	"forest": "res://audio/amb_forest.ogg",
@@ -29,7 +30,7 @@ const AMB := {
 }
 const AMB_DB := -12.0
 ## 各音效的音量（沒列的用 -4）
-const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0}
+const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0, "heartbeat": -2.0}
 const BGM_DB := -8.0
 const DUCK_DB := -22.0
 const FADE := 1.0

@@ -3,6 +3,10 @@
 第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場。
 用來驗證：守則與膽量系統、對話節奏、「可愛 → 一點點怪」的氛圍。
 
+> 故事的真相與角色設定：[`docs/story.md`](../docs/story.md)（以這份為準）。
+> 真結局：修理室的鑰匙（Fen 的樹屋）＋六團記憶碎片（每輪三團）＋「老師」的線索（鎮長公館）→ 第三天的鐘聲 → 鎮長崩潰 → 3D 追逐戰（`scripts/chase/chase.gd`）→ 剪刀 → 車掌 → 前往第二章。
+> 小屋室內：`scripts/world/interiors.gd`（房間資料）＋ `scripts/ui/interior.gd`（點擊調查）。美術放 `art/int_<房間>.jpg` 就會取代程式畫的房間。
+
 ![廣場](../docs/images/proto_plaza.png)
 
 ## 執行
@@ -101,11 +105,16 @@ game/
     ├── quests_test.gd          # 支線委託
     ├── idle_test.gd            # 閒聊輪替（驚悚的那段只出現一次）
     ├── forest_test.gd          # 森林：每樣東西都走得到、按得到
+    ├── interiors_test.gd       # 小屋：從門口進去、每樣東西都點得到、離開
+    ├── chase_test.gd           # 追逐戰：照著路跑得到修理室、不動會被抓
     ├── walk_routes_test.gd     # 模擬玩家用方向鍵走遍小鎮／森林，找出會卡住的地方（路線：tools/make_routes.py → tests/data/）
     ├── screenshots_ui.gd       # 標題畫面截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     ├── screenshots_day3.gd     # 第三天畫面截圖
-    └── screenshots_fx.gd       # 演出截圖：方向箭頭、NPC 轉頭、第三天盯著看、森林暗角、驚悚閃爍
+    ├── screenshots_fx.gd       # 演出截圖：方向箭頭、NPC 轉頭、第三天盯著看、森林暗角、驚悚閃爍
+    ├── screenshots_interiors.gd # 小屋室內截圖
+    ├── screenshots_chase.gd    # 追逐戰截圖
+    └── screenshots_ending.gd   # 真結局（剪刀、回憶）截圖
 ```
 
 ## 測試
@@ -117,6 +126,8 @@ godot --headless --path . -s tests/endings_test.gd
 godot --headless --path . -s tests/quests_test.gd
 godot --headless --path . -s tests/idle_test.gd
 godot --headless --path . -s tests/forest_test.gd
+godot --headless --path . -s tests/interiors_test.gd
+godot --headless --path . -s tests/chase_test.gd
 ```
 
 ## 字型

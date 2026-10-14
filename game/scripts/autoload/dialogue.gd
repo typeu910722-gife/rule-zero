@@ -17,9 +17,9 @@ const BG_COLORS := {
 }
 ## 有美術的背景（game/art/bg_*.jpg）。@bg 名稱 → 全畫面背景圖
 const BG_IMAGES := ["train", "platform", "plaza", "bakery", "repair", "clocktower", "room_night",
-	"hospital_child", "hospital_empty", "hospital_haruka"]
+	"hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night"]
 ## 夢境（醫院）時換成「記憶揭露」的音樂
-const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka"]
+const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka", "classroom"]
 
 ## 說話者 → 表情圖（game/art/face_*.png，4 欄 × 2 列，每格 256px）
 const FACES := {

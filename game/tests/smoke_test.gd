@@ -98,9 +98,9 @@ func _run() -> void:
 	await _do("forest_bow")
 	_check(main.phase == "forest", "只調查 2 個還不會觸發鐘聲")
 	await _do("forest_tags", [0])
-	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：第四十七個小布 → 衝出去")
+	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：這是第幾次了 → 衝出去")
 	_check(main.phase == "ended" and gs.has("loop_done") and gs.meta.last_ending == "brave", "修理 → 結局③勇敢 → 這一輪結束")
-	_check(not gs.has_save() and int(gs.meta.loops_done) == 1 and gs.remembers("knows_47"), "輪迴：刪除當輪存檔、記得「第幾個小布」")
+	_check(not gs.has_save() and int(gs.meta.loops_done) == 1 and gs.remembers("knows_47"), "輪迴：刪除當輪存檔、記得「第幾次了」")
 	_check(gs.has("found_sheep") and gs.has("found_lulu_bow"), "線索記進日記")
 	print("  秘密：", gs.secrets_found(), "　懷疑值：", gs.suspicion)
 

@@ -7,6 +7,7 @@
   game/audio/sfx_bell_far.ogg 遠處的鈴聲
   game/audio/sfx_creepy.wav   驚悚台詞：低沉的一聲＋雜訊
   game/audio/sfx_glitch.wav   畫面閃爍時的短雜訊
+  game/audio/sfx_heartbeat.wav 心跳（追逐戰）
 
 用法：python3 tools/make_ambience.py
 """
@@ -160,6 +161,21 @@ def glitch(dur=0.35):
     return norm(out, 0.6)
 
 
+def heartbeat():
+    """心跳：咚—咚（兩下），約 0.6 秒。追逐戰時越近越快。"""
+    dur = 0.6
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    out = np.zeros(n)
+    for start, amp in [(0.0, 1.0), (0.17, 0.7)]:
+        tt = t - start
+        m = tt >= 0
+        env = np.where(m, np.exp(-np.maximum(tt, 0) / 0.06) * np.minimum(1, np.maximum(tt, 0) / 0.004), 0)
+        out += amp * env * np.sin(2 * np.pi * (48 + 30 * np.exp(-np.maximum(tt, 0) / 0.03)) * np.maximum(tt, 0))
+    b, a = signal.butter(2, 300, fs=SR)
+    return norm(signal.lfilter(b, a, out), 0.9)
+
+
 def main():
     sec = 24.0
     forest = wind(sec + 1.5) * 0.8 + rustle(sec + 1.5, 9) * 0.25
@@ -169,6 +185,7 @@ def main():
     save_ogg(OUT + "sfx_bell_far.ogg", bell(4.5))
     save_wav(OUT + "sfx_creepy.wav", creepy())
     save_wav(OUT + "sfx_glitch.wav", glitch())
+    save_wav(OUT + "sfx_heartbeat.wav", heartbeat())
     print("ok")
 
 

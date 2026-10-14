@@ -196,6 +196,17 @@ func _draw_object() -> void:
 			Critter.ellipse(self, Vector2(0, -2), Vector2(24, 6), Color(0, 0, 0, 0.15))
 			draw_texture_rect(SACK_TEX, Rect2(-28, -56, 56, 55), false)
 			_glint_ring(Vector2(0, -28))
+		"fen_tree":
+			# 大樹上垂下來的繩梯（地圖上還沒有樹屋的美術）
+			for side in [-12.0, 12.0]:
+				draw_line(Vector2(side, -150), Vector2(side * 0.8, -6), Color("#8d6e63"), 3)
+			for k in 6:
+				var y := -140.0 + k * 24.0
+				draw_line(Vector2(-12, y), Vector2(12, y), Color("#a1887f"), 4)
+			draw_rect(Rect2(-30, -186, 60, 30), Color("#e6c39e"))
+			draw_rect(Rect2(-30, -186, 60, 30), Color("#6d4c41"), false, 2)
+			draw_string(GameState.font, Vector2(-30, -164), "Fen", HORIZONTAL_ALIGNMENT_CENTER, 60, 16, Color("#6d4c41"))
+			_glint_ring(Vector2(0, -60))
 		"mayor_door":
 			# 門是地圖原圖上的；這裡只在門框外加一圈淡淡的光
 			_glint_ring(Vector2(0, -34))
