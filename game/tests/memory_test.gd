@@ -139,6 +139,34 @@ func _run() -> void:
 		_check(gs.has("blank_letter") and int(gs.flags.get("letters", 0)) == 3 and gs.has("mirror_letter") and gs.has("letter_done") and gs.has("fen_invited"),
 			"記憶深度 %d：拿信 → 送三封 → 回報 → Fen 的邀請" % k)
 
+	print("[露露的蝴蝶結：每一輪懷疑得更深]")
+	for k in [1, 2, 3, 4]:
+		await _loop(k)
+		gs.meta.memory["knows_bow"] = true
+		gs.set_flag("visited_lulu")
+		gs.auto_choices = [0]
+		await dlg.run("lulu_d1")
+		_check(gs.has("lulu_doubt"), "第 %d 層：第一天〔記得〕黃色蝴蝶結" % k)
+		gs.day = 3
+		gs.auto_choices = [1]
+		await dlg.run("lulu_d3")
+		_check(gs.has("lulu_d3_done") and gs.auto_choices.is_empty(), "第 %d 層：第三天的夢／拆開的蝴蝶結" % k)
+
+	print("[麻糬：被拒絕一次，就不會再問了]")
+	await _loop(1)
+	gs.day = 2
+	gs.auto_choices = [1]
+	await dlg.run("mochi_d2")
+	_check(gs.remembers("mochi_refused") and not gs.has("q_mochi"), "拒絕 → 記住了")
+	gs.auto_choices = [1]
+	await dlg.run("mochi_d2")
+	_check(not gs.has("q_mochi") and gs.auto_choices.is_empty(), "同一輪再找他：不會再開口問")
+	await _loop(2)
+	gs.day = 2
+	gs.auto_choices = [0]
+	await dlg.run("mochi_d2")
+	_check(gs.has("q_mochi"), "下一輪：要由你先開口（〔記得〕你上次想問我什麼？），委託才會開始")
+
 	print("[開頭的固定任務：每三輪換一版，越來越短]")
 	_check(gs.OPENINGS.size() == 10, "一共 10 版")
 	await _loop(3)
