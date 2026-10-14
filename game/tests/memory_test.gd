@@ -112,6 +112,20 @@ func _run() -> void:
 	_check("true_name" in gs.meta.collected and gs.remembers("knows_dog"), "蒐藏：「小布」的名牌；謎團：小狗居民在掃什麼")
 	_check(gs.heaviness() >= 2, "標題畫面變沉重（%d）" % gs.heaviness())
 
+	print("[車掌：懷疑 → 困惑 → 不敢置信 → 加油（一輪前進一段）]")
+	for k in [1, 2, 3, 4]:
+		await _loop(k + 1)
+		gs.day = 2
+		await dlg.run("conductor")
+		_check(gs.remembers("conductor_%d" % k) and not gs.remembers("conductor_%d" % (k + 1)), "第 %d 段" % k)
+		await dlg.run("conductor")
+		_check(not gs.remembers("conductor_%d" % (k + 1)), "同一輪再聊，不會跳下一段")
+	_check(gs.has("conductor_glove"), "收到車掌的白手套")
+	await _loop(6)
+	gs.day = 2
+	await dlg.run("conductor")
+	_check(gs.has("co_cheer"), "之後的輪：「……加油。」")
+
 	print("[開頭的固定任務：每三輪換一版，越來越短]")
 	_check(gs.OPENINGS.size() == 10, "一共 10 版")
 	await _loop(3)

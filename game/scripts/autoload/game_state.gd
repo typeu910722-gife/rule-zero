@@ -105,6 +105,7 @@ const MYSTERIES := [
 	{"q": "鏡之屋裡住著誰？", "a": "有人回信了：「謝謝。我一直在等。」", "key": "knows_mirror_letter"},
 	{"q": "守則是誰寫的？", "a": "三年二班的班規。鎮長以前，是老師。", "key": "knows_teacher"},
 	{"q": "小狗居民在掃什麼？", "a": "那天，他坐在窗邊，全部都看到了。他什麼都沒有說。", "key": "knows_dog"},
+	{"q": "車掌，站在哪一邊？", "a": "「你應該忘記的。……終於，發生了嗎。……加油。」", "key": "conductor_4"},
 	{"q": "第一個戳章，是誰蓋的？", "a": "慈愛組織。一隻戴著白手套的手。", "key": "story_4"},
 	{"q": "為什麼要一直重來？", "a": "慈愛計劃：讓受傷的孩子忘記。忘記了，就不會痛。", "key": "end_truth"},
 ]
@@ -134,6 +135,7 @@ const COLLECTIBLES := {
 	"candy_button": "糖果裡的鈕扣",
 	"got_key": "修理室的鑰匙",
 	"true_name": "「小布」的名牌",
+	"conductor_glove": "車掌的白手套",
 }
 ## 會被「修理」的結局：上一輪最後記下的事會被剪掉
 const REPAIR_ENDINGS := ["early", "brave", "betrayed", "mochi"]
