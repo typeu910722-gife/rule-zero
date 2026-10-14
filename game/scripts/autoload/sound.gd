@@ -47,13 +47,26 @@ var _streams := {}
 var _amb: Array[AudioStreamPlayer] = []
 var _amb_active := 0
 var _amb_current := ""
+## 記憶深度（0～5）：越深，音樂越慢、越走音、越悶（像被水泡過的錄音帶）
+var _wear := 0
+var _lowpass: AudioEffectLowPassFilter
+var _t := 0.0
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# 音樂專用的 bus：低通濾波（記憶越深越悶）
+	var bus := AudioServer.bus_count
+	AudioServer.add_bus(bus)
+	AudioServer.set_bus_name(bus, "Music")
+	AudioServer.set_bus_send(bus, "Master")
+	_lowpass = AudioEffectLowPassFilter.new()
+	_lowpass.cutoff_hz = 20000.0
+	AudioServer.add_bus_effect(bus, _lowpass)
 	for i in 2:
 		var p := AudioStreamPlayer.new()
 		p.volume_db = SILENT
+		p.bus = "Music"
 		add_child(p)
 		_players.append(p)
 	for i in 6:
@@ -65,6 +78,29 @@ func _ready() -> void:
 		p.volume_db = SILENT
 		add_child(p)
 		_amb.append(p)
+
+
+## 記憶深度改變音樂的「磨損」程度
+func set_wear(depth: int) -> void:
+	_wear = clampi(depth, 0, 5)
+	_lowpass.cutoff_hz = [20000.0, 9000.0, 5200.0, 3400.0, 2300.0, 1700.0][_wear]
+
+
+func wear() -> int:
+	return _wear
+
+
+func _process(delta: float) -> void:
+	_t += delta
+	if _wear == 0:
+		for p in _players:
+			p.pitch_scale = 1.0
+		return
+	# 越深越慢，再加上一點點慢慢飄的走音（錄音帶）
+	var base := 1.0 - 0.022 * _wear
+	var wob := sin(_t * 0.55) * 0.004 * _wear + sin(_t * 1.7) * 0.0015 * _wear
+	for p in _players:
+		p.pitch_scale = base + wob
 
 
 func ambience(name: String) -> void:
@@ -122,6 +158,9 @@ func sfx(name: String) -> void:
 			p.stream = _load(SFX[name])
 			p.volume_db = SFX_DB.get(name, -4.0)
 			p.pitch_scale = randf_range(0.92, 1.08) if name in ["step", "talk"] else 1.0
+			# 鐘聲：記憶越深越低沉
+			if name == "bell_far":
+				p.pitch_scale = 1.0 - 0.045 * _wear
 			p.play()
 			return
 

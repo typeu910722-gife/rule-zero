@@ -23,7 +23,7 @@ const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haru
 
 ## 說話者 → 表情圖（game/art/face_*.png，4 欄 × 2 列，每格 256px）
 const FACES := {
-	"小布": "bu", "熊熊鎮長": "mayor", "鎮長": "mayor", "露露": "lulu", "Fen": "fen",
+	"小布": "bu", "遙": "bu", "熊熊鎮長": "mayor", "鎮長": "mayor", "露露": "lulu", "Fen": "fen",
 	"波波": "popo", "麻糬": "mochi", "小玉": "tama",
 	"車掌": "conductor", "居民": "puppy", "小狗居民": "puppy", "貓居民": "cat",
 }

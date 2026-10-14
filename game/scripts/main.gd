@@ -267,6 +267,7 @@ func _show_title() -> void:
 
 ## 從存檔繼續：每個檢查點都是某一天的早上
 func _continue() -> void:
+	Sound.set_wear(GameState.memory_depth())
 	if not GameState.load_game():
 		GameState.reset()
 		run_chapter()
@@ -291,6 +292,7 @@ func _continue() -> void:
 # ───────────────────────── 章節流程 ─────────────────────────
 
 func run_chapter() -> void:
+	Sound.set_wear(GameState.memory_depth())
 	_set_phase("prologue")
 	hud.set_status_visible(false)
 	# 第一次搭上列車前的一瞬間：閃過一段影片。之後再也不會出現。

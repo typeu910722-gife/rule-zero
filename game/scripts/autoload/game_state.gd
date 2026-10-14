@@ -82,6 +82,58 @@ const MEMORY_FROM_FLAGS := {
 	"read_note_2": "knows_key_spot",
 	"read_note_3": "knows_candy",
 	"found_class_rules": "knows_teacher",
+	"dog_confessed": "knows_dog",
+	"lulu_mirror_seen": "saw_lulu_mirror",
+	"saw_pink": "saw_pink",
+	"saw_lulu_letter": "saw_lulu_letter",
+	"saw_tama_test": "saw_tama_test",
+	"tama_done": "helped_tama",
+}
+## 標題畫面「解開的謎團」：問題一直看得到（就是提示），解開以後才看得到答案（key＝跨輪記憶）
+const MYSTERIES := [
+	{"q": "「小布」是誰？", "a": "我叫遙。從有海的小鎮轉學過來。", "key": "story_1"},
+	{"q": "這是第幾次了？", "a": "數不清了。Fen 在樹上刻滿了線。", "key": "knows_47"},
+	{"q": "露露的蝴蝶結，為什麼換了顏色？", "a": "森林裡的垂耳綁著黃色的蝴蝶結。露露也被修理過。", "key": "knows_bow"},
+	{"q": "晚上八點以後，大家在做什麼？", "a": "大家站在廣場上，一動也不動，看著鐘塔。", "key": "knows_night"},
+	{"q": "鏡子裡的是誰？", "a": "一個人類小孩。他在敲鏡子。", "key": "knows_mirror"},
+	{"q": "名牌的背面寫著什麼？", "a": "一個被剪掉一半的字：「辶」。", "key": "knows_tag"},
+	{"q": "森林裡的小綿羊是誰？", "a": "以前的小布。腳上的號碼被剪掉了。", "key": "knows_sheep"},
+	{"q": "下午三點會發生什麼事？", "a": "鐘會響。鎮長會來森林。", "key": "knows_bell"},
+	{"q": "麻糬本來叫什麼？", "a": "一個好長好長的名字。要用兩隻手才寫得完。", "key": "knows_mochi"},
+	{"q": "修理室的鑰匙在哪裡？", "a": "Fen 的樹屋，從門口數過來第三塊木板底下。", "key": "knows_key"},
+	{"q": "糖果裡包著什麼？", "a": "吃了就會忘記。", "key": "knows_candy"},
+	{"q": "鏡之屋裡住著誰？", "a": "有人回信了：「謝謝。我一直在等。」", "key": "knows_mirror_letter"},
+	{"q": "守則是誰寫的？", "a": "三年二班的班規。鎮長以前，是老師。", "key": "knows_teacher"},
+	{"q": "小狗居民在掃什麼？", "a": "那天，他坐在窗邊，全部都看到了。他什麼都沒有說。", "key": "knows_dog"},
+	{"q": "第一個戳章，是誰蓋的？", "a": "慈愛組織。一隻戴著白手套的手。", "key": "story_4"},
+	{"q": "為什麼要一直重來？", "a": "慈愛計劃：讓受傷的孩子忘記。忘記了，就不會痛。", "key": "end_truth"},
+]
+## 標題畫面「結局」：沒看過的結局只給一句提示
+const ENDING_HINTS := {
+	"good_kid": "如果，你一直、一直當個好孩子……",
+	"early": "如果，你知道得太多、太快……",
+	"brave": "如果，鎮長來的時候，你衝了出去……",
+	"betrayed": "如果，你把躲的地方告訴了好朋友……",
+	"hesitate": "如果，好朋友開始懷疑了……",
+	"mochi": "如果，有人想起了自己的名字……",
+	"truth": "鑰匙、六團棉花，還有一個你該叫出口的稱呼。",
+}
+## 標題畫面「蒐藏過的東西」：口袋裡的東西＋找到的東西（跨輪記在 meta.collected）
+const COLLECTIBLES := {
+	"got_button": "灰色鈕扣",
+	"gift_bread": "棉花糖麵包",
+	"gift_stamp": "沒有面額的郵票",
+	"gift_candy": "門縫底下的糖果",
+	"gift_thread": "一截紅線",
+	"gift_glass": "照不出你的玻璃",
+	"gift_rust": "新鎖上的鐵鏽",
+	"gift_leaf": "刻著「笑」的葉子",
+	"found_lulu_bow": "黃色蝴蝶結",
+	"found_fox_tail": "狐狸尾巴",
+	"read_notes": "Fen 的筆記",
+	"candy_button": "糖果裡的鈕扣",
+	"got_key": "修理室的鑰匙",
+	"true_name": "「小布」的名牌",
 }
 ## 會被「修理」的結局：上一輪最後記下的事會被剪掉
 const REPAIR_ENDINGS := ["early", "brave", "betrayed", "mochi"]
@@ -301,6 +353,24 @@ func opening() -> Dictionary:
 	return OPENINGS[opening_index()]
 
 
+## 把這一輪拿到的東西記進「蒐藏」（跨輪）
+func record_collected() -> void:
+	var got: Array = meta.get("collected", [])
+	for k in COLLECTIBLES:
+		if has(k) and not k in got:
+			got.append(k)
+	meta.collected = got
+
+
+func has_collected(k: String) -> bool:
+	return k in meta.get("collected", []) or has(k)
+
+
+## 標題畫面的「沉重」程度：記憶越深、越接近真相越重（0～5）
+func heaviness() -> int:
+	return clampi(memory_depth() + int(meta.get("chapters_done", 0)), 0, 5)
+
+
 ## 上一輪「才剛」記住的事（記憶的 key、棉花 id）：火車上會先想起這些
 func is_fresh(key: String) -> bool:
 	if key == "any":
@@ -327,6 +397,7 @@ func finish_loop(ending: String) -> void:
 	meta.memory = memory
 	fresh.append_array(flags.get("got_tufts", []))
 	meta.fresh = fresh
+	record_collected()
 	var past: Array = meta.get("past_clues", [])
 	var new_clues: Array = []
 	for k in CLUES:
@@ -416,6 +487,8 @@ func _path(name: String) -> String:
 
 func save_game(cp: String) -> void:
 	checkpoint = cp
+	record_collected()
+	save_meta()
 	var data := {"version": 1, "checkpoint": cp, "day": day, "courage": courage,
 		"suspicion": suspicion, "flags": flags}
 	var f := FileAccess.open(_path(SAVE_PATH), FileAccess.WRITE)

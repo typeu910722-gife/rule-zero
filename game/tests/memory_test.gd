@@ -90,6 +90,28 @@ func _run() -> void:
 	await _loop(6, {"memory": {}})
 	_check(gs.remembers("story_1") and gs.remembers("story_4"), "四段都想起來了")
 
+	print("[小狗居民＝旁觀者]")
+	await _loop(1)
+	var dlg := root.get_node("Dialogue")
+	gs.day = 2
+	await dlg.run("extra1_d2")
+	_check(gs.has("dog_d2_done"), "第二天：走廊盡頭是廁所")
+	gs.day = 3
+	gs.auto_choices = [0]
+	await dlg.run("extra1_d3")
+	_check(gs.has("dog_confessed"), "第三天：「我那天坐在窗戶旁邊，都看到了」")
+
+	print("[夜車：每個人的小結局＋拿回名字]")
+	for f in ["lulu_mirror_seen", "saw_pink", "tama_done", "mochi_remembers"]:
+		gs.set_flag(f)
+	gs.auto_choices = [0, 0]
+	await dlg.run("nt_lulu")
+	_check(gs.auto_choices.is_empty(), "小狗居民的選項＋名字的選項都出現了")
+	_check(gs.has("true_name") and gs.remembers("true_name"), "拆下名牌：「我叫遙。」（跨輪記住）")
+	gs.finish_loop("truth")
+	_check("true_name" in gs.meta.collected and gs.remembers("knows_dog"), "蒐藏：「小布」的名牌；謎團：小狗居民在掃什麼")
+	_check(gs.heaviness() >= 2, "標題畫面變沉重（%d）" % gs.heaviness())
+
 	print("[開頭的固定任務：每三輪換一版，越來越短]")
 	_check(gs.OPENINGS.size() == 10, "一共 10 版")
 	await _loop(3)
