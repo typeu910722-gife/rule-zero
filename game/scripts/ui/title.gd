@@ -95,7 +95,7 @@ func _ready() -> void:
 	_menu.custom_minimum_size = Vector2(320, 0)
 	_menu.add_theme_constant_override("separation", 10)
 	add_child(_menu)
-	var cleared := int(GameState.meta.get("chapters_done", 0)) >= 1
+	var cleared := GameState.chapter1_cleared()
 	var cont := _button("繼續", func(): continue_game.emit())
 	cont.disabled = not GameState.has_save()
 	_menu.add_child(cont)
@@ -114,7 +114,7 @@ func _ready() -> void:
 
 ## 小布的姿態：還沒想起來（期待）→ 開始懷疑 → 沉重 → 拿回名字（抱著名牌）
 func bu_pose() -> int:
-	if GameState.remembers("true_name"):
+	if GameState.ever("true_name"):
 		return 3
 	if _heavy == 0:
 		return 0
@@ -167,7 +167,7 @@ func _draw_area() -> void:
 	_area.draw_string_outline(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, 6, halo)
 	_area.draw_string(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576").lerp(Color("#c9a3b8"), h))
 	var sub: String = SUBTITLES[_heavy]
-	if _heavy >= 5 and GameState.remembers("true_name"):
+	if _heavy >= 5 and GameState.ever("true_name"):
 		sub = "我叫遙。"
 	_area.draw_string_outline(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, halo)
 	_area.draw_string(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e").lerp(Color("#d8c6d2"), h))
@@ -256,10 +256,10 @@ func _show_tab(tab: String) -> void:
 
 
 static func mystery_text() -> String:
-	var solved: Array = GameState.MYSTERIES.filter(func(m): return GameState.remembers(m.key))
+	var solved: Array = GameState.MYSTERIES.filter(func(m): return GameState.ever(m.key))
 	var t := "[font_size=26]解開的謎團　%d / %d[/font_size]\n\n" % [solved.size(), GameState.MYSTERIES.size()]
 	for m in GameState.MYSTERIES:
-		if GameState.remembers(m.key):
+		if GameState.ever(m.key):
 			t += "[color=#7b4fa0]◆ %s[/color]\n[color=#5d4a58]　　%s[/color]\n\n" % [m.q, m.a]
 		else:
 			t += "[color=#a99aa6]◇ %s\n　　？？？[/color]\n\n" % m.q
@@ -271,11 +271,11 @@ static func items_text() -> String:
 	var t := "[font_size=26]蒐藏過的東西　%d / %d[/font_size]\n\n" % [got.size(), GameState.COLLECTIBLES.size()]
 	for k in GameState.COLLECTIBLES:
 		t += ("・%s\n" % GameState.COLLECTIBLES[k]) if k in got else "[color=#a99aa6]・？？？[/color]\n"
-	var tufts: Array = GameState.meta.get("tufts", [])
+	var tufts: Array = GameState.ever_tufts()
 	t += "\n[font_size=22][color=#c2558a]記憶碎片　%d / %d[/color][/font_size]\n" % [tufts.size(), GameState.TUFT_TEXT.size()]
 	for k in GameState.TUFT_TEXT:
 		t += ("[color=#c2558a]・%s[/color]\n" % GameState.TUFT_TEXT[k]) if k in tufts else "[color=#a99aa6]・……[/color]\n"
-	var pages: Array = GameState.STORY_TEXT.keys().filter(func(k): return GameState.remembers(k))
+	var pages: Array = GameState.STORY_TEXT.keys().filter(func(k): return GameState.ever(k))
 	t += "\n[font_size=22][color=#3f6f8f]想起來的事　%d / %d[/color][/font_size]\n" % [pages.size(), GameState.STORY_TEXT.size()]
 	for k in GameState.STORY_TEXT:
 		t += ("[color=#3f6f8f]・%s[/color]\n" % GameState.STORY_TEXT[k]) if k in pages else "[color=#a99aa6]・……[/color]\n"
@@ -299,7 +299,7 @@ static func endings_text() -> String:
 # ───────── 選擇篇章 ─────────
 
 const CHAPTERS := [
-	["第一章　歡迎回來", "重新回到棉花糖鎮。記得的事，都會留著。"],
+	["第一章　歡迎回來", "從還沒開始輪迴的第一天，重新開始。看過的結局和蒐藏會留著。"],
 	["第二章　黑色的鎮", "製作中。"],
 	["第三章", "製作中。"],
 	["第四章", "製作中。"],
@@ -324,7 +324,10 @@ func _open_chapters() -> void:
 		var label: String = CHAPTERS[i][0]
 		if i < done:
 			label += "　✓"
-		var b := _button("%s\n%s" % [label, CHAPTERS[i][1]], func(): new_game.emit(), 18)
+		var b := _button("%s\n%s" % [label, CHAPTERS[i][1]], func():
+			# 第一章：從還沒開始輪迴的第一天、空白的紀錄開始（看過的結局和蒐藏會留著）
+			GameState.restart_chapter1()
+			new_game.emit(), 18)
 		b.custom_minimum_size = Vector2(560, 70)
 		b.disabled = i != 0
 		_panel_chapters.add_child(b)

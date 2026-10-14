@@ -515,13 +515,13 @@ func _expression(key: String, text: String) -> int:
 				return 3
 			return 0
 		"puppy":
-			# 小狗居民：0 釋然 1 平常的笑 2 傾聽 3 低著頭 4 快哭了 5 驚訝 6 愧疚 7 說出對不起
+			# 小狗居民：0 平常 1 開心 2 疑問 3 低著頭（愧疚）4 難過 5 驚訝 6 釋然 7 說出對不起
 			if "對不起" in t:
 				return 7
-			if "看到" in t or "沒有說" in t or "壞孩子" in t or "應該要" in t:
-				return 6
+			if "看到" in t or "沒有說" in t or "壞孩子" in t or "應該要" in t or "掃不" in t:
+				return 3
 			if "謝謝" in t:
-				return 0
+				return 6
 		"mochi", "tama":
 			if "不用想" in t or "好吃" in t or "笑嘻嘻" in t:
 				return 7

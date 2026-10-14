@@ -167,6 +167,34 @@ func _run() -> void:
 	await dlg.run("mochi_d2")
 	_check(gs.has("q_mochi"), "下一輪：要由你先開口（〔記得〕你上次想問我什麼？），委託才會開始")
 
+	print("[鏡之屋：被邀請之後敲門進去]")
+	await _loop(3)
+	await dlg.run("mirror_house")
+	_check(gs.remembers("mirror_invite"), "第四輪：倒影從裡面敲門 → 被邀請")
+	gs.auto_choices = [0]
+	await dlg.run("mirror_house")
+	_check(gs.has("want_enter_mirror") and gs.has("mirror_opened"), "敲門 → 門自己打開")
+	gs.meta.memory["story_1"] = true
+	gs.auto_choices = [0]
+	await dlg.run("int_mirror_chair")
+	_check(gs.remembers("knows_mirror_self"), "椅子對著的鏡子：穿醫院衣服的你（謎團：鏡之屋裡住著誰？）")
+
+	print("[鎮長公館：送完信就發現門沒鎖]")
+	await _loop(0)
+	gs.day = 2
+	gs.set_flag("q_letters")
+	gs.auto_choices = [0]
+	await dlg.run("mayor_door_day2_explore")
+	_check(gs.has("mayor_mail_done") and gs.has("want_enter_mayor"), "送信 →「門沒有關緊」→ 進去")
+
+	print("[選擇篇章 → 第一章：空白的紀錄]")
+	gs.meta = {"runs": 9, "chapters_done": 1, "loop": 55, "loops_done": 8, "endings": ["truth", "good_kid"],
+		"memory": {"story_1": true, "true_name": true, "knows_47": true}, "tufts": ["tuft_0", "tuft_1"], "collected": ["got_key"]}
+	gs.restart_chapter1()
+	_check(gs.loop_number() == 47 and gs.memory_depth() == 0 and not gs.remembers("story_1") and gs.tuft_count() == 0, "從第一輪、第一天開始（沒有記憶、沒有棉花）")
+	_check(gs.ever("story_1") and gs.ever("true_name") and gs.ever_tufts().size() == 2 and gs.has_collected("got_key"), "標題畫面的謎團、蒐藏還在")
+	_check(gs.chapter1_cleared() and "truth" in gs.meta.endings, "看過的結局還在，選擇篇章還看得到")
+
 	print("[開頭的固定任務：每三輪換一版，越來越短]")
 	_check(gs.OPENINGS.size() == 10, "一共 10 版")
 	await _loop(3)

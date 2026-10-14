@@ -102,7 +102,7 @@ const MYSTERIES := [
 	{"q": "麻糬本來叫什麼？", "a": "一個好長好長的名字。要用兩隻手才寫得完。", "key": "knows_mochi"},
 	{"q": "修理室的鑰匙在哪裡？", "a": "Fen 的樹屋，從門口數過來第三塊木板底下。", "key": "knows_key"},
 	{"q": "糖果裡包著什麼？", "a": "吃了就會忘記。", "key": "knows_candy"},
-	{"q": "鏡之屋裡住著誰？", "a": "有人回信了：「謝謝。我一直在等。」", "key": "knows_mirror_letter"},
+	{"q": "鏡之屋裡住著誰？", "a": "穿著醫院衣服的你。他一直在寫信，寫給下一個你。", "key": "knows_mirror_self"},
 	{"q": "守則是誰寫的？", "a": "三年二班的班規。鎮長以前，是老師。", "key": "knows_teacher"},
 	{"q": "小狗居民在掃什麼？", "a": "那天，他坐在窗邊，全部都看到了。他什麼都沒有說。", "key": "knows_dog"},
 	{"q": "車掌，站在哪一邊？", "a": "「你應該忘記的。……終於，發生了嗎。……加油。」", "key": "conductor_4"},
@@ -353,6 +353,43 @@ func opening_index() -> int:
 
 func opening() -> Dictionary:
 	return OPENINGS[opening_index()]
+
+
+## 曾經記得（包含「從第一章重新開始」之前的紀錄）：標題畫面的謎團、蒐藏用
+func ever(key: String) -> bool:
+	return remembers(key) or bool(meta.get("archive_memory", {}).get(key, false))
+
+
+func ever_tufts() -> Array:
+	var t: Array = meta.get("tufts", []).duplicate()
+	for k in meta.get("archive_tufts", []):
+		if not k in t:
+			t.append(k)
+	return t
+
+
+## 第一章全破過（真結局）
+func chapter1_cleared() -> bool:
+	return "truth" in meta.get("endings", [])
+
+
+## 選擇篇章 → 第一章：從「還沒開始輪迴」的第一天、空白的紀錄重新開始。
+## 輪迴、記憶、棉花、車票戳章都歸零；看過的結局、蒐藏、謎團的紀錄留在標題畫面（archive）。
+func restart_chapter1() -> void:
+	var arch: Dictionary = meta.get("archive_memory", {})
+	for k in meta.get("memory", {}):
+		if meta.memory[k]:
+			arch[k] = true
+	meta.archive_memory = arch
+	meta.archive_tufts = ever_tufts()
+	record_collected()
+	for k in ["memory", "past_clues", "cut_clues", "tufts", "fresh", "last_ending", "creepy_seen", "idle_norm"]:
+		meta.erase(k)
+	meta.loop = FIRST_LOOP
+	meta.loops_done = 0
+	save_meta()
+	delete_save()
+	reset()
 
 
 ## 把這一輪拿到的東西記進「蒐藏」（跨輪）

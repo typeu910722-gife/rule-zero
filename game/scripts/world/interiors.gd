@@ -88,6 +88,25 @@ const ROOMS := {
 			{"id": "int_mayor_mousehole", "name": "老鼠洞", "rect": Rect2(1062, 448, 46, 50), "prop": "mousehole", "hidden": true},
 		],
 	},
+	# 鏡之屋：收到「下次，可以敲敲門嗎？」之後敲門才進得去（對話 mirror_house_knock）
+	"mirror": {
+		"name": "鏡之屋",
+		"wall": Color("#c9d3dc"), "wall2": Color("#b9c5d0"), "pattern": "dots",
+		"trim": Color("#8b97a6"), "floor": Color("#a7a2ad"), "floor2": Color("#98939f"),
+		"dark": 0.2,
+		"decor": [
+			{"prop": "window_round", "rect": Rect2(565, 18, 150, 150)},
+			{"prop": "rug", "rect": Rect2(420, 590, 440, 100)},
+		],
+		"hotspots": [
+			{"id": "int_mirror_a", "name": "蓋著布的鏡子", "rect": Rect2(60, 150, 150, 330), "prop": "mirror_cloth"},
+			{"id": "int_mirror_b", "name": "蓋著布的鏡子", "rect": Rect2(240, 150, 150, 330), "prop": "mirror_cloth"},
+			{"id": "int_mirror_c", "name": "被縫起來的鏡子", "rect": Rect2(1070, 150, 150, 330), "prop": "mirror_sewn"},
+			{"id": "int_mirror_chair", "name": "對著鏡子的椅子", "rect": Rect2(540, 190, 200, 360), "prop": "mirror_chair"},
+			{"id": "int_mirror_desk", "name": "書桌上的一疊紙", "rect": Rect2(820, 380, 200, 110), "prop": "desk_letter"},
+			{"id": "int_mirror_slot", "name": "投信口的內側", "rect": Rect2(430, 420, 90, 70), "prop": "slots"},
+		],
+	},
 	"mochi": {
 		"name": "麻糬的小屋",
 		"wall": Color("#fbe9d0"), "wall2": Color("#f6dcb8"), "pattern": "dots",

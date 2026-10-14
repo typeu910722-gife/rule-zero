@@ -251,6 +251,29 @@ func _draw_prop(c: Control, prop: String, r: Rect2) -> void:
 	var s := r.size
 	var ctr := r.get_center()
 	match prop:
+		"mirror_cloth", "mirror_sewn":
+			# 鏡之屋：蓋著碎花布的鏡子（被縫起來的那一面有一排縫線）
+			_outline(c, r, Color("#7d6a5a"), 6)
+			c.draw_rect(r.grow(-8), Color("#dfe7ee"))
+			var cloth := Rect2(p + Vector2(4, 20), Vector2(s.x - 8, s.y - 16))
+			c.draw_rect(cloth, Color("#f3d9e1"))
+			for i in 9:
+				c.draw_circle(cloth.position + Vector2(18 + (i % 3) * (cloth.size.x - 36) / 2.0, 30 + (i / 3) * cloth.size.y / 3.2), 6, Color("#e2a7b8"))
+			if prop == "mirror_sewn":
+				for i in 12:
+					var y := cloth.position.y + 12 + i * (cloth.size.y - 24) / 11.0
+					c.draw_line(Vector2(ctr.x - 10, y), Vector2(ctr.x + 10, y + 6), Color("#5a3a46"), 3)
+		"mirror_chair":
+			# 唯一沒有蓋布的鏡子，和對著它的小椅子
+			_outline(c, Rect2(p + Vector2(30, 0), Vector2(s.x - 60, s.y * 0.62)), Color("#7d6a5a"), 6)
+			c.draw_rect(Rect2(p + Vector2(38, 8), Vector2(s.x - 76, s.y * 0.62 - 16)), Color("#e9f0f5"))
+			c.draw_circle(p + Vector2(s.x / 2, s.y * 0.3), 26, Color(0.75, 0.78, 0.84, 0.6))
+			var seat := Rect2(p + Vector2(s.x * 0.25, s.y * 0.72), Vector2(s.x * 0.5, 20))
+			c.draw_rect(seat, Color("#9a6b4b"))
+			c.draw_rect(Rect2(seat.position + Vector2(0, -60), Vector2(14, 60)), Color("#8a5d40"))
+			c.draw_rect(Rect2(seat.end + Vector2(-14, -80), Vector2(14, 60)), Color("#8a5d40"))
+			for x in [seat.position.x + 4, seat.end.x - 14]:
+				c.draw_rect(Rect2(Vector2(x, seat.end.y), Vector2(10, s.y * 0.24)), Color("#7a4f36"))
 		"window", "window_round":
 			var night := GameState.has("night_out")
 			var sky := Color("#bfe3f5") if not night else Color("#2b2f55")
