@@ -126,6 +126,19 @@ func _run() -> void:
 	await dlg.run("conductor")
 	_check(gs.has("co_cheer"), "之後的輪：「……加油。」")
 
+	print("[送信、丟小石頭：每一輪不一樣]")
+	for k in [0, 1, 2, 3, 4]:
+		await _loop(k)
+		gs.day = 2
+		gs.flags.erase("q_letters")
+		await dlg.run("popo_d2")
+		for id in ["lulu_mailbox", "mayor_door_day2_explore", "mirror_house_day2_explore"]:
+			await dlg.run(id)
+		await dlg.run("popo_d2")
+		await dlg.run("fen_invite")
+		_check(gs.has("blank_letter") and int(gs.flags.get("letters", 0)) == 3 and gs.has("mirror_letter") and gs.has("letter_done") and gs.has("fen_invited"),
+			"記憶深度 %d：拿信 → 送三封 → 回報 → Fen 的邀請" % k)
+
 	print("[開頭的固定任務：每三輪換一版，越來越短]")
 	_check(gs.OPENINGS.size() == 10, "一共 10 版")
 	await _loop(3)
