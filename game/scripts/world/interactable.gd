@@ -21,6 +21,13 @@ var facing := Vector2.DOWN
 var _last_pos := Vector2.INF
 var _step := -1
 var _step_t := 0.0
+## 第三天：站著一動也不動，一直盯著小布（不呼吸、不跳）
+var stare := false
+## 小布走近時轉頭看他
+var _noticed := false
+var _hop_t := 0.0
+var _hop_next := randf_range(3.0, 9.0)
+const HOP_TIME := 0.32
 
 const MIRROR_TEX := preload("res://art/mirror_states.png")
 const PHOTO_TEX := preload("res://art/item_photo.png")
@@ -77,6 +84,21 @@ func _process(delta: float) -> void:
 			_step = -1
 			queue_redraw()
 	_last_pos = position
+	if kind == "npc":
+		if target:
+			var d := global_position.distance_to(target.global_position)
+			var was := _noticed
+			_noticed = d < (250.0 if _noticed else 200.0)
+			if was != _noticed:
+				queue_redraw()
+		# 偶爾輕輕跳一下（看起來是活的）
+		if not stare and not follow_eyes and _step == -1:
+			_hop_next -= delta
+			if _hop_next <= 0.0:
+				_hop_t = HOP_TIME
+				_hop_next = randf_range(5.0, 12.0)
+		_hop_t = maxf(_hop_t - delta, 0.0)
+		queue_redraw()
 	if marked or follow_eyes or id.begins_with("tuft_") or id.begins_with("candy_") or id.begins_with("note_") or kind == "obj":
 		queue_redraw()
 
@@ -84,9 +106,23 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if kind == "npc":
 		var look := facing
-		if follow_eyes and target:
-			look = (target.global_position - global_position).normalized()
+		var to_player := Vector2.ZERO
+		if target:
+			to_player = (target.global_position - global_position).normalized()
+		if (follow_eyes or stare) and target:
+			look = to_player
+		elif _noticed and _step == -1 and target:
+			# 小布走近：轉頭看他
+			look = to_player
+		var alive := not stare and not follow_eyes
+		if alive:
+			# 呼吸：身體輕輕上下伸縮；偶爾跳一下
+			var t := Time.get_ticks_msec() / 1000.0
+			var breath := sin(t * 2.2 + position.x * 0.013) * 0.016 if _step == -1 else 0.0
+			var hop := sin(PI * (1.0 - _hop_t / HOP_TIME)) * 7.0 if _hop_t > 0.0 else 0.0
+			draw_set_transform(Vector2(0, -hop), 0.0, Vector2(1.0 - breath * 0.5, 1.0 + breath))
 		Critter.draw(self, species, body_color, size * Critter.WORLD_SCALE, look, smile, stitched, false, _step)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		var f: Font = GameState.font
 		draw_string_outline(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, 5, Color(1, 1, 1, 0.85))
 		draw_string(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))

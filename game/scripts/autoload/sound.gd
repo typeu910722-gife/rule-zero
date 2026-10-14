@@ -3,6 +3,7 @@ extends Node
 ##   Sound.bgm("day" / "night" / "memory" / "")   切換背景音樂（約 1 秒交叉淡入淡出）
 ##   Sound.override_bgm("memory")                  暫時蓋過（夢境），傳 "" 恢復
 ##   Sound.sfx("interact")                          播放音效
+##   Sound.ambience("forest" / "night" / "")        環境音（疊在音樂下面，交叉淡入淡出）
 ## 音樂：game/audio/bgm_*.ogg（原創合成，見 docs）；音效：game/audio/sfx_*.wav
 
 const BGM := {
@@ -18,7 +19,17 @@ const SFX := {
 	"door": "res://audio/sfx_door.wav",
 	"step": "res://audio/sfx_step.wav",
 	"strange": "res://audio/sfx_strange.wav",
+	"bell_far": "res://audio/sfx_bell_far.ogg",
+	"creepy": "res://audio/sfx_creepy.wav",
+	"glitch": "res://audio/sfx_glitch.wav",
 }
+const AMB := {
+	"forest": "res://audio/amb_forest.ogg",
+	"night": "res://audio/amb_night.ogg",
+}
+const AMB_DB := -12.0
+## 各音效的音量（沒列的用 -4）
+const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0}
 const BGM_DB := -8.0
 const DUCK_DB := -22.0
 const FADE := 1.0
@@ -32,6 +43,9 @@ var _current := ""
 var _ducked := false
 var _sfx_pool: Array[AudioStreamPlayer] = []
 var _streams := {}
+var _amb: Array[AudioStreamPlayer] = []
+var _amb_active := 0
+var _amb_current := ""
 
 
 func _ready() -> void:
@@ -45,9 +59,43 @@ func _ready() -> void:
 		var p := AudioStreamPlayer.new()
 		add_child(p)
 		_sfx_pool.append(p)
+	for i in 2:
+		var p := AudioStreamPlayer.new()
+		p.volume_db = SILENT
+		add_child(p)
+		_amb.append(p)
+
+
+func ambience(name: String) -> void:
+	if name == _amb_current:
+		return
+	_amb_current = name
+	var old := _amb[_amb_active]
+	_amb_active = 1 - _amb_active
+	var new := _amb[_amb_active]
+	if old.playing:
+		var tw := create_tween()
+		tw.tween_property(old, "volume_db", SILENT, 1.5)
+		tw.tween_callback(old.stop)
+	if name == "" or not AMB.has(name):
+		return
+	var st: AudioStream = _load(AMB[name])
+	if st is AudioStreamOggVorbis:
+		(st as AudioStreamOggVorbis).loop = true
+	new.stream = st
+	new.volume_db = SILENT
+	new.play()
+	var tw2 := create_tween()
+	tw2.tween_property(new, "volume_db", AMB_DB, 2.0)
+
+
+func ambience_name() -> String:
+	return _amb_current
 
 
 func bgm(name: String) -> void:
+	if name == "memory" or name == "":
+		ambience("")   # 回憶、標題、結局：只留音樂
 	_base = name
 	_apply()
 
@@ -71,7 +119,7 @@ func sfx(name: String) -> void:
 	for p in _sfx_pool:
 		if not p.playing:
 			p.stream = _load(SFX[name])
-			p.volume_db = -4.0 if name != "step" else -10.0
+			p.volume_db = SFX_DB.get(name, -4.0)
 			p.pitch_scale = randf_range(0.92, 1.08) if name in ["step", "talk"] else 1.0
 			p.play()
 			return

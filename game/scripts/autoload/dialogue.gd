@@ -50,6 +50,8 @@ var _choosing := false
 var _shown_at := 0
 var _hold_t := 0.0
 var _skip_t := 0.0
+## 全螢幕效果（驚悚閃爍、森林暗角）
+var fx: ScreenFx
 
 
 func _ready() -> void:
@@ -59,6 +61,8 @@ func _ready() -> void:
 	for e in parser.errors:
 		push_error(e)
 	_build_ui()
+	fx = ScreenFx.new()
+	add_child(fx)
 
 
 func has_label(label: String) -> bool:
@@ -152,6 +156,8 @@ func _command(op: String, args: Array) -> int:
 		"sfx":
 			if not GameState.fast:
 				Sound.sfx(args[0])
+		"scare":
+			fx.scare()
 		"event":
 			_box.visible = false
 			_portrait.visible = false
@@ -366,7 +372,7 @@ func _build_ui() -> void:
 	_more.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_more)
 	_hint = Label.new()
-	_hint.text = "按住 E 快轉"
+	_hint.text = "按住畫面快轉" if DisplayServer.is_touchscreen_available() else "按住 E 快轉"
 	_hint.add_theme_font_size_override("font_size", 14)
 	_hint.add_theme_color_override("font_color", Color("#c9b3bf"))
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -414,19 +420,28 @@ func _build_ui() -> void:
 
 	var v := VBoxContainer.new()
 	# 名字在布標上，台詞往下一點，落在米色的布裡
-	v.add_theme_constant_override("separation", 14)
+	v.add_theme_constant_override("separation", 8)
 	_box.add_child(v)
+	# 名字：往右下一點，正好落在布標中間
+	var name_pad := MarginContainer.new()
+	name_pad.add_theme_constant_override("margin_left", 14)
+	name_pad.add_theme_constant_override("margin_top", 5)
+	name_pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(name_pad)
 	_name = Label.new()
 	_name.add_theme_color_override("font_color", Color("#f8f1df"))
-	_name.add_theme_font_size_override("font_size", 19)
-	v.add_child(_name)
+	_name.add_theme_color_override("font_outline_color", Color("#5e7048"))
+	_name.add_theme_constant_override("outline_size", 4)
+	_name.add_theme_font_size_override("font_size", 21)
+	name_pad.add_child(_name)
 	_text = RichTextLabel.new()
 	_text.bbcode_enabled = true
 	_text.fit_content = true
 	_text.scroll_active = false
 	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_text.add_theme_color_override("default_color", Color("#4a3b47"))
-	_text.add_theme_font_size_override("normal_font_size", 26)
+	# 手機螢幕小：字放大一點
+	_text.add_theme_font_size_override("normal_font_size", 29 if DisplayServer.is_touchscreen_available() else 26)
 	v.add_child(_text)
 
 	_choices = VBoxContainer.new()

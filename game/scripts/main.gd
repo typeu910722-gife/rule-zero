@@ -119,11 +119,15 @@ var tint: CanvasModulate
 var fade: ColorRect
 var forest: Node2D
 var repair_scene: CanvasLayer
+var guide: GuideArrow
+## 森林和夜晚：每隔一陣子，遠處傳來鈴聲
+var _bell_t := 25.0
 
 
 func _ready() -> void:
 	# 越下面的角色畫在越前面
 	y_sort_enabled = true
+	Dialogue.fx.vignette = 0.0
 	tint = CanvasModulate.new()
 	add_child(tint)
 	town = Town.new()
@@ -167,9 +171,12 @@ func _ready() -> void:
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fade_layer.add_child(fade)
 
+	guide = GuideArrow.new()
+	add_child(guide)
 	var touch := TouchControls.new()
 	touch.mode_provider = _touch_mode
 	add_child(touch)
+	guide.touch = touch.enabled
 	Dialogue.event_requested.connect(_on_event)
 	hud.set_status_visible(false)
 	if GameState.fast:
@@ -263,7 +270,7 @@ func run_chapter() -> void:
 		hud.toast("用左下角的方向鍵走路，靠近有「！」的地方按「互動」。", 7.0)
 	else:
 		hud.toast("WASD／方向鍵走路　·　靠近按 E 互動　·　Tab 打開日記", 7.0)
-	hud.toast("頭上有「！」的地方，就是今天可以去的地方。", 5.0)
+	hud.toast("頭上有「！」的地方，就是今天可以去的地方。不在畫面裡時，邊緣的粉紅箭頭會指給你看。", 6.0)
 
 
 func _after_interaction() -> void:
@@ -387,6 +394,7 @@ func _forest() -> void:
 	player.in_forest = true
 	_set_phase("forest")
 	Sound.bgm("night")
+	Sound.ambience("forest")
 	await _fade_to(0.0)
 	await Dialogue.run("forest_enter")
 
@@ -408,6 +416,8 @@ func _forest_climax() -> void:
 	await _fade_to(1.0)
 	forest.visible = false
 	player.in_forest = false
+	player.sway = 0.0
+	Dialogue.fx.vignette = 0.0
 	for a in actors.values():
 		a.visible = false
 	repair_scene = RepairScene.new()
@@ -580,21 +590,52 @@ func _talk_label(id: String) -> String:
 
 
 func _process(_delta: float) -> void:
+	if Sound.ambience_name() != "" and phase in EXPLORE_PHASES:
+		_bell_t -= _delta
+		if _bell_t <= 0.0:
+			_bell_t = randf_range(35.0, 70.0)
+			Sound.sfx("bell_far")
 	if phase == "forest":
 		# 越往森林深處，顏色就越淡
 		var t := clampf((Forest.START.y - player.position.y) / (Forest.START.y - 240.0), 0.0, 1.0)
 		tint.color = Color(1, 1, 1).lerp(Color(0.6, 0.6, 0.66), t)
+		Dialogue.fx.vignette = 0.25 + 0.75 * t
+		player.sway = t
 		if not busy:
 			var fen: Interactable = actors.fen
 			fen.position = fen.position.lerp(player.position + Vector2(55, 25), 0.04)
 	if busy or Dialogue.running or hud.menu_open or board.visible:
 		hud.set_prompt("")
+		guide.point_to(null)
 		return
+	_update_guide()
 	var it: Interactable = player.nearest()
 	var key := "互動" if DisplayServer.is_touchscreen_available() else "E"
 	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
 	if it:
 		_first_time_tip(it)
+
+
+## 目標不在畫面裡時，畫面邊緣的箭頭指過去（最近的一個「！」）
+func _update_guide() -> void:
+	var in_room: bool = player.position.x > 2000.0
+	var best: Interactable = null
+	var best_d := INF
+	for a: Interactable in actors.values():
+		if not a.marked or not a.visible:
+			continue
+		var t := a
+		# 目標在房間裡、人在外面（或反過來）：先指向門
+		if (t.position.x > 2000.0) != in_room:
+			t = actors.home_exit if in_room else actors.home_door
+		var d: float = player.position.distance_to(t.position)
+		if d < best_d:
+			best = t
+			best_d = d
+	if best == null:
+		guide.point_to(null)
+		return
+	guide.point_to(get_viewport().get_canvas_transform() * best.position, best.display_name)
 
 
 ## 第一次靠近某種東西時，上方跳出一句說明（整個存檔只說一次）
@@ -715,6 +756,7 @@ func _layout(mode: String) -> void:
 		a.position = ACTORS[id].pos
 		a.visible = not id.begins_with("extra") or id == "extra1"
 		a.follow_eyes = false
+		a.stare = false
 		a.facing = Vector2.DOWN
 	for id in OBJECTS:
 		actors[id].visible = not id.begins_with("forest_")
@@ -735,6 +777,10 @@ func _layout(mode: String) -> void:
 			actors.conductor.visible = GameState.day >= 2
 			# 想起名字的麻糬，第三天已經被帶去修理了
 			actors.mochi.visible = not (GameState.day >= 3 and GameState.has("mochi_remembers"))
+			# 第三天：有幾個居民站著不動，一直盯著小布看
+			if GameState.day >= 3:
+				for who in ["tama", "extra1", "conductor"]:
+					actors[who].stare = true
 		"night":
 			# 夜晚：居民們站在廣場，面朝鐘塔。一動也不動。鈕扣眼睛跟著小布轉。
 			var who := ["lulu", "popo", "mochi", "tama", "extra1"]
@@ -825,6 +871,9 @@ func _refresh_objective() -> void:
 			marks.append("home_door")
 		"forest":
 			GameState.set_objective("調查森林深處的東西（%d / 3）" % mini(_forest_count(), 3))
+			for k in FOREST_ITEMS.size():
+				if not GameState.has(FOREST_ITEMS[k]):
+					marks.append(["forest_sheep", "forest_bow", "forest_tags", "forest_tail"][k])
 		_:
 			GameState.set_objective("")
 	for id in actors:
@@ -847,6 +896,7 @@ func _visited_count() -> int:
 func _set_tint(name: String) -> void:
 	tint.color = TINTS[name]
 	Sound.bgm("day" if name in ["day", "sunset"] else "night")
+	Sound.ambience("night" if name in ["evening", "night"] else "")
 
 
 func _fade_to(alpha: float) -> void:

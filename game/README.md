@@ -69,6 +69,8 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 - 鏡子：`art/mirror_states.png`（空鏡／浮現／低頭／貼掌），掀開布後在房間裡顯示
 - 背景音樂：日間小鎮、夜間探索、記憶揭露（`audio/bgm_*.ogg`，交叉淡入淡出，夢境與真相時切換）
 - 音效：對話、互動、選項、選單、開門、腳步、異常（`audio/sfx_*.wav`，`autoload/sound.gd`）
+- 環境音：森林的風聲、夜晚的蟲鳴、遠處的鈴聲；驚悚台詞的低音與雜訊（`audio/amb_*.ogg`、`sfx_bell_far/creepy/glitch`，由 `tools/make_ambience.py` 合成）
+- 演出：畫面邊緣的目標箭頭、NPC 轉頭看小布與呼吸、第三天居民盯著看、森林暗角與鏡頭晃動、驚悚台詞閃爍色偏（`@scare`，`ui/screen_fx.gd`）
 - 素材處理腳本與原始檔不在 repo 內；重新切圖時維持相同的格子尺寸即可直接替換
 
 ## 尚未實作（下一步）
@@ -102,7 +104,8 @@ game/
     ├── walk_routes_test.gd     # 模擬玩家用方向鍵走遍小鎮／森林，找出會卡住的地方（路線：tools/make_routes.py → tests/data/）
     ├── screenshots_ui.gd       # 標題畫面截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
-    └── screenshots_day3.gd     # 第三天畫面截圖
+    ├── screenshots_day3.gd     # 第三天畫面截圖
+    └── screenshots_fx.gd       # 演出截圖：方向箭頭、NPC 轉頭、第三天盯著看、森林暗角、驚悚閃爍
 ```
 
 ## 測試

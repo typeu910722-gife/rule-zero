@@ -17,6 +17,8 @@ var in_forest := false:
 	set(v):
 		in_forest = v
 		_update_camera()
+## 鏡頭輕微晃動（0～1：森林越深越晃）
+var sway := 0.0
 ## 是否套用小鎮的建築碰撞
 var collide := true
 var _facing := Vector2.DOWN
@@ -59,6 +61,9 @@ func _update_camera() -> void:
 
 
 func _process(delta: float) -> void:
+	if _cam:
+		var t := Time.get_ticks_msec() / 1000.0
+		_cam.offset = Vector2(sin(t * 0.7) * 5.0 + sin(t * 1.9) * 1.5, sin(t * 0.53) * 3.5) * sway
 	var dir := Vector2.ZERO
 	if can_move:
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
