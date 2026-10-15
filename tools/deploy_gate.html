@@ -53,6 +53,30 @@
   }
   ul.links a:hover { border-color: var(--accent); }
   ul.links a span { color: var(--muted); flex: none; }
+  ul.links li { display: flex; gap: 6px; align-items: stretch; }
+  ul.links li a { flex: 1; min-width: 0; }
+  ul.links .t { display: flex; flex-direction: column; min-width: 0; }
+  ul.links .note { color: var(--muted); font-size: .82rem; margin-top: 2px; }
+  ul.links .tag { color: var(--accent2); font-size: .72rem; margin-left: 6px; }
+  .mini {
+    padding: 0 12px; font-size: .85rem; font-weight: 500; background: transparent;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 10px;
+  }
+  .mini:hover { color: var(--text); border-color: var(--accent2); }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .head h2 { margin: 0; }
+  #editor { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); }
+  #editor.on { display: block; }
+  #editor form { flex-direction: column; }
+  #editor input[type=text] {
+    width: 100%; padding: 11px 13px; font-size: .95rem; color: var(--text);
+    background: transparent; border: 1px solid var(--line); border-radius: 10px; outline: none;
+  }
+  #editor input[type=text]:focus { border-color: var(--accent2); }
+  #editor .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  #editor .hint { color: var(--muted); font-size: .8rem; margin: 8px 0 0; }
+  .editing ul.links li .mini { display: block; }
+  ul.links li .mini { display: none; }
 </style>
 </head>
 <body>
@@ -73,8 +97,23 @@
   </section>
 
   <section class="panel">
-    <h2>目前可用的網站</h2>
+    <div class="head">
+      <h2>目前可用的網站</h2>
+      <button class="mini" id="editToggle" type="button">管理</button>
+    </div>
     <ul class="links" id="links"></ul>
+    <div id="editor">
+      <form id="addForm" autocomplete="off">
+        <input type="text" id="addUrl" placeholder="網址，例如 abc.yzprojecttw.com" aria-label="網址" required>
+        <input type="text" id="addNote" placeholder="備註（選填）" aria-label="備註">
+        <input type="hidden" id="editKey">
+        <div class="row">
+          <button id="addBtn" type="submit">新增網站</button>
+          <button class="mini" id="cancelEdit" type="button" style="display:none">取消修改</button>
+        </div>
+      </form>
+      <p class="hint">新增、修改的網站和備註只存在這台裝置的這個瀏覽器裡。內建的網站可以改備註，也可以隱藏。</p>
+    </div>
   </section>
 </div>
 
@@ -88,31 +127,152 @@
     { hash: "7d0da48b0454e21264480e06c01821b3689f51df2c7d28163e2c7a8401c71d6a", url: "rule-zero-ch2/", name: "第零條規則 第二章 漂白鎮" }
   ];
 
-  // ── 密碼框下方的公開連結 ───────────────────────────────────
+  // ── 密碼框下方的公開連結（內建；note 是備註）────────────────
   const LINKS = [
-    "yzprojecttw.com",
-    "vip.yzprojecttw.com",
-    "yourzone.yzprojecttw.com",
-    "beastidal.yzprojecttw.com",
-    "yingrisuo.yzprojecttw.com",
-    "eroom.yzprojecttw.com"
+    { host: "yzprojecttw.com", note: "" },
+    { host: "vip.yzprojecttw.com", note: "" },
+    { host: "cardvip.yzprojecttw.com", note: "" },
+    { host: "yourzone.yzprojecttw.com", note: "" },
+    { host: "beastidal.yzprojecttw.com", note: "" },
+    { host: "yingrisuo.yzprojecttw.com", note: "" },
+    { host: "eroom.yzprojecttw.com", note: "" }
   ];
 
   const $ = (id) => document.getElementById(id);
 
-  for (const host of LINKS) {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.href = "https://" + host + "/";
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = host;
-    const arrow = document.createElement("span");
-    arrow.textContent = "↗";
-    a.appendChild(arrow);
-    li.appendChild(a);
-    $("links").appendChild(li);
+  // ── 手動新增的網站、改過的備註（存在這個瀏覽器）──────────────
+  const STORE = "yzp_try_links";
+  function loadLocal() {
+    try { const v = JSON.parse(localStorage.getItem(STORE) || "{}"); return { added: v.added || [], notes: v.notes || {}, hidden: v.hidden || [] }; }
+    catch (_) { return { added: [], notes: {}, hidden: [] }; }
   }
+  function saveLocal() {
+    try { localStorage.setItem(STORE, JSON.stringify(local)); } catch (_) { alertMsg("這個瀏覽器不能儲存（可能是私密瀏覽）"); }
+  }
+  let local = loadLocal();
+
+  function cleanHost(u) {
+    return u.trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+  }
+  function allLinks() {
+    const builtin = LINKS.filter(l => !local.hidden.includes(l.host))
+      .map(l => ({ host: l.host, note: local.notes[l.host] ?? l.note, builtin: true }));
+    return builtin.concat(local.added.map(l => ({ host: l.host, note: l.note || "", builtin: false })));
+  }
+
+  function render() {
+    const ul = $("links");
+    ul.textContent = "";
+    for (const l of allLinks()) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = /^https?:/i.test(l.host) ? l.host : "https://" + l.host + (l.host.includes("/") ? "" : "/");
+      a.target = "_blank";
+      a.rel = "noopener";
+      const t = document.createElement("div");
+      t.className = "t";
+      const name = document.createElement("div");
+      name.textContent = l.host;
+      if (!l.builtin) {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "自訂";
+        name.appendChild(tag);
+      }
+      t.appendChild(name);
+      if (l.note) {
+        const n = document.createElement("div");
+        n.className = "note";
+        n.textContent = l.note;
+        t.appendChild(n);
+      }
+      a.appendChild(t);
+      const arrow = document.createElement("span");
+      arrow.textContent = "↗";
+      a.appendChild(arrow);
+      li.appendChild(a);
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "mini";
+      edit.textContent = "修改";
+      edit.onclick = () => startEdit(l);
+      li.appendChild(edit);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "mini";
+      del.textContent = l.builtin ? "隱藏" : "刪除";
+      del.onclick = () => {
+        if (l.builtin) local.hidden.push(l.host);
+        else local.added = local.added.filter(x => x.host !== l.host);
+        saveLocal(); render();
+      };
+      li.appendChild(del);
+      ul.appendChild(li);
+    }
+    if (local.hidden.length && document.body.classList.contains("editing")) {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "mini";
+      b.style.display = "block";
+      b.style.padding = "10px 12px";
+      b.textContent = "顯示隱藏的內建網站（" + local.hidden.length + "）";
+      b.onclick = () => { local.hidden = []; saveLocal(); render(); };
+      li.appendChild(b);
+      ul.appendChild(li);
+    }
+  }
+
+  function startEdit(l) {
+    $("addUrl").value = l.host;
+    $("addUrl").disabled = l.builtin;
+    $("addNote").value = l.note || "";
+    $("editKey").value = (l.builtin ? "b:" : "a:") + l.host;
+    $("addBtn").textContent = "儲存修改";
+    $("cancelEdit").style.display = "";
+    $("addNote").focus();
+  }
+  function endEdit() {
+    $("addForm").reset();
+    $("addUrl").disabled = false;
+    $("editKey").value = "";
+    $("addBtn").textContent = "新增網站";
+    $("cancelEdit").style.display = "none";
+  }
+  function alertMsg(t) { const m = $("msg"); m.className = "msg"; m.textContent = t; }
+
+  $("editToggle").onclick = () => {
+    const on = !document.body.classList.contains("editing");
+    document.body.classList.toggle("editing", on);
+    $("editor").classList.toggle("on", on);
+    $("editToggle").textContent = on ? "完成" : "管理";
+    if (!on) endEdit();
+    render();
+  };
+  $("cancelEdit").onclick = endEdit;
+  $("addForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const key = $("editKey").value;
+    const note = $("addNote").value.trim();
+    if (key.startsWith("b:")) {
+      local.notes[key.slice(2)] = note;
+    } else {
+      const host = cleanHost($("addUrl").value);
+      if (!host) return;
+      if (key.startsWith("a:")) local.added = local.added.filter(x => x.host !== key.slice(2));
+      local.added = local.added.filter(x => x.host !== host);
+      if (LINKS.some(l => l.host === host)) {
+        local.notes[host] = note;
+        local.hidden = local.hidden.filter(h => h !== host);
+      } else {
+        local.added.push({ host, note });
+      }
+    }
+    saveLocal();
+    endEdit();
+    render();
+  });
+  render();
 
   async function sha256(text) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
