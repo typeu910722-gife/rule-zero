@@ -88,6 +88,13 @@ func _photo_hallway(r: Rect2) -> void:
 	# 旁邊站著一個人，看不清楚臉，名牌寫著「遙」
 	var kid := r.position + Vector2(450, 410)
 	_kid(kid, 200, Color("#8d8880"))
+	# 男生的制服（領帶）；垂下的手心裡握著一個粉紅色的髮夾，只露出一點點（遙的設定，見 CLAUDE.md）
+	a.draw_colored_polygon(PackedVector2Array([kid + Vector2(-4, -122), kid + Vector2(4, -122),
+		kid + Vector2(5, -92), kid + Vector2(0, -86), kid + Vector2(-5, -92)]), Color("#4f4a44"))
+	a.draw_rect(Rect2(kid + Vector2(36, -60), Vector2(10, 26)), Color("#8d8880"))
+	a.draw_circle(kid + Vector2(41, -32), 6, Color("#d8cfc4"))
+	a.draw_rect(Rect2(kid + Vector2(38, -30), Vector2(10, 4)), Color("#e8a0bf"))
+	a.draw_circle(kid + Vector2(48, -28), 2.5, Color("#e8a0bf"))
 	a.draw_rect(Rect2(kid + Vector2(-16, -110), Vector2(32, 18)), Color("#f7f4ee"))
 	a.draw_string(f, kid + Vector2(-16, -96), "遙", HORIZONTAL_ALIGNMENT_CENTER, 32, 14, Color("#5a524a"))
 

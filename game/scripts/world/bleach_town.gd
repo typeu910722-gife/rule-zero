@@ -34,6 +34,7 @@ func _ready() -> void:
 func _draw() -> void:
 	if _map:
 		draw_texture_rect(_map, Rect2(0, 0, W, H), false)
+		_signs()
 		_overlays()
 		return
 	draw_rect(Rect2(0, 0, W, H), GROUND)
@@ -140,6 +141,33 @@ func _draw() -> void:
 
 
 	_overlays()
+
+
+## 外包地圖上不畫字：站牌、公告欄標題、海報、廣播塔底下的「救」由遊戲疊上去
+func _signs() -> void:
+	var f: Font = GameState.font
+	var ink := Color("#4a443c")
+	# 公告欄
+	draw_string(f, Vector2(735, 340), "矯正守則", HORIZONTAL_ALIGNMENT_CENTER, 115, 15, ink)
+	for k in 3:
+		draw_line(Vector2(752, 350 + k * 7), Vector2(833 - (k % 2) * 14, 350 + k * 7), Color(0.3, 0.27, 0.23, 0.5), 1.5)
+	# 月台站牌
+	draw_string(f, Vector2(416, 939), "慈愛組織", HORIZONTAL_ALIGNMENT_CENTER, 104, 11, ink)
+	draw_string(f, Vector2(416, 955), "漂白鎮站", HORIZONTAL_ALIGNMENT_CENTER, 104, 15, ink)
+	# 治療室的門：兒童畫風的海報
+	_poster(Rect2(1145, 222, 56, 30), "乖孩子", "不痛！")
+	# 洗衣房的牆
+	_poster(Rect2(1062, 398, 66, 30), "白白的，", "最乾淨！")
+	# 廣播塔底下，用指甲刻的小字
+	draw_string(f, Vector2(782, 270), "救", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color(0.25, 0.22, 0.2, 0.75))
+
+
+func _poster(r: Rect2, a: String, b: String) -> void:
+	var f: Font = GameState.font
+	draw_rect(r, Color("#fff3f7"))
+	draw_rect(r, Color("#f2a7c3"), false, 1.5)
+	draw_string(f, r.position + Vector2(0, 13), a, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 10, Color("#e05780"))
+	draw_string(f, r.position + Vector2(0, 26), b, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 10, Color("#e05780"))
 
 
 ## 畢業典禮的布條、工作台與火車（兩種地圖共用）
