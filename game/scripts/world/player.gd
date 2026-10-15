@@ -4,6 +4,8 @@ extends Node2D
 const SPEED := 230.0
 
 var bounds := Rect2(20, 40, 1560, 1000)
+## 走不進去的區域（第二章：鐵絲網另一邊的河與模範生宿舍）
+var blocked := PackedVector2Array()
 var can_move := true
 var _facing := Vector2.DOWN
 
@@ -25,8 +27,11 @@ func _process(delta: float) -> void:
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if dir != Vector2.ZERO:
 		_facing = dir
+		var before := position
 		position += dir * SPEED * delta
 		position = position.clamp(bounds.position, bounds.end)
+		if not blocked.is_empty() and Geometry2D.is_point_in_polygon(position, blocked):
+			position = before
 		queue_redraw()
 
 

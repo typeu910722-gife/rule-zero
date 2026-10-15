@@ -20,7 +20,16 @@ const BG_COLORS := {
 ## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
 const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt"]
 
+## 第二章立繪（外包 P0）：說話的人有立繪時顯示在右邊
+const PORTRAITS := {
+	"白面": "baimian", "小棘": "xiaoji", "條碼": "tiaoma", "嘎嘎": "gaga",
+	"重重": "zhongzhong", "鼬鼬": "youyou", "和平鴿": "dove",
+}
+const PORTRAIT_PATH := "res://art/ch2/characters/portraits/ch2_%s_portrait_default.png"
+
 var running := false
+## 由章節導演設定：這個角色現在的樣子還符合立繪嗎（例如小棘的刺被剪掉後就不顯示）
+var portrait_ok: Callable
 var parser := DialogueParser.new()
 
 var _bg: ColorRect
@@ -31,6 +40,8 @@ var _choices: VBoxContainer
 var _typing := false
 var _choosing := false
 var _shown_at := 0
+var _portrait: TextureRect
+var _blip := 0
 
 
 func _ready() -> void:
@@ -87,6 +98,7 @@ func run(label: String) -> void:
 					break
 				i = next if next >= 0 else i + 1
 	_box.visible = false
+	_portrait.visible = false
 	running = false
 	finished.emit()
 
@@ -114,11 +126,16 @@ func _command(op: String, args: Array) -> int:
 		"wait":
 			if not GameState.fast:
 				_box.visible = false
+				_portrait.visible = false
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
+		"sfx":
+			if not GameState.fast:
+				Sfx.play(self, args[0])
 		"event":
 			_box.visible = false
+			_portrait.visible = false
 			event_requested.emit(args[0])
 			await event_done
 	return -1
@@ -132,6 +149,7 @@ func set_bg(mode: String) -> void:
 
 func _say(who: String, text: String) -> void:
 	text = text.replace("{name}", GameState.player_name())
+	_show_portrait(who)
 	_box.visible = true
 	_name.visible = who != ""
 	_name.text = who
@@ -150,6 +168,11 @@ func _say(who: String, text: String) -> void:
 func _process(delta: float) -> void:
 	if _typing:
 		_text.visible_characters += maxi(1, int(CHARS_PER_SEC * delta + 0.5))
+		# 漂白鎮的打字聲：每幾個字「嗒」一下
+		if GameState.chapter == 2:
+			_blip += 1
+			if _blip % 4 == 0:
+				Sfx.play(self, "text", -14.0)
 		if _text.visible_characters >= _text.get_total_character_count():
 			_text.visible_characters = -1
 			_typing = false
@@ -216,6 +239,15 @@ func _build_ui() -> void:
 	_bg.visible = false
 	add_child(_bg)
 
+	_portrait = TextureRect.new()
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.position = Vector2(930, 40)
+	_portrait.size = Vector2(330, 495)
+	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait.visible = false
+	add_child(_portrait)
+
 	_box = PanelContainer.new()
 	_box.anchor_left = 0.0
 	_box.anchor_right = 1.0
@@ -271,6 +303,17 @@ func _build_ui() -> void:
 	# 對話框本身不攔截點擊，讓「點畫面任何地方」都能前進（手機）
 	for c in [_box, v, _name, _text]:
 		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _show_portrait(who: String) -> void:
+	var id: String = PORTRAITS.get(who, "")
+	var ok: bool = GameState.chapter == 2 and id != "" and (not portrait_ok.is_valid() or portrait_ok.call(id))
+	var path := PORTRAIT_PATH % id
+	if ok and ResourceLoader.exists(path):
+		_portrait.texture = load(path)
+		_portrait.visible = true
+	else:
+		_portrait.visible = false
 
 
 ## 漂白鎮的對話框：同樣是縫在布上的標籤，只是被洗白了

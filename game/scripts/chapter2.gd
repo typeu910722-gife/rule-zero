@@ -31,23 +31,24 @@ const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_ou
 
 ## 漂白鎮的六個居民（不跟棉花糖鎮的好孩子混在一起）＋和平鴿；露露他們在河對岸
 const ACTORS := {
-	"baimian": {"name": "白面", "species": "fox", "color": Color("#e2e2df"), "pos": Vector2(210, 418),
-		"opts": {"pale": true, "no_tail": true}},
-	"xiaoji": {"name": "小棘", "species": "hedgehog", "color": Color("#2f2f2f"), "pos": Vector2(410, 610),
-		"opts": {"quills": 5}},
-	"tiaoma": {"name": "條碼", "species": "zebra", "color": Color("#f4f4f2"), "pos": Vector2(1010, 510),
-		"smile": false, "opts": {"stripes": 3}},
-	"gaga": {"name": "嘎嘎", "species": "crow", "color": Color("#4a4a4a"), "pos": Vector2(320, 985),
-		"smile": false, "opts": {"sewn": true}},
-	"zhongzhong": {"name": "重重", "species": "hippo", "color": Color("#9c9c9c"), "pos": Vector2(350, 375),
-		"smile": false, "size": 1.25, "stitched": true},
-	"youyou": {"name": "鼬鼬", "species": "weasel", "color": Color("#b8b8b4"), "pos": Vector2(1130, 770),
-		"opts": {"thread": true}},
-	"dove": {"name": "和平鴿", "species": "dove", "color": Color.WHITE, "pos": Vector2(720, 560)},
-	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(1370, 705)},
-	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1435, 705), "smile": false},
-	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1500, 705)},
-	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(880, 1000)},
+	"baimian": {"name": "白面", "species": "fox", "color": Color("#e2e2df"), "pos": Vector2(330, 92),
+		"opts": {"pale": true, "no_tail": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_baimian_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4}},
+	"xiaoji": {"name": "小棘", "species": "hedgehog", "color": Color("#2f2f2f"), "pos": Vector2(430, 315),
+		"opts": {"quills": 5}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_xiaoji_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4, "requires": {"quills": 5}}},
+	"tiaoma": {"name": "條碼", "species": "zebra", "color": Color("#f4f4f2"), "pos": Vector2(1255, 610),
+		"smile": false, "opts": {"stripes": 3}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_tiaoma_sprite_sheet.png", "cols": 1, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"stripes": 3}}},
+	"gaga": {"name": "嘎嘎", "species": "crow", "color": Color("#4a4a4a"), "pos": Vector2(700, 705),
+		"smile": false, "opts": {"sewn": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_gaga_sprite_sheet.png", "cols": 1, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"sewn": true}}},
+	"zhongzhong": {"name": "重重", "species": "hippo", "color": Color("#9c9c9c"), "pos": Vector2(420, 600),
+		"smile": false, "size": 1.25, "stitched": true, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_zhongzhong_sprite_sheet.png", "cols": 2, "frame": Vector2(208, 208), "origin": Vector2(104, 200), "frames": [0, 1, 2, 3], "fps": 3}},
+	"youyou": {"name": "鼬鼬", "species": "weasel", "color": Color("#b8b8b4"), "pos": Vector2(990, 715),
+		"opts": {"thread": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_youyou_sprite_sheet.png", "cols": 4, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"thread": true}}},
+	"dove": {"name": "和平鴿", "species": "dove", "color": Color.WHITE, "pos": Vector2(900, 440),
+		"sprite": {"tex": "res://art/ch2/characters/sprites/ch2_dove_sprite_sheet.png", "cols": 4, "frame": Vector2(384, 416), "origin": Vector2(192, 408), "frames": [0], "fps": 4, "requires": {"unmasked": false, "crack": 1.0}}},
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(1355, 905)},
+	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1415, 920), "smile": false},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1475, 935)},
+	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(560, 975)},
 }
 const RESIDENTS := ["baimian", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
 const MODELS := ["lulu", "mochi", "popo"]
@@ -55,27 +56,38 @@ const MODELS := ["lulu", "mochi", "popo"]
 const HIDDEN := ["lulu", "mochi", "popo", "conductor"]
 
 const OBJECTS := {
-	"c2_board": {"name": "公告欄", "pos": Vector2(540, 580)},
-	"treatment_door": {"name": "治療室的門", "pos": Vector2(735, 300)},
-	"laundry": {"name": "洗衣房", "pos": Vector2(930, 480)},
-	"tower": {"name": "廣播塔", "pos": Vector2(480, 315)},
-	"station": {"name": "月台", "pos": Vector2(840, 1015)},
-	"fence": {"name": "鐵絲網", "pos": Vector2(1160, 620)},
-	"dining": {"name": "食堂", "pos": Vector2(200, 960)},
-	"c2_bed": {"name": "鐵床", "pos": Vector2(290, 565)},
-	"c2_pillow": {"name": "枕頭", "pos": Vector2(190, 560)},
+	"c2_board": {"name": "公告欄", "pos": Vector2(790, 385)},
+	"treatment_door": {"name": "治療室的門", "pos": Vector2(1150, 285)},
+	"laundry": {"name": "洗衣房", "pos": Vector2(1170, 560)},
+	"tower": {"name": "廣播塔", "pos": Vector2(790, 285)},
+	"station": {"name": "月台", "pos": Vector2(230, 935)},
+	"fence": {"name": "鐵絲網", "pos": Vector2(880, 795)},
+	"dining": {"name": "食堂", "pos": Vector2(790, 695)},
+	"c2_bed": {"name": "鐵床", "pos": Vector2(300, 210)},
+	"c2_pillow": {"name": "枕頭", "pos": Vector2(240, 222)},
 	# 第二天夜晚（跟鼬鼬偷溜）
-	"treatment_window": {"name": "治療室的窗戶", "pos": Vector2(800, 300)},
-	"office": {"name": "辦公室", "pos": Vector2(560, 330)},
-	"platform": {"name": "月台", "pos": Vector2(760, 1000)},
+	"treatment_window": {"name": "治療室的窗戶", "pos": Vector2(1320, 245)},
+	"office": {"name": "辦公室", "pos": Vector2(1060, 275)},
+	"platform": {"name": "月台", "pos": Vector2(480, 965)},
 }
 const NIGHT_OBJECTS := ["c2_bed", "c2_pillow"]
 const NIGHT_OUT_OBJECTS := ["treatment_window", "office", "platform"]
+## 傍晚隔著鐵絲網排隊的位置（沿著地圖上的鐵絲網）
+const FENCE_LINE := [Vector2(720, 930), Vector2(775, 870), Vector2(830, 830), Vector2(885, 785),
+	Vector2(940, 750), Vector2(995, 720)]
+## 外包配樂（第二章 P0）
+const BGM := {
+	"town": "res://audio/ch2/bgm/ch2_bgm01_bleach_town.ogg",
+	"dove": "res://audio/ch2/bgm/ch2_bgm04_dove.ogg",
+	"correction": "res://audio/ch2/bgm/ch2_bgm05_correction_time.ogg",
+}
 
-const WORLD_BOUNDS := Rect2(20, 40, 1150, 1000)
-const HOUSE_BOUNDS := Rect2(85, 490, 255, 180)
-const HOME_SPOT := Vector2(230, 630)
-const PLAZA_SPOT := Vector2(600, 680)
+## 地圖：game/art/ch2/backgrounds/ch2_bg_town_day.jpg（外包 P0）。鐵絲網另一邊走不過去（BleachTown.BLOCKED）
+const WORLD_BOUNDS := Rect2(20, 40, 1560, 975)
+## 宿舍的剖面（地圖左上）：夜晚只能在裡面走動
+const HOUSE_BOUNDS := Rect2(225, 165, 235, 100)
+const HOME_SPOT := Vector2(380, 250)
+const PLAZA_SPOT := Vector2(790, 500)
 
 const TINTS := {
 	"day": Color(1, 1, 1),
@@ -96,6 +108,8 @@ var board: CanvasLayer
 var tint: CanvasModulate
 var fade: ColorRect
 var overlay: CanvasLayer
+var music: AudioStreamPlayer
+var _bgm_name := ""
 
 
 func _ready() -> void:
@@ -116,7 +130,13 @@ func _ready() -> void:
 		actors[id] = o
 	player = Player.new()
 	player.can_move = false
+	if town.has_map():
+		player.blocked = PackedVector2Array(BleachTown.BLOCKED)
 	add_child(player)
+	music = AudioStreamPlayer.new()
+	music.volume_db = -8.0
+	add_child(music)
+	Dialogue.portrait_ok = func(id: String) -> bool: return actors.has(id) and actors[id].sprite_matches()
 	for a in actors.values():
 		a.target = player
 
@@ -152,7 +172,32 @@ func _ready() -> void:
 			run_chapter.call_deferred()
 
 
+## 配樂：town（漂白鎮）、dove（和平鴿）、correction（矯正時間）；"" 停止
+func _bgm(name: String) -> void:
+	if name == _bgm_name:
+		return
+	_bgm_name = name
+	music.stop()
+	if name == "" or not ResourceLoader.exists(BGM[name]):
+		return
+	var s: AudioStream = load(BGM[name])
+	if s is AudioStreamOggVorbis:
+		s.loop = true
+	music.stream = s
+	music.play()
+
+
+## 小遊戲時換配樂，結束後換回來
+func _with_bgm(name: String, game: Node, method := "play") -> Variant:
+	var prev := _bgm_name
+	_bgm(name)
+	var r = await game.call(method)
+	_bgm(prev)
+	return r
+
+
 func _exit_tree() -> void:
+	Dialogue.portrait_ok = Callable()
 	if Dialogue.event_requested.is_connected(_on_event):
 		Dialogue.event_requested.disconnect(_on_event)
 
@@ -167,7 +212,7 @@ func _to_title() -> void:
 func run_chapter() -> void:
 	_set_phase("prologue")
 	_layout("arrival")
-	player.position = Vector2(700, 1030)
+	player.position = Vector2(250, 975)
 	await Dialogue.run("c2_prologue")
 	await Dialogue.run("c2_arrival")
 	await _fade_to(1.0)
@@ -177,7 +222,7 @@ func run_chapter() -> void:
 	await Dialogue.run("c2_report")
 	await Dialogue.run("c2_apology")
 	await _fade_to(1.0)
-	player.position = Vector2(560, 700)
+	player.position = Vector2(620, 560)
 	hud.set_status_visible(true)
 	_set_phase("day1_explore")
 	GameState.save_game("c2_day1_explore")
@@ -191,7 +236,7 @@ func _continue() -> void:
 	Dialogue.set_bg("none")
 	_set_tint("day")
 	player.bounds = WORLD_BOUNDS
-	player.position = Vector2(560, 700)
+	player.position = Vector2(620, 560)
 	_layout("day")
 	hud.set_status_visible(true)
 	_set_phase("day1_explore")
@@ -221,20 +266,22 @@ func _after_interaction() -> void:
 func _day1_evening() -> void:
 	await _fade_to(1.0)
 	_set_tint("evening")
-	player.position = Vector2(1080, 640)
+	player.position = Vector2(850, 830)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_evening")
 	await _fade_to(1.0)
 	_set_tint("night")
 	_layout("rollcall")
-	player.position = Vector2(780, 720)
+	player.position = Vector2(950, 520)
 	await _fade_to(0.0)
+	_bgm("dove")
 	await Dialogue.run("c2_rollcall")
 	await _fade_to(1.0)
 	_layout("night")
 	player.position = HOME_SPOT
 	player.bounds = HOUSE_BOUNDS
 	await _fade_to(0.0)
+	_bgm("")
 	await Dialogue.run("c2_night_intro")
 	_set_phase("day1_night")
 
@@ -262,22 +309,22 @@ func _day2_morning() -> void:
 	await _fade_to(0.0)
 	await Dialogue.run("c2_d2_morning")
 	await _fade_to(1.0)
-	player.position = Vector2(260, 980)
+	player.position = Vector2(790, 740)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_breakfast")
 	await _fade_to(1.0)
-	player.position = Vector2(960, 520)
+	player.position = Vector2(1250, 640)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_scrub")
 	_layout("day")
 	await _fade_to(1.0)
-	player.position = Vector2(350, 420)
+	player.position = Vector2(300, 600)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_find")
 	await Dialogue.run("c2_treatment_1")
 	_layout("day")
 	await _fade_to(1.0)
-	player.position = Vector2(400, 560)
+	player.position = Vector2(500, 560)
 	_set_phase("day2_explore")
 	await _fade_to(0.0)
 	busy = false
@@ -289,14 +336,16 @@ func _day2_evening() -> void:
 	await _fade_to(1.0)
 	_set_tint("night")
 	_layout("rollcall")
-	player.position = Vector2(780, 720)
+	player.position = Vector2(950, 520)
 	await _fade_to(0.0)
+	_bgm("dove")
 	await Dialogue.run("c2_rollcall_2")
 	await _fade_to(1.0)
 	_layout("night")
 	player.position = HOME_SPOT
 	player.bounds = HOUSE_BOUNDS
 	await _fade_to(0.0)
+	_bgm("")
 	await Dialogue.run("c2_night2")
 	if not GameState.has("night_out_2"):
 		await _day2_end()
@@ -336,12 +385,12 @@ func _day3_morning() -> void:
 	await Dialogue.run("c2_d3_morning")
 	await _fade_to(1.0)
 	_layout("day")
-	player.position = Vector2(1060, 660)
+	player.position = Vector2(850, 800)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_popo_fence")
 	await _fade_to(1.0)
 	_layout("day")
-	player.position = Vector2(350, 420)
+	player.position = Vector2(300, 600)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_confession")
 	await Dialogue.run("c2_trim")
@@ -349,8 +398,8 @@ func _day3_morning() -> void:
 	await _fade_to(1.0)
 	_layout("day")
 	_set_tint("evening")
-	actors.xiaoji.position = Vector2(1130, 650)
-	player.position = Vector2(900, 640)
+	actors.xiaoji.position = Vector2(920, 755)
+	player.position = Vector2(830, 800)
 	_set_phase("day3_explore")
 	await _fade_to(0.0)
 	busy = false
@@ -361,12 +410,12 @@ func _graduation() -> void:
 	_set_phase("graduation")
 	await _fade_to(1.0)
 	_layout("day")
-	player.position = Vector2(560, 700)
+	player.position = Vector2(620, 560)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_chairs")
 	await _fade_to(1.0)
 	_layout("graduation")
-	player.position = Vector2(560, 700)
+	player.position = Vector2(620, 560)
 	await _fade_to(0.0)
 	await Dialogue.run("c2_graduation")
 	await _chapter_end()
@@ -491,7 +540,7 @@ func _on_event(event_name: String) -> void:
 		"apology":
 			var game := Apology.new()
 			add_child(game)
-			await game.play()
+			await _with_bgm("", game)
 		"roll_list":
 			var r := RollList.new()
 			add_child(r)
@@ -500,28 +549,30 @@ func _on_event(event_name: String) -> void:
 			for id in MODELS:
 				actors[id].visible = false
 		"c2_dove_appears":
+			_bgm("dove")
 			var dove: Interactable = actors.dove
 			dove.visible = true
-			dove.position = Vector2(770, 960)
+			dove.position = Vector2(560, 935)
 		"scrub":
 			var sc := Scrub.new()
 			add_child(sc)
-			await sc.play()
+			await _with_bgm("correction", sc)
 		"find_1", "find_2", "find_3":
 			var fo := FindOdd.new()
 			add_child(fo)
 			var n := int(event_name.right(1))
+			_bgm("correction")
 			GameState.set_flag("c2_found_%d" % n, await fo.play(n))
 		"treatment_hold":
 			var h := HoldEndure.new()
 			h.questions = [["第一題。你為什麼沒有笑？", 3.0], ["第二題。你在看誰？", 4.0],
 				["第三題。你還記得，遙是誰嗎？", 5.0]]
 			add_child(h)
-			await h.play()
+			await _with_bgm("dove", h)
 		"sneak":
 			var sn := Sneak.new()
 			add_child(sn)
-			if await sn.play():
+			if await _with_bgm("dove", sn):
 				GameState.set_flag("c2_sneak_caught")
 				GameState.add_conduct(-10)
 		"photo_1", "photo_2", "photo_nirvana", "silhouette":
@@ -543,37 +594,37 @@ func _on_event(event_name: String) -> void:
 				actors[id].visible = false
 			var dove: Interactable = actors.dove
 			dove.visible = true
-			dove.position = Vector2(700, 1010)
+			dove.position = Vector2(420, 965)
 			dove.opts["unmasked"] = true
 			dove.queue_redraw()
 			actors.conductor.visible = true
-			actors.conductor.position = Vector2(900, 1010)
-			player.position = Vector2(560, 960)
+			actors.conductor.position = Vector2(600, 965)
+			player.position = Vector2(250, 960)
 		"c2_dove_mask_on":
 			actors.dove.opts["unmasked"] = false
 			actors.dove.queue_redraw()
 		"c2_popo_fence":
 			actors.popo.visible = true
-			actors.popo.position = Vector2(1300, 640)
+			actors.popo.position = Vector2(1240, 935)
 			for id in ["lulu", "mochi"]:
 				actors[id].visible = true
-			actors.xiaoji.position = Vector2(1140, 650)
+			actors.xiaoji.position = Vector2(920, 755)
 		"c2_dove_hug":
-			actors.dove.position = Vector2(1100, 690)
+			actors.dove.position = Vector2(860, 735)
 		"confession_1", "confession_2":
 			var cf := Confession.new()
 			cf.cards = CARDS_DONE if event_name == "confession_1" else CARDS_ORPHAN
 			add_child(cf)
-			await cf.play()
+			await _with_bgm("correction", cf)
 		"trim_1", "trim_2", "trim_3":
 			var tr := Trim.new()
 			tr.quills = {"trim_1": Trim.TOTAL, "trim_2": 6, "trim_3": 1}[event_name]
 			tr.leave = {"trim_1": 6, "trim_2": 1, "trim_3": 0}[event_name]
 			add_child(tr)
-			await tr.play()
+			await _with_bgm("correction", tr)
 		"c2_mochi_cross":
 			actors.mochi.visible = true
-			actors.mochi.position = Vector2(1165, 660)
+			actors.mochi.position = Vector2(965, 740)
 			actors.lulu.visible = true
 		"c2_mochi_back":
 			actors.mochi.position = ACTORS.mochi.pos
@@ -591,12 +642,12 @@ func _on_event(event_name: String) -> void:
 				"chairs_3":
 					ch.players = ["pip", "zhongzhong"]
 			add_child(ch)
-			await ch.play()
+			await _with_bgm("", ch)
 		"long_hold", "special_hold":
 			var lh := HoldEndure.new()
 			lh.questions = [["（他沒有問問題。他一直按。）", 10.0 if event_name == "long_hold" else 15.0]]
 			add_child(lh)
-			await lh.play()
+			await _with_bgm("dove", lh)
 		"c2_graduation_layout":
 			pass
 		"restuff_1", "restuff_2":
@@ -604,7 +655,7 @@ func _on_event(event_name: String) -> void:
 			rs.step = 0 if event_name == "restuff_1" else 2
 			rs.steps = 2 if event_name == "restuff_1" else 4
 			add_child(rs)
-			await rs.play()
+			await _with_bgm("correction", rs)
 		"c2_tiaoma_gone":
 			actors.tiaoma.visible = false
 		"c2_mask_crack":
@@ -620,7 +671,7 @@ func _on_event(event_name: String) -> void:
 		"c2_fence_lineup":
 			# 隔著鐵絲網排隊；對岸的模範生站在陽台上揮手
 			for k in RESIDENTS.size():
-				actors[RESIDENTS[k]].position = Vector2(1120 - (k % 2) * 40, 470 + k * 50)
+				actors[RESIDENTS[k]].position = FENCE_LINE[k]
 				actors[RESIDENTS[k]].visible = true
 			for id in MODELS:
 				actors[id].position = ACTORS[id].pos
@@ -643,16 +694,16 @@ func _layout(mode: String) -> void:
 		"arrival":
 			# 月台：模範生在左邊，漂白鎮的六個居民在右邊排成一排
 			for k in MODELS.size():
-				actors[MODELS[k]].position = Vector2(560 + k * 45, 1010)
+				actors[MODELS[k]].position = Vector2(300 + k * 45, 980)
 				actors[MODELS[k]].visible = true
 			for k in RESIDENTS.size():
-				actors[RESIDENTS[k]].position = Vector2(810 + k * 52, 1020 - (k % 2) * 12)
+				actors[RESIDENTS[k]].position = Vector2(470 + k * 48, 975 - (k % 2) * 10)
 			actors.dove.visible = false
 		"rollcall":
 			# 點名：所有人在廣場排成一排，第 8 個位置空著
 			for k in RESIDENTS.size():
-				actors[RESIDENTS[k]].position = Vector2(500 + k * 46, 720)
-			actors.dove.position = Vector2(700, 560)
+				actors[RESIDENTS[k]].position = Vector2(650 + k * 50, 520)
+			actors.dove.position = Vector2(790, 440)
 		"night":
 			for id in ACTORS:
 				actors[id].visible = false
@@ -664,11 +715,11 @@ func _layout(mode: String) -> void:
 			town.queue_redraw()
 			for k in MODELS.size():
 				actors[MODELS[k]].visible = true
-				actors[MODELS[k]].position = Vector2(670 + k * 45, 500)
+				actors[MODELS[k]].position = Vector2(750 + k * 40, 420)
 			for k in RESIDENTS.size():
-				actors[RESIDENTS[k]].position = Vector2(470 + k * 52, 640 + (k % 2) * 14)
-			actors.baimian.position = Vector2(820, 520)
-			actors.dove.position = Vector2(880, 680)
+				actors[RESIDENTS[k]].position = Vector2(640 + k * 55, 500 + (k % 2) * 8)
+			actors.baimian.position = Vector2(950, 450)
+			actors.dove.position = Vector2(600, 450)
 		"night_out":
 			# 偷溜：只有鼬鼬跟著你
 			for id in ACTORS:
@@ -676,7 +727,7 @@ func _layout(mode: String) -> void:
 			for id in OBJECTS:
 				actors[id].visible = id in NIGHT_OUT_OBJECTS
 			actors.youyou.visible = true
-			actors.youyou.position = Vector2(1120, 600)
+			actors.youyou.position = Vector2(880, 765)
 
 
 ## 依劇情改變居民的樣子：條碼的斑紋、嘎嘎的嘴、鼬鼬的紅毛線、和平鴿的面具
@@ -702,8 +753,16 @@ func _close_overlay() -> void:
 		overlay = null
 
 
+## 每個時段的配樂
+const PHASE_BGM := {"prologue": "", "day1_explore": "town", "day1_night": "", "day2_morning": "town",
+	"day2_explore": "town", "night_out_2": "", "day3_morning": "town", "day3_explore": "town",
+	"graduation": "dove", "ended": ""}
+
+
 func _set_phase(p: String) -> void:
 	phase = p
+	if PHASE_BGM.has(p):
+		_bgm(PHASE_BGM[p])
 	_refresh_objective()
 
 

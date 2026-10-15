@@ -1,0 +1,197 @@
+[
+  {
+    "id": "BGM-01",
+    "file": "game/audio/ch2/bgm/ch2_bgm01_bleach_town.wav",
+    "seconds": 96,
+    "bpm": 80,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "loop_start_sample": 0,
+    "loop_end_sample_exclusive": 4608000,
+    "method": "original procedural instrumental synthesis; no vocals"
+  },
+  {
+    "id": "BGM-04",
+    "file": "game/audio/ch2/bgm/ch2_bgm04_dove.wav",
+    "seconds": 96,
+    "bpm": 60,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "loop_start_sample": 0,
+    "loop_end_sample_exclusive": 4608000,
+    "method": "original procedural instrumental synthesis; no vocals"
+  },
+  {
+    "id": "BGM-05",
+    "file": "game/audio/ch2/bgm/ch2_bgm05_correction_time.wav",
+    "seconds": 60,
+    "bpm": 96,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "loop_start_sample": 0,
+    "loop_end_sample_exclusive": 2880000,
+    "method": "original procedural instrumental synthesis; no vocals"
+  },
+  {
+    "id": "SE-01",
+    "file": "game/audio/ch2/se/ch2_se01_text_01.wav",
+    "seconds": 0.045,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_short_01.wav",
+    "seconds": 0.325,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_long_01.wav",
+    "seconds": 1.06,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_short_01.wav",
+    "seconds": 0.18,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_medium_01.wav",
+    "seconds": 0.55,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_long_01.wav",
+    "seconds": 1.2,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-01",
+    "file": "game/audio/ch2/se/ch2_se01_text_02.wav",
+    "seconds": 0.045,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_short_02.wav",
+    "seconds": 0.35,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_long_02.wav",
+    "seconds": 1.12,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_short_02.wav",
+    "seconds": 0.18,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_medium_02.wav",
+    "seconds": 0.55,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_long_02.wav",
+    "seconds": 1.2,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-01",
+    "file": "game/audio/ch2/se/ch2_se01_text_03.wav",
+    "seconds": 0.045,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_short_03.wav",
+    "seconds": 0.375,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-20",
+    "file": "game/audio/ch2/se/ch2_se20_whistle_long_03.wav",
+    "seconds": 1.18,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_short_03.wav",
+    "seconds": 0.18,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_medium_03.wav",
+    "seconds": 0.55,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  },
+  {
+    "id": "SE-40",
+    "file": "game/audio/ch2/se/ch2_se40_shock_long_03.wav",
+    "seconds": 1.2,
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "channels": 1,
+    "method": "original procedural sound synthesis"
+  }
+]

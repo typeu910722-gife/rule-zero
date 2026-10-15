@@ -60,6 +60,10 @@ static func buzz_wave(length := 0.3) -> AudioStreamWAV:
 
 
 static func buzz(parent: Node, length := 0.3, volume_db := -10.0) -> void:
+	# 有外包的電擊音效就用它（短／中／長），沒有才用程式合成的嗡嗡聲
+	var kind := "shock_short" if length < 0.25 else ("shock_medium" if length < 0.5 else "shock_long")
+	if Sfx.play(parent, kind, volume_db + 4.0):
+		return
 	var p := AudioStreamPlayer.new()
 	p.stream = buzz_wave(snappedf(length, 0.05))
 	p.volume_db = volume_db

@@ -14,6 +14,7 @@
 | `@set 旗標` / `@unset 旗標` | 設定／清除旗標（秘密也是旗標，見 `game_state.gd` 的 `SECRETS`） |
 | `@sus 10` | 懷疑值 +10（玩家看不到，F3 可顯示） |
 | `@conduct -10` | 第二章：操行成績 −10（玩家看得到） |
+| `@sfx whistle_short` | 播放音效（`scripts/audio/sfx.gd` 的名稱：text、whistle_short、whistle_long、shock_short／medium／long） |
 | `@goto 標籤` | 跳轉 |
 | `@if 條件 標籤` | 條件成立就跳轉 |
 | `@end` | 結束這段對話 |

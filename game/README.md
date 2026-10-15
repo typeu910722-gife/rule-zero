@@ -98,6 +98,14 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 
 ![畢業典禮](../docs/images/proto_ch2_graduation.png)
 
+## 外包素材（第二章 P0，已接入）
+交件說明與檔案表：`docs/vendor/ch2_p0/`（AI 生成，Steam 上架需揭露；提示詞在 `generation_prompts.json`）。
+- 地圖：`art/ch2/backgrounds/ch2_bg_town_day.jpg`（原檔 3200×2300 縮成 1600×1150）。鐵絲網另一邊走不過去（`BleachTown.BLOCKED`）。
+- 小人：`art/ch2/characters/sprites/`，以 0.5 倍顯示。劇情狀態還沒有對應的圖時（條碼少斑紋、小棘剪刺、嘎嘎拆線、鼬鼬沒紅毛線、和平鴿破面具／沒戴面具），自動退回程式繪製的樣子。
+- 立繪：`art/ch2/characters/portraits/`（縮成 512×768），對話時顯示在右邊；狀態不符時不顯示。
+- 配樂：漂白鎮（自由時間）、和平鴿（點名、治療室、畢業典禮）、矯正時間（洗白白、找出壞孩子、反省會、修剪、重新塞棉花）。
+- 音效：對話打字聲、哨音（腳本裡的 `@sfx`）、電擊（所有小遊戲的電擊都換成外包音效）。
+
 ## 尚未實作（下一步）
 - 第三章「慈愛綜合醫院」
 - 第二章的正式美術、音樂、音效（需求清單：`docs/chapter2_asset_requests.txt`）

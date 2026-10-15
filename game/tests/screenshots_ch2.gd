@@ -46,24 +46,24 @@ func _run() -> void:
 	# 月台：和平鴿
 	ch._layout("arrival")
 	ch.actors.dove.visible = true
-	ch.actors.dove.position = Vector2(770, 960)
-	ch.player.position = Vector2(700, 1030)
+	ch.actors.dove.position = Vector2(560, 935)
+	ch.player.position = Vector2(250, 975)
 	await _frames(40)
 	await _shot("c2_01_arrival")
 
 	# 自由時間：點名廣場
 	ch._layout("day")
-	ch.player.position = Vector2(600, 680)
+	ch.player.position = Vector2(790, 500)
 	await _frames(40)
 	await _shot("c2_02_plaza")
 
 	# 宿舍屋頂的白面、走廊的小棘
-	ch.player.position = Vector2(330, 520)
+	ch.player.position = Vector2(420, 330)
 	await _frames(40)
 	await _shot("c2_03_dorm")
 
 	# 洗衣房的條碼、鐵絲網的鼬鼬
-	ch.player.position = Vector2(1050, 640)
+	ch.player.position = Vector2(1000, 640)
 	await _frames(40)
 	await _shot("c2_04_fence")
 
@@ -110,8 +110,9 @@ func _run() -> void:
 	r.queue_free()
 
 	# 對話框（漂白鎮的配色）
-	ch.player.position = Vector2(600, 680)
+	ch.player.position = Vector2(790, 500)
 	dlg._apply_style()
+	dlg._show_portrait("和平鴿")
 	dlg._box.visible = true
 	dlg._name.text = "和平鴿"
 	dlg._text.text = "我會很愛你。愛到你變好為止。"
@@ -122,7 +123,7 @@ func _run() -> void:
 	# 夜晚的宿舍
 	ch._layout("night")
 	ch._set_tint("night")
-	ch.player.position = Vector2(230, 630)
+	ch.player.position = Vector2(380, 250)
 	await _frames(40)
 	await _shot("c2_12_night")
 	gs.delete_save()

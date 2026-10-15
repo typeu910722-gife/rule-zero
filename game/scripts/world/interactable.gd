@@ -15,6 +15,12 @@ var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
 ## 第二章的外觀細節（斑紋數、縫起來的嘴……），見 Critter.draw 的 opts
 var opts := {}
+## 外包的小人圖（第二章 P0）：{tex, cols, rows, frame, origin, frames, fps}
+## sprite.requires：這張圖畫的是哪個狀態（例如條碼 3 條斑紋）。劇情狀態不同、還沒有對應的圖時，
+## 退回程式繪製的樣子（見 sprite_matches）
+var sprite := {}
+var _tex: Texture2D
+var _anim_t := 0.0
 var target: Node2D
 
 
@@ -29,6 +35,9 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 	stitched = data.get("stitched", false)
 	position = data.get("pos", Vector2.ZERO)
 	opts = data.get("opts", {}).duplicate()
+	sprite = data.get("sprite", {})
+	if not sprite.is_empty() and ResourceLoader.exists(sprite.tex):
+		_tex = load(sprite.tex)
 	add_to_group("interactable")
 	return self
 
@@ -37,9 +46,32 @@ func reach() -> float:
 	return 70.0 * size
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if follow_eyes:
 		queue_redraw()
+	if _tex and sprite.get("frames", [0]).size() > 1 and sprite_matches():
+		_anim_t += delta
+		queue_redraw()
+
+
+func sprite_matches() -> bool:
+	if sprite.is_empty():
+		return false
+	var req: Dictionary = sprite.get("requires", {})
+	for k in req:
+		if opts.has(k) and opts[k] != req[k]:
+			return false
+	return true
+
+
+func _draw_sprite() -> void:
+	var frames: Array = sprite.get("frames", [0])
+	var i: int = frames[int(_anim_t * sprite.get("fps", 4)) % frames.size()]
+	var fs: Vector2 = sprite.frame
+	var cols: int = sprite.get("cols", 1)
+	var src := Rect2(Vector2(i % cols, i / cols) * fs, fs)
+	var sc: float = sprite.get("scale", 0.5)
+	draw_texture_rect_region(_tex, Rect2(-sprite.origin * sc, fs * sc), src)
 
 
 func _draw() -> void:
@@ -48,7 +80,10 @@ func _draw() -> void:
 		if follow_eyes and target:
 			look = (target.global_position - global_position).normalized()
 		var label_col := Color("#6d597a")
-		if species == "dove":
+		if _tex and sprite_matches():
+			_draw_sprite()
+			label_col = Color("#555555")
+		elif species == "dove":
 			Critter.draw_dove(self, size, opts.get("unmasked", false), opts.get("crack", 1.0))
 			label_col = Color("#555555")
 		elif species == "conductor":
@@ -81,11 +116,9 @@ func _draw_object() -> void:
 				for k in 6:
 					draw_circle(Vector2(-14 + (k % 3) * 14, -48 + (k / 3) * 22), 3, Color("#ffffff"))
 		"c2_bed":
-			# 漂白鎮宿舍的鐵製上下舖
-			draw_rect(Rect2(-42, -70, 84, 80), Color("#8d8d8d"), false, 3)
-			draw_rect(Rect2(-40, -34, 80, 16), Color("#e6e6e6"))
-			draw_rect(Rect2(-40, -66, 80, 14), Color("#e6e6e6"))
-			draw_rect(Rect2(-36, -40, 26, 8), Color("#ffffff"))
+			# 地圖上已經畫了鐵製上下舖：只留一個小小的閃光提示
+			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
+			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
 		"c2_pillow":
 			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#f5f5f5"))
 			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#cfcfcf"))
@@ -93,6 +126,10 @@ func _draw_object() -> void:
 			if not GameState.has("c2_pillow_done"):
 				draw_circle(Vector2(10, -3), 3, Color("#f28fb0"))
 		"c2_board":
+			# 地圖上已經有公告欄：只留閃光提示
+			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
+			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
+		"c2_board_old":
 			draw_rect(Rect2(-36, -20, 6, 40), Color("#6e6e6e"))
 			draw_rect(Rect2(30, -20, 6, 40), Color("#6e6e6e"))
 			draw_rect(Rect2(-46, -70, 92, 56), Color("#f4f4f2"))

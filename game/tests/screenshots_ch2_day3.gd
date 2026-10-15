@@ -84,7 +84,7 @@ func _run() -> void:
 	ch._layout("graduation")
 	ch.town.train = true
 	ch._set_tint("evening")
-	ch.player.position = Vector2(620, 760)
+	ch.player.position = Vector2(950, 560)
 	for i in 40:
 		await process_frame
 	await _shot("c2_d3_05_graduation")

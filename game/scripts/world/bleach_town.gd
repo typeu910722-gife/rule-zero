@@ -14,9 +14,28 @@ const FENCE_X := 1190.0
 ## 第三天：畢業典禮的布條；火車進站
 var banner := false
 var train := false
+## 外包的漂白鎮白天地圖（第二章 P0）。有它就用它，沒有才用程式繪製的佔位圖。
+const MAP := "res://art/ch2/backgrounds/ch2_bg_town_day.jpg"
+var _map: Texture2D
+## 鐵絲網的另一邊：河與模範生宿舍（地圖座標）
+const BLOCKED := [Vector2(640, 1150), Vector2(668, 1010), Vector2(800, 872), Vector2(880, 808),
+	Vector2(1000, 748), Vector2(1250, 658), Vector2(1600, 626), Vector2(1600, 1150)]
+
+
+func has_map() -> bool:
+	return _map != null
+
+
+func _ready() -> void:
+	if ResourceLoader.exists(MAP):
+		_map = load(MAP)
 
 
 func _draw() -> void:
+	if _map:
+		draw_texture_rect(_map, Rect2(0, 0, W, H), false)
+		_overlays()
+		return
 	draw_rect(Rect2(0, 0, W, H), GROUND)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
@@ -120,7 +139,14 @@ func _draw() -> void:
 	draw_arc(Vector2(700, 860), 18, 0, TAU, 20, Color("#5a5a5a"), 3)
 
 
+	_overlays()
+
+
+## 畢業典禮的布條、工作台與火車（兩種地圖共用）
+func _overlays() -> void:
+	var o := Vector2.ZERO if not _map else Vector2(160, -140)
 	if banner:
+		draw_set_transform(o)
 		draw_rect(Rect2(500, 400, 300, 50), Color("#f7f7f5"))
 		draw_rect(Rect2(500, 400, 300, 50), Color("#f2a7c3"), false, 3)
 		draw_string(GameState.font, Vector2(500, 436), "恭喜畢業！", HORIZONTAL_ALIGNMENT_CENTER, 300, 28, Color("#e05780"))
@@ -128,11 +154,12 @@ func _draw() -> void:
 			draw_rect(Rect2(470 + k * 70, 600, 56, 24), Color("#fbfbf9"))
 			draw_rect(Rect2(474 + k * 70, 624, 6, 20), Color("#9a9a9a"))
 			draw_rect(Rect2(516 + k * 70, 624, 6, 20), Color("#9a9a9a"))
+		draw_set_transform(Vector2.ZERO)
 	if train:
-		draw_rect(Rect2(260, 1030, 900, 70), Color("#bfb8bd"))
-		for k in 8:
-			draw_rect(Rect2(290 + k * 108, 1044, 70, 30), Color("#e8e2e6"))
-		draw_rect(Rect2(1160, 1020, 80, 80), Color("#a69ea4"))
+		var tr := Rect2(260, 1030, 900, 70) if not _map else Rect2(-20, 1032, 660, 70)
+		draw_rect(tr, Color("#bfb8bd"))
+		for k in int(tr.size.x / 108):
+			draw_rect(Rect2(tr.position.x + 30 + k * 108, tr.position.y + 14, 70, 30), Color("#e8e2e6"))
 
 
 func _label(text: String, center: Vector2, col: Color) -> void:

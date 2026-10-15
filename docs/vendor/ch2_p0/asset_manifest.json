@@ -1,0 +1,394 @@
+[
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_baimian_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "baimian",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 644243
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_baimian_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "baimian",
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 16640
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_baimian_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 320,
+    "height": 320,
+    "mode": "RGBA",
+    "character": "baimian",
+    "columns": 2,
+    "rows": 2,
+    "frame_width": 160,
+    "frame_height": 160,
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "layout": "FOUR equal cells in exact 2 columns by 2 rows. Each cell same fox seated on an INVISIBLE roof edge, legs dangling freely (no environment). Four subtly different foot swing poses. Show head upper surface from elevated camera. No roof piece.",
+    "suggested_fps": 5,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 4,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 66801
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_xiaoji_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "xiaoji",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 720587
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_xiaoji_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "xiaoji",
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 17222
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_xiaoji_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 320,
+    "height": 320,
+    "mode": "RGBA",
+    "character": "xiaoji",
+    "columns": 2,
+    "rows": 2,
+    "frame_width": 160,
+    "frame_height": 160,
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "layout": "FOUR equal cells in exact 2 columns by 2 rows. Each shows same hedgehog in successive gentle sweeping motions with a gray broom; same torso position and scale; hands sweep left, center, right, center. Base irregular spine state only.",
+    "suggested_fps": 5,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 4,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 69291
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_tiaoma_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "tiaoma",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 898391
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_tiaoma_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "tiaoma",
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 18203
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_tiaoma_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "tiaoma",
+    "columns": 1,
+    "rows": 1,
+    "frame_width": 160,
+    "frame_height": 160,
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "layout": "SINGLE full-body standing idle zebra facing south toward viewer from elevated camera. Exactly 3 black torso stripes; no other stripes.",
+    "suggested_fps": 5,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 1,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 18203
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_gaga_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "gaga",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 795094
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_gaga_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "gaga",
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 16634
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_gaga_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "gaga",
+    "columns": 1,
+    "rows": 1,
+    "frame_width": 160,
+    "frame_height": 160,
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "layout": "SINGLE full-body standing idle crow facing south toward viewer from elevated camera. Closed stitched beak; left button eye, right camera eye.",
+    "suggested_fps": 5,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 1,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 16634
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "zhongzhong",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 687007
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_zhongzhong_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 208,
+    "height": 208,
+    "mode": "RGBA",
+    "character": "zhongzhong",
+    "origin_pixels": [
+      104,
+      200
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 23199
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_zhongzhong_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 416,
+    "height": 416,
+    "mode": "RGBA",
+    "character": "zhongzhong",
+    "columns": 2,
+    "rows": 2,
+    "frame_width": 208,
+    "frame_height": 208,
+    "origin_pixels": [
+      104,
+      200
+    ],
+    "layout": "FOUR equal cells in exact 2 columns by 2 rows. Each shows same seated hippo folding a tiny gray paper crane in four consecutive small hand movements. Feet and torso maintain position.",
+    "suggested_fps": 5,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 4,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 92356
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_youyou_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "youyou",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 994927
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_youyou_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 160,
+    "height": 160,
+    "mode": "RGBA",
+    "character": "youyou",
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 18834
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_youyou_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 640,
+    "height": 640,
+    "mode": "RGBA",
+    "character": "youyou",
+    "columns": 4,
+    "rows": 4,
+    "frame_width": 160,
+    "frame_height": 160,
+    "origin_pixels": [
+      80,
+      152
+    ],
+    "layout": "SIXTEEN equal cells in exact 4 columns by 4 rows. Row 1 walking SOUTH toward viewer, row 2 walking WEST left, row 3 walking EAST right, row 4 walking NORTH away. Each row four gait frames: neutral, left foot ahead, neutral, right foot ahead. Consistent vivid red yarn at neck in every frame. Fixed head/body size, feet centered in each cell.",
+    "suggested_fps": 7,
+    "native_size": [
+      1254,
+      1254
+    ],
+    "frames": 16,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 301372
+  },
+  {
+    "file": "game/art/ch2/characters/portraits/ch2_dove_portrait_default.png",
+    "kind": "portrait",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "character": "dove",
+    "status": "base_only",
+    "layered_source": false,
+    "alpha_min": 0,
+    "alpha_max": 254,
+    "transparent_pixels": 1075250
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_dove_sprite_idle.png",
+    "kind": "sprite_idle",
+    "width": 384,
+    "height": 416,
+    "mode": "RGBA",
+    "character": "dove",
+    "origin_pixels": [
+      192,
+      408
+    ],
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 114803
+  },
+  {
+    "file": "game/art/ch2/characters/sprites/ch2_dove_sprite_sheet.png",
+    "kind": "sprite_sheet",
+    "width": 1536,
+    "height": 832,
+    "mode": "RGBA",
+    "character": "dove",
+    "columns": 4,
+    "rows": 2,
+    "frame_width": 384,
+    "frame_height": 416,
+    "origin_pixels": [
+      192,
+      408
+    ],
+    "layout": "EIGHT equal cells in exact 4 columns by 2 rows. Row1 adult walking SOUTH toward viewer, row2 walking NORTH away from viewer. Each row four gait frames neutral, left foot ahead, neutral, right foot ahead. Human adult thin 7.5-head proportion, not a plush bird; white mask visible only in front, dark short hair at back; overcoat stethoscope whistle heart pin pink heart remote. Fixed height in all frames.",
+    "suggested_fps": 7,
+    "native_size": [
+      1774,
+      887
+    ],
+    "frames": 8,
+    "alpha_min": 0,
+    "alpha_max": 255,
+    "transparent_pixels": 909336
+  },
+  {
+    "file": "game/art/ch2/backgrounds/ch2_bg_town_day.png",
+    "kind": "map",
+    "width": 3200,
+    "height": 2300,
+    "mode": "RGB",
+    "native_size": [
+      1478,
+      1064
+    ],
+    "resampled": true,
+    "collision_data": false,
+    "layered_source": false
+  }
+]
