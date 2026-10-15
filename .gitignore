@@ -1,2 +1,3 @@
 build/
 tools/.subset_chars.txt
+out/
