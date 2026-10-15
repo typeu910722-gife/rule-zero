@@ -346,11 +346,11 @@ func _update_run(delta: float) -> void:
 			if _tele.kind == "needle":
 				for ln in _tele.get("lanes", [_tele.lane]):
 					_needles.append({"x": _mayor_x, "tx": float(ln) * LANE_W, "z": BU_Z + _gap, "z0": BU_Z + _gap, "y": 1.6, "hit": false, "spd": _needle_speed()})
-				Sound.sfx("interact")
+				Sound.sfx("whoosh")
 			else:
 				_lunge = {"lane": _tele.lane, "t": 0.0, "x0": _mayor_x, "gap0": _gap}
 				_mayor_pose = "grab"
-				Sound.sfx("creepy")
+				Sound.sfx("growl")
 			_tele = {}
 	elif _lunge.is_empty():
 		_next_throw -= delta
@@ -425,6 +425,7 @@ func _caught() -> void:
 	_gap = 0.0
 	_flash = 1.0
 	Dialogue.fx.scare()
+	Sound.sfx("impact")
 	Sound.sfx("glitch")
 	_say("……被抓住了。再跑一次！")
 

@@ -2342,6 +2342,7 @@ Fen：去修理室！剪刀——在修理室裡！
 熊熊鎮長：不要怕。一點都不痛的。
 熊熊鎮長：想起來的事情，才會痛喔。所以——
 @event scissors
+@bg mayor_broken
 > 最後一下。
 > 鎮長停住了。
 > 棉花，像雪一樣，從他的胸口湧了出來。
@@ -2358,7 +2359,7 @@ Fen：去修理室！剪刀——在修理室裡！
 > 有一天，他在走廊上看到了。廁所的門被卡住了。裡面有人在敲門。
 > 他想走過去。
 > 他的腳，動不了。
-@bg repair
+@bg mayor_broken
 熊熊鎮長：……我……想起來了。
 熊熊鎮長：我是……你們的老師。
 熊熊鎮長：守則……是我寫的。只要大家都當個好孩子……就不會再有人受傷了……
@@ -2372,7 +2373,8 @@ Fen：去修理室！剪刀——在修理室裡！
 [mem.story_1] 熊熊鎮長：對不起。那天……老師沒有走過去。
 > 鎮長的鈕扣眼睛，慢慢地、慢慢地停了下來。
 > 他不動了。
-@show mayor_still
+@show none
+@bg mayor_broken
 > 他只是一隻很大很大的、舊舊的泰迪熊。
 > ……
 @show none
@@ -2408,6 +2410,10 @@ Fen：去修理室！剪刀——在修理室裡！
 // 每個人的小結局：這一輪或以前的輪做過那件事，才會出現
 @if lulu_mirror_seen nt_lulu
 @if mem.saw_lulu_mirror nt_lulu
+@if lulu_doubt nt_lulu
+@if lulu_d3_done nt_lulu
+@if lulu_mem_done nt_lulu
+@if found_lulu_bow nt_lulu
 > 露露靠在窗邊睡著了。耳朵上的縫線，在月光下亮亮的。
 @goto nt_popo
 # nt_lulu
@@ -2424,6 +2430,9 @@ Fen：去修理室！剪刀——在修理室裡！
 @if mem.saw_pink nt_pink
 @if saw_lulu_letter nt_pink
 @if mem.saw_lulu_letter nt_pink
+@if letter_done nt_pink
+@if lulu_mail_done nt_pink
+@if q_letters nt_pink
 > 波波抱著郵袋，數著裡面的信。數了一遍，又一遍。
 @goto nt_tama
 # nt_pink
@@ -2441,6 +2450,8 @@ Fen：去修理室！剪刀——在修理室裡！
 @if mem.helped_tama nt_tama_yes
 @if saw_tama_test nt_tama_yes
 @if mem.saw_tama_test nt_tama_yes
+@if met_tama nt_tama_yes
+@if q_tama nt_tama_yes
 > 小玉坐得直直的。手放在膝蓋上。好像在等誰來點名。
 @goto nt_mochi
 # nt_tama_yes
@@ -2453,6 +2464,9 @@ Fen：去修理室！剪刀——在修理室裡！
 @bg train_night
 @if mochi_remembers nt_mochi_yes
 @if mem.knows_mochi nt_mochi_yes
+@if met_mochi nt_mochi_yes
+@if q_mochi_done nt_mochi_yes
+@if mem.mochi_refused nt_mochi_yes
 > 麻糬抱著你的斗篷一角，睡得好熟。名牌還是空白的。
 @goto nt_dog
 # nt_mochi_yes
@@ -2466,6 +2480,8 @@ Fen：去修理室！剪刀——在修理室裡！
 @bg train_night
 @if dog_confessed nt_dog_yes
 @if mem.knows_dog nt_dog_yes
+@if dog_d2_done nt_dog_yes
+@if met_puppy nt_dog_yes
 > 小狗居民抱著掃把，坐在最後一排。掃把的毛，掉光了。
 @goto nt_name
 # nt_dog_yes

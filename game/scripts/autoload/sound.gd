@@ -1,6 +1,6 @@
 extends Node
 ## 背景音樂與音效。
-##   Sound.bgm("day" / "night" / "memory" / "")   切換背景音樂（約 1 秒交叉淡入淡出）
+##   Sound.bgm("day" / "night" / "memory" / "chase" / "")   切換背景音樂（約 1 秒交叉淡入淡出）
 ##   Sound.override_bgm("memory")                  暫時蓋過（夢境），傳 "" 恢復
 ##   Sound.sfx("interact")                          播放音效
 ##   Sound.ambience("forest" / "night" / "")        環境音（疊在音樂下面，交叉淡入淡出）
@@ -10,6 +10,7 @@ const BGM := {
 	"day": "res://audio/bgm_01_day_town.ogg",
 	"night": "res://audio/bgm_02_night_exploration.ogg",
 	"memory": "res://audio/bgm_03_memory_reveal.ogg",
+	"chase": "res://audio/bgm_04_chase.ogg",
 }
 const SFX := {
 	"talk": "res://audio/sfx_talk.wav",
@@ -23,6 +24,12 @@ const SFX := {
 	"creepy": "res://audio/sfx_creepy.wav",
 	"glitch": "res://audio/sfx_glitch.wav",
 	"heartbeat": "res://audio/sfx_heartbeat.wav",
+	"stab": "res://audio/sfx_stab.wav",
+	"tear": "res://audio/sfx_tear.wav",
+	"boom": "res://audio/sfx_boom.wav",
+	"whoosh": "res://audio/sfx_whoosh.wav",
+	"growl": "res://audio/sfx_growl.wav",
+	"impact": "res://audio/sfx_impact.wav",
 }
 const AMB := {
 	"forest": "res://audio/amb_forest.ogg",
@@ -30,8 +37,10 @@ const AMB := {
 }
 const AMB_DB := -12.0
 ## 各音效的音量（沒列的用 -4）
-const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0, "heartbeat": -2.0}
+const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0, "heartbeat": -2.0, "stab": 0.0, "tear": 0.0, "boom": 0.0, "growl": -1.0, "impact": 0.0, "whoosh": -3.0}
 const BGM_DB := -8.0
+## 追逐戰的音樂大聲一點
+const BGM_EXTRA := {"chase": 3.0}
 const DUCK_DB := -22.0
 const FADE := 1.0
 const SILENT := -60.0
@@ -161,7 +170,7 @@ func sfx(name: String) -> void:
 
 func _target_db() -> float:
 	# 記憶越深，音樂越遠、越小聲
-	return (DUCK_DB if _ducked else BGM_DB) - 1.2 * _wear
+	return (DUCK_DB if _ducked else BGM_DB) + BGM_EXTRA.get(_current, 0.0) - 1.2 * _wear
 
 
 func _apply() -> void:

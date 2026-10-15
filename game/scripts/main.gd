@@ -510,7 +510,7 @@ func _true_ending() -> void:
 		a.visible = false
 	hud.set_status_visible(false)
 	Sound.ambience("")
-	Sound.bgm("night")
+	Sound.bgm("chase")
 	var chase := ChaseScene.new()
 	add_child(chase)
 	await _fade_to(0.0)
@@ -638,6 +638,14 @@ func interact(id: String) -> void:
 		Sound.sfx("strange")
 		GameState.collect_tuft(id)
 		await Dialogue.run(id)
+		var n := GameState.tuft_count()
+		var left := GameState.loop_tufts().filter(func(t): return not GameState.has_tuft(t)).size()
+		var msg := "撿到記憶碎片（%d / 10）。撿過的，下一輪也會記得。" % n
+		if n >= 6 and n - 1 < 6:
+			msg = "記憶碎片已經有 %d 團了。……好像想起了什麼重要的事。" % n
+		elif left > 0:
+			msg += "這一輪，鎮上還有 %d 團。" % left
+		hud.toast(msg, 5.0)
 	else:
 		Sound.sfx("interact")
 		var label := _talk_label(id)
@@ -852,10 +860,12 @@ func _on_event(event_name: String) -> void:
 		"sew":
 			await repair_scene.sew()
 		"scissors":
+			Sound.bgm("chase")
 			var sc := ScissorsScene.new()
 			add_child(sc)
 			await sc.play()
 			sc.queue_free()
+			Sound.bgm("memory")
 		"mayor_falls":
 			Sound.sfx("strange")
 		"conductor_enters":
@@ -1039,6 +1049,11 @@ func _refresh_objective() -> void:
 					marks.append(["forest_sheep", "forest_bow", "forest_tags", "forest_tail"][k])
 		_:
 			GameState.set_objective("")
+	# 記憶碎片：還沒撿的棉花頭上也有「！」
+	if phase in EXPLORE_PHASES and phase != "forest":
+		for id in actors:
+			if id.begins_with("tuft_") and actors[id].visible:
+				marks.append(id)
 	for id in actors:
 		var a: Interactable = actors[id]
 		var m: bool = id in marks

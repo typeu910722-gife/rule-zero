@@ -2,13 +2,16 @@ class_name ScissorsScene
 extends CanvasLayer
 ## 修理室：用剪刀捅鎮長。連按 E／空白鍵，或連點畫面（手機）。
 ## 每捅一下畫面抖一下、噴出棉花；鎮長一張一張越來越破（art/scissors/mayor_1..7）。
-## 停手的話，他會慢慢把自己「縫回去」（同一階段內的進度會退），所以要一直連點。
+## 他一直在掙扎、把自己「縫回去」：越接近越拚命（進度一直在退，停手退得更快，壞掉的地方也會縫回來），
+## 所以要用力一直連點（大約每秒 6 下以上才捅得到底）。
 
 signal done
 
-const MAX_HITS := 48.0       # 大約要捅這麼多下
-const DECAY := 2.2           # 停手後每秒退多少
-const DECAY_DELAY := 0.35    # 停手多久開始退
+const MAX_HITS := 70.0       # 進度條的長度（一下 +1）
+const RESIST := 1.5          # 他一直在掙扎：每秒退這麼多
+const RESIST_MORE := 3.5     # 越接近底，掙扎得越兇（×進度）
+const DECAY := 3.0           # 停手後再多退這麼多
+const DECAY_DELAY := 0.3     # 停手多久算「停手」
 const STAGES := 7
 
 var _area: Control
@@ -25,6 +28,7 @@ var _jab := 0.0
 var _jab_pos := Vector2(640, 380)
 var _puffs: Array = []
 var _hits := 0
+var _mend := 0.0
 var _t := 0.0
 
 
@@ -75,7 +79,7 @@ func stab(pos: Vector2 = Vector2(-1, -1)) -> void:
 	_jab_pos = pos
 	_shake = 1.0
 	_flash = 0.35
-	Sound.sfx("interact")
+	Sound.sfx("stab")
 	for i in 7:
 		_puffs.append({"p": pos, "v": Vector2(randf_range(-260, 260), randf_range(-320, 60)),
 			"life": 1.0, "r": randf_range(6, 16)})
@@ -84,6 +88,7 @@ func stab(pos: Vector2 = Vector2(-1, -1)) -> void:
 		_stage = st
 		_stage_flash = 1.0
 		_shake = 1.8
+		Sound.sfx("tear")
 		Dialogue.fx.scare()
 	if _dmg >= MAX_HITS:
 		_win()
@@ -93,7 +98,7 @@ func _stage_of(d: float) -> int:
 	return clampi(int(d / MAX_HITS * (STAGES - 1)), 0, STAGES - 1)
 
 
-## 目前這一階段的起點：退不到上一張圖（已經壞掉的不會復原，只會退回這一張的開頭）
+## 這一張圖的起點（進度條上的白線）
 func _stage_floor() -> float:
 	return ceilf(_stage * MAX_HITS / (STAGES - 1))
 
@@ -108,6 +113,7 @@ func _process(delta: float) -> void:
 	_flash = maxf(_flash - delta * 3.0, 0.0)
 	_stage_flash = maxf(_stage_flash - delta * 1.6, 0.0)
 	_jab = maxf(_jab - delta * 7.0, 0.0)
+	_mend = maxf(_mend - delta * 1.5, 0.0)
 	for p in _puffs:
 		p.p += p.v * delta
 		p.v.y += 420 * delta
@@ -115,8 +121,15 @@ func _process(delta: float) -> void:
 	_puffs = _puffs.filter(func(p): return p.life > 0.0)
 	if _state == "play":
 		_idle += delta
+		var drain := RESIST + RESIST_MORE * progress()
 		if _idle > DECAY_DELAY:
-			_dmg = maxf(_dmg - DECAY * delta, _stage_floor())
+			drain += DECAY
+		_dmg = maxf(_dmg - drain * delta, 0.0)
+		# 縫回去了：圖退回上一張
+		var st := _stage_of(_dmg)
+		if st < _stage:
+			_stage = st
+			_mend = 1.0
 	_area.queue_redraw()
 
 
@@ -125,9 +138,9 @@ func _win() -> void:
 	_stage = STAGES - 1
 	_shake = 2.5
 	_stage_flash = 1.0
-	Sound.sfx("creepy")
+	Sound.sfx("boom")
 	Dialogue.fx.scare()
-	await get_tree().create_timer(2.2).timeout
+	await get_tree().create_timer(2.6).timeout
 	done.emit()
 
 
@@ -172,7 +185,7 @@ func _draw() -> void:
 	c.draw_rect(Rect2(bar.position, Vector2(bar.size.x * p, bar.size.y)), Color("#d23a5a"))
 	var fl := _stage_floor() / MAX_HITS
 	c.draw_line(Vector2(bar.position.x + bar.size.x * fl, bar.position.y - 4), Vector2(bar.position.x + bar.size.x * fl, bar.end.y + 4), Color(1, 1, 1, 0.6), 2)
-	if _idle > DECAY_DELAY and _dmg > _stage_floor():
-		var m2 := "……他在把自己縫回去"
+	if _mend > 0.0 or _idle > DECAY_DELAY:
+		var m2 := "……他在把自己縫回去！"
 		c.draw_string_outline(f, Vector2(0, 640), m2, HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, 8, Color("#3a1426"))
 		c.draw_string(f, Vector2(0, 640), m2, HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#ffd0dc"))

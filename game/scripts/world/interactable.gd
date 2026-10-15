@@ -129,8 +129,20 @@ func _draw() -> void:
 		draw_string(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
 	else:
 		_draw_object()
-	if marked:
+	if marked and id.begins_with("tuft_"):
+		_draw_tuft_label()
+	elif marked:
 		_draw_mark()
+
+
+## 棉花頭上的小牌子：「記憶碎片」，讓玩家一眼知道這是可以撿的
+func _draw_tuft_label() -> void:
+	var bob := sin(Time.get_ticks_msec() / 260.0) * 3.0
+	var r := Rect2(-46, -82 + bob, 92, 28)
+	draw_rect(r, Color("#e05780"))
+	draw_rect(r.grow(-2), Color("#fff4f8"), false, 2)
+	draw_colored_polygon(PackedVector2Array([Vector2(-6, r.end.y), Vector2(6, r.end.y), Vector2(0, r.end.y + 8)]), Color("#e05780"))
+	draw_string(GameState.font, Vector2(r.position.x, r.position.y + 21), "記憶碎片", HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 17, Color.WHITE)
 
 
 ## 頭上的「！」小泡泡
@@ -164,11 +176,19 @@ func _draw_object() -> void:
 		_glint(Vector2(12, -24))
 		return
 	if id.begins_with("tuft_"):
+		# 記憶碎片：大一點、會呼吸的粉紅光暈、往上飄的小光點，遠遠就看得到
 		var t := Time.get_ticks_msec() / 1000.0
-		var bob := sin(t * 2.0 + position.x) * 2.0
-		for o in [Vector2(-6, 0), Vector2(6, 0), Vector2(0, -6), Vector2(0, 4)]:
-			draw_circle(o + Vector2(0, -12 + bob), 8, Color(1, 1, 1, 0.92))
-		draw_circle(Vector2(0, -12 + bob), 18, Color(1, 0.85, 0.92, 0.18))
+		var bob := sin(t * 2.0 + position.x) * 3.0
+		var c := Vector2(0, -16 + bob)
+		var pulse := 0.5 + 0.5 * sin(t * 3.0 + position.y)
+		draw_circle(c, 40 + 8 * pulse, Color(1, 0.45, 0.7, 0.16 + 0.12 * pulse))
+		draw_circle(c, 26 + 4 * pulse, Color(1, 0.6, 0.8, 0.35))
+		draw_arc(c, 30 + 10 * pulse, 0, TAU, 32, Color(1, 0.4, 0.65, 0.75 * (1.0 - pulse)), 3)
+		for o in [Vector2(-8, 0), Vector2(8, 0), Vector2(0, -8), Vector2(0, 6), Vector2(-5, -5), Vector2(5, -4)]:
+			draw_circle(o + c, 10, Color(1, 1, 1, 0.96))
+		for k in 3:
+			var ph := fmod(t * 0.6 + k / 3.0 + position.x * 0.01, 1.0)
+			draw_circle(c + Vector2(sin(k * 2.1 + t) * 14, -ph * 46), 3.0 * (1.0 - ph) + 1.0, Color(1, 0.85, 0.95, 1.0 - ph))
 		return
 	if id == "lulu_mailbox":
 		draw_rect(Rect2(-3, -30, 6, 30), Color("#8d6e63"))

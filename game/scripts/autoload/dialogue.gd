@@ -19,7 +19,7 @@ const BG_COLORS := {
 const BG_IMAGES := ["train", "platform", "plaza", "bakery", "repair", "clocktower", "room_night",
 	"hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2",
 	"mem_sea", "mem_class", "mem_toilet", "mem_hospital",
-	"nt_lulu", "nt_popo", "nt_tama", "nt_mochi", "nt_dog", "glove"]
+	"nt_lulu", "nt_popo", "nt_tama", "nt_mochi", "nt_dog", "glove", "mayor_broken"]
 ## 夢境（醫院）時換成「記憶揭露」的音樂
 const MEMORY_BGS := ["dream", "hospital_child", "hospital_empty", "hospital_haruka", "classroom",
 	"mem_sea", "mem_class", "mem_toilet", "mem_hospital"]

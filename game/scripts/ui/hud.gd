@@ -131,6 +131,7 @@ func refresh() -> void:
 	var day_names := ["", "第一天", "第二天", "第三天"]
 	var stars := "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)
 	_status.text = "%s　｜　膽量 %s" % [day_names[mini(GameState.day, 3)], stars]
+	_status.text += "　｜　記憶碎片 %d / 10" % GameState.tuft_count()
 	if show_debug:
 		_status.text += "　｜　[debug] 鎮長懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
