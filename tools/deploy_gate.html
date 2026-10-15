@@ -77,6 +77,10 @@
   #editor .hint { color: var(--muted); font-size: .8rem; margin: 8px 0 0; }
   .editing ul.links li .mini { display: block; }
   ul.links li .mini { display: none; }
+  .move { display: none; flex-direction: column; gap: 4px; }
+  .editing .move { display: flex; }
+  .move .mini { display: block; flex: 1; padding: 0 10px; line-height: 1; }
+  .move .mini:disabled { opacity: .3; }
 </style>
 </head>
 <body>
@@ -112,7 +116,7 @@
           <button class="mini" id="cancelEdit" type="button" style="display:none">取消修改</button>
         </div>
       </form>
-      <p class="hint">新增、修改的網站和備註只存在這台裝置的這個瀏覽器裡。內建的網站可以改備註，也可以隱藏。</p>
+      <p class="hint">用 ▲▼ 調整順序。新增、修改、排序都只存在這台裝置的這個瀏覽器裡。內建的網站可以改備註，也可以隱藏。</p>
     </div>
   </section>
 </div>
@@ -143,8 +147,8 @@
   // ── 手動新增的網站、改過的備註（存在這個瀏覽器）──────────────
   const STORE = "yzp_try_links";
   function loadLocal() {
-    try { const v = JSON.parse(localStorage.getItem(STORE) || "{}"); return { added: v.added || [], notes: v.notes || {}, hidden: v.hidden || [] }; }
-    catch (_) { return { added: [], notes: {}, hidden: [] }; }
+    try { const v = JSON.parse(localStorage.getItem(STORE) || "{}"); return { added: v.added || [], notes: v.notes || {}, hidden: v.hidden || [], order: v.order || [] }; }
+    catch (_) { return { added: [], notes: {}, hidden: [], order: [] }; }
   }
   function saveLocal() {
     try { localStorage.setItem(STORE, JSON.stringify(local)); } catch (_) { alertMsg("這個瀏覽器不能儲存（可能是私密瀏覽）"); }
@@ -157,14 +161,31 @@
   function allLinks() {
     const builtin = LINKS.filter(l => !local.hidden.includes(l.host))
       .map(l => ({ host: l.host, note: local.notes[l.host] ?? l.note, builtin: true }));
-    return builtin.concat(local.added.map(l => ({ host: l.host, note: l.note || "", builtin: false })));
+    const list = builtin.concat(local.added.map(l => ({ host: l.host, note: l.note || "", builtin: false })));
+    // 自己排過的順序優先；沒排過的（例如之後新加的）照原本的順序接在後面
+    const pos = (l, i) => { const k = local.order.indexOf(l.host); return k >= 0 ? k : 10000 + i; };
+    return list.map((l, i) => [pos(l, i), l]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
   }
 
   function render() {
     const ul = $("links");
     ul.textContent = "";
-    for (const l of allLinks()) {
+    const links = allLinks();
+    links.forEach((l, idx) => {
       const li = document.createElement("li");
+      const mv = document.createElement("div");
+      mv.className = "move";
+      for (const [txt, d] of [["▲", -1], ["▼", 1]]) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "mini";
+        b.textContent = txt;
+        b.setAttribute("aria-label", d < 0 ? "往上移" : "往下移");
+        b.disabled = idx + d < 0 || idx + d >= links.length;
+        b.onclick = () => move(links, idx, d);
+        mv.appendChild(b);
+      }
+      li.appendChild(mv);
       const a = document.createElement("a");
       a.href = /^https?:/i.test(l.host) ? l.host : "https://" + l.host + (l.host.includes("/") ? "" : "/");
       a.target = "_blank";
@@ -208,7 +229,7 @@
       };
       li.appendChild(del);
       ul.appendChild(li);
-    }
+    });
     if (local.hidden.length && document.body.classList.contains("editing")) {
       const li = document.createElement("li");
       const b = document.createElement("button");
@@ -221,6 +242,14 @@
       li.appendChild(b);
       ul.appendChild(li);
     }
+  }
+
+  function move(links, idx, d) {
+    const hosts = links.map(l => l.host);
+    [hosts[idx], hosts[idx + d]] = [hosts[idx + d], hosts[idx]];
+    local.order = hosts;
+    saveLocal();
+    render();
   }
 
   function startEdit(l) {
