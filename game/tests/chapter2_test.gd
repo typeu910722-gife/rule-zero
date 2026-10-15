@@ -43,6 +43,18 @@ func _start(gs: Node, ch1_flags: Dictionary) -> void:
 	root.add_child(ch)
 
 
+func _start_day3(gs: Node, flags: Dictionary, conduct: int) -> void:
+	gs.reset()
+	for k in flags:
+		gs.set_flag(k, flags[k])
+	gs.start_chapter2()
+	gs.day = 3
+	gs.conduct = conduct
+	gs.checkpoint = "c2_day3_morning"
+	ch = load("res://scenes/chapter2.tscn").instantiate()
+	root.add_child(ch)
+
+
 func _run() -> void:
 	var gs := root.get_node("GameState")
 	gs.fast = true
@@ -82,11 +94,22 @@ func _run() -> void:
 	await _do("gaga", [0])
 	_check(gs.has("photo_1") and gs.has("photo_2") and gs.has("photo_nirvana") and not gs.has("c2_sneak_caught"), "拿回底片：三張照片")
 	_check(ch.phase == "day2_explore", "還沒問白面之前不會天黑")
-	await _do("baimian", [1])
+	# 白面 → 點名替「遙」回答 → 沒人敲窗 → 夢境 2 → 第三天：反省會抽掉孤兒院卡片、留下最後一根刺
+	await _do("baimian", [1, 1, 1])
 	_check(gs.has("baimian_tail") and gs.has("baimian_dove_past"), "白面：尾巴（第一章看過）＋和平鴿的過去")
-	_check(gs.has("answered_haruka") and gs.courage == 1 and gs.conduct == 60, "點名替「遙」回答（膽量 -1、操行 -10）")
-	await _wait_phase("ended")
+	_check(gs.has("answered_haruka"), "點名替「遙」回答")
 	_check(not gs.has("night_out_2"), "舉報過鼬鼬：沒有人敲窗戶")
+	await _wait_phase("day3_explore")
+	_check(gs.day == 3 and gs.checkpoint == "c2_day3_morning", "第三天早上：自動存檔")
+	_check(gs.has("skipped_orphan_cards") and gs.has("xiaoji_last_quill") and gs.has("got_xiaoji_letter"), "反省會抽掉卡片、留下最後一根刺、拿到那封信")
+	_check(gs.courage == 0 and gs.conduct == 35, "膽量 0、操行 60 -15 -10 = 35（實際 %d）" % gs.conduct)
+	# 傍晚：麻糬（膽量不夠寫名牌）→ 信留著 → 搶椅子（只能坐下）→ 畢業典禮：把針交還
+	await _do("xiaoji", [1, 1, 0, 2])
+	await _wait_phase("ended")
+	_check(gs.has("mochi_name") and gs.has("kept_letter") and not gs.has("mochi_tag_written"), "麻糬的本名；信留著")
+	_check(gs.has("fate_xiaoji_aboard") and gs.has("fate_zhongzhong_aboard") and gs.has("fate_gaga_aboard"), "小棘（刺＋卡片）、重重（受罰）、嘎嘎（沒被舉報）上車")
+	_check(gs.has("fate_tiaoma_dead") and gs.has("fate_youyou_unknown") and gs.has("fate_baimian_aboard"), "條碼處分、鼬鼬留在月台、白面上車")
+	_check(int(gs.meta.chapters_done) == 2 and gs.meta.ch2_fates.tiaoma == "dead" and not gs.has_save(), "第二章完成：跨周目記錄去向、刪除當章存檔")
 	print("  秘密：", gs.secrets_found(), "　操行：", gs.conduct)
 
 	print("[路線二：不受罰、看第 8 個位置、藏起鈕扣]")
@@ -123,14 +146,47 @@ func _run() -> void:
 	_check(gs.has("saw_silhouette"), "治療室的剪影")
 	await _do("office", [0, 1, 2])
 	_check(gs.has("youyou_lost_thread") and gs.has("dove_first_page") and gs.has("nirvana_clipboard"), "辦公室：鼬鼬用紅毛線引開機械鳥；愛的日記、涅槃夾板")
-	await _do("platform")
+	# 月台 → 被抓 → 夢境 2 → 第三天：卡片照念、刺全部剪掉
+	await _do("platform", [0, 0])
+	_check(gs.has("overheard_conductor"), "月台偷聽 → 被抓到")
+	await _wait_phase("day3_explore")
+	_check(not gs.has("skipped_orphan_cards") and not gs.has("xiaoji_last_quill") and gs.conduct == 55, "照念卡片（+10）、剪掉所有刺：操行 %d" % gs.conduct)
+	# 寫名牌、射紙飛機、坐下、繼續縫完
+	await _do("xiaoji", [0, 0, 0, 0])
 	await _wait_phase("ended")
-	_check(gs.has("overheard_conductor") and gs.conduct == 45, "月台偷聽 → 被抓到（操行 -20）")
+	_check(gs.has("mochi_tag_written") and gs.has("letter_to_lulu") and gs.courage == 0, "麻糬的名牌寫上「小滿」；信射給露露")
+	_check(gs.has("fate_xiaoji_graduated") and gs.has("fate_zhongzhong_dead") and gs.has("fate_gaga_graduated"), "小棘被小布縫完畢業、重重沒被救、嘎嘎被舉報後畢業")
 	print("  秘密：", gs.secrets_found(), "　操行：", gs.conduct)
+
+	print("[路線三：刺向面具、鼬鼬切換軌道]")
+	ch.queue_free()
+	await process_frame
+	_start_day3(gs, {"night_out_2": true, "met_youyou": true}, 50)
+	gs.auto_choices = [0, 0]
+	await _wait_phase("day3_explore")
+	await _do("xiaoji", [1, 1, 1, 1])
+	await _wait_phase("ended")
+	_check(gs.has("lost_chair_for_zhongzhong") and gs.has("stabbed_mask"), "搶椅子讓給重重、針刺向面具")
+	_check(gs.has("fate_youyou_aboard") and gs.has("fate_zhongzhong_aboard") and gs.has("fate_xiaoji_dead"), "鼬鼬、重重上車；小棘沒被保護（處分）")
+
+	print("[路線四：操行太低 → 特別的愛]")
+	ch.queue_free()
+	await process_frame
+	_start_day3(gs, {}, 10)
+	gs.auto_choices = [0, 0]
+	await _wait_phase("day3_explore")
+	await _do("xiaoji", [1, 1, 0, 2, 0])
+	await _wait_phase("ended")
+	_check(gs.flags.get("special_love_cut") == "lulu_slip", "被剪掉的記憶：露露叫你「小遙」的傍晚")
+	_check(gs.has("fate_gaga_unknown") and gs.flags.get("special_love_left") == "gaga", "代價：本來能上車的嘎嘎被留在月台")
 
 	print("[存檔與繼續]")
 	ch.queue_free()
 	await process_frame
+	gs.reset()
+	gs.start_chapter2()
+	gs.day = 2
+	gs.save_game("c2_day2_morning")
 	gs.reset()
 	_check(gs.load_game() and gs.chapter == 2 and gs.checkpoint == "c2_day2_morning", "讀檔：第二章第二天早上")
 	gs.auto_choices = [0, 0, 0]

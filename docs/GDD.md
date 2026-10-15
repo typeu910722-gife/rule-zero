@@ -311,5 +311,5 @@ rule-zero/
 1. 確認主角、鎮長、Lulu 的角色設計稿（美術風格定調最重要）。
 2. ~~建立 Godot 專案骨架與守則原型~~ → 已完成第一～二天可玩原型：`game/`（見 `game/README.md`）。
 3. ~~寫第一章完整劇本~~ → 已完成：`docs/script/chapter1.md`。
-4. ~~設計第二章~~ → 劇本完成：`docs/script/chapter2.md`（設計、角色、小遊戲、全三天＋畢業典禮＋結尾＋壞結局）。下一步：實作。
+4. ~~設計第二章~~ → 劇本與原型完成：`docs/script/chapter2.md`、`game/`（第二章完整可玩）。美術音樂需求：`docs/chapter2_asset_requests.txt`。
 5. 決定遊戲正式中英文名稱（暫定：《第零條規則》/ *Rule Zero*）。

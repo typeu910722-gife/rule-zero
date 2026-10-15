@@ -1,5 +1,5 @@
 extends Node2D
-## 第二章「漂白鎮」的流程導演（目前：序章＋第一天＋第二天）。
+## 第二章「漂白鎮」的流程導演：序章、三天、畢業典禮、結尾（含操行過低的壞結局）。
 ## 劇情邏輯寫在 dialogue/chapter2.txt（標籤以 c2_ 開頭），這裡只處理「世界」的變化。
 ## 互動時依序尋找對話標籤：c2_<id>_<phase> → c2_<id>_d<day> → c2_<id>
 
@@ -16,8 +16,18 @@ const FindOdd := preload("res://scripts/minigames/find_odd.gd")
 const HoldEndure := preload("res://scripts/minigames/hold_endure.gd")
 const Sneak := preload("res://scripts/minigames/sneak.gd")
 const SceneOverlay := preload("res://scripts/ui/scene_overlay.gd")
+const Confession := preload("res://scripts/minigames/confession.gd")
+const Trim := preload("res://scripts/minigames/trim.gd")
+const Chairs := preload("res://scripts/minigames/chairs.gd")
+const Restuff := preload("res://scripts/minigames/restuff.gd")
 
-const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_out_2"]
+## 反省會的罪狀卡：前四張是小棘真的做過的事，後四張是孤兒院的大人說過的話
+const CARDS_DONE := ["偷拿別人的信。", "在班上說波波偷東西。", "舉報同學換糖果。", "說謊。一直說謊。"]
+const CARDS_ORPHAN := ["刺太多，會刺傷我們的孩子。", "他不親人。", "我們有自己的孩子了。", "沒有人要你。"]
+## 畢業典禮後，每個居民的去向（見 docs/script/chapter2.md 7.2）
+const FATES := ["aboard", "graduated", "dead", "unknown"]
+
+const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_out_2", "day3_explore"]
 
 ## 漂白鎮的六個居民（不跟棉花糖鎮的好孩子混在一起）＋和平鴿；露露他們在河對岸
 const ACTORS := {
@@ -136,6 +146,8 @@ func _ready() -> void:
 			_continue.call_deferred()
 		"c2_day2_morning":
 			_day2_morning.call_deferred()
+		"c2_day3_morning":
+			_day3_morning.call_deferred()
 		_:
 			run_chapter.call_deferred()
 
@@ -201,6 +213,9 @@ func _after_interaction() -> void:
 		"night_out_2":
 			if GameState.has("overheard_conductor"):
 				await _day2_end()
+		"day3_explore":
+			if GameState.has("c2_d3_evening_done"):
+				await _graduation()
 
 
 func _day1_evening() -> void:
@@ -297,13 +312,107 @@ func _day2_evening() -> void:
 
 
 func _day2_end() -> void:
-	_set_phase("ended")
+	_set_phase("day3_morning")
 	await _fade_to(1.0)
 	_close_overlay()
 	await Dialogue.run("c2_dream_2")
+	GameState.new_day()
+	GameState.save_game("c2_day3_morning")
+	await _day3_morning()
+
+
+## 第三天：公告欄 → 波波認出小棘 → 反省會 → 修剪 → 傍晚（麻糬）→ 搶椅子 → 畢業典禮 → 結尾
+func _day3_morning() -> void:
+	busy = true
+	player.can_move = false
+	_set_phase("day3_morning")
+	Dialogue.set_bg("none")
+	_set_tint("day")
+	player.bounds = WORLD_BOUNDS
+	_layout("day")
+	hud.set_status_visible(true)
+	player.position = PLAZA_SPOT
+	await _fade_to(0.0)
+	await Dialogue.run("c2_d3_morning")
+	await _fade_to(1.0)
+	_layout("day")
+	player.position = Vector2(1060, 660)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_popo_fence")
+	await _fade_to(1.0)
+	_layout("day")
+	player.position = Vector2(350, 420)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_confession")
+	await Dialogue.run("c2_trim")
+	GameState.set_flag("c2_trimmed")
+	await _fade_to(1.0)
+	_layout("day")
+	_set_tint("evening")
+	actors.xiaoji.position = Vector2(1130, 650)
+	player.position = Vector2(900, 640)
+	_set_phase("day3_explore")
+	await _fade_to(0.0)
+	busy = false
+	player.can_move = true
+
+
+func _graduation() -> void:
+	_set_phase("graduation")
+	await _fade_to(1.0)
+	_layout("day")
+	player.position = Vector2(560, 700)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_chairs")
+	await _fade_to(1.0)
+	_layout("graduation")
+	player.position = Vector2(560, 700)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_graduation")
+	await _chapter_end()
+
+
+func _chapter_end() -> void:
+	_set_phase("ended")
+	var fates := {}
+	for id in RESIDENTS:
+		for fate in FATES:
+			if GameState.has("fate_%s_%s" % [id, fate]):
+				fates[id] = fate
+	GameState.meta.chapters_done = maxi(int(GameState.meta.get("chapters_done", 0)), 2)
+	GameState.meta.ch2_fates = fates
+	GameState.save_meta()
+	GameState.delete_save()
 	var card := EndCard.new()
-	card.mode = "c2_day2"
+	card.mode = "c2_done"
 	add_child(card)
+
+
+## 依存活條件決定每個居民的去向（docs/script/chapter2.md 7.2）
+func _compute_fates() -> void:
+	var f := {"baimian": "aboard", "tiaoma": "dead"}
+	if GameState.has("xiaoji_by_pip"):
+		f.xiaoji = "graduated"
+	else:
+		var saved := int(GameState.has("xiaoji_last_quill")) + int(GameState.has("skipped_orphan_cards"))
+		f.xiaoji = ["dead", "graduated", "aboard"][saved]
+	f.zhongzhong = "aboard" if GameState.has("took_shock_for_zhongzhong") or GameState.has("lost_chair_for_zhongzhong") else "dead"
+	f.gaga = "graduated" if GameState.has("reported_gaga") else "aboard"
+	var yy := not GameState.has("reported_youyou") and GameState.has("night_out_2") and GameState.has("stabbed_mask")
+	f.youyou = "aboard" if yy else "unknown"
+	for id in f:
+		for fate in FATES:
+			GameState.set_flag("fate_%s_%s" % [id, fate], f[id] == fate)
+
+
+## 壞結局「特別的愛」的代價：一位本來能上車的居民，被留在月台上
+func _special_love_cost() -> void:
+	for id in ["zhongzhong", "gaga", "xiaoji"]:
+		if GameState.has("fate_%s_aboard" % id):
+			GameState.set_flag("fate_%s_aboard" % id, false)
+			GameState.set_flag("fate_%s_unknown" % id, true)
+			GameState.set_flag("special_love_left", id)
+			return
 
 
 # ───────────────────────── 互動 ─────────────────────────
@@ -443,6 +552,71 @@ func _on_event(event_name: String) -> void:
 		"c2_dove_mask_on":
 			actors.dove.opts["unmasked"] = false
 			actors.dove.queue_redraw()
+		"c2_popo_fence":
+			actors.popo.visible = true
+			actors.popo.position = Vector2(1300, 640)
+			for id in ["lulu", "mochi"]:
+				actors[id].visible = true
+			actors.xiaoji.position = Vector2(1140, 650)
+		"c2_dove_hug":
+			actors.dove.position = Vector2(1100, 690)
+		"confession_1", "confession_2":
+			var cf := Confession.new()
+			cf.cards = CARDS_DONE if event_name == "confession_1" else CARDS_ORPHAN
+			add_child(cf)
+			await cf.play()
+		"trim_1", "trim_2", "trim_3":
+			var tr := Trim.new()
+			tr.quills = {"trim_1": Trim.TOTAL, "trim_2": 6, "trim_3": 1}[event_name]
+			tr.leave = {"trim_1": 6, "trim_2": 1, "trim_3": 0}[event_name]
+			add_child(tr)
+			await tr.play()
+		"c2_mochi_cross":
+			actors.mochi.visible = true
+			actors.mochi.position = Vector2(1165, 660)
+			actors.lulu.visible = true
+		"c2_mochi_back":
+			actors.mochi.position = ACTORS.mochi.pos
+		"chairs_1", "chairs_2", "chairs_3":
+			var ch := Chairs.new()
+			var everyone := ["pip", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
+			var second := "gaga" if GameState.has("reported_gaga") else "youyou"
+			match event_name:
+				"chairs_1":
+					ch.players = everyone
+					ch.out = "tiaoma"
+				"chairs_2":
+					ch.players = everyone.filter(func(p): return p != "tiaoma")
+					ch.out = second
+				"chairs_3":
+					ch.players = ["pip", "zhongzhong"]
+			add_child(ch)
+			await ch.play()
+		"long_hold", "special_hold":
+			var lh := HoldEndure.new()
+			lh.questions = [["（他沒有問問題。他一直按。）", 10.0 if event_name == "long_hold" else 15.0]]
+			add_child(lh)
+			await lh.play()
+		"c2_graduation_layout":
+			pass
+		"restuff_1", "restuff_2":
+			var rs := Restuff.new()
+			rs.step = 0 if event_name == "restuff_1" else 2
+			rs.steps = 2 if event_name == "restuff_1" else 4
+			add_child(rs)
+			await rs.play()
+		"c2_tiaoma_gone":
+			actors.tiaoma.visible = false
+		"c2_mask_crack":
+			actors.dove.opts["crack"] = 2.0
+			actors.dove.queue_redraw()
+		"c2_fates":
+			_compute_fates()
+		"c2_special_love_cost":
+			_special_love_cost()
+		"c2_train_arrives":
+			town.train = true
+			town.queue_redraw()
 		"c2_fence_lineup":
 			# 隔著鐵絲網排隊；對岸的模範生站在陽台上揮手
 			for k in RESIDENTS.size():
@@ -484,6 +658,17 @@ func _layout(mode: String) -> void:
 				actors[id].visible = false
 			for id in OBJECTS:
 				actors[id].visible = id in NIGHT_OBJECTS
+		"graduation":
+			# 點名廣場：布條、工作台；模範生站在高台上
+			town.banner = true
+			town.queue_redraw()
+			for k in MODELS.size():
+				actors[MODELS[k]].visible = true
+				actors[MODELS[k]].position = Vector2(670 + k * 45, 500)
+			for k in RESIDENTS.size():
+				actors[RESIDENTS[k]].position = Vector2(470 + k * 52, 640 + (k % 2) * 14)
+			actors.baimian.position = Vector2(820, 520)
+			actors.dove.position = Vector2(880, 680)
 		"night_out":
 			# 偷溜：只有鼬鼬跟著你
 			for id in ACTORS:
@@ -505,7 +690,9 @@ func _refresh_looks() -> void:
 	actors.gaga.opts["sewn"] = not GameState.has("reported_gaga")
 	actors.youyou.opts["thread"] = not (GameState.has("reported_youyou") or GameState.has("youyou_lost_thread"))
 	actors.dove.opts["unmasked"] = false
-	for id in ["tiaoma", "gaga", "youyou", "dove"]:
+	if GameState.has("c2_trimmed"):
+		actors.xiaoji.opts["quills"] = 1 if GameState.has("xiaoji_last_quill") else 0
+	for id in ["tiaoma", "gaga", "youyou", "dove", "xiaoji"]:
 		actors[id].queue_redraw()
 
 
@@ -535,6 +722,8 @@ func _refresh_objective() -> void:
 				GameState.set_objective("")
 		"night_out_2":
 			GameState.set_objective("十五分鐘。治療室、辦公室、月台。")
+		"day3_explore":
+			GameState.set_objective("傍晚。鐵絲網關電的十五分鐘——去河邊看看小棘。")
 		_:
 			GameState.set_objective("")
 

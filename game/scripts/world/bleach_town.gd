@@ -11,6 +11,10 @@ const INK := Color("#4a4a4a")
 const RIVER := [Vector2(1250, 0), Vector2(1235, 300), Vector2(1255, 560), Vector2(1232, 820), Vector2(1250, 1150)]
 const FENCE_X := 1190.0
 
+## 第三天：畢業典禮的布條；火車進站
+var banner := false
+var train := false
+
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, W, H), GROUND)
@@ -114,6 +118,21 @@ func _draw() -> void:
 	_building(Rect2(560, 880, 280, 110), Color("#cfcfcb"), Color("#5a5a5a"), "漂白鎮站", INK)
 	draw_circle(Vector2(700, 860), 18, Color.WHITE)
 	draw_arc(Vector2(700, 860), 18, 0, TAU, 20, Color("#5a5a5a"), 3)
+
+
+	if banner:
+		draw_rect(Rect2(500, 400, 300, 50), Color("#f7f7f5"))
+		draw_rect(Rect2(500, 400, 300, 50), Color("#f2a7c3"), false, 3)
+		draw_string(GameState.font, Vector2(500, 436), "恭喜畢業！", HORIZONTAL_ALIGNMENT_CENTER, 300, 28, Color("#e05780"))
+		for k in 4:
+			draw_rect(Rect2(470 + k * 70, 600, 56, 24), Color("#fbfbf9"))
+			draw_rect(Rect2(474 + k * 70, 624, 6, 20), Color("#9a9a9a"))
+			draw_rect(Rect2(516 + k * 70, 624, 6, 20), Color("#9a9a9a"))
+	if train:
+		draw_rect(Rect2(260, 1030, 900, 70), Color("#bfb8bd"))
+		for k in 8:
+			draw_rect(Rect2(290 + k * 108, 1044, 70, 30), Color("#e8e2e6"))
+		draw_rect(Rect2(1160, 1020, 80, 80), Color("#a69ea4"))
 
 
 func _label(text: String, center: Vector2, col: Color) -> void:

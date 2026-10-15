@@ -6,7 +6,11 @@ const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", 
 	# 第二章
 	"report_card", "apology", "roll_list", "c2_take_models", "c2_dove_appears", "c2_fence_lineup",
 	"scrub", "find_1", "find_2", "find_3", "treatment_hold", "sneak", "photo_1", "photo_2", "photo_nirvana",
-	"silhouette", "overlay_close", "roll_list_2", "c2_platform_scene", "c2_dove_mask_on"]
+	"silhouette", "overlay_close", "roll_list_2", "c2_platform_scene", "c2_dove_mask_on",
+	"c2_popo_fence", "c2_dove_hug", "confession_1", "confession_2", "trim_1", "trim_2", "trim_3",
+	"c2_mochi_cross", "c2_mochi_back", "chairs_1", "chairs_2", "chairs_3", "long_hold", "special_hold",
+	"c2_graduation_layout", "restuff_1", "restuff_2", "c2_tiaoma_gone", "c2_mask_crack", "c2_fates",
+	"c2_special_love_cost", "c2_train_arrives"]
 
 
 func _init() -> void:
