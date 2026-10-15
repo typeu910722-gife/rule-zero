@@ -16,21 +16,25 @@
 > 窗外沒有雲。只有一片白。
 > 對面的座位上，露露、麻糬、波波靠在一起睡著。
 # c2_pro_hub
-* 看看露露 -> c2_pro_lulu
-* 看看麻糬 -> c2_pro_mochi
-* 看看波波 -> c2_pro_popo
-* 看看自己的胸口 -> c2_pro_chest
-* 看看車票 -> c2_pro_ticket
+// 看過的選項會隱藏
+[!c2_seen_lulu] * 看看露露 -> c2_pro_lulu
+[!c2_seen_mochi] * 看看麻糬 -> c2_pro_mochi
+[!c2_seen_popo] * 看看波波 -> c2_pro_popo
+[!ch2_referral] * 看看自己的胸口 -> c2_pro_chest
+[!c2_seen_ticket] * 看看車票 -> c2_pro_ticket
 [ch2_referral] * （等火車停下來） -> c2_pro_conductor
 # c2_pro_lulu
+@set c2_seen_lulu
 > 露露睡得很熟。胸口別著一張紙。
 > 「慈愛組織　轉介單　　分類：模範生」
 @goto c2_pro_hub
 # c2_pro_mochi
+@set c2_seen_mochi
 > 麻糬的嘴角還是笑著的。胸口的轉介單也寫著「模範生」。
 > 他的名牌還是空白的。
 @goto c2_pro_hub
 # c2_pro_popo
+@set c2_seen_popo
 > 波波把郵袋抱得很緊。有一封信露出一角，上面蓋著「未寄出」。
 @goto c2_pro_hub
 # c2_pro_chest
@@ -42,6 +46,7 @@
 @set ch2_referral
 @goto c2_pro_hub
 # c2_pro_ticket
+@set c2_seen_ticket
 > 「棉花糖鎮　單程票」
 > 「棉花糖鎮」被一條黑線劃掉了。旁邊用很工整的字寫著：漂白鎮。
 > 背面有兩個戳章。

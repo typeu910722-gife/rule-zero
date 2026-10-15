@@ -73,7 +73,7 @@ func _run() -> void:
 	gs.checkpoint = "c2_start"
 	var ch = load("res://scenes/chapter2.tscn").instantiate()
 	root.add_child(ch)
-	gs.auto_choices = [3, 5]
+	gs.auto_choices = [3, 4]
 	for i in 300:
 		if ch.phase == "day1_explore":
 			break
