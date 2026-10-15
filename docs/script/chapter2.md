@@ -1484,5 +1484,5 @@
 |---|---|---|
 | `docs/script/chapter1.md`「第二章自動開場」 | 回到棉花糖鎮、新的 Fen、第 11 條守則 | 縫線拆開 → 灰色車廂、睡著的露露／麻糬／波波、轉介單「壞孩子」、車掌：「下一站——漂白鎮。」停格在標題「第二章　漂白鎮」 |
 | 同上，附錄 A「帶入第二章的旗標」 | 以 Fen 與第 11 條為主 | 改成本章實際使用的旗標：lulu_doubt／lulu_comforted（露露揮手方式）、got_button（枕頭下的彩色鈕扣呼應）、found_fox_tail（白面的對話多一句：「那條尾巴？我的。」）、brave_end（和平鴿初始態度） |
-| `game/dialogue/chapter1.txt`、`game/scripts/ui/end_card.gd` 等 | 第二章開場的演出 | 實作時一起改（下一輪之後） |
+| `game/dialogue/chapter1.txt`、`game/scripts/ui/end_card.gd` 等 | 第二章開場的演出 | ✅ 已實作：灰色車廂預告 →「繼續」進入第二章 |
 | `docs/script/chapter1.md` 3-3 森林 | Fen：「那不是我的。**還**不是。」 | 保留。第二章揭曉：那條尾巴是白面的（白面沒有尾巴） |

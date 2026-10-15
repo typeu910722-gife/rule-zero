@@ -31,7 +31,8 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	Critter.draw(self, "sheep", Color("#fffdf8"), 1.0, _facing * 0.6, true, false, GameState.has("tag_on"))
+	Critter.draw(self, "sheep", Color("#fffdf8"), 1.0, _facing * 0.6, true, false, GameState.has("tag_on"),
+		{"grey_patch": GameState.has("c2_grey_patch")})
 
 
 func nearest(max_dist := -1.0) -> Interactable:

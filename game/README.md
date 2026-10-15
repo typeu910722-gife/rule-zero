@@ -1,6 +1,6 @@
 # Rule Zero — Godot 原型
 
-第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場。
+第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場；第二章「漂白鎮」目前做到**序章＋第一天**（標題畫面可以直接進入試玩）。
 用來驗證：守則與膽量系統、對話節奏、「可愛 → 一點點怪」的氛圍。
 
 ![廣場](../docs/images/proto_plaza.png)
@@ -56,8 +56,23 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 ## 存檔位置
 `user://save.json`（當章進度）與 `user://meta.json`（跨周目）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
 
+## 第二章「漂白鎮」（進行中）
+劇本：`docs/script/chapter2.md`。程式：`scripts/chapter2.gd`（流程）、`scenes/chapter2.tscn`、`dialogue/chapter2.txt`（標籤以 `c2_` 開頭）。
+
+![漂白鎮](../docs/images/proto_ch2_plaza.png)
+
+- 第一章結尾的預告改成：灰色車廂、「壞孩子」轉介單、車掌：「下一站——漂白鎮。」→「繼續」進入第二章（帶著第一章的旗標，例如露露隔岸揮手的方式）
+- 標題畫面「第二章　漂白鎮（試玩）」可以不玩第一章直接進入
+- 漂白鎮地圖：全部黑白灰，只有河對岸的模範生宿舍是彩色的；鐵絲網過不去
+- 六個居民（白面、小棘、條碼、嘎嘎、重重、鼬鼬）與和平鴿（人類，戴鴿子面具，玩偶只到他的膝蓋）
+- 操行成績單（畫面左上與日記）、漂白鎮矯正守則（公告欄）、漂白鎮配色的對話框
+- 序章（可調查的車廂、轉介單「校外參訪」）→ 抵達 → 成績單與守則 → **道歉練習** → 自由時間（認識 2 個居民）→ 傍晚隔著鐵絲網 → 夜間點名（被塗掉的第 8 個名字）→ 枕頭下的彩色鈕扣 → 夢境 1
+- 道歉練習：節奏遊戲，按錯時被電的是重重；連續亂按 5 次 → 電擊轉到小布身上，要按住「我很乖」撐過去（膽量 -1、操行 -10）
+
+![道歉練習](../docs/images/proto_ch2_apology.png)
+
 ## 尚未實作（下一步）
-- 第二章本體
+- 第二章第二、三天、畢業典禮與結尾（劇本已完成）
 - 音樂、環境音（目前只有揉麵團的程式合成音樂盒音色）
 - 正式美術（目前角色與地圖都是程式繪製的佔位圖）
 - 牆壁碰撞（目前只限制地圖邊界）
@@ -67,7 +82,8 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 game/
 ├── project.godot
 ├── scenes/main.tscn            # 進入點
-├── dialogue/chapter1.txt       # 全部對話（語法：docs/dialogue-format.md）
+├── dialogue/chapter1.txt       # 第一章對話（語法：docs/dialogue-format.md）
+├── dialogue/chapter2.txt       # 第二章對話（標籤以 c2_ 開頭）
 ├── scripts/
 │   ├── main.gd                 # 章節流程、場景配置、互動分派
 │   ├── autoload/
@@ -81,6 +97,8 @@ game/
 └── tests/
     ├── lint_dialogue.gd        # 檢查對話腳本
     ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）、存檔讀檔
+    ├── chapter2_test.gd        # 第二章序章＋第一天的兩條路線、存檔讀檔
+    ├── screenshots_ch2.gd      # 第二章截圖
     ├── rhythm_test.gd          # 揉麵團判定
     ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
@@ -92,6 +110,7 @@ game/
 godot --headless --path . -s tests/lint_dialogue.gd
 godot --headless --path . -s tests/smoke_test.gd
 godot --headless --path . -s tests/rhythm_test.gd
+godot --headless --path . -s tests/chapter2_test.gd
 ```
 
 ## 字型

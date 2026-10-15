@@ -92,7 +92,8 @@ func _run() -> void:
 	await _do("forest_tags", [0])
 	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：第四十七個小布 → 衝出去")
 	_check(main.phase == "ended" and gs.has("chapter2"), "修理 → 結算 → 第二章開場")
-	_check(not gs.has_save() and int(gs.meta.chapters_done) == 1, "章節完成：刪除當章存檔、標題畫面多一個戳章")
+	_check(int(gs.meta.chapters_done) == 1, "章節完成：標題畫面多一個戳章")
+	_check(gs.chapter == 2 and gs.checkpoint == "c2_start" and gs.has_save(), "第二章開場後存檔：繼續會從第二章開始")
 	_check(gs.has("found_sheep") and gs.has("found_lulu_bow"), "線索記進日記")
 	print("  秘密：", gs.secrets_found(), "　懷疑值：", gs.suspicion)
 

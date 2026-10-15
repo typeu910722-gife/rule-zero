@@ -51,6 +51,11 @@ func refresh() -> void:
 	var day_names := ["", "第一天", "第二天", "第三天"]
 	var stars := "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)
 	_status.text = "%s　｜　膽量 %s" % [day_names[mini(GameState.day, 3)], stars]
+	if GameState.chapter == 2:
+		_status.text += "　｜　操行 %d" % GameState.conduct
+	var cold := GameState.chapter == 2
+	_status.add_theme_color_override("font_color", Color("#444444") if cold else Color("#6d597a"))
+	_objective.add_theme_color_override("font_color", Color("#6a6a6a") if cold else Color("#8e7d8a"))
 	if show_debug:
 		_status.text += "　｜　[debug] 懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
@@ -78,10 +83,13 @@ func toggle_menu(allow_tag: bool) -> void:
 
 func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
-	t += "名字：%s\n膽量：%d / %d\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE]
-	t += "[font_size=22]發現的事情[/font_size]\n"
-	for k in GameState.SECRETS:
-		t += ("・%s\n" % GameState.SECRETS[k]) if GameState.has(k) else "・？？？\n"
+	t += "名字：%s\n膽量：%d / %d\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE]
+	if GameState.chapter == 2:
+		t += "操行：%d 分\n" % GameState.conduct
+	t += "\n[font_size=22]發現的事情[/font_size]\n"
+	var defs := GameState.secret_defs()
+	for k in defs:
+		t += ("・%s\n" % defs[k]) if GameState.has(k) else "・？？？\n"
 	var clues: Array = GameState.CLUES.keys().filter(func(k): return GameState.has(k))
 	if not clues.is_empty():
 		t += "\n[font_size=22]記下的事[/font_size]\n"

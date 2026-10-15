@@ -13,6 +13,8 @@ var stitched := false
 ## 夜晚異常：鈕扣眼睛跟著玩家轉
 var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
+## 第二章的外觀細節（斑紋數、縫起來的嘴……），見 Critter.draw 的 opts
+var opts := {}
 var target: Node2D
 
 
@@ -26,6 +28,7 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 	smile = data.get("smile", true)
 	stitched = data.get("stitched", false)
 	position = data.get("pos", Vector2.ZERO)
+	opts = data.get("opts", {}).duplicate()
 	add_to_group("interactable")
 	return self
 
@@ -44,9 +47,16 @@ func _draw() -> void:
 		var look := Vector2.ZERO
 		if follow_eyes and target:
 			look = (target.global_position - global_position).normalized()
-		Critter.draw(self, species, body_color, size, look, smile, stitched)
+		var label_col := Color("#6d597a")
+		if species == "dove":
+			Critter.draw_dove(self, size, opts.get("unmasked", false), opts.get("crack", 1.0))
+			label_col = Color("#555555")
+		else:
+			Critter.draw(self, species, body_color, size, look, smile, stitched, false, opts)
+			if GameState.chapter == 2:
+				label_col = Color("#555555")
 		var f: Font = GameState.font
-		draw_string(f, Vector2(-60, 22 * size), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
+		draw_string(f, Vector2(-60, 22 * size), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, label_col)
 	else:
 		_draw_object()
 
@@ -67,6 +77,25 @@ func _draw_object() -> void:
 				draw_colored_polygon(PackedVector2Array([Vector2(-20, -60), Vector2(20, -60), Vector2(24, -2), Vector2(-24, -2)]), Color("#f7c5d3"))
 				for k in 6:
 					draw_circle(Vector2(-14 + (k % 3) * 14, -48 + (k / 3) * 22), 3, Color("#ffffff"))
+		"c2_bed":
+			# 漂白鎮宿舍的鐵製上下舖
+			draw_rect(Rect2(-42, -70, 84, 80), Color("#8d8d8d"), false, 3)
+			draw_rect(Rect2(-40, -34, 80, 16), Color("#e6e6e6"))
+			draw_rect(Rect2(-40, -66, 80, 14), Color("#e6e6e6"))
+			draw_rect(Rect2(-36, -40, 26, 8), Color("#ffffff"))
+		"c2_pillow":
+			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#f5f5f5"))
+			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#cfcfcf"))
+			Critter.ellipse(self, Vector2(0, -9), Vector2(16, 7), Color("#fafafa"))
+			if not GameState.has("c2_pillow_done"):
+				draw_circle(Vector2(10, -3), 3, Color("#f28fb0"))
+		"c2_board":
+			draw_rect(Rect2(-36, -20, 6, 40), Color("#6e6e6e"))
+			draw_rect(Rect2(30, -20, 6, 40), Color("#6e6e6e"))
+			draw_rect(Rect2(-46, -70, 92, 56), Color("#f4f4f2"))
+			draw_rect(Rect2(-46, -70, 92, 56), Color("#7a7a7a"), false, 3)
+			for k in 7:
+				draw_line(Vector2(-36, -63 + k * 7), Vector2(30 - (k % 3) * 10, -63 + k * 7), Color("#a8a8a8"), 2)
 		"bed":
 			draw_rect(Rect2(-40, -50, 80, 60), Color("#bde0fe"))
 			draw_rect(Rect2(-36, -46, 72, 16), Color("#ffffff"))

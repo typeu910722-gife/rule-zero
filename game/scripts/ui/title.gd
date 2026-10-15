@@ -4,6 +4,7 @@ extends CanvasLayer
 
 signal new_game
 signal continue_game
+signal chapter2
 
 var _area: Control
 
@@ -25,6 +26,8 @@ func _ready() -> void:
 	cont.disabled = not GameState.has_save()
 	box.add_child(cont)
 	box.add_child(_button("新遊戲", func(): new_game.emit()))
+	# 原型：第二章可以直接從標題進去試玩
+	box.add_child(_button("第二章　漂白鎮（試玩）", func(): chapter2.emit()))
 	if not OS.has_feature("web"):
 		box.add_child(_button("離開", func(): get_tree().quit()))
 	(cont if not cont.disabled else box.get_child(1)).grab_focus.call_deferred()

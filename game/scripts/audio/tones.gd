@@ -33,3 +33,36 @@ static func play(parent: Node, freq: float, volume_db := -6.0) -> void:
 	parent.add_child(p)
 	p.play()
 	p.finished.connect(p.queue_free)
+
+
+## 電擊的嗡嗡聲（方波＋雜訊）
+static func buzz_wave(length := 0.3) -> AudioStreamWAV:
+	var key := "buzz_%d" % int(length * 100)
+	if _cache.has(key):
+		return _cache[key]
+	var n := int(RATE * length)
+	var data := PackedByteArray()
+	data.resize(n * 2)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 13
+	for i in n:
+		var t := float(i) / RATE
+		var env := minf(1.0, t * 200.0) * minf(1.0, (length - t) * 30.0)
+		var sq := 1.0 if fmod(t * 120.0, 1.0) < 0.5 else -1.0
+		var v := sq * 0.5 + rng.randf_range(-0.35, 0.35)
+		data.encode_s16(i * 2, int(clampf(v * env * 0.35, -1.0, 1.0) * 32767))
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = RATE
+	wav.data = data
+	_cache[key] = wav
+	return wav
+
+
+static func buzz(parent: Node, length := 0.3, volume_db := -10.0) -> void:
+	var p := AudioStreamPlayer.new()
+	p.stream = buzz_wave(snappedf(length, 0.05))
+	p.volume_db = volume_db
+	parent.add_child(p)
+	p.play()
+	p.finished.connect(p.queue_free)

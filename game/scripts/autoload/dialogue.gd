@@ -14,7 +14,11 @@ const BG_COLORS := {
 	"black": Color(0.05, 0.04, 0.06),
 	"train": Color("#f6d6e6"),
 	"dream": Color("#d8d4cc"),
+	"grey_train": Color("#d9cfd3"),
+	"white": Color("#f4f4f2"),
 }
+## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
+const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt"]
 
 var running := false
 var parser := DialogueParser.new()
@@ -32,7 +36,8 @@ var _shown_at := 0
 func _ready() -> void:
 	layer = 50
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	parser.parse_file("res://dialogue/chapter1.txt")
+	for path in SCRIPTS:
+		parser.parse_file(path)
 	for e in parser.errors:
 		push_error(e)
 	_build_ui()
@@ -47,6 +52,7 @@ func run(label: String) -> void:
 		push_warning("對話標籤不存在：%s" % label)
 		return
 	running = true
+	_apply_style()
 	var cmds := parser.cmds
 	var i: int = parser.labels[label]
 	while i < cmds.size():
@@ -93,6 +99,8 @@ func _command(op: String, args: Array) -> int:
 			GameState.set_flag(args[0], false)
 		"sus":
 			GameState.add_suspicion(int(args[0]))
+		"conduct":
+			GameState.add_conduct(int(args[0]))
 		"courage":
 			GameState.courage = clampi(GameState.courage + int(args[0]), 0, GameState.MAX_COURAGE)
 			GameState.changed.emit()
@@ -128,7 +136,7 @@ func _say(who: String, text: String) -> void:
 	_name.visible = who != ""
 	_name.text = who
 	if who == "":
-		_text.text = "[color=#7a6a78]%s[/color]" % text
+		_text.text = "[color=%s]%s[/color]" % ["#777777" if GameState.chapter == 2 else "#7a6a78", text]
 	else:
 		_text.text = text
 	if GameState.fast:
@@ -263,6 +271,16 @@ func _build_ui() -> void:
 	# 對話框本身不攔截點擊，讓「點畫面任何地方」都能前進（手機）
 	for c in [_box, v, _name, _text]:
 		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+## 漂白鎮的對話框：同樣是縫在布上的標籤，只是被洗白了
+func _apply_style() -> void:
+	var cold := GameState.chapter == 2
+	var sb: StyleBoxFlat = _box.get_theme_stylebox("panel")
+	sb.bg_color = Color("#f4f4f2") if cold else Color("#fff8f0")
+	sb.border_color = Color("#9a9a9a") if cold else Color("#e8a0bf")
+	_name.add_theme_color_override("font_color", Color("#555555") if cold else Color("#c2558a"))
+	_text.add_theme_color_override("default_color", Color("#2e2e2e") if cold else Color("#4a3b47"))
 
 
 func _style_button(b: Button) -> void:

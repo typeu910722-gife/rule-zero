@@ -1,5 +1,6 @@
 extends Node2D
-## 第一章原型的流程導演：章節進行、場景配置、互動分派。
+## 第一章原型的流程導演（也是標題畫面）：章節進行、場景配置、互動分派。
+## 第二章在 scenes/chapter2.tscn（scripts/chapter2.gd）。
 ##
 ## 互動時依序尋找對話標籤：<id>_<phase> → <phase 預設> → <id>_d<day> → <id>
 ## 劇情邏輯盡量寫在 dialogue/chapter1.txt，這裡只處理「世界」的變化。
@@ -154,6 +155,11 @@ func _show_title() -> void:
 	title.continue_game.connect(func():
 		title.queue_free()
 		_continue())
+	title.chapter2.connect(func():
+		GameState.reset()
+		GameState.start_chapter2()
+		GameState.checkpoint = ""
+		get_tree().change_scene_to_file("res://scenes/chapter2.tscn"))
 
 
 ## 從存檔繼續：每個檢查點都是某一天的早上
@@ -161,6 +167,9 @@ func _continue() -> void:
 	if not GameState.load_game():
 		GameState.reset()
 		run_chapter()
+		return
+	if GameState.chapter == 2:
+		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
 		return
 	var cp := GameState.checkpoint
 	Dialogue.set_bg("none")
@@ -332,13 +341,14 @@ func _chapter_end() -> void:
 	add_child(s)
 	Dialogue.set_bg("none")
 	await s.show_and_wait()
-	# 第二章自動開場：不給玩家按鍵，直接接下去
+	# 第二章自動開場：不給玩家按鍵，直接接下去（火車開往漂白鎮）
 	s.queue_free()
 	repair_scene.queue_free()
 	GameState.set_flag("chapter2")
-	town.visible = true
-	player.bounds = WORLD_BOUNDS
 	await Dialogue.run("ch2_opening")
+	# 帶著第一章的旗標進入第二章；「繼續」會從第二章序章開始
+	GameState.start_chapter2()
+	GameState.save_game("c2_start")
 	add_child(EndCard.new())
 
 
@@ -472,17 +482,6 @@ func _on_event(event_name: String) -> void:
 			actors.mayor.position = player.position + Vector2(-20, 70)
 		"sew":
 			await repair_scene.sew()
-		"ch2_arrival":
-			# 第二章：Fen 回來了。縫線整整齊齊的，在笑。
-			_layout("arrival")
-			player.position = Vector2(700, 1030)
-			var fen: Interactable = actors.fen
-			fen.visible = true
-			fen.smile = true
-			fen.stitched = false
-			fen.position = Vector2(700, 975)
-			fen.queue_redraw()
-			actors.mayor.position = Vector2(640, 945)
 	Dialogue.event_done.emit()
 
 
