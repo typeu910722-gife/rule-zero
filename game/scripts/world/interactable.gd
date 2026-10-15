@@ -51,6 +51,9 @@ func _draw() -> void:
 		if species == "dove":
 			Critter.draw_dove(self, size, opts.get("unmasked", false), opts.get("crack", 1.0))
 			label_col = Color("#555555")
+		elif species == "conductor":
+			Critter.draw_conductor(self, size)
+			label_col = Color("#555555")
 		else:
 			Critter.draw(self, species, body_color, size, look, smile, stitched, false, opts)
 			if GameState.chapter == 2:

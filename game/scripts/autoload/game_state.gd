@@ -44,6 +44,15 @@ const CLUES := {
 	"met_gaga": "嘎嘎在桌上寫：「你以前也被拍過。很多次。」",
 	"met_youyou": "鼬鼬說：點名之後，鐵絲網會關電十五分鐘。",
 	"saw_eighth_name": "點名的名單上有第 8 個名字，被墨水塗掉了。",
+	"tiaoma_1": "條碼身上只剩 1 條斑紋。",
+	"photo_1": "嘎嘎的照片：白臉狐狸把「遙」的書包倒進垃圾桶。",
+	"photo_2": "嘎嘎的照片：黑色刺蝟拿著波波寫給露露的信。",
+	"photo_nirvana": "嘎嘎燒壞的照片：很多張床，人類的小孩，牌子寫著「涅槃」。其中一個頭髮是捲的。",
+	"baimian_dove_past": "白面說：和平鴿以前也坐過那張小椅子。面具上的裂痕，是上一個教官的。",
+	"answered_haruka": "點名念到「遙」的時候，我回答了「到」。",
+	"dove_first_page": "愛的日記最前面一頁：「今天，教官沒有醒來。我替他戴上了面具。很合。」",
+	"nirvana_clipboard": "夾板：涅槃計畫區第七期。「意識：已處分　身體：維持中」。",
+	"overheard_conductor": "月台上，和平鴿和車掌在說話。車掌的哥哥選了和平鴿。",
 }
 
 ## 第二章：操行成績單（第一章隱藏的懷疑值，這章攤開給你看）
@@ -63,6 +72,8 @@ var fast := false
 var auto_choices: Array = []
 var fast_rhythm_streak := 0
 var fast_apology_take := false
+var fast_scrub_keep := false
+var fast_sneak_caught := false
 var resume_on_start := false
 
 ## 存檔：每天早上自動存一次（檢查點）。meta 是跨周目的記錄，標題畫面會依它改變。

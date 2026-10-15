@@ -4,7 +4,9 @@ extends SceneTree
 const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", "fen_taken",
 	"lulu_appears", "mayor_shadow", "sew", "bread",
 	# 第二章
-	"report_card", "apology", "roll_list", "c2_take_models", "c2_dove_appears", "c2_fence_lineup"]
+	"report_card", "apology", "roll_list", "c2_take_models", "c2_dove_appears", "c2_fence_lineup",
+	"scrub", "find_1", "find_2", "find_3", "treatment_hold", "sneak", "photo_1", "photo_2", "photo_nirvana",
+	"silhouette", "overlay_close", "roll_list_2", "c2_platform_scene", "c2_dove_mask_on"]
 
 
 func _init() -> void:

@@ -247,3 +247,25 @@ static func draw_dove(ci: CanvasItem, s: float, unmasked := false, crack := 1.0)
 	if crack > 1.0:
 		ci.draw_polyline(PackedVector2Array([head + Vector2(0, 5) * s, head + Vector2(5, 1) * s,
 			head + Vector2(9, 4) * s, head + Vector2(12, 0) * s]), c, 1.2 * s)
+
+
+## 車掌：戴帽子、看不見臉的影子
+static func draw_conductor(ci: CanvasItem, s: float) -> void:
+	var dark := Color("#2a2a2e")
+	ellipse(ci, Vector2(0, 2) * s, Vector2(30, 8) * s, Color(0, 0, 0, 0.15))
+	ci.draw_rect(Rect2(Vector2(-12, -40) * s, Vector2(9, 40) * s), dark)
+	ci.draw_rect(Rect2(Vector2(3, -40) * s, Vector2(9, 40) * s), dark)
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(-20, -140) * s, Vector2(20, -140) * s,
+		Vector2(24, -38) * s, Vector2(-24, -38) * s]), Color("#34343a"))
+	for k in 3:
+		ci.draw_circle(Vector2(0, -124 + k * 24) * s, 1.8 * s, Color("#8a7a4a"))
+	# 手套上洗不掉的白色污漬
+	ci.draw_circle(Vector2(-26, -70) * s, 6 * s, Color("#3a3a40"))
+	ci.draw_circle(Vector2(26, -70) * s, 6 * s, Color("#3a3a40"))
+	ci.draw_circle(Vector2(-27, -71) * s, 2.5 * s, Color("#e8e8e4"))
+	var head := Vector2(0, -156) * s
+	ellipse(ci, head, Vector2(13, 15) * s, Color("#1a1a1e"))
+	# 帽子
+	ci.draw_rect(Rect2(head + Vector2(-16, -10) * s, Vector2(32, 5) * s), Color("#1f1f24"))
+	ci.draw_rect(Rect2(head + Vector2(-12, -22) * s, Vector2(24, 13) * s), Color("#26262c"))
+	ci.draw_rect(Rect2(head + Vector2(-12, -14) * s, Vector2(24, 3) * s), Color("#8a7a4a"))

@@ -1,5 +1,5 @@
 extends Node2D
-## 第二章「漂白鎮」的流程導演（目前：序章＋第一天）。
+## 第二章「漂白鎮」的流程導演（目前：序章＋第一天＋第二天）。
 ## 劇情邏輯寫在 dialogue/chapter2.txt（標籤以 c2_ 開頭），這裡只處理「世界」的變化。
 ## 互動時依序尋找對話標籤：c2_<id>_<phase> → c2_<id>_d<day> → c2_<id>
 
@@ -11,8 +11,13 @@ const EndCard := preload("res://scripts/ui/end_card.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const Apology := preload("res://scripts/minigames/apology.gd")
 const RollList := preload("res://scripts/ui/roll_list.gd")
+const Scrub := preload("res://scripts/minigames/scrub.gd")
+const FindOdd := preload("res://scripts/minigames/find_odd.gd")
+const HoldEndure := preload("res://scripts/minigames/hold_endure.gd")
+const Sneak := preload("res://scripts/minigames/sneak.gd")
+const SceneOverlay := preload("res://scripts/ui/scene_overlay.gd")
 
-const EXPLORE_PHASES := ["day1_explore", "day1_night"]
+const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_out_2"]
 
 ## 漂白鎮的六個居民（不跟棉花糖鎮的好孩子混在一起）＋和平鴿；露露他們在河對岸
 const ACTORS := {
@@ -32,9 +37,12 @@ const ACTORS := {
 	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(1370, 705)},
 	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1435, 705), "smile": false},
 	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1500, 705)},
+	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(880, 1000)},
 }
 const RESIDENTS := ["baimian", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
 const MODELS := ["lulu", "mochi", "popo"]
+## 平常不在場的人
+const HIDDEN := ["lulu", "mochi", "popo", "conductor"]
 
 const OBJECTS := {
 	"c2_board": {"name": "公告欄", "pos": Vector2(540, 580)},
@@ -46,8 +54,13 @@ const OBJECTS := {
 	"dining": {"name": "食堂", "pos": Vector2(200, 960)},
 	"c2_bed": {"name": "鐵床", "pos": Vector2(290, 565)},
 	"c2_pillow": {"name": "枕頭", "pos": Vector2(190, 560)},
+	# 第二天夜晚（跟鼬鼬偷溜）
+	"treatment_window": {"name": "治療室的窗戶", "pos": Vector2(800, 300)},
+	"office": {"name": "辦公室", "pos": Vector2(560, 330)},
+	"platform": {"name": "月台", "pos": Vector2(760, 1000)},
 }
 const NIGHT_OBJECTS := ["c2_bed", "c2_pillow"]
+const NIGHT_OUT_OBJECTS := ["treatment_window", "office", "platform"]
 
 const WORLD_BOUNDS := Rect2(20, 40, 1150, 1000)
 const HOUSE_BOUNDS := Rect2(85, 490, 255, 180)
@@ -58,6 +71,8 @@ const TINTS := {
 	"day": Color(1, 1, 1),
 	"evening": Color(0.86, 0.86, 0.9),
 	"night": Color(0.55, 0.55, 0.62),
+	# 漂白鎮的夜晚沒有黑色：所有東西都在發白光，像底片的負片
+	"negative": Color(0.82, 0.86, 0.95),
 }
 
 var phase := "prologue"
@@ -70,6 +85,7 @@ var hud: CanvasLayer
 var board: CanvasLayer
 var tint: CanvasModulate
 var fade: ColorRect
+var overlay: CanvasLayer
 
 
 func _ready() -> void:
@@ -115,10 +131,13 @@ func _ready() -> void:
 	add_child(touch)
 	Dialogue.event_requested.connect(_on_event)
 	hud.set_status_visible(false)
-	if GameState.checkpoint == "c2_day1_explore":
-		_continue.call_deferred()
-	else:
-		run_chapter.call_deferred()
+	match GameState.checkpoint:
+		"c2_day1_explore":
+			_continue.call_deferred()
+		"c2_day2_morning":
+			_day2_morning.call_deferred()
+		_:
+			run_chapter.call_deferred()
 
 
 func _exit_tree() -> void:
@@ -176,6 +195,12 @@ func _after_interaction() -> void:
 		"day1_night":
 			if GameState.has("c2_sleep_1"):
 				await _day1_end()
+		"day2_explore":
+			if GameState.has("gaga_done") and (GameState.has("baimian_d2_done") or not GameState.has("photo_1")):
+				await _day2_evening()
+		"night_out_2":
+			if GameState.has("overheard_conductor"):
+				await _day2_end()
 
 
 func _day1_evening() -> void:
@@ -200,11 +225,84 @@ func _day1_evening() -> void:
 
 
 func _day1_end() -> void:
-	_set_phase("ended")
+	_set_phase("day2_morning")
 	await _fade_to(1.0)
 	await Dialogue.run("c2_dream_1")
+	GameState.new_day()
+	GameState.save_game("c2_day2_morning")
+	await _day2_morning()
+
+
+## 第二天：早上的公告欄 → 早餐 → 洗白白 → 找出壞孩子 → 治療室 → 自由時間
+func _day2_morning() -> void:
+	busy = true
+	player.can_move = false
+	_set_phase("day2_morning")
+	Dialogue.set_bg("none")
+	_set_tint("day")
+	player.bounds = WORLD_BOUNDS
+	_layout("day")
+	hud.set_status_visible(true)
+	player.position = PLAZA_SPOT
+	await _fade_to(0.0)
+	await Dialogue.run("c2_d2_morning")
+	await _fade_to(1.0)
+	player.position = Vector2(260, 980)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_breakfast")
+	await _fade_to(1.0)
+	player.position = Vector2(960, 520)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_scrub")
+	_layout("day")
+	await _fade_to(1.0)
+	player.position = Vector2(350, 420)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_find")
+	await Dialogue.run("c2_treatment_1")
+	_layout("day")
+	await _fade_to(1.0)
+	player.position = Vector2(400, 560)
+	_set_phase("day2_explore")
+	await _fade_to(0.0)
+	busy = false
+	player.can_move = true
+
+
+## 第二天傍晚：第二晚點名（名單上的「遙」）→ 宿舍 → 鼬鼬敲窗
+func _day2_evening() -> void:
+	await _fade_to(1.0)
+	_set_tint("night")
+	_layout("rollcall")
+	player.position = Vector2(780, 720)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_rollcall_2")
+	await _fade_to(1.0)
+	_layout("night")
+	player.position = HOME_SPOT
+	player.bounds = HOUSE_BOUNDS
+	await _fade_to(0.0)
+	await Dialogue.run("c2_night2")
+	if not GameState.has("night_out_2"):
+		await _day2_end()
+		return
+	await _fade_to(1.0)
+	_layout("night_out")
+	_set_tint("negative")
+	player.bounds = WORLD_BOUNDS
+	player.position = Vector2(1080, 640)
+	await _fade_to(0.0)
+	await Dialogue.run("c2_night2_intro")
+	_set_phase("night_out_2")
+
+
+func _day2_end() -> void:
+	_set_phase("ended")
+	await _fade_to(1.0)
+	_close_overlay()
+	await Dialogue.run("c2_dream_2")
 	var card := EndCard.new()
-	card.mode = "c2_day1"
+	card.mode = "c2_day2"
 	add_child(card)
 
 
@@ -296,6 +394,55 @@ func _on_event(event_name: String) -> void:
 			var dove: Interactable = actors.dove
 			dove.visible = true
 			dove.position = Vector2(770, 960)
+		"scrub":
+			var sc := Scrub.new()
+			add_child(sc)
+			await sc.play()
+		"find_1", "find_2", "find_3":
+			var fo := FindOdd.new()
+			add_child(fo)
+			var n := int(event_name.right(1))
+			GameState.set_flag("c2_found_%d" % n, await fo.play(n))
+		"treatment_hold":
+			var h := HoldEndure.new()
+			h.questions = [["第一題。你為什麼沒有笑？", 3.0], ["第二題。你在看誰？", 4.0],
+				["第三題。你還記得，遙是誰嗎？", 5.0]]
+			add_child(h)
+			await h.play()
+		"sneak":
+			var sn := Sneak.new()
+			add_child(sn)
+			if await sn.play():
+				GameState.set_flag("c2_sneak_caught")
+				GameState.add_conduct(-10)
+		"photo_1", "photo_2", "photo_nirvana", "silhouette":
+			if overlay == null:
+				overlay = SceneOverlay.new()
+				add_child(overlay)
+			overlay.mode = event_name
+			overlay.get_child(0).queue_redraw()
+		"overlay_close":
+			_close_overlay()
+		"roll_list_2":
+			var r2 := RollList.new()
+			r2.haruka = true
+			add_child(r2)
+			await r2.show_and_wait()
+		"c2_platform_scene":
+			# 月台：和平鴿沒有戴面具，背對著小布；對面是車掌
+			for id in RESIDENTS:
+				actors[id].visible = false
+			var dove: Interactable = actors.dove
+			dove.visible = true
+			dove.position = Vector2(700, 1010)
+			dove.opts["unmasked"] = true
+			dove.queue_redraw()
+			actors.conductor.visible = true
+			actors.conductor.position = Vector2(900, 1010)
+			player.position = Vector2(560, 960)
+		"c2_dove_mask_on":
+			actors.dove.opts["unmasked"] = false
+			actors.dove.queue_redraw()
 		"c2_fence_lineup":
 			# 隔著鐵絲網排隊；對岸的模範生站在陽台上揮手
 			for k in RESIDENTS.size():
@@ -314,9 +461,10 @@ func _layout(mode: String) -> void:
 	for id in ACTORS:
 		var a: Interactable = actors[id]
 		a.position = ACTORS[id].pos
-		a.visible = not id in MODELS
+		a.visible = not id in HIDDEN
 	for id in OBJECTS:
-		actors[id].visible = not id in NIGHT_OBJECTS
+		actors[id].visible = not id in NIGHT_OBJECTS and not id in NIGHT_OUT_OBJECTS
+	_refresh_looks()
 	match mode:
 		"arrival":
 			# 月台：模範生在左邊，漂白鎮的六個居民在右邊排成一排
@@ -336,6 +484,35 @@ func _layout(mode: String) -> void:
 				actors[id].visible = false
 			for id in OBJECTS:
 				actors[id].visible = id in NIGHT_OBJECTS
+		"night_out":
+			# 偷溜：只有鼬鼬跟著你
+			for id in ACTORS:
+				actors[id].visible = false
+			for id in OBJECTS:
+				actors[id].visible = id in NIGHT_OUT_OBJECTS
+			actors.youyou.visible = true
+			actors.youyou.position = Vector2(1120, 600)
+
+
+## 依劇情改變居民的樣子：條碼的斑紋、嘎嘎的嘴、鼬鼬的紅毛線、和平鴿的面具
+func _refresh_looks() -> void:
+	var stripes := 3
+	if GameState.has("tiaoma_1"):
+		stripes = 1
+	elif GameState.has("tiaoma_2"):
+		stripes = 2
+	actors.tiaoma.opts["stripes"] = stripes
+	actors.gaga.opts["sewn"] = not GameState.has("reported_gaga")
+	actors.youyou.opts["thread"] = not (GameState.has("reported_youyou") or GameState.has("youyou_lost_thread"))
+	actors.dove.opts["unmasked"] = false
+	for id in ["tiaoma", "gaga", "youyou", "dove"]:
+		actors[id].queue_redraw()
+
+
+func _close_overlay() -> void:
+	if overlay != null:
+		overlay.queue_free()
+		overlay = null
 
 
 func _set_phase(p: String) -> void:
@@ -349,6 +526,15 @@ func _refresh_objective() -> void:
 			GameState.set_objective("自由時間。認識漂白鎮的孩子們（%d / 2）" % mini(_met_count(), 2))
 		"day1_night":
 			GameState.set_objective("熄燈了。可以看看床邊，或上床睡覺。")
+		"day2_explore":
+			if not GameState.has("gaga_done"):
+				GameState.set_objective("自由時間。嘎嘎好像有話要說（食堂）。")
+			elif GameState.has("photo_1") and not GameState.has("baimian_d2_done"):
+				GameState.set_objective("拿照片去問屋頂上的白面。")
+			else:
+				GameState.set_objective("")
+		"night_out_2":
+			GameState.set_objective("十五分鐘。治療室、辦公室、月台。")
 		_:
 			GameState.set_objective("")
 

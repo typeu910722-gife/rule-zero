@@ -1,7 +1,7 @@
 extends CanvasLayer
 ## 原型的章節結尾選單。
 ## mode "to_ch2"：第一章結束、第二章預告播完後才出現（繼續第二章／回到標題）。
-## mode "c2_day1"：第二章目前做到第一天。
+## mode "c2_day2"：第二章目前做到第二天。
 
 const CHAPTER2 := "res://scenes/chapter2.tscn"
 const TITLE := "res://scenes/main.tscn"
@@ -38,7 +38,7 @@ func _ready() -> void:
 		first = _button(box, "繼續", func(): get_tree().change_scene_to_file(CHAPTER2))
 		_button(box, "存檔並回到標題", _to_title)
 	else:
-		t.text = "第二章「漂白鎮」　第一天　—　完\n（第二天製作中）"
+		t.text = "第二章「漂白鎮」　第二天　—　完\n（第三天製作中）"
 		hint.text = "操行：%d 分　｜　本章秘密：%d / %d" % [GameState.conduct, GameState.secrets_found().size(), GameState.secret_defs().size()]
 		first = _button(box, "回到標題", _to_title)
 	if not OS.has_feature("web"):
