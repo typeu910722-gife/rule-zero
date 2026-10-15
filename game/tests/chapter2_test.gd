@@ -66,7 +66,7 @@ func _run() -> void:
 	# 序章：看露露 → 看胸口（轉介單）→ 等火車停下來
 	gs.fast_apology_take = true
 	_start(gs, {"lulu_doubt": true, "got_button": true, "found_fox_tail": true})
-	gs.auto_choices = [0, 3, 5]
+	gs.auto_choices = [0, 2, 3]
 	await _wait_phase("day1_explore")
 	_check(gs.chapter == 2 and gs.day == 1, "第二章第一天")
 	_check(gs.has("ch2_referral") and gs.has("c2_grey_patch"), "轉介單、和平鴿摸過的地方褪色")
@@ -117,7 +117,7 @@ func _run() -> void:
 	await process_frame
 	gs.fast_apology_take = false
 	_start(gs, {})
-	gs.auto_choices = [4, 3, 5]
+	gs.auto_choices = [4, 3, 3]
 	await _wait_phase("day1_explore")
 	_check(not gs.has("took_shock_for_zhongzhong") and gs.courage == 2 and gs.conduct == 100, "道歉練習：沒有受罰")
 	await _do("zhongzhong")
