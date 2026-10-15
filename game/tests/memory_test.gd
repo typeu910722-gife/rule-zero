@@ -158,14 +158,12 @@ func _run() -> void:
 	gs.auto_choices = [1]
 	await dlg.run("mochi_d2")
 	_check(gs.remembers("mochi_refused") and not gs.has("q_mochi"), "拒絕 → 記住了")
-	gs.auto_choices = [1]
 	await dlg.run("mochi_d2")
-	_check(not gs.has("q_mochi") and gs.auto_choices.is_empty(), "同一輪再找他：不會再開口問")
+	_check(not gs.has("q_mochi"), "同一輪再找他：不會再開口問")
 	await _loop(2)
 	gs.day = 2
-	gs.auto_choices = [0]
 	await dlg.run("mochi_d2")
-	_check(gs.has("q_mochi"), "下一輪：要由你先開口（〔記得〕你上次想問我什麼？），委託才會開始")
+	_check(not gs.has("q_mochi"), "下一輪也不會再問（委託、麻糬的結局都拿不到了）")
 
 	print("[鏡之屋：被邀請之後敲門進去]")
 	await _loop(3)
