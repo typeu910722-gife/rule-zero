@@ -78,7 +78,28 @@ body {
 		</style>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
-<script>(function(){var of=window.fetch.bind(window);window.fetch=function(input,init){var url=typeof input==='string'?input:((input&&input.url)||'');if(url.indexOf('index.wasm')!==-1&&url.indexOf('index.wasm.')===-1){return of('index.wasm.parts.json').then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}).then(function(parts){if(!Array.isArray(parts)){return of(input,init);}return Promise.all(parts.map(function(p){return of(p).then(function(x){return x.arrayBuffer();});})).then(function(bufs){return new Response(new Blob(bufs),{status:200,headers:{'Content-Type':'application/wasm'}});});});}return of(input,init);};})();</script>
+<script>(function () {
+  var of = window.fetch.bind(window);
+  var TYPES = { wasm: 'application/wasm', pck: 'application/octet-stream' };
+  window.fetch = function (input, init) {
+    var url = typeof input === 'string' ? input : ((input && input.url) || '');
+    var m = url.match(/(index\.(wasm|pck))(\?.*)?$/);
+    if (m) {
+      var name = m[1], kind = m[2];
+      return of(name + '.parts.json').then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (parts) {
+          if (!Array.isArray(parts)) { return of(input, init); }
+          return Promise.all(parts.map(function (p) { return of(p).then(function (x) { if (!x.ok) { throw new Error(p + ' ' + x.status); } return x.arrayBuffer(); }); }))
+            .then(function (bufs) {
+              var total = bufs.reduce(function (n, b) { return n + b.byteLength; }, 0);
+              return new Response(new Blob(bufs), { status: 200, headers: { 'Content-Type': TYPES[kind], 'Content-Length': String(total) } });
+            });
+        });
+    }
+    return of(input, init);
+  };
+})();</script>
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -97,7 +118,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":8946000,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":34433008,"index.wasm":35376909},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
