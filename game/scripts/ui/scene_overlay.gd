@@ -134,7 +134,7 @@ func _photo_mailbox(r: Rect2) -> void:
 		var l := hog + Vector2(50 + k * 6, -90 - k * 6)
 		a.draw_rect(Rect2(l, Vector2(90, 54)), Color("#f3efe7"))
 		a.draw_rect(Rect2(l, Vector2(90, 54)), Color("#9a948a"), false, 1)
-	a.draw_string(f, hog + Vector2(68, -96), "給露露", HORIZONTAL_ALIGNMENT_CENTER, 90, 16, Color("#4a4540"))
+	a.draw_string(f, hog + Vector2(68, -96), "給希露飛", HORIZONTAL_ALIGNMENT_CENTER, 90, 16, Color("#4a4540"))
 
 
 func _photo_nirvana(r: Rect2) -> void:

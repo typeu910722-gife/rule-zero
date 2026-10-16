@@ -303,7 +303,7 @@ func _draw_art() -> void:
 			_draw_scissors_fallback(a)
 
 
-## 信封：寫名字的地方被棉花的毛屑糊掉了，看不清楚是寫給誰
+## 信封：外包的圖上寫的是玩偶名，先用紙色蓋掉，再寫上人類本名（希露飛＝露露、銘越＝波波）
 func _draw_letter(a: Control, at: Vector2) -> void:
 	var s := 0.62
 	var sz := _letter_tex.get_size() * s
@@ -317,6 +317,10 @@ func _draw_letter(a: Control, at: Vector2) -> void:
 	for i in 26:
 		var p := o + Vector2(rng.randf_range(122, 262), rng.randf_range(50, 126)) * s
 		a.draw_circle(p, rng.randf_range(9, 15) * s * 1.6, paper[i % 3])
+	var f: Font = GameState.font
+	var ink := Color("#4a4038")
+	a.draw_string(f, o + Vector2(118, 78) * s, "給希露飛", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
+	a.draw_string(f, o + Vector2(190, 116) * s, "銘越", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, ink)
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
