@@ -17,18 +17,19 @@ root, out = sys.argv[1], sys.argv[2]
 im = Image.open(f"{root}/docs/images/proto_title.png").convert("RGB")
 im.thumbnail((640, 360))
 im.save(f"{out}/rule-zero-cover.jpg", quality=82)
-# Cloudflare Pages 單檔上限 25 MiB：把引擎 wasm 切塊，頁面載入時再接回來（見 export_presets.cfg 的 head_include）
-wasm = f"{out}/rule-zero/index.wasm"
-data = open(wasm, "rb").read()
-size = 20 * 1024 * 1024
-parts = []
-for i in range(0, len(data), size):
-    name = f"index.wasm.part{len(parts)}"
-    open(f"{out}/rule-zero/{name}", "wb").write(data[i:i + size])
-    parts.append(name)
-json.dump(parts, open(f"{out}/rule-zero/index.wasm.parts.json", "w"))
+# Cloudflare Pages 單檔上限 25 MiB：把引擎 wasm 與資源包 pck 切塊，頁面載入時再接回來（見 export_presets.cfg 的 head_include）
 import os
-os.remove(wasm)
-print("wasm 切成", len(parts), "塊")
+for ext in ("wasm", "pck"):
+    path = f"{out}/rule-zero/index.{ext}"
+    data = open(path, "rb").read()
+    size = 20 * 1024 * 1024
+    parts = []
+    for i in range(0, len(data), size):
+        name = f"index.{ext}.part{len(parts)}"
+        open(f"{out}/rule-zero/{name}", "wb").write(data[i:i + size])
+        parts.append(name)
+    json.dump(parts, open(f"{out}/rule-zero/index.{ext}.parts.json", "w"))
+    os.remove(path)
+    print(ext, "切成", len(parts), "塊")
 PY
 echo "完成：$OUT"

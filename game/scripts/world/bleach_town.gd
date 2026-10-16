@@ -14,9 +14,24 @@ const FENCE_X := 1190.0
 ## 第三天：畢業典禮的布條；火車進站
 var banner := false
 var train := false
-## 外包的漂白鎮白天地圖（第二章 P0）。有它就用它，沒有才用程式繪製的佔位圖。
+## 外包的漂白鎮地圖。有它就用它，沒有才用程式繪製的佔位圖。
 const MAP := "res://art/ch2/backgrounds/ch2_bg_town_day.jpg"
+## 時段的地圖（同一張圖重新上色）；沒有的時段用白天的圖＋章節導演的 CanvasModulate
+const MAPS := {
+	"evening": "res://art/ch2/backgrounds/ch2_bg_town_evening.jpg",
+	"night": "res://art/ch2/backgrounds/ch2_bg_town_night.jpg",
+	"negative": "res://art/ch2/backgrounds/ch2_bg_town_negative.jpg",
+}
+const OVERLAY_GRADUATION := "res://art/ch2/backgrounds/ch2_bg_town_graduation_overlay.png"
+const OVERLAY_TRAIN := "res://art/ch2/backgrounds/ch2_bg_town_train_overlay.png"
+## 焚化爐第三天才開：之前蓋上「關著」的疊圖
+const OVERLAY_INCINERATOR := "res://art/ch2/backgrounds/ch2_bg_town_incinerator_closed.png"
 var _map: Texture2D
+var _maps := {}
+var _tex := {}
+## 現在的時段：day / evening / night / negative
+var time := "day"
+var incinerator_open := false
 ## 鐵絲網的另一邊：河與模範生宿舍（地圖座標）
 const BLOCKED := [Vector2(640, 1150), Vector2(668, 1010), Vector2(800, 872), Vector2(880, 808),
 	Vector2(1000, 748), Vector2(1250, 658), Vector2(1600, 626), Vector2(1600, 1150)]
@@ -29,11 +44,29 @@ func has_map() -> bool:
 func _ready() -> void:
 	if ResourceLoader.exists(MAP):
 		_map = load(MAP)
+	for k in MAPS:
+		if ResourceLoader.exists(MAPS[k]):
+			_maps[k] = load(MAPS[k])
+	for path in [OVERLAY_GRADUATION, OVERLAY_TRAIN, OVERLAY_INCINERATOR]:
+		if ResourceLoader.exists(path):
+			_tex[path] = load(path)
+
+
+## 這個時段有沒有自己的地圖（有的話章節導演就不用再整片調暗）
+func has_time_map(t: String) -> bool:
+	return t == "day" or _maps.has(t)
+
+
+func set_time(t: String) -> void:
+	time = t
+	queue_redraw()
 
 
 func _draw() -> void:
 	if _map:
-		draw_texture_rect(_map, Rect2(0, 0, W, H), false)
+		draw_texture_rect(_maps.get(time, _map), Rect2(0, 0, W, H), false)
+		if not incinerator_open and _tex.has(OVERLAY_INCINERATOR):
+			draw_texture_rect(_tex[OVERLAY_INCINERATOR], Rect2(0, 0, W, H), false)
 		_signs()
 		_overlays()
 		return
@@ -173,7 +206,11 @@ func _poster(r: Rect2, a: String, b: String) -> void:
 ## 畢業典禮的布條、工作台與火車（兩種地圖共用）
 func _overlays() -> void:
 	var o := Vector2.ZERO if not _map else Vector2(160, -140)
-	if banner:
+	if banner and _map and _tex.has(OVERLAY_GRADUATION):
+		# 外包的布條與蓋白布的工作台；布條上的字由遊戲寫
+		draw_texture_rect(_tex[OVERLAY_GRADUATION], Rect2(0, 0, W, H), false)
+		draw_string(GameState.font, Vector2(752, 292), "恭喜畢業！", HORIZONTAL_ALIGNMENT_CENTER, 116, 17, Color("#e05780"))
+	elif banner:
 		draw_set_transform(o)
 		draw_rect(Rect2(500, 400, 300, 50), Color("#f7f7f5"))
 		draw_rect(Rect2(500, 400, 300, 50), Color("#f2a7c3"), false, 3)
@@ -183,7 +220,9 @@ func _overlays() -> void:
 			draw_rect(Rect2(474 + k * 70, 624, 6, 20), Color("#9a9a9a"))
 			draw_rect(Rect2(516 + k * 70, 624, 6, 20), Color("#9a9a9a"))
 		draw_set_transform(Vector2.ZERO)
-	if train:
+	if train and _map and _tex.has(OVERLAY_TRAIN):
+		draw_texture_rect(_tex[OVERLAY_TRAIN], Rect2(0, 0, W, H), false)
+	elif train:
 		var tr := Rect2(260, 1030, 900, 70) if not _map else Rect2(-20, 1032, 660, 70)
 		draw_rect(tr, Color("#bfb8bd"))
 		for k in int(tr.size.x / 108):

@@ -10,7 +10,7 @@ const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", 
 	"c2_popo_fence", "c2_dove_hug", "confession_1", "confession_2", "trim_1", "trim_2", "trim_3",
 	"c2_mochi_cross", "c2_mochi_back", "chairs_1", "chairs_2", "chairs_3", "long_hold", "special_hold",
 	"c2_graduation_layout", "restuff_1", "restuff_2", "c2_tiaoma_gone", "c2_mask_crack", "c2_fates",
-	"c2_special_love_cost", "c2_train_arrives"]
+	"c2_special_love_cost", "c2_train_arrives", "c2_ending_cg"]
 
 
 func _init() -> void:

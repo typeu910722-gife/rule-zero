@@ -6,6 +6,8 @@ signal finished
 ## 腳本中的 @event 會發出此訊號；處理者完成後必須呼叫 Dialogue.event_done.emit()
 signal event_requested(name: String)
 signal event_done
+## 腳本中的 @bgm：請章節導演換配樂（"" 或 stop：停止）
+signal bgm_requested(name: String)
 signal _advance
 signal _chosen(index: int)
 
@@ -20,16 +22,27 @@ const BG_COLORS := {
 ## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
 const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt"]
 
-## 第二章立繪（外包 P0）：說話的人有立繪時顯示在右邊
+## 第二章立繪：說話的人有立繪時顯示在右邊。
+## 檔名 ch2_<id>_portrait_<狀態>_<表情>.png；狀態由章節導演給（portrait_state），表情由腳本的 @face 指定
 const PORTRAITS := {
 	"白面": "baimian", "小棘": "xiaoji", "條碼": "tiaoma", "嘎嘎": "gaga",
 	"重重": "zhongzhong", "鼬鼬": "youyou", "和平鴿": "dove",
+	"露露": "lulu", "麻糬": "mochi", "波波": "popo", "小布": "pip", "車掌": "conductor", "職員": "staff",
 }
-const PORTRAIT_PATH := "res://art/ch2/characters/portraits/ch2_%s_portrait_default.png"
+const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
+## 第二章的室內背景與 CG（@bg 的名字 → 圖）。沒有圖時退回 BG_COLORS 的底色
+const BG_ART := "res://art/ch2/backgrounds/ch2_bg_%s.jpg"
+const CG_ART := "res://art/ch2/cg/ch2_%s.jpg"
+const BG_FALLBACK := {"platform_negative": "white", "ending_grey": "grey_train", "ending_color": "grey_train"}
 
 var running := false
-## 由章節導演設定：這個角色現在的樣子還符合立繪嗎（例如小棘的刺被剪掉後就不顯示）
-var portrait_ok: Callable
+## 由章節導演設定：這個角色現在是哪個樣子（例如小棘剪光刺之後是 "bald"）。回傳 "" 表示用預設
+var portrait_state: Callable
+## @face 指定的表情（每段對話開始時清空）
+var _faces := {}
+var _portrait_cache := {}
+var _bg_art: TextureRect
+var _cg_shown := false
 var parser := DialogueParser.new()
 
 var _bg: ColorRect
@@ -63,6 +76,7 @@ func run(label: String) -> void:
 		push_warning("對話標籤不存在：%s" % label)
 		return
 	running = true
+	_faces.clear()
 	_apply_style()
 	var cmds := parser.cmds
 	var i: int = parser.labels[label]
@@ -99,6 +113,9 @@ func run(label: String) -> void:
 				i = next if next >= 0 else i + 1
 	_box.visible = false
 	_portrait.visible = false
+	# 室內背景與 CG 只屬於這段對話：結束時收起來，回到地圖
+	if _bg_art.visible:
+		set_bg("none")
 	running = false
 	finished.emit()
 
@@ -130,6 +147,11 @@ func _command(op: String, args: Array) -> int:
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
+		"bgm":
+			bgm_requested.emit("" if args.is_empty() or args[0] == "stop" else args[0])
+		"face":
+			# @face 小棘 cry ／ @face 小棘 （不寫表情：回到預設）
+			_faces[args[0]] = args[1] if args.size() > 1 else "default"
 		"sfx":
 			if not GameState.fast:
 				Sfx.play(self, args[0])
@@ -141,10 +163,47 @@ func _command(op: String, args: Array) -> int:
 	return -1
 
 
+## 一張背景上疊好幾層（結尾的車廂：上車的人每人一層）
+func set_bg_layers(paths: Array) -> void:
+	set_bg("none")
+	var first := true
+	for path in paths:
+		if not ResourceLoader.exists(path):
+			continue
+		if first:
+			_bg.visible = true
+			_bg.color = BG_COLORS.grey_train
+			_bg_art.texture = load(path)
+			_bg_art.visible = true
+			_cg_shown = true
+			first = false
+		else:
+			var layer := TextureRect.new()
+			layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+			layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			layer.texture = load(path)
+			_bg_art.add_child(layer)
+
+
 func set_bg(mode: String) -> void:
 	_bg.visible = mode != "none"
-	if _bg.visible:
-		_bg.color = BG_COLORS[mode]
+	_bg_art.visible = false
+	for layer in _bg_art.get_children():
+		layer.queue_free()
+	if not _bg.visible:
+		return
+	var art := ""
+	if mode.begins_with("cg"):
+		art = CG_ART % mode
+	elif not BG_COLORS.has(mode) or mode == "grey_train":
+		art = BG_ART % ("train_grey" if mode == "grey_train" else mode)
+	if art != "" and ResourceLoader.exists(art):
+		_bg_art.texture = load(art)
+		_bg_art.visible = true
+		_cg_shown = mode.begins_with("cg")
+	_bg.color = BG_COLORS.get(mode, BG_COLORS.get(BG_FALLBACK.get(mode, ""), BG_COLORS.white if mode.begins_with("cg") else BG_COLORS.black))
 
 
 func _say(who: String, text: String) -> void:
@@ -238,6 +297,13 @@ func _build_ui() -> void:
 	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_bg.visible = false
 	add_child(_bg)
+	_bg_art = TextureRect.new()
+	_bg_art.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bg_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_bg_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_bg_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bg_art.visible = false
+	_bg.add_child(_bg_art)
 
 	_portrait = TextureRect.new()
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -307,13 +373,35 @@ func _build_ui() -> void:
 
 func _show_portrait(who: String) -> void:
 	var id: String = PORTRAITS.get(who, "")
-	var ok: bool = GameState.chapter == 2 and id != "" and (not portrait_ok.is_valid() or portrait_ok.call(id))
-	var path := PORTRAIT_PATH % id
-	if ok and ResourceLoader.exists(path):
+	var path := portrait_path(id, _faces.get(who, "default")) if GameState.chapter == 2 and id != "" else ""
+	# CG（一整張畫好的畫面）上不再疊立繪
+	if _bg_art.visible and _cg_shown:
+		path = ""
+	if path != "":
 		_portrait.texture = load(path)
 		_portrait.visible = true
 	else:
 		_portrait.visible = false
+
+
+## 依狀態與表情找立繪；找不到這個組合時，依序退回：只看表情 → 這個狀態的預設 → 預設
+func portrait_path(id: String, face := "default") -> String:
+	var state: String = portrait_state.call(id) if portrait_state.is_valid() else ""
+	var key := "%s/%s/%s" % [id, state, face]
+	if _portrait_cache.has(key):
+		return _portrait_cache[key]
+	var base := PORTRAIT_DIR % id
+	var tries: Array = []
+	if state != "":
+		tries += ["%s_%s" % [state, face], state if face == "default" else "", "%s_default" % state]
+	tries += ["a_%s" % face, face, "a_default", "default"]
+	var found := ""
+	for t in tries:
+		if t != "" and ResourceLoader.exists(base + t + ".png"):
+			found = base + t + ".png"
+			break
+	_portrait_cache[key] = found
+	return found
 
 
 ## 漂白鎮的對話框：同樣是縫在布上的標籤，只是被洗白了

@@ -30,24 +30,60 @@ const FATES := ["aboard", "graduated", "dead", "unknown"]
 const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_out_2", "day3_explore"]
 
 ## 漂白鎮的六個居民（不跟棉花糖鎮的好孩子混在一起）＋和平鴿；露露他們在河對岸
+const SP := "res://art/ch2/characters/sprites/ch2_"
 const ACTORS := {
 	"baimian": {"name": "白面", "species": "fox", "color": Color("#e2e2df"), "pos": Vector2(330, 92),
-		"opts": {"pale": true, "no_tail": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_baimian_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4}},
+		"opts": {"pale": true, "no_tail": true}, "sprites": [
+			# 平常坐在宿舍屋頂晃腳；其他時候站著
+			{"tex": SP + "baimian_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4, "requires": {"home": true}},
+			{"tex": SP + "baimian_sprite_stand_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
 	"xiaoji": {"name": "小棘", "species": "hedgehog", "color": Color("#2f2f2f"), "pos": Vector2(430, 315),
-		"opts": {"quills": 5}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_xiaoji_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4, "requires": {"quills": 5}}},
+		"opts": {"quills": 5, "white": false}, "sprites": [
+			{"tex": SP + "xiaoji_sprite_white_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"white": true}},
+			# 平常在宿舍前掃地
+			{"tex": SP + "xiaoji_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4, "requires": {"quills": 5, "home": true}},
+			{"tex": SP + "xiaoji_sprite_stand_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"quills": 5}},
+			{"tex": SP + "xiaoji_sprite_onequill_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"quills": 1}},
+			{"tex": SP + "xiaoji_sprite_bald_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"quills": 0}}]},
 	"tiaoma": {"name": "條碼", "species": "zebra", "color": Color("#f4f4f2"), "pos": Vector2(1255, 610),
-		"smile": false, "opts": {"stripes": 3}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_tiaoma_sprite_sheet.png", "cols": 1, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"stripes": 3}}},
+		"smile": false, "opts": {"stripes": 3}, "sprites": [
+			{"tex": SP + "tiaoma_sprite_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"stripes": 3}},
+			{"tex": SP + "tiaoma_sprite_s2_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"stripes": 2}},
+			{"tex": SP + "tiaoma_sprite_s1_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"stripes": 1}},
+			{"tex": SP + "tiaoma_sprite_s0_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"stripes": 0}}]},
 	"gaga": {"name": "嘎嘎", "species": "crow", "color": Color("#4a4a4a"), "pos": Vector2(700, 705),
-		"smile": false, "opts": {"sewn": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_gaga_sprite_sheet.png", "cols": 1, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"sewn": true}}},
+		"smile": false, "opts": {"sewn": true}, "sprites": [
+			{"tex": SP + "gaga_sprite_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"sewn": true}},
+			{"tex": SP + "gaga_sprite_unsewn_sheet.png", "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"sewn": false}}]},
 	"zhongzhong": {"name": "重重", "species": "hippo", "color": Color("#9c9c9c"), "pos": Vector2(420, 600),
-		"smile": false, "size": 1.25, "stitched": true, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_zhongzhong_sprite_sheet.png", "cols": 2, "frame": Vector2(208, 208), "origin": Vector2(104, 200), "frames": [0, 1, 2, 3], "fps": 3}},
+		"smile": false, "size": 1.25, "stitched": true, "sprites": [
+			# 平常坐著摺紙鶴
+			{"tex": SP + "zhongzhong_sprite_sheet.png", "cols": 2, "frame": Vector2(208, 208), "origin": Vector2(104, 200), "frames": [0, 1, 2, 3], "fps": 3, "requires": {"home": true}},
+			{"tex": SP + "zhongzhong_sprite_stand_sheet.png", "frame": Vector2(208, 208), "origin": Vector2(104, 200)}]},
 	"youyou": {"name": "鼬鼬", "species": "weasel", "color": Color("#b8b8b4"), "pos": Vector2(990, 715),
-		"opts": {"thread": true}, "sprite": {"tex": "res://art/ch2/characters/sprites/ch2_youyou_sprite_sheet.png", "cols": 4, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0], "fps": 4, "requires": {"thread": true}}},
+		"opts": {"thread": true}, "sprites": [
+			# 平常趴在鐵絲網下
+			{"tex": SP + "youyou_sprite_crawl_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"thread": true, "home": true}},
+			{"tex": SP + "youyou_sprite_sheet.png", "cols": 4, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"thread": true}},
+			{"tex": SP + "youyou_sprite_nothread_sheet.png", "cols": 4, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "requires": {"thread": false}}]},
 	"dove": {"name": "和平鴿", "species": "dove", "color": Color.WHITE, "pos": Vector2(900, 440),
-		"sprite": {"tex": "res://art/ch2/characters/sprites/ch2_dove_sprite_sheet.png", "cols": 4, "frame": Vector2(384, 416), "origin": Vector2(192, 408), "frames": [0], "fps": 4, "requires": {"unmasked": false, "crack": 1.0}}},
-	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(1355, 905)},
-	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1415, 920), "smile": false},
-	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1475, 935)},
+		"opts": {"unmasked": false, "crack": 1.0, "clap": false}, "sprites": [
+			# 沒戴面具：只有背影（第二天夜晚的月台）
+			{"tex": SP + "dove_sprite_unmasked_sheet.png", "cols": 4, "frame": Vector2(384, 416), "origin": Vector2(192, 408), "requires": {"unmasked": true}},
+			{"tex": SP + "dove_sprite_cracked_sheet.png", "cols": 4, "frame": Vector2(384, 416), "origin": Vector2(192, 408), "requires": {"crack": 2.0}},
+			{"tex": SP + "dove_sprite_clap_sheet.png", "cols": 2, "frame": Vector2(384, 416), "origin": Vector2(192, 408), "frames": [0, 1], "fps": 2, "requires": {"clap": true}},
+			{"tex": SP + "dove_sprite_sheet.png", "cols": 4, "frame": Vector2(384, 416), "origin": Vector2(192, 408)}]},
+	# 河對岸陽台上揮手的模範生（彩色）
+	"lulu": {"name": "露露", "species": "rabbit", "color": Color("#f4b6c2"), "pos": Vector2(1355, 905), "sprites": [
+		{"tex": SP + "lulu_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
+		{"tex": SP + "lulu_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
+	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1415, 920), "smile": false, "sprites": [
+		{"tex": SP + "mochi_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
+		{"tex": SP + "mochi_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
+	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1475, 935), "sprites": [
+		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
+		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
+	# 車掌的外包小人背影是捲髮（捲髮是指向小布的線索），退回外包修正前先用程式畫的
 	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(560, 975)},
 }
 const RESIDENTS := ["baimian", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
@@ -75,12 +111,16 @@ const NIGHT_OUT_OBJECTS := ["treatment_window", "office", "platform"]
 ## 傍晚隔著鐵絲網排隊的位置（沿著地圖上的鐵絲網）
 const FENCE_LINE := [Vector2(720, 930), Vector2(775, 870), Vector2(830, 830), Vector2(885, 785),
 	Vector2(940, 750), Vector2(995, 720)]
-## 外包配樂（第二章 P0）
+## 外包配樂（docs/chapter2_asset_requests.txt 第 8 節）；腳本裡用 @bgm <名字> 切換
+const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
 const BGM := {
-	"town": "res://audio/ch2/bgm/ch2_bgm01_bleach_town.ogg",
-	"dove": "res://audio/ch2/bgm/ch2_bgm04_dove.ogg",
-	"correction": "res://audio/ch2/bgm/ch2_bgm05_correction_time.ogg",
+	"town": "01_bleach_town", "evening": "02_evening", "far_shore": "03_far_shore", "dove": "04_dove",
+	"correction": "05_correction_time", "night": "08_night", "humming": "09_humming", "nirvana": "10_nirvana",
+	"memory": "11_memory", "graduation": "12_graduation", "escape": "13_escape", "next_stop": "14_next_stop",
+	"special_love": "15_special_love", "dream": "16_dream",
 }
+## 只播一次、不循環的曲子
+const BGM_ONCE := ["humming", "escape", "special_love"]
 
 ## 地圖：game/art/ch2/backgrounds/ch2_bg_town_day.jpg（外包 P0）。鐵絲網另一邊走不過去（BleachTown.BLOCKED）
 const WORLD_BOUNDS := Rect2(20, 40, 1560, 975)
@@ -136,7 +176,7 @@ func _ready() -> void:
 	music = AudioStreamPlayer.new()
 	music.volume_db = -8.0
 	add_child(music)
-	Dialogue.portrait_ok = func(id: String) -> bool: return actors.has(id) and actors[id].sprite_matches()
+	Dialogue.portrait_state = _portrait_state
 	for a in actors.values():
 		a.target = player
 
@@ -160,6 +200,7 @@ func _ready() -> void:
 	touch.mode_provider = _touch_mode
 	add_child(touch)
 	Dialogue.event_requested.connect(_on_event)
+	Dialogue.bgm_requested.connect(_bgm)
 	hud.set_status_visible(false)
 	match GameState.checkpoint:
 		"c2_day1_explore":
@@ -178,11 +219,12 @@ func _bgm(name: String) -> void:
 		return
 	_bgm_name = name
 	music.stop()
-	if name == "" or not ResourceLoader.exists(BGM[name]):
+	var path: String = BGM_DIR % BGM.get(name, "")
+	if name == "" or not ResourceLoader.exists(path):
 		return
-	var s: AudioStream = load(BGM[name])
+	var s: AudioStream = load(path)
 	if s is AudioStreamOggVorbis:
-		s.loop = true
+		s.loop = not name in BGM_ONCE
 	music.stream = s
 	music.play()
 
@@ -197,9 +239,11 @@ func _with_bgm(name: String, game: Node, method := "play") -> Variant:
 
 
 func _exit_tree() -> void:
-	Dialogue.portrait_ok = Callable()
+	Dialogue.portrait_state = Callable()
 	if Dialogue.event_requested.is_connected(_on_event):
 		Dialogue.event_requested.disconnect(_on_event)
+	if Dialogue.bgm_requested.is_connected(_bgm):
+		Dialogue.bgm_requested.disconnect(_bgm)
 
 
 func _to_title() -> void:
@@ -622,6 +666,8 @@ func _on_event(event_name: String) -> void:
 			tr.leave = {"trim_1": 6, "trim_2": 1, "trim_3": 0}[event_name]
 			add_child(tr)
 			await _with_bgm("correction", tr)
+			# 剪完之後的樣子（留下最後一根時停在 1 根）
+			actors.xiaoji.opts["quills"] = {"trim_1": 5, "trim_2": 1, "trim_3": 0}[event_name]
 		"c2_mochi_cross":
 			actors.mochi.visible = true
 			actors.mochi.position = Vector2(965, 740)
@@ -663,11 +709,24 @@ func _on_event(event_name: String) -> void:
 			actors.dove.queue_redraw()
 		"c2_fates":
 			_compute_fates()
+			_refresh_looks()
 		"c2_special_love_cost":
 			_special_love_cost()
 		"c2_train_arrives":
 			town.train = true
 			town.queue_redraw()
+		"c2_ending_cg":
+			# 結尾的車廂：上車的人每人一層（外包 CG-20 分層）
+			var layers := ["res://art/ch2/backgrounds/ch2_bg_ending_color.jpg"]
+			var aboard := ["pip", "lulu", "mochi", "popo", "conductor"]
+			for id in ["baimian", "zhongzhong", "gaga", "youyou"]:
+				if GameState.has("fate_%s_aboard" % id):
+					aboard.append(id)
+			if GameState.has("fate_xiaoji_aboard"):
+				aboard.append("xiaoji_onequill" if GameState.has("xiaoji_last_quill") else "xiaoji_bald")
+			for id in aboard:
+				layers.append("res://art/ch2/cg/ending_layers/ch2_cg20_%s.png" % id)
+			Dialogue.set_bg_layers(layers)
 		"c2_fence_lineup":
 			# 隔著鐵絲網排隊；對岸的模範生站在陽台上揮手
 			for k in RESIDENTS.size():
@@ -720,6 +779,7 @@ func _layout(mode: String) -> void:
 				actors[RESIDENTS[k]].position = Vector2(640 + k * 55, 500 + (k % 2) * 8)
 			actors.baimian.position = Vector2(950, 450)
 			actors.dove.position = Vector2(600, 450)
+			actors.dove.opts["clap"] = true
 		"night_out":
 			# 偷溜：只有鼬鼬跟著你
 			for id in ACTORS:
@@ -741,10 +801,53 @@ func _refresh_looks() -> void:
 	actors.gaga.opts["sewn"] = not GameState.has("reported_gaga")
 	actors.youyou.opts["thread"] = not (GameState.has("reported_youyou") or GameState.has("youyou_lost_thread"))
 	actors.dove.opts["unmasked"] = false
+	actors.dove.opts["clap"] = false
+	town.incinerator_open = GameState.day >= 3
+	town.queue_redraw()
 	if GameState.has("c2_trimmed"):
 		actors.xiaoji.opts["quills"] = 1 if GameState.has("xiaoji_last_quill") else 0
+	# 畢業典禮：條碼被洗到一條斑紋都不剩；被縫完的小棘全身是白的
+	if phase == "graduation":
+		actors.tiaoma.opts["stripes"] = 0
+	actors.xiaoji.opts["white"] = GameState.has("fate_xiaoji_graduated")
 	for id in ["tiaoma", "gaga", "youyou", "dove", "xiaoji"]:
 		actors[id].queue_redraw()
+
+
+## 立繪的狀態（檔名中間那一段，見 Dialogue.portrait_path）：跟地圖上的小人同一套劇情狀態
+func _portrait_state(id: String) -> String:
+	if id == "pip":
+		# 第二天夜晚的治療室之後，手腕上有兩圈紅痕
+		return "marks" if GameState.day >= 3 else ""
+	if id in ["staff", "conductor"]:
+		return "stand"
+	if not actors.has(id):
+		return ""
+	var o: Dictionary = actors[id].opts
+	match id:
+		"xiaoji":
+			if o.get("white", false):
+				return "white"
+			if GameState.has("c2_tied"):
+				return "tied"  # 反省會：被綁在講台的椅子上
+			return {5: "a", 1: "onequill", 0: "bald"}.get(o.get("quills", 5), "a")
+		"tiaoma":
+			var n: int = o.get("stripes", 3)
+			if n == 0:
+				return "s0mark" if GameState.has("tiaoma_color_left") else "s0"
+			return "s%d" % n
+		"gaga":
+			return "a" if o.get("sewn", true) else "unsewn"
+		"youyou":
+			# 逃上火車的時候，紅毛線被扯斷了一截
+			if GameState.has("stabbed_mask") and GameState.has("fate_youyou_aboard"):
+				return "broken"
+			return "a" if o.get("thread", true) else "nothread"
+		"dove":
+			if o.get("unmasked", false):
+				return "back"
+			return "cracked" if o.get("crack", 1.0) > 1.0 else "a"
+	return "a"
 
 
 func _close_overlay() -> void:
@@ -759,10 +862,32 @@ const PHASE_BGM := {"prologue": "", "day1_explore": "town", "day1_night": "", "d
 	"graduation": "dove", "ended": ""}
 
 
+## 每個時段的環境音（循環、很小聲）：白天是遠方的洗衣機和哨音，偷溜的夜晚是負片世界的高頻嗡鳴
+const PHASE_AMBIENCE := {"day1_explore": "ambience", "day2_explore": "ambience", "day3_explore": "ambience",
+	"night_out_2": "negative_hum"}
+var _ambience: AudioStreamPlayer
+
+
+func _set_ambience(name: String) -> void:
+	if _ambience == null:
+		_ambience = AudioStreamPlayer.new()
+		_ambience.volume_db = -20.0
+		add_child(_ambience)
+	_ambience.stop()
+	var st := Sfx.stream(name) if name != "" else null
+	if st is AudioStreamOggVorbis:
+		st = st.duplicate()
+		st.loop = true
+	if st:
+		_ambience.stream = st
+		_ambience.play()
+
+
 func _set_phase(p: String) -> void:
 	phase = p
 	if PHASE_BGM.has(p):
 		_bgm(PHASE_BGM[p])
+	_set_ambience(PHASE_AMBIENCE.get(p, ""))
 	_refresh_objective()
 
 
@@ -791,8 +916,18 @@ func _met_count() -> int:
 	return RESIDENTS.filter(func(r): return GameState.has("met_" + r)).size()
 
 
+## 有外包時段地圖的時候，地圖本身已經上好色：只把角色稍微調暗，讓他們跟地圖的光線一致
+const TINTS_WITH_MAP := {
+	"day": Color(1, 1, 1),
+	"evening": Color(0.93, 0.93, 0.97),
+	"night": Color(0.8, 0.8, 0.88),
+	"negative": Color(1, 1, 1),
+}
+
+
 func _set_tint(name: String) -> void:
-	tint.color = TINTS[name]
+	town.set_time(name)
+	tint.color = TINTS_WITH_MAP[name] if town.has_map() and town.has_time_map(name) else TINTS[name]
 
 
 func _fade_to(alpha: float) -> void:

@@ -14,6 +14,13 @@ var _prompt: Label
 var _menu: PanelContainer
 var _menu_text: RichTextLabel
 var _tag_button: Button
+## 第二章的狀態框（外包美術；缺檔時用原本的文字列）
+const HUD_TEX := "res://art/ch2/ui/ch2_ui_05_hud.png"
+const STAR_ON_TEX := "res://art/ch2/ui/ch2_ui_05_star_bright.png"
+const STAR_OFF_TEX := "res://art/ch2/ui/ch2_ui_05_star_dark.png"
+const FRAME_POS := Vector2(16, 10)
+var _frame: Control
+var _status_on := true
 
 
 func _ready() -> void:
@@ -31,6 +38,12 @@ func _ready() -> void:
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.add_theme_color_override("font_outline_color", Color("#b56576"))
 	_prompt.add_theme_constant_override("outline_size", 6)
+	_frame = Control.new()
+	_frame.position = FRAME_POS
+	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_frame.draw.connect(_draw_frame)
+	add_child(_frame)
+	move_child(_frame, 0)
 	_build_menu()
 	GameState.changed.connect(refresh)
 	refresh()
@@ -59,6 +72,12 @@ func refresh() -> void:
 	if show_debug:
 		_status.text += "　｜　[debug] 懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
+	# 第二章：用狀態框取代文字列（文字仍照舊更新）
+	var framed := _use_frame()
+	_frame.visible = framed and _status_on
+	_status.visible = _status_on and not framed
+	_objective.position.y = 96 if framed else 54
+	_frame.queue_redraw()
 	if menu_open:
 		_fill_menu()
 
@@ -68,8 +87,37 @@ func set_prompt(text: String) -> void:
 
 
 func set_status_visible(v: bool) -> void:
-	_status.visible = v
+	_status_on = v
+	_status.visible = v and not _use_frame()
+	_frame.visible = v and _use_frame()
 	_objective.visible = v
+
+
+func _use_frame() -> bool:
+	return GameState.chapter == 2 and ResourceLoader.exists(HUD_TEX)
+
+
+## 狀態框（原圖座標）：「第」「天」之間寫日子，中間是膽量的星星，「操行」後面寫分數
+func _draw_frame() -> void:
+	if not _use_frame():
+		return
+	var f: Font = GameState.font
+	var ink := Color("#444444")
+	_frame.draw_texture(_tex(HUD_TEX), Vector2.ZERO)
+	var nums := ["", "一", "二", "三"]
+	_frame.draw_string(f, Vector2(42, 46), nums[mini(GameState.day, 3)], HORIZONTAL_ALIGNMENT_CENTER, 26, 21, ink)
+	_frame.draw_string(f, Vector2(118, 46), "膽量", HORIZONTAL_ALIGNMENT_LEFT, -1, 21, ink)
+	for k in GameState.MAX_COURAGE:
+		var on := k < GameState.courage
+		var path := STAR_ON_TEX if on else STAR_OFF_TEX
+		var r := Rect2(170 + k * 38, 19, 36, 36)
+		if ResourceLoader.exists(path):
+			_frame.draw_texture_rect(_tex(path), r, false)
+		else:
+			_frame.draw_string(f, r.position + Vector2(4, 28), "★" if on else "☆", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, ink)
+	_frame.draw_string(f, Vector2(424, 46), "%d" % GameState.conduct, HORIZONTAL_ALIGNMENT_LEFT, -1, 21, ink)
+	if show_debug:
+		_frame.draw_string(f, Vector2(540, 46), "[debug] 懷疑值 %d" % GameState.suspicion, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, ink)
 
 
 func toggle_menu(allow_tag: bool) -> void:
@@ -141,3 +189,13 @@ func _build_menu() -> void:
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)
+
+
+## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色
+var _tex_cache := {}
+
+
+func _tex(path: String) -> Texture2D:
+	if not _tex_cache.has(path):
+		_tex_cache[path] = load(path)
+	return _tex_cache[path]

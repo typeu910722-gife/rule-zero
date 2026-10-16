@@ -2,8 +2,16 @@ class_name DialogueParser
 extends RefCounted
 ## 解析 res://dialogue/*.txt 的對話腳本。語法見 docs/dialogue-format.md。
 
-const KNOWN_OPS := ["set", "unset", "sus", "conduct", "courage", "goto", "if", "end", "wait", "bg", "event", "sfx"]
-const KNOWN_BG := ["none", "black", "train", "dream", "grey_train", "white"]
+const KNOWN_OPS := ["set", "unset", "sus", "conduct", "courage", "goto", "if", "end", "wait", "bg", "event", "sfx", "face", "bgm"]
+const KNOWN_BG := ["none", "black", "train", "dream", "grey_train", "white",
+	# 第二章：室內背景與 CG（見 dialogue.gd 的 BG_ART／CG_ART）
+	"classroom", "dining", "laundry", "treatment", "treatment_window", "dorm_night", "office", "platform",
+	"platform_negative", "fence", "incinerator", "graduation", "ending_grey", "ending_color",
+	"cg01_referral", "cg01_referral_stitch_04", "cg02_ticket", "cg02_ticket_ending", "cg03_arrival_pat",
+	"cg04_photo_hallway", "cg05_photo_mailbox", "cg06_photo_nirvana", "cg07_silhouette", "cg08_diary",
+	"cg09_clipboard", "cg10_platform_two", "cg11_popo_fence", "cg12_mochi_hug", "cg13_paper_plane",
+	"cg14_tiaoma_last", "cg15_mask_break", "cg16_conductor_photo", "cg17_dream_orphanage",
+	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all"]
 
 var cmds: Array = []
 var labels := {}
@@ -104,6 +112,9 @@ func validate(known_events: Array) -> Array:
 				"bg":
 					if c.args.size() != 1 or not c.args[0] in KNOWN_BG:
 						out.append("%s 未知背景 %s" % [c.where, c.args])
+				"face":
+					if c.args.is_empty() or c.args.size() > 2:
+						out.append("%s @face 參數錯誤" % c.where)
 				"set", "unset", "sus", "conduct", "courage", "wait", "sfx":
 					if c.args.is_empty():
 						out.append("%s @%s 缺少參數" % [c.where, c.op])

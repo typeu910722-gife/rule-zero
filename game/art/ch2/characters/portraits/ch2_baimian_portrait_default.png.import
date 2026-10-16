@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dn3scwimxn2v6"
+uid="uid://cd0lokxf2extb"
 path="res://.godot/imported/ch2_baimian_portrait_default.png-0088ca07027ffba116ade9fb60619163.ctex"
 metadata={
 "vram_texture": false
@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/ch2_baimian_portrait_default.png-0088ca07027f
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.85
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

@@ -15,13 +15,16 @@ var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
 ## 第二章的外觀細節（斑紋數、縫起來的嘴……），見 Critter.draw 的 opts
 var opts := {}
-## 外包的小人圖（第二章 P0）：{tex, cols, rows, frame, origin, frames, fps}
-## sprite.requires：這張圖畫的是哪個狀態（例如條碼 3 條斑紋）。劇情狀態不同、還沒有對應的圖時，
-## 退回程式繪製的樣子（見 sprite_matches）
+## 外包的小人圖：{tex, cols, frame, origin, frames, fps, requires}
+## 一個角色可以有好幾張（sprites，依序檢查）：requires 寫這張圖畫的是哪個狀態（例如條碼 3 條斑紋）。
+## 第一張符合目前 opts 的圖就用它；都不符合（還沒有對應的圖）時，退回程式繪製的樣子
+var sprites: Array = []
 var sprite := {}
-var _tex: Texture2D
+var _texs := {}
 var _anim_t := 0.0
 var target: Node2D
+## 平常待的位置。小人圖可以用 requires {"home": true} 指定「在老位置時」的樣子（例如坐在屋頂晃腳）
+var home := Vector2.INF
 
 
 func setup(p_id: String, data: Dictionary) -> Interactable:
@@ -34,10 +37,12 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 	smile = data.get("smile", true)
 	stitched = data.get("stitched", false)
 	position = data.get("pos", Vector2.ZERO)
+	home = position
 	opts = data.get("opts", {}).duplicate()
-	sprite = data.get("sprite", {})
-	if not sprite.is_empty() and ResourceLoader.exists(sprite.tex):
-		_tex = load(sprite.tex)
+	sprites = data.get("sprites", [data.sprite] if data.has("sprite") else [])
+	for sp in sprites:
+		if ResourceLoader.exists(sp.tex):
+			_texs[sp.tex] = load(sp.tex)
 	add_to_group("interactable")
 	return self
 
@@ -49,19 +54,28 @@ func reach() -> float:
 func _process(delta: float) -> void:
 	if follow_eyes:
 		queue_redraw()
-	if _tex and sprite.get("frames", [0]).size() > 1 and sprite_matches():
+	if sprite_matches() and sprite.get("frames", [0]).size() > 1:
 		_anim_t += delta
 		queue_redraw()
 
 
+## 目前的樣子有沒有對應的外包小人圖（順便記下要用哪一張）
 func sprite_matches() -> bool:
-	if sprite.is_empty():
-		return false
-	var req: Dictionary = sprite.get("requires", {})
-	for k in req:
-		if opts.has(k) and opts[k] != req[k]:
-			return false
-	return true
+	sprite = {}
+	opts["home"] = position.distance_to(home) < 4.0
+	for sp in sprites:
+		if not _texs.has(sp.tex):
+			continue
+		var req: Dictionary = sp.get("requires", {})
+		var ok := true
+		for k in req:
+			if opts.get(k, null) != req[k]:
+				ok = false
+				break
+		if ok:
+			sprite = sp
+			return true
+	return false
 
 
 func _draw_sprite() -> void:
@@ -71,7 +85,7 @@ func _draw_sprite() -> void:
 	var cols: int = sprite.get("cols", 1)
 	var src := Rect2(Vector2(i % cols, i / cols) * fs, fs)
 	var sc: float = sprite.get("scale", 0.5)
-	draw_texture_rect_region(_tex, Rect2(-sprite.origin * sc, fs * sc), src)
+	draw_texture_rect_region(_texs[sprite.tex], Rect2(-sprite.origin * sc, fs * sc), src)
 
 
 func _draw() -> void:
@@ -80,7 +94,7 @@ func _draw() -> void:
 		if follow_eyes and target:
 			look = (target.global_position - global_position).normalized()
 		var label_col := Color("#6d597a")
-		if _tex and sprite_matches():
+		if sprite_matches():
 			_draw_sprite()
 			label_col = Color("#555555")
 		elif species == "dove":

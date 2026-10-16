@@ -6,6 +6,17 @@ extends CanvasLayer
 var mode := ""
 var _area: Control
 var _t := 0.0
+## 外包的 CG（有圖就整張畫面顯示，沒有才用程式畫的照片）
+const CG := {
+	"photo_1": "res://art/ch2/cg/ch2_cg04_photo_hallway.jpg",
+	"photo_2": "res://art/ch2/cg/ch2_cg05_photo_mailbox.jpg",
+	"photo_nirvana": "res://art/ch2/cg/ch2_cg06_photo_nirvana.jpg",
+	"silhouette": "res://art/ch2/cg/ch2_cg07_silhouette.jpg",
+}
+## 外包的哼歌錄音（BGM-09）在的話，就不用程式合成的音
+const HUM_BGM := "res://audio/ch2/bgm/ch2_bgm09_humming.ogg"
+## 畫的時候才 load() 的貼圖，在真正畫到畫面前就被釋放了（會變成一片白）：先留在這裡
+var _cg_tex := {}
 
 
 func _ready() -> void:
@@ -28,7 +39,7 @@ func _process(delta: float) -> void:
 		_area.queue_redraw()
 		# 玻璃後面，和平鴿在哼棉花糖鎮音樂盒的旋律
 		_hum_t -= delta
-		if _hum_t <= 0 and _t > 2.0:
+		if _hum_t <= 0 and _t > 2.0 and not ResourceLoader.exists(HUM_BGM):
 			_hum_t = 0.7
 			Tones.play(self, HUM[_hum_i % HUM.size()] * 0.5, -16.0)
 			_hum_i += 1
@@ -36,6 +47,12 @@ func _process(delta: float) -> void:
 
 func _draw_area() -> void:
 	var a := _area
+	var cg: String = CG.get(mode, "")
+	if cg != "" and ResourceLoader.exists(cg):
+		if not _cg_tex.has(cg):
+			_cg_tex[cg] = load(cg)
+		a.draw_texture_rect(_cg_tex[cg], Rect2(0, 0, 1280, 720), false)
+		return
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.55))
 	var frame := Rect2(370, 30, 540, 450)
 	if mode == "silhouette":

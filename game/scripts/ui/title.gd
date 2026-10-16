@@ -11,6 +11,12 @@ var _hover_tag := -1
 ## 第二章結束後，車票下方多一排名牌（docs/script/chapter2.md 第 11 節）
 const TAG_NAMES := {"baimian": "白面", "xiaoji": "小棘", "tiaoma": "條碼", "gaga": "嘎嘎", "zhongzhong": "重重", "youyou": "鼬鼬"}
 
+## 第二章的外包美術：居民名牌（存活／死亡／畢業三種）與白色的第三個戳章（缺檔時用程式畫的）
+const UI := "res://art/ch2/ui/"
+const WHITE_STAMP_TEX := UI + "ch2_ui_08_white_stamp.png"
+## 白色戳章原圖是整張 1280×720 的畫布，只取有墨水的那一塊
+const WHITE_STAMP_SRC := Rect2(1055, 302, 116, 116)
+
 
 func _ready() -> void:
 	layer = 70
@@ -47,7 +53,23 @@ func _tags() -> Array:
 
 
 func _tag_rect(i: int) -> Rect2:
+	if _tag_art():
+		# 外包名牌比較寬（180×68），一排放三個
+		return Rect2(960 + (i % 3) * 86, 280 + (i / 3) * 46, 80, 30)
 	return Rect2(960 + (i % 4) * 62, 280 + (i / 4) * 40, 54, 30)
+
+
+## 名牌圖：處分＝死亡、畢業＝畢業，其他（上車、留在月台）＝存活
+func _tag_tex(id: String, fate: String) -> String:
+	var state: String = {"dead": "dead", "graduated": "graduate"}.get(fate, "alive")
+	return UI + "ch2_ui_08_nameplate_%s_%s.png" % [id, state]
+
+
+func _tag_art() -> bool:
+	for t in _tags():
+		if not ResourceLoader.exists(_tag_tex(t[0], t[1])):
+			return false
+	return true
 
 
 func _process(_delta: float) -> void:
@@ -109,11 +131,18 @@ func _draw_area() -> void:
 		var c := ticket.position + Vector2(40 + (k % 3) * 70, 75 + (k / 3) * 40)
 		# 第三個戳章（漂白鎮之後）的墨水是白色的
 		var ink := Color(0.75, 0.2, 0.25, 0.75) if k != 2 else Color(0.85, 0.85, 0.82, 0.95)
+		if k == 2 and ResourceLoader.exists(WHITE_STAMP_TEX):
+			_area.draw_texture_rect_region(_tex(WHITE_STAMP_TEX), Rect2(c - Vector2(22, 22), Vector2(44, 44)), WHITE_STAMP_SRC, ink)
+			continue
 		_area.draw_arc(c, 18, 0, TAU, 24, ink, 3)
 		_area.draw_circle(c, 4, ink)
 	var tags := _tags()
+	var art := _tag_art()
 	for i in tags.size():
 		var r := _tag_rect(i)
+		if art:
+			_area.draw_texture_rect(_tex(_tag_tex(tags[i][0], tags[i][1])), r, false)
+			continue
 		var dead: bool = tags[i][1] == "dead"
 		_area.draw_rect(r, Color("#b9b9b6") if dead else Color("#fbfbf9"))
 		_area.draw_rect(r, Color("#8a8a8a") if dead else Color("#dcdcd8"), false, 2)
@@ -126,7 +155,19 @@ func _draw_area() -> void:
 				_area.draw_line(r.position + Vector2(8 + k * 10, 15), r.position + Vector2(13 + k * 10, 15), Color("#d6d6d2"), 1.5)
 	if _hover_tag >= 0 and _hover_tag < tags.size() and tags[_hover_tag][1] == "dead":
 		var r := _tag_rect(_hover_tag)
-		_area.draw_string(f, r.position + Vector2(-10, 48), "維持中", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#a8a0a6"))
+		# 外包名牌一排之間只留一點縫，字寫在名牌正下方
+		var at := r.position + (Vector2(4, 43) if art else Vector2(-10, 48))
+		_area.draw_string(f, at, "維持中", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#a8a0a6"))
 
 	if int(GameState.meta.get("chapters_done", 0)) >= 1:
 		_area.draw_string(f, Vector2(0, 690), "歡迎回來。", HORIZONTAL_ALIGNMENT_RIGHT, 1250, 18, Color("#c9b3bf"))
+
+
+## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色
+var _tex_cache := {}
+
+
+func _tex(path: String) -> Texture2D:
+	if not _tex_cache.has(path):
+		_tex_cache[path] = load(path)
+	return _tex_cache[path]

@@ -3,8 +3,20 @@ extends CanvasLayer
 
 signal closed
 
+## 第二章的外包美術（缺檔時退回程式畫的面板）
+const UI := "res://art/ch2/ui/"
+const RULES_TEX := UI + "ch2_ui_03_rules.png"
+const DRIPS_TEX := UI + "ch2_ui_03_ink_drips.png"
+const CONDUCT_TEX := UI + "ch2_ui_02_conduct.png"
+const HEART_TEX := UI + "ch2_ui_11_heart_stamp.png"
+## 成績單在畫面上的縮放（原圖 620×750，太高放不下 720）
+const CARD_SCALE := 0.86
+
 var _panel: PanelContainer
 var _text: RichTextLabel
+var _flat: StyleBoxFlat
+var _drips: Control
+var _card: Control
 
 
 func _ready() -> void:
@@ -23,6 +35,7 @@ func _ready() -> void:
 	sb.set_border_width_all(8)
 	sb.set_corner_radius_all(10)
 	sb.set_content_margin_all(28)
+	_flat = sb
 	_panel.add_theme_stylebox_override("panel", sb)
 	add_child(_panel)
 	_text = RichTextLabel.new()
@@ -32,7 +45,17 @@ func _ready() -> void:
 	_text.add_theme_font_size_override("normal_font_size", 24)
 	_text.add_theme_font_size_override("bold_font_size", 24)
 	_panel.add_child(_text)
-	for c in [dim, _panel, _text]:
+	# 第 3 條後半新加的字：墨水還沒乾，往下滴（第二章、第二天起）
+	_drips = Control.new()
+	_drips.draw.connect(_draw_drips)
+	_text.add_child(_drips)
+	# 第二章的操行成績單：外包的表格底圖，字由遊戲自己寫上去
+	_card = Control.new()
+	_card.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_card.visible = false
+	_card.draw.connect(_draw_card)
+	add_child(_card)
+	for c in [dim, _panel, _text, _drips, _card]:
 		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -98,7 +121,7 @@ func report_bbcode() -> String:
 
 
 func open_report() -> void:
-	_show(report_bbcode())
+	_show(report_bbcode(), _use_card())
 	if visible:
 		await closed
 
@@ -109,12 +132,22 @@ func open() -> void:
 		await closed
 
 
-func _show(bbcode: String) -> void:
+func _show(bbcode: String, card := false) -> void:
 	_text.text = bbcode
-	var sb: StyleBoxFlat = _panel.get_theme_stylebox("panel")
+	var sb := _flat
 	sb.bg_color = Color("#f2f2f0") if GameState.chapter == 2 else Color("#fff3e0")
 	sb.border_color = Color("#8a8a8a") if GameState.chapter == 2 else Color("#a1887f")
+	_panel.add_theme_stylebox_override("panel", _rules_stylebox() if GameState.chapter == 2 else sb)
 	_text.add_theme_color_override("default_color", Color("#333333") if GameState.chapter == 2 else Color("#4e342e"))
+	# 第二章行距拉開一點，留位置給往下滴的墨水
+	if GameState.chapter == 2:
+		_text.add_theme_constant_override("line_separation", 8)
+	else:
+		_text.remove_theme_constant_override("line_separation")
+	_panel.visible = not card
+	_card.visible = card
+	_card.queue_redraw()
+	_drips.queue_redraw()
 	visible = true
 	if GameState.fast:
 		close()
@@ -130,3 +163,72 @@ func _unhandled_input(event: InputEvent) -> void:
 	if visible and (event.is_action_pressed("interact") or event.is_action_pressed("menu") or tap):
 		get_viewport().set_input_as_handled()
 		close()
+
+
+func _use_card() -> bool:
+	return GameState.chapter == 2 and ResourceLoader.exists(CONDUCT_TEX)
+
+
+## 第二章守則板：外包的紙板底圖（九宮格拉伸，虛線縫邊用平鋪）
+func _rules_stylebox() -> StyleBox:
+	if not ResourceLoader.exists(RULES_TEX):
+		return _flat
+	var st := StyleBoxTexture.new()
+	st.texture = load(RULES_TEX)
+	st.set_texture_margin_all(24)
+	st.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+	st.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
+	st.set_content_margin_all(36)
+	return st
+
+
+func _draw_drips() -> void:
+	if GameState.chapter != 2 or GameState.day < 2 or not _panel.visible or not ResourceLoader.exists(DRIPS_TEX):
+		return
+	# 第 3 條在第 4 段（標題、空行、1、2、3）
+	var f: Font = GameState.font
+	var fs := 24
+	var head := f.get_string_size("3. 不可以哭。", HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	var tail := f.get_string_size("哭的人加倍。", HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	var y := _text.get_paragraph_offset(4) + f.get_ascent(fs) + 2
+	var tex: Texture2D = _tex(DRIPS_TEX)
+	# 只取有墨水的部分（原圖左右有透明邊），也只取上半段，免得蓋到下一條
+	var src := Rect2(40, 0, 348, 56)
+	var k := tail / src.size.x
+	_drips.draw_texture_rect_region(tex, Rect2(head, y, tail, src.size.y * k), src, Color(1, 1, 1, 0.5))
+
+
+func _draw_card() -> void:
+	if not _use_card():
+		return
+	var f: Font = GameState.font
+	var tex: Texture2D = _tex(CONDUCT_TEX)
+	var size := tex.get_size() * CARD_SCALE
+	var o := Vector2((1280 - size.x) / 2, 14)
+	_card.draw_texture_rect(tex, Rect2(o, size), false)
+	var ink := Color("#333333")
+	var p := func(x: float, y: float) -> Vector2: return o + Vector2(x, y) * CARD_SCALE
+	# 欄位（原圖座標）：姓名、分類的底線在 y=230、315；分數欄 330～500；評語留白
+	_card.draw_string(f, p.call(150, 218), GameState.player_name(), HORIZONTAL_ALIGNMENT_LEFT, -1, 24, ink)
+	_card.draw_string(f, p.call(150, 303), "壞孩子", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, ink)
+	_card.draw_string(f, p.call(150, 470), "%d 分" % GameState.conduct, HORIZONTAL_ALIGNMENT_LEFT, -1, 40, ink)
+	if ResourceLoader.exists(HEART_TEX):
+		# 慈愛組織的愛心印章，蓋在分數旁邊
+		var heart: Texture2D = _tex(HEART_TEX)
+		_card.draw_set_transform(p.call(470, 420), -0.18, Vector2.ONE)
+		_card.draw_texture_rect(heart, Rect2(Vector2(-55, -55), Vector2(110, 110)), false, Color(1, 1, 1, 0.8))
+		_card.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	var gray := Color("#9a9a9a")
+	_card.draw_string(f, p.call(55, 714), "違反守則、不服從，會扣操行分數。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, gray)
+	_card.draw_string(f, p.call(55, 733), "分數太低的孩子，會得到「特別的愛」。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, gray)
+	_card.draw_string(f, Vector2(0, o.y + size.y + 36), "（按 E／空白鍵，或點一下畫面 關閉）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#e0e0e0"))
+
+
+## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色
+var _tex_cache := {}
+
+
+func _tex(path: String) -> Texture2D:
+	if not _tex_cache.has(path):
+		_tex_cache[path] = load(path)
+	return _tex_cache[path]
