@@ -43,6 +43,8 @@ var _faces := {}
 var _portrait_cache := {}
 var _bg_art: TextureRect
 var _cg_shown := false
+## 每次換背景就加一：事件裡換過背景的話，事件結束後不要蓋回舊的
+var _bg_serial := 0
 var parser := DialogueParser.new()
 
 var _bg: ColorRect
@@ -158,14 +160,21 @@ func _command(op: String, args: Array) -> int:
 		"event":
 			_box.visible = false
 			_portrait.visible = false
+			# 背景圖在對話層（比小遊戲、照片高）：事件進行時先收起來，不然會把小遊戲整個蓋住
+			var bg_was := _bg.visible
+			var serial := _bg_serial
+			_bg.visible = false
 			event_requested.emit(args[0])
 			await event_done
+			if serial == _bg_serial:
+				_bg.visible = bg_was
 	return -1
 
 
 ## 一張背景上疊好幾層（結尾的車廂：上車的人每人一層）
 func set_bg_layers(paths: Array) -> void:
 	set_bg("none")
+	_bg_serial += 1
 	var first := true
 	for path in paths:
 		if not ResourceLoader.exists(path):
@@ -188,6 +197,7 @@ func set_bg_layers(paths: Array) -> void:
 
 
 func set_bg(mode: String) -> void:
+	_bg_serial += 1
 	_bg.visible = mode != "none"
 	_bg_art.visible = false
 	for layer in _bg_art.get_children():
