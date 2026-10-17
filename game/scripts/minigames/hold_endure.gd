@@ -17,6 +17,7 @@ var _buzz_t := 0.0
 const ART := "res://art/ch2/minigames/hold_endure/ch2_hold_endure_"
 const BG := "res://art/ch2/backgrounds/ch2_bg_treatment.jpg"
 const PIP_ART := "res://art/ch2/minigames/sneak/ch2_sneak_pip_tiptoe_01.png"
+const PIP_SEATED := "res://art/ch2/minigames/hold_endure/ch2_hold_endure_pip_seated.png"
 var _tex_cache := {}
 
 
@@ -95,7 +96,21 @@ func _draw_art(bg: Texture2D, chair: Texture2D, dove: Texture2D) -> void:
 	var shake := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * (8.0 if held else 0.0)
 	# 牆上的海報：背景裡那塊布告板寫上標語
 	a.draw_string(f, Vector2(625, 150), "乖孩子不痛！", HORIZONTAL_ALIGNMENT_CENTER, 230, 24, Color("#e05780"))
-	# 椅子與小布
+	# 外包的「小布坐在小椅子上」（圖裡已經有椅子）
+	var seated := _tex(PIP_SEATED)
+	if seated:
+		var sz := seated.get_size() * 0.9
+		a.draw_texture_rect(seated, Rect2(Vector2(352, 650) + shake - Vector2(sz.x * 0.5, sz.y), sz), false)
+	else:
+		_draw_chair_and_pip(chair, shake)
+	# 和平鴿（白袍、聽診器、手上捧著愛心）
+	a.draw_texture(dove, Vector2(720, 0))
+	_draw_question_and_button(held)
+
+
+## 沒有「坐姿小布」時：空椅子＋借用潛行小遊戲的小布
+func _draw_chair_and_pip(chair: Texture2D, shake: Vector2) -> void:
+	var a := _area
 	a.draw_texture(chair, Vector2(190, 225))
 	# 小布：有外包的小布圖（借用潛行小遊戲的那張）就坐在椅墊上，沒有就用程式畫的羊
 	var pip_tex := _tex(PIP_ART)
@@ -114,8 +129,11 @@ func _draw_art(bg: Texture2D, chair: Texture2D, dove: Texture2D) -> void:
 			a.draw_texture_rect(ring, Rect2(c - Vector2(26, 15), Vector2(52, 30)), false)
 		else:
 			a.draw_arc(c, 9, 0, TAU, 16, Color("#5a5a5a"), 4)
-	# 和平鴿（白袍、聽診器、手上捧著愛心）
-	a.draw_texture(dove, Vector2(720, 0))
+
+
+func _draw_question_and_button(held: bool) -> void:
+	var f: Font = GameState.font
+	var a := _area
 	# 題目（底下墊一塊半透明的白，背景太花會看不清楚）
 	a.draw_rect(Rect2(0, 168, 1280, 80), Color(1, 1, 1, 0.72))
 	if _i < questions.size():

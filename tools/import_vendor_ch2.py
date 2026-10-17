@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """把外包第二章交付包（rulezero_ch2_complete/）轉成遊戲用的尺寸與格式，放進 game/。
 
-用法：python3 tools/import_vendor_ch2.py <解壓後的 rulezero_ch2_complete 資料夾>
+用法：python3 tools/import_vendor_ch2.py <解壓後的 rulezero_ch2_complete 或修正包 rulezero_ch2_revision 資料夾>
+（修正包只含要換掉的檔案，照樣丟進來即可；沒附的檔案保持原樣）
 
 - 圖：交付是 2 倍尺寸，遊戲用 1 倍（立繪 512×768、背景／CG 1280×720、地圖 1600×1150、零件 ×0.5）。
 - 大圖在 Godot 裡用有損 WebP 匯入（寫好 .import 的 compress/mode=1），網頁版才不會太大。
@@ -76,7 +77,7 @@ for f in sorted((ART / "backgrounds").iterdir()):
         stem = f.stem
         if stem.endswith("_overlay") or stem.endswith("_closed"):
             save(scaled(f, (1600, 1150)), DST / "backgrounds" / (stem + ".png"))
-        elif stem != "ch2_bg_town_day":  # 白天地圖沿用已接入的版本（同一張）
+        else:
             save(scaled(f, (1600, 1150)), DST / "backgrounds" / (stem + ".jpg"), jpg=True)
     else:
         save(scaled(f, (1280, 720)), DST / "backgrounds" / (f.stem + ".jpg"), jpg=True)

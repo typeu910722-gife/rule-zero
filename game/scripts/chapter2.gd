@@ -83,8 +83,9 @@ const ACTORS := {
 	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1475, 935), "sprites": [
 		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
 		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
-	# 車掌的外包小人背影是捲髮（捲髮是指向小布的線索），退回外包修正前先用程式畫的
-	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(560, 975)},
+	# 車掌：正面、背面（人類規格）；月台上背對小布時用背面
+	"conductor": {"name": "車掌", "species": "conductor", "color": Color.BLACK, "pos": Vector2(560, 975), "sprites": [
+		{"tex": SP + "conductor_sprite_stand_sheet.png", "cols": 1, "frame": Vector2(384, 416), "origin": Vector2(192, 408)}]},
 }
 const RESIDENTS := ["baimian", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
 const MODELS := ["lulu", "mochi", "popo"]

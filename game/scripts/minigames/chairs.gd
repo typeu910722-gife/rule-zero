@@ -7,6 +7,8 @@ signal done
 
 const NAMES := {"pip": "小布", "xiaoji": "小棘", "tiaoma": "條碼", "gaga": "嘎嘎", "zhongzhong": "重重", "youyou": "鼬鼬"}
 const SPECIES := {"pip": "sheep", "xiaoji": "hedgehog", "tiaoma": "zebra", "gaga": "crow", "zhongzhong": "hippo", "youyou": "weasel"}
+## 走路圖是「走路動畫 4 格」而不是「四個方向」的角色
+const WALK_CYCLE := ["xiaoji", "zhongzhong"]
 const COLORS := {"pip": Color("#fffdf8"), "xiaoji": Color("#2f2f2f"), "tiaoma": Color("#f4f4f2"),
 	"gaga": Color("#4a4a4a"), "zhongzhong": Color("#9c9c9c"), "youyou": Color("#b8b8b4")}
 const MELODY := [523.3, 659.3, 784.0, 659.3, 587.3, 523.3, 587.3, 659.3]
@@ -76,10 +78,19 @@ func _ready() -> void:
 			frames.append(t)
 		if not frames.is_empty():
 			_walk[id] = frames
-	# 小棘這時候已經被剪過刺了，走路圖還有滿頭的刺，改用剪過的站姿
-	var hog := _tex(SP + ("xiaoji_sprite_onequill_sheet.png" if GameState.has("xiaoji_last_quill") else "xiaoji_sprite_bald_sheet.png"))
-	if hog:
-		_still["xiaoji"] = hog
+	# 小棘這時候已經被剪過刺了：剪光／留一根刺的走路圖（4 格走路動畫）
+	var hog_state := "onequill" if GameState.has("xiaoji_last_quill") else "bald"
+	var hog_frames: Array = []
+	for k in 4:
+		var t := _tex(ART + "ch2_chairs_xiaoji_%s_walk_%02d.png" % [hog_state, k + 1])
+		if t:
+			hog_frames.append(t)
+	if hog_frames.size() == 4:
+		_walk["xiaoji"] = hog_frames
+	else:
+		var hog := _tex(SP + "xiaoji_sprite_%s_sheet.png" % hog_state)
+		if hog:
+			_still["xiaoji"] = hog
 	# 條碼沒有走路圖：用只剩一條斑紋的站姿（跟原本畫的 stripes: 1 一樣）
 	var zebra := _tex(SP + "tiaoma_sprite_s1_sheet.png")
 	if zebra:
@@ -219,11 +230,11 @@ func _draw_art() -> void:
 ## 一個人：有走路圖用走路圖（四個方向），沒有就用站姿，再沒有就程序繪圖
 func _draw_kid(a: Control, p: Vector2, id: String, dir: int) -> void:
 	if _walk.has(id):
-		var t: Texture2D = _walk[id][dir]
-		# 腳底大約在圖的 95%；重重的圖最下面黏著下一格的頭頂，切掉
+		# 小棘、重重的 4 格是走路動畫；其他人的 4 格是四個方向
+		var i := (int(_t * 6.0) % 4) if id in WALK_CYCLE else dir
+		var t: Texture2D = _walk[id][i]
+		# 腳底大約在圖的 95%
 		var src := Rect2(Vector2.ZERO, t.get_size())
-		if id == "zhongzhong":
-			src.size.y = 92
 		var sz := src.size * KID_SCALE
 		a.draw_texture_rect_region(t, Rect2(p - Vector2(sz.x * 0.5, sz.y - 4 * KID_SCALE), sz), src)
 	elif _still.has(id):

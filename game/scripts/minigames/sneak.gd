@@ -24,8 +24,8 @@ const HUM := [523.3, 587.3, 659.3, 784.0, 659.3, 587.3]
 const ART := "res://art/ch2/minigames/sneak/ch2_sneak_"
 const BG := "res://art/ch2/backgrounds/ch2_bg_laundry.jpg"
 ## 紅綠燈狀態 → 和平鴿的圖：背對／快轉頭（哼歌停了）／轉過來
-## 注意：外包檔名和內容對調了——dove_front 是「頭轉一半」，dove_turn_hint 才是「整個轉過來」，這裡照圖的內容對應
-const DOVE_ART := {"back": "dove_back", "warn": "dove_front", "look": "dove_turn_hint"}
+## dove_turn_hint：頭轉一半（快轉過來了）；dove_front：整個轉過來
+const DOVE_ART := {"back": "dove_back", "warn": "dove_turn_hint", "look": "dove_front"}
 var _tex_cache := {}
 
 
