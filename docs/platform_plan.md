@@ -192,7 +192,7 @@
 | Windows | `tools/build_platforms.sh windows` → `build/windows/RuleZero.exe`（單一執行檔） | 你在 Windows 上實際試玩（含手把）；App 圖示；正式發行前可考慮程式碼簽章 |
 | Android | `tools/build_platforms.sh android` → `build/android/RuleZero-debug.apk`（debug 簽章，arm64＋armv7） | 你在手機上側載試玩；App 圖示；**套件名稱 `com.rulezero.prototype` 是暫定的**，上架後不能改，正式名稱請你決定；上架要用 release keystore 與 AAB（需要 Gradle 建置）；確認 Google Play 當時要求的 target API 等級 |
 | iOS | 在 Linux 上試產 Xcode 專案：大部分檔案都產生了，但因為**沒有 App 圖示**而失敗（iOS 一定要圖示）。設定沒有提交（Apple 團隊 ID 要用你的帳號） | App 圖示（1024×1024）；Mac＋Xcode；Apple 開發者帳號與團隊 ID |
-| 網頁 | `tools/build_site.sh`（既有） | `public/` 還沒用這幾輪的新版本重建 |
+| 網頁 | `tools/build_site.sh`（既有）。新版本在 Chromium（Playwright）實際跑過：標題 → 新遊戲 → 粉紅車廂正常；另用暫時副本測過瀏覽器裡的安全存檔、壞檔退回 .bak、音量設定，全部通過 | `public/`（網站上的版本）還沒重建，要更新網站時跑 `tools/build_site.sh` |
 
 這個雲端環境的網路政策擋住了 Google 的 Android SDK 下載網址（`dl.google.com`），這次改用 Ubuntu 套件庫的 `apksigner`、`zipalign`、`adb` 組出最小 SDK 完成 debug 匯出。要做 Gradle 建置（AAB、上架）時，需要在環境設定裡允許這個網域，或在你的電腦上建置。
 
