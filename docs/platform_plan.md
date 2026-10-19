@@ -182,6 +182,7 @@
 | 5 | 2026-10-19 | 序章粉紅車廂：窗外三層視差、車廂搖晃（程式繪製佔位） | 截圖確認 |
 | 6 | 2026-10-19 | 手機版面：觸控時字級、對話框、選項按鈕加大；浮動搖桿 | 電腦版／手機版對照截圖（`tests/screenshots_mobile.gd`） |
 | 7 | 2026-10-19 | Windows、Android 匯出設定與 `tools/build_platforms.sh`；手機橫向、ETC2/ASTC；重新產生內建字型 | 實際產生 `RuleZero.exe`（118MB）與 debug APK（80MB，apksigner 驗證通過）；匯出的資源包在 Linux 引擎單獨啟動 240 格無錯誤、標題畫面截圖正常。**exe 沒在 Windows 上執行過、APK 沒在手機上安裝過** |
+| 8 | 2026-10-19 | 正式 Logo 與 App 圖示：標題畫面改用 Logo、啟動畫面、專案圖示、Android 自適應圖示、iOS 匯出設定；介紹圖存進 `docs/marketing/` | 標題截圖確認；APK 內圖示確認；iOS Xcode 專案（暫時團隊 ID）完整產生 |
 
 ---
 
@@ -189,10 +190,9 @@
 
 | 平台 | 狀態 | 還需要什麼 |
 |---|---|---|
-| Windows | `tools/build_platforms.sh windows` → `build/windows/RuleZero.exe`（單一執行檔） | 你在 Windows 上實際試玩（含手把）；App 圖示；正式發行前可考慮程式碼簽章 |
-| Android | `tools/build_platforms.sh android` → `build/android/RuleZero-debug.apk`（debug 簽章，arm64＋armv7） | 你在手機上側載試玩；App 圖示；**套件名稱 `com.rulezero.prototype` 是暫定的**，上架後不能改，正式名稱請你決定；上架要用 release keystore 與 AAB（需要 Gradle 建置）；確認 Google Play 當時要求的 target API 等級 |
-| iOS | 在 Linux 上試產 Xcode 專案：大部分檔案都產生了，但因為**沒有 App 圖示**而失敗（iOS 一定要圖示）。設定沒有提交（Apple 團隊 ID 要用你的帳號） | App 圖示（1024×1024）；Mac＋Xcode；Apple 開發者帳號與團隊 ID |
+| Windows | `tools/build_platforms.sh windows` → `build/windows/RuleZero.exe`（單一執行檔） | 你在 Windows 上實際試玩（含手把）；exe 檔案本身的圖示要用 rcedit 寫入（在 Linux 上需要 wine，這裡沒做；遊戲視窗與工作列圖示已經是新圖示）；正式發行前可考慮程式碼簽章 |
+| Android | `tools/build_platforms.sh android` → `build/android/RuleZero-debug.apk`（debug 簽章，arm64＋armv7）；桌面圖示用 Logo 的「0」（自適應圖示：前景＋梅紅背景，圓形裁切也完整） | 你在手機上側載試玩；**套件名稱 `com.rulezero.prototype` 是暫定的**，上架後不能改，正式名稱請你決定；上架要用 release keystore 與 AAB（需要 Gradle 建置）；確認 Google Play 當時要求的 target API 等級 |
+| iOS | 已加入 iOS 匯出設定（`export_project_only`：產生 Xcode 專案）。用暫時的團隊 ID 在 Linux 上試過：Xcode 專案與各尺寸 App 圖示都完整產生，只差在 Mac 上編譯 | 在 `export_presets.cfg` 的 iOS 設定填入你的 Apple 團隊 ID（`application/app_store_team_id`）；Mac＋Xcode 開啟 `build/ios/RuleZero.xcodeproj` 簽署安裝 |
 | 網頁 | `tools/build_site.sh`（既有）。新版本在 Chromium（Playwright）實際跑過：標題 → 新遊戲 → 粉紅車廂正常；另用暫時副本測過瀏覽器裡的安全存檔、壞檔退回 .bak、音量設定，全部通過 | `public/`（網站上的版本）還沒重建，要更新網站時跑 `tools/build_site.sh` |
 
 這個雲端環境的網路政策擋住了 Google 的 Android SDK 下載網址（`dl.google.com`），這次改用 Ubuntu 套件庫的 `apksigner`、`zipalign`、`adb` 組出最小 SDK 完成 debug 匯出。要做 Gradle 建置（AAB、上架）時，需要在環境設定裡允許這個網域，或在你的電腦上建置。
-

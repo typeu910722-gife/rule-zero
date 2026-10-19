@@ -5,7 +5,8 @@
 #   在 Godot 編輯器設定 → 匯出 → Android 填好路徑（或 ~/.config/godot/editor_settings-4.3.tres）。
 # iOS：需要 macOS＋Xcode＋Apple 開發者帳號，見 docs/platform_plan.md 第 9 節。
 #
-# 用法：GODOT=/path/to/godot tools/build_platforms.sh [windows] [android]（不寫＝兩個都做）
+# 用法：GODOT=/path/to/godot tools/build_platforms.sh [windows] [android] [ios]（不寫＝Windows＋Android）
+# ios：產生 Xcode 專案到 build/ios/（要先在 export_presets.cfg 填 Apple 團隊 ID；編譯簽署要在 Mac 上用 Xcode）
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 GODOT="${GODOT:-godot}"
@@ -22,6 +23,10 @@ for t in $TARGETS; do
       mkdir -p "$ROOT/build/android"
       "$GODOT" --headless --path . --export-debug "Android" "$ROOT/build/android/RuleZero-debug.apk"
       echo "完成：build/android/RuleZero-debug.apk（debug 簽章，只能側載測試，不能上架）";;
-    *) echo "不認得的平台：$t（可用：windows、android）"; exit 1;;
+    ios)
+      mkdir -p "$ROOT/build/ios"
+      "$GODOT" --headless --path . --export-debug "iOS" "$ROOT/build/ios/RuleZero.ipa"
+      echo "完成：build/ios/RuleZero.xcodeproj（在 Mac 上用 Xcode 開啟、簽署、安裝）";;
+    *) echo "不認得的平台：$t（可用：windows、android、ios）"; exit 1;;
   esac
 done

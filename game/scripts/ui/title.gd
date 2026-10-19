@@ -16,6 +16,14 @@ const UI := "res://art/ch2/ui/"
 const WHITE_STAMP_TEX := UI + "ch2_ui_08_white_stamp.png"
 ## 白色戳章原圖是整張 1280×720 的畫布，只取有墨水的那一塊
 const WHITE_STAMP_SRC := Rect2(1055, 302, 116, 116)
+const LOGO_TEX := "res://art/branding/logo.png"
+var _logo_tex: Texture2D
+
+
+func _logo() -> Texture2D:
+	if _logo_tex == null:
+		_logo_tex = load(LOGO_TEX)
+	return _logo_tex
 
 
 func _ready() -> void:
@@ -27,7 +35,7 @@ func _ready() -> void:
 	add_child(_area)
 
 	var box := VBoxContainer.new()
-	box.position = Vector2(120, 380)
+	box.position = Vector2(120, 392)
 	box.custom_minimum_size = Vector2(320, 0)
 	box.add_theme_constant_override("separation", 12)
 	add_child(box)
@@ -112,9 +120,13 @@ func _draw_area() -> void:
 	for k in 60:
 		_area.draw_circle(Vector2(rng.randf_range(0, 1280), rng.randf_range(0, 720)), rng.randf_range(2, 5),
 			[Color("#ffd6e0"), Color("#fff1a8"), Color("#e2d4f7")][k % 3])
-	_area.draw_string(f, Vector2(110, 210), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, Color("#6d4c5c"))
-	_area.draw_string(f, Vector2(116, 270), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576"))
-	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#a38b98"))
+	# 正式 Logo（docs/marketing/logo_rule_zero.png）；缺檔時退回文字標題
+	if ResourceLoader.exists(LOGO_TEX):
+		_area.draw_texture_rect(_logo(), Rect2(104, 14, 330, 330), false)
+	else:
+		_area.draw_string(f, Vector2(110, 210), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, Color("#6d4c5c"))
+		_area.draw_string(f, Vector2(116, 270), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576"))
+	_area.draw_string(f, Vector2(120, 368), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#a38b98"))
 
 	# 小布
 	_area.draw_set_transform(Vector2(820, 560), 0.0, Vector2(6, 6))
