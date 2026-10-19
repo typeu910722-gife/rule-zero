@@ -104,7 +104,7 @@ func _draw_art(bg: Texture2D, hog: Texture2D, front: Texture2D, back: Texture2D)
 	a.draw_texture_rect(bg, Rect2(0, 0, 1280, 720), false)
 	# 標題（底下墊一塊半透明的白，背景太花會看不清楚）
 	a.draw_rect(Rect2(0, 18, 1280, 50), Color(1, 1, 1, 0.75))
-	a.draw_string(f, Vector2(0, 52), "反省會：把卡片翻開，大聲念出來！（點畫面／按 E）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 52), GameState.hint("反省會：把卡片翻開，大聲念出來！（點畫面／按 E）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	var frac := clampf(_t / TIME, 0.0, 1.0)
 	a.draw_rect(Rect2(440, 78, 400, 10), Color(1, 1, 1, 0.6))
 	a.draw_rect(Rect2(440, 78, 400 * frac, 10), Color("#e05780"))
@@ -152,7 +152,7 @@ func _draw_procedural() -> void:
 	var f: Font = GameState.font
 	var a := _area
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color("#e3e3e0"))
-	a.draw_string(f, Vector2(0, 50), "反省會：把卡片翻開，大聲念出來！（點畫面／按 E）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("反省會：把卡片翻開，大聲念出來！（點畫面／按 E）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	a.draw_string(f, Vector2(0, 84), "念得越快，星星越多！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
 	# 講台中央的小棘：被綁在椅子上，顏色越來越淡
 	var hog := Vector2(640, 420)

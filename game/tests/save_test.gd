@@ -106,5 +106,17 @@ func _run() -> void:
 	gs._input(key)
 	_check(gs.interact_key_label() == "E", "改用鍵盤後，提示改回「E」")
 
+	print("[操作說明]")
+	var line := "音符碰到圓圈時按 E／空白鍵（手機：點畫面）"
+	gs.last_device = "keyboard"
+	_check(gs.hint(line) == line, "鍵盤：說明不變")
+	gs.last_device = "pad"
+	_check(gs.hint(line) == "音符碰到圓圈時按 A", "手把：「按 A」")
+	_check(gs.hint("按住 E／空白鍵（手機：按住畫面）前進。") == "按住 A前進。", "手把：「按住 A」")
+	gs.last_device = "touch"
+	_check(gs.hint(line) == "音符碰到圓圈時點畫面", "觸控：「點畫面」")
+	_check(gs.interact_key_label() == "互動", "觸控：互動提示")
+	gs.last_device = ""
+
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

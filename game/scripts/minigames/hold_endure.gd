@@ -160,7 +160,7 @@ func _draw_question_and_button(held: bool) -> void:
 		a.draw_rect(bar, Color("#ffe1ec"))
 		a.draw_rect(Rect2(bar.position, Vector2(bar.size.x * _hold, bar.size.y)), Color("#ffb3c9"))
 	a.draw_rect(Rect2(0, 680, 1280, 30), Color(1, 1, 1, 0.6))
-	a.draw_string(f, Vector2(0, 701), "按住 E／空白鍵（手機：按住畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#777777"))
+	a.draw_string(f, Vector2(0, 701), GameState.hint("按住 E／空白鍵（手機：按住畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#777777"))
 	# 越撐越白
 	var white := _hold * 0.5 + float(_i) / maxf(questions.size(), 1) * 0.3
 	var wtex := _tex(ART + "whiteout.png")
@@ -207,7 +207,7 @@ func _draw_procedural() -> void:
 	a.draw_rect(Rect2(btn.position, Vector2(btn.size.x * _hold, btn.size.y)), Color("#ffb3c9"))
 	a.draw_rect(btn, Color("#e05780"), false, 4)
 	a.draw_string(f, Vector2(btn.position.x, btn.position.y + 58), "我很乖（按住）", HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, 34, Color("#8a4b68"))
-	a.draw_string(f, Vector2(0, 690), "按住 E／空白鍵（手機：按住畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
+	a.draw_string(f, Vector2(0, 690), GameState.hint("按住 E／空白鍵（手機：按住畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
 	# 越撐越白
 	var white := _hold * 0.5 + float(_i) / maxf(questions.size(), 1) * 0.3
 	if _flash > 0:

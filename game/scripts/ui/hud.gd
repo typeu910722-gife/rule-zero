@@ -14,6 +14,7 @@ var _prompt: Label
 var _menu: PanelContainer
 var _menu_text: RichTextLabel
 var _tag_button: Button
+var _menu_hint: Label
 ## 第二章的狀態框（外包美術；缺檔時用原本的文字列）
 const HUD_TEX := "res://art/ch2/ui/ch2_ui_05_hud.png"
 const STAR_ON_TEX := "res://art/ch2/ui/ch2_ui_05_star_bright.png"
@@ -79,6 +80,7 @@ func refresh() -> void:
 	_objective.position.y = 96 if framed else 54
 	_frame.queue_redraw()
 	if menu_open:
+		_menu_hint.text = GameState.hint("Tab / Esc 關閉")
 		_fill_menu()
 
 
@@ -125,6 +127,7 @@ func toggle_menu(allow_tag: bool) -> void:
 	_menu.visible = menu_open
 	_tag_button.visible = allow_tag
 	if menu_open:
+		_menu_hint.text = GameState.hint("Tab / Esc 關閉")
 		_fill_menu()
 		_tag_button.grab_focus.call_deferred()
 
@@ -187,7 +190,7 @@ func _build_menu() -> void:
 	title_btn.pressed.connect(func(): title_requested.emit())
 	v.add_child(title_btn)
 	var hint := Label.new()
-	hint.text = "Tab / Esc 關閉"
+	_menu_hint = hint
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)

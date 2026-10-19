@@ -241,7 +241,7 @@ func _draw_art() -> void:
 	else:
 		a.draw_rect(Rect2(0, 0, 1280, 720), Color("#f4f4f2"))
 	a.draw_rect(Rect2(0, 22, 1280, 76), Color(1, 1, 1, 0.72))
-	a.draw_string(f, Vector2(0, 50), "修剪！一根一根剪掉刺（點刺／按 E）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("修剪！一根一根剪掉刺（點刺／按 E）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
 	a.draw_string(f, Vector2(0, 84), "注意不要剪到肉喔～　小棘的笑容要保持在綠色！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
 	var shake := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 10.0 * _zap
 	# 刺：在身體後面
@@ -324,7 +324,7 @@ func _draw_fallback() -> void:
 	var f: Font = GameState.font
 	var a := _area
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color("#f4f4f2"))
-	a.draw_string(f, Vector2(0, 50), "修剪！一根一根剪掉刺（點刺／按 E）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("修剪！一根一根剪掉刺（點刺／按 E）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
 	a.draw_string(f, Vector2(0, 84), "注意不要剪到肉喔～　小棘的笑容要保持在綠色！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
 	a.draw_rect(Rect2(ORIGIN + Vector2(-200, 10), Vector2(400, 30)), Color("#bdbdbd"))
 	var shake := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 10.0 * _zap

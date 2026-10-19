@@ -215,7 +215,7 @@ func _draw_area() -> void:
 		# 教室背景：黑板本來就畫在背景裡
 		a.draw_texture_rect(_tex.bg, Rect2(0, 0, 1280, 720), false)
 		a.draw_string(f, Vector2(350, 190), "今天的練習：對、不、起", HORIZONTAL_ALIGNMENT_CENTER, 620, 38, Color("#f4f4f2"))
-		a.draw_string(f, Vector2(350, 232), "音符碰到圓圈時按 E／空白鍵（手機：點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 620, 22, Color("#d8d8d4"))
+		a.draw_string(f, Vector2(350, 232), GameState.hint("音符碰到圓圈時按 E／空白鍵（手機：點畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 620, 22, Color("#d8d8d4"))
 		for k in 3:
 			_star(Vector2(895 + k * 26, 300), 9, Color("#ffd1dc"))
 	else:
@@ -224,7 +224,7 @@ func _draw_area() -> void:
 		a.draw_rect(Rect2(340, 40, 600, 150), Color("#4a4f4a"))
 		a.draw_rect(Rect2(340, 40, 600, 150), Color("#9a9a9a"), false, 6)
 		a.draw_string(f, Vector2(340, 100), "今天的練習：對、不、起", HORIZONTAL_ALIGNMENT_CENTER, 600, 34, Color("#f4f4f2"))
-		a.draw_string(f, Vector2(340, 150), "音符碰到圓圈時按 E／空白鍵（手機：點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 600, 20, Color("#cfcfcf"))
+		a.draw_string(f, Vector2(340, 150), GameState.hint("音符碰到圓圈時按 E／空白鍵（手機：點畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 600, 20, Color("#cfcfcf"))
 		for k in 3:
 			_star(Vector2(1110 + k * 30, 212), 11, Color("#ffd1dc"))
 
@@ -321,7 +321,7 @@ func _draw_area() -> void:
 		a.draw_texture(_tex["good_button_" + state], BTN_ART.position)
 		var prog: Texture2D = _tex.get("hold_progress_%02d" % mini(4, int(_hold * 5.0)), _tex.hold_progress_00)
 		a.draw_texture(prog, Vector2(BTN_ART.position.x, BTN_ART.end.y + 12))
-		_label(Vector2(0, 690), "按住 E／空白鍵（手機：按住畫面）", 1280, 18, Color("#666666"))
+		_label(Vector2(0, 690), GameState.hint("按住 E／空白鍵（手機：按住畫面）"), 1280, 18, Color("#666666"))
 		# 越撐越白
 		a.draw_rect(Rect2(0, 0, 1280, 720), Color(1, 1, 1, _hold * 0.55))
 	elif _phase == "hold":
@@ -330,7 +330,7 @@ func _draw_area() -> void:
 		a.draw_rect(Rect2(btn.position, Vector2(btn.size.x * _hold, btn.size.y)), Color("#ffb3c9"))
 		a.draw_rect(btn, Color("#e05780"), false, 4)
 		a.draw_string(f, Vector2(btn.position.x, btn.position.y + 58), "我很乖（按住）", HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, 34, Color("#8a4b68"))
-		a.draw_string(f, Vector2(0, 690), "按住 E／空白鍵（手機：按住畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
+		a.draw_string(f, Vector2(0, 690), GameState.hint("按住 E／空白鍵（手機：按住畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#888888"))
 		# 越撐越白
 		a.draw_rect(Rect2(0, 0, 1280, 720), Color(1, 1, 1, _hold * 0.55))
 	elif _phase == "flash":

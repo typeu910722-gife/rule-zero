@@ -78,7 +78,7 @@ func rules_bbcode() -> String:
 		"9. 新朋友來的時候，大家要一起說「歡迎%s」。" % back,
 		"10. 守則永遠只有十條。",
 		"",
-		"[center][color=#a1887f][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
+		GameState.hint("[center][color=#a1887f][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]"),
 	]
 	return "\n".join(lines)
 
@@ -97,7 +97,7 @@ func bleach_rules_bbcode() -> String:
 		"7. 你做過的事，你自己最清楚。",
 		"8. 畢業的孩子，不會再回來。" if GameState.day >= 3 else "",
 		"",
-		"[center][color=#9a9a9a][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
+		GameState.hint("[center][color=#9a9a9a][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]"),
 	]
 	return "\n".join(lines)
 
@@ -115,7 +115,7 @@ func report_bbcode() -> String:
 		"",
 		"[color=#9a9a9a][font_size=18]違反守則、不服從，會扣操行分數。\n分數太低的孩子，會得到「特別的愛」。[/font_size][/color]",
 		"",
-		"[center][color=#9a9a9a][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
+		GameState.hint("[center][color=#9a9a9a][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]"),
 	]
 	return "\n".join(lines)
 
@@ -221,7 +221,7 @@ func _draw_card() -> void:
 	var gray := Color("#9a9a9a")
 	_card.draw_string(f, p.call(55, 714), "違反守則、不服從，會扣操行分數。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, gray)
 	_card.draw_string(f, p.call(55, 733), "分數太低的孩子，會得到「特別的愛」。", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, gray)
-	_card.draw_string(f, Vector2(0, o.y + size.y + 36), "（按 E／空白鍵，或點一下畫面 關閉）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#e0e0e0"))
+	_card.draw_string(f, Vector2(0, o.y + size.y + 36), GameState.hint("（按 E／空白鍵，或點一下畫面 關閉）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#e0e0e0"))
 
 
 ## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色

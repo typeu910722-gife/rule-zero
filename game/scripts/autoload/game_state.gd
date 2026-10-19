@@ -354,13 +354,43 @@ func _input(event: InputEvent) -> void:
 	last_device = dev
 
 
+## 畫面上的操作說明依裝置改寫：原文是鍵盤版，手把、觸控換成對應的說法。
+## 長的句子放前面，避免先被短的規則換掉一半。
+const HINT_RULES := [
+	# [鍵盤原文, 手把, 觸控]
+	["按住 E／空白鍵（手機：按住畫面）", "按住 A", "按住畫面"],
+	["按 E／空白鍵（手機：點畫面）", "按 A", "點畫面"],
+	["按 E／空白鍵，或點一下畫面 關閉", "按 A 關閉", "點一下畫面關閉"],
+	["（按 E／點畫面）", "（按 A）", "（點畫面）"],
+	["點畫面／按 E", "按 A", "點畫面"],
+	["按 E／點畫面", "按 A", "點畫面"],
+	["拖曳刷子／按住 E", "按住 A", "拖曳刷子"],
+	["點刺／按 E", "按 A", "點刺"],
+	["Tab / Esc 關閉", "START 關閉", "點「日記」關閉"],
+	["（Tab）", "（START）", ""],
+]
+
+
+func hint(text: String) -> String:
+	var col: int = {"pad": 1, "touch": 2}.get(_hint_device(), 0)
+	if col == 0:
+		return text
+	for rule in HINT_RULES:
+		text = text.replace(rule[0], rule[col])
+	return text
+
+
+func _hint_device() -> String:
+	if last_device == "" and DisplayServer.is_touchscreen_available():
+		return "touch"
+	return last_device
+
+
 ## 互動鍵的提示文字（「E：公告欄」「A：公告欄」「互動：公告欄」）
 func interact_key_label() -> String:
-	match last_device:
+	match _hint_device():
 		"pad": return "A"
 		"touch": return "互動"
-	if last_device == "" and DisplayServer.is_touchscreen_available():
-		return "互動"
 	return "E"
 
 

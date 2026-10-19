@@ -170,7 +170,7 @@ func _draw_art() -> void:
 	else:
 		a.draw_rect(Rect2(0, 0, 1280, 720), Color("#dededb"))
 	a.draw_rect(Rect2(0, 18, 1280, 46), Color(1, 1, 1, 0.7))
-	a.draw_string(f, Vector2(0, 50), "搶椅子！音樂停下來的時候，按 E／點畫面坐下", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("搶椅子！音樂停下來的時候，按 E／點畫面坐下"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	var chairs := players.size() - 1
 	var chair_sz := _chair_tex.get_size() * CHAIR_SCALE
 	for k in chairs:
@@ -262,7 +262,7 @@ func _draw_fallback() -> void:
 	var f: Font = GameState.font
 	var a := _area
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color("#dededb"))
-	a.draw_string(f, Vector2(0, 50), "搶椅子！音樂停下來的時候，按 E／點畫面坐下", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("搶椅子！音樂停下來的時候，按 E／點畫面坐下"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	var chairs := players.size() - 1
 	var radius := 190.0
 	for k in chairs:

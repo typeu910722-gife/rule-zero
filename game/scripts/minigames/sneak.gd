@@ -115,7 +115,7 @@ func _draw_art(bg: Texture2D, dove: Texture2D, coat: Texture2D) -> void:
 	# 說明文字（底下墊一塊半透明的白，背景太花會看不清楚）
 	a.draw_rect(Rect2(0, 22, 1280, 90), Color(1, 1, 1, 0.75))
 	a.draw_string(f, Vector2(0, 60), "一二三木頭人：去拿大衣口袋裡的底片", HORIZONTAL_ALIGNMENT_CENTER, 1280, 30, Color("#c2558a"))
-	a.draw_string(f, Vector2(0, 98), "按住 E／空白鍵（手機：按住畫面）前進。哼歌停下來的時候，要放開！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color("#777777"))
+	a.draw_string(f, Vector2(0, 98), GameState.hint("按住 E／空白鍵（手機：按住畫面）前進。哼歌停下來的時候，要放開！"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color("#777777"))
 	# 門口衣架上的大衣（口袋在終點那裡）
 	a.draw_texture(coat, Vector2(900, 120))
 	# 和平鴿：背對 → 頭轉一半 → 轉過來
@@ -152,7 +152,7 @@ func _draw_procedural() -> void:
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color("#e3e3e0"))
 	a.draw_rect(Rect2(0, 600, 1280, 120), Color("#cfcfcb"))
 	a.draw_string(f, Vector2(0, 60), "一二三木頭人：去拿大衣口袋裡的底片", HORIZONTAL_ALIGNMENT_CENTER, 1280, 30, Color("#c2558a"))
-	a.draw_string(f, Vector2(0, 98), "按住 E／空白鍵（手機：按住畫面）前進。哼歌停下來的時候，要放開！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color("#888888"))
+	a.draw_string(f, Vector2(0, 98), GameState.hint("按住 E／空白鍵（手機：按住畫面）前進。哼歌停下來的時候，要放開！"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color("#888888"))
 	# 洗衣機
 	a.draw_circle(Vector2(1150, 400), 120, Color("#a8a8a4"))
 	a.draw_circle(Vector2(1150, 400), 90, Color("#c4c4c0"))

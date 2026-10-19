@@ -166,7 +166,7 @@ func _draw_top() -> void:
 	var f: Font = GameState.font
 	var a := _top
 	a.draw_rect(Rect2(0, 22, 1280, 40), Color(1, 1, 1, 0.7))
-	a.draw_string(f, Vector2(0, 50), "畢業手作時間！（按 E／點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("畢業手作時間！（按 E／點畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
 	# 步驟板
 	if _panel_tex:
 		a.draw_texture(_panel_tex, PANEL_POS)
@@ -223,7 +223,7 @@ func _draw_fallback() -> void:
 	for k in 16:
 		a.draw_line(Vector2(k * 80, 0), Vector2(k * 80, 720), Color(0.95, 0.75, 0.8, 0.25), 18)
 		a.draw_line(Vector2(0, k * 80), Vector2(1280, k * 80), Color(0.95, 0.75, 0.8, 0.25), 18)
-	a.draw_string(f, Vector2(0, 50), "畢業手作時間！（按 E／點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("畢業手作時間！（按 E／點畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#c2558a"))
 	for k in STEP_NAMES.size():
 		var col := Color("#e05780") if k == step else (Color("#7ccf8a") if k < step else Color("#bbbbbb"))
 		a.draw_string(f, Vector2(60, 140 + k * 46), STEP_NAMES[k], HORIZONTAL_ALIGNMENT_LEFT, -1, 24, col)

@@ -118,7 +118,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _draw_area() -> void:
 	var f: Font = GameState.font
 	_area.draw_rect(Rect2(0, 0, 1280, 720), Color("#ffe5ec"))
-	_area.draw_string(f, Vector2(0, 70), "揉麵團！音符碰到圓圈時按 E／空白鍵（手機：點畫面）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#b56576"))
+	_area.draw_string(f, Vector2(0, 70), GameState.hint("揉麵團！音符碰到圓圈時按 E／空白鍵（手機：點畫面）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#b56576"))
 	_area.draw_string(f, Vector2(0, 110), "連續 Perfect：%d" % _streak, HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color("#c2558a"))
 	# 麵團與露露
 	Critter.ellipse(_area, Vector2(330, 560), Vector2(120, 50), Color("#fff3d6"))

@@ -249,7 +249,7 @@ func _draw_area() -> void:
 		a.draw_rect(Rect2(40, 70, 230, 110), Color("#fff3f7"))
 	a.draw_string(f, Vector2(40, 118), "白白的，", HORIZONTAL_ALIGNMENT_CENTER, 230, 30, Color("#e05780"))
 	a.draw_string(f, Vector2(40, 156), "最乾淨！", HORIZONTAL_ALIGNMENT_CENTER, 230, 30, Color("#e05780"))
-	_label(Vector2(0, 42), "洗白白！把黑色的地方刷乾淨（拖曳刷子／按住 E）", 1280, 24, Color("#c2558a"))
+	_label(Vector2(0, 42), GameState.hint("洗白白！把黑色的地方刷乾淨（拖曳刷子／按住 E）"), 1280, 24, Color("#c2558a"))
 	# 洗衣板
 	if _tex.has("washboard"):
 		var wb: Texture2D = _tex.washboard
@@ -330,7 +330,7 @@ func _draw_area() -> void:
 		if r.has_point(a.get_local_mouse_position()):
 			state = "pressed" if _mouse_down else "hover"
 		a.draw_texture(_tex["done_button_" + state], r.position)
-		a.draw_string(f, r.position + Vector2(63, 46), "（Tab）", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("#5f5962"))
+		a.draw_string(f, r.position + Vector2(63, 46), GameState.hint("（Tab）"), HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("#5f5962"))
 	else:
 		_draw_fallback_done()
 	if _too_dirty_t > 0:
@@ -366,7 +366,7 @@ func _draw_fallback() -> void:
 	a.draw_rect(Rect2(60, 60, 260, 120), Color("#f2a7c3"), false, 4)
 	a.draw_string(f, Vector2(60, 115), "白白的，", HORIZONTAL_ALIGNMENT_CENTER, 260, 30, Color("#e05780"))
 	a.draw_string(f, Vector2(60, 155), "最乾淨！", HORIZONTAL_ALIGNMENT_CENTER, 260, 30, Color("#e05780"))
-	a.draw_string(f, Vector2(0, 40), "洗白白！把黑色的地方刷乾淨（拖曳刷子／按住 E）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 40), GameState.hint("洗白白！把黑色的地方刷乾淨（拖曳刷子／按住 E）"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#c2558a"))
 	# 洗衣板與曬衣夾
 	a.draw_rect(Rect2(POS.x - 230, POS.y - 300, 460, 340), Color("#cfc6b8"))
 	for k in 14:
@@ -425,7 +425,7 @@ func _draw_fallback_done() -> void:
 	var f: Font = GameState.font
 	a.draw_rect(DONE_BTN, Color("#fff8f0"))
 	a.draw_rect(DONE_BTN, Color("#e8a0bf"), false, 3)
-	a.draw_string(f, DONE_BTN.position + Vector2(0, 46), "完成（Tab）", HORIZONTAL_ALIGNMENT_CENTER, DONE_BTN.size.x, 24, Color("#8a4b68"))
+	a.draw_string(f, DONE_BTN.position + Vector2(0, 46), GameState.hint("完成（Tab）"), HORIZONTAL_ALIGNMENT_CENTER, DONE_BTN.size.x, 24, Color("#8a4b68"))
 
 
 func _star(c: Vector2, r: float, col: Color) -> void:
