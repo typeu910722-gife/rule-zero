@@ -183,6 +183,7 @@
 | 6 | 2026-10-19 | 手機版面：觸控時字級、對話框、選項按鈕加大；浮動搖桿 | 電腦版／手機版對照截圖（`tests/screenshots_mobile.gd`） |
 | 7 | 2026-10-19 | Windows、Android 匯出設定與 `tools/build_platforms.sh`；手機橫向、ETC2/ASTC；重新產生內建字型 | 實際產生 `RuleZero.exe`（118MB）與 debug APK（80MB，apksigner 驗證通過）；匯出的資源包在 Linux 引擎單獨啟動 240 格無錯誤、標題畫面截圖正常。**exe 沒在 Windows 上執行過、APK 沒在手機上安裝過** |
 | 8 | 2026-10-19 | 正式 Logo 與 App 圖示：標題畫面改用 Logo、啟動畫面、專案圖示、Android 自適應圖示、iOS 匯出設定；介紹圖存進 `docs/marketing/` | 標題截圖確認；APK 內圖示確認；iOS Xcode 專案（暫時團隊 ID）完整產生 |
+| 9 | 2026-10-19 | 合併 `art-audio` 的新版第一章（正式美術、音樂、改版劇情）與第二章，成為同一個遊戲；第二章畫面程式獨立到 `scripts/ch2/`；聲音改成不新增 bus（修正網頁版會靜音的問題）；平台升級與 Logo 套到新版第一章；章節銜接 | 15 組測試全過（含新的 `transition_test`）；兩章截圖確認；Windows／Android 重新匯出，匯出的資源包單獨啟動到標題畫面正常。設定衝突 16 項列在 `docs/canon_conflicts.md` 待使用者決定 |
 
 ---
 
