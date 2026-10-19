@@ -180,6 +180,8 @@ func _build_menu() -> void:
 	_tag_button = Button.new()
 	_tag_button.pressed.connect(func(): tag_toggle_requested.emit())
 	v.add_child(_tag_button)
+	for bus in [["Music", "配樂"], ["SFX", "音效"]]:
+		v.add_child(_volume_row(bus[0], bus[1]))
 	var title_btn := Button.new()
 	title_btn.text = "回到標題（從今天早上的存檔繼續）"
 	title_btn.pressed.connect(func(): title_requested.emit())
@@ -189,6 +191,37 @@ func _build_menu() -> void:
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)
+
+
+## 音量列：「配樂 ───●── 80%」。鍵盤／手把選到滑桿後按左右調整。
+func _volume_row(bus: String, label: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	var title := Label.new()
+	title.text = label
+	title.custom_minimum_size.x = 56
+	title.add_theme_color_override("font_color", Color("#4a3b47"))
+	row.add_child(title)
+	var slider := HSlider.new()
+	slider.min_value = 0
+	slider.max_value = 100
+	slider.step = 10
+	slider.value = round(Audio.get_volume(bus) * 100)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	slider.custom_minimum_size.y = 32
+	row.add_child(slider)
+	var pct := Label.new()
+	pct.custom_minimum_size.x = 64
+	pct.text = "%d%%" % slider.value
+	pct.add_theme_color_override("font_color", Color("#a39ba8"))
+	row.add_child(pct)
+	slider.value_changed.connect(func(value: float):
+		pct.text = "%d%%" % value
+		Audio.set_volume(bus, value / 100.0)
+		if GameState.chapter == 2:  # 第一章還沒有自己的介面音效
+			Sfx.play(self, "cursor", -10.0))
+	return row
 
 
 ## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色

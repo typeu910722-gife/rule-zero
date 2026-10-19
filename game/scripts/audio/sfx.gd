@@ -86,6 +86,7 @@ static func play(parent: Node, name: String, volume_db := -6.0) -> bool:
 	var p := AudioStreamPlayer.new()
 	p.stream = s
 	p.volume_db = volume_db
+	p.bus = "SFX"
 	parent.add_child(p)
 	p.play()
 	p.finished.connect(p.queue_free)

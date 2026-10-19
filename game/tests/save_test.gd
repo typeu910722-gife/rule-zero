@@ -1,5 +1,5 @@
 extends SceneTree
-## 存檔安全與手把綁定：godot --headless --path game -s tests/save_test.gd
+## 存檔安全、音量設定、手把綁定：godot --headless --path game -s tests/save_test.gd
 
 var failures := 0
 
@@ -57,6 +57,29 @@ func _run() -> void:
 	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.load_meta()
 	_check(int(gs.meta.runs) == 3, "meta.json 存讀")
+	DirAccess.remove_absolute(gs._path(gs.META_PATH))
+	DirAccess.remove_absolute(gs._path(gs.META_PATH) + ".bak")
+
+	print("[聲音]")
+	var audio := root.get_node("Audio")
+	_check(AudioServer.get_bus_index("Music") != -1 and AudioServer.get_bus_index("SFX") != -1, "有 Music、SFX 兩條 bus")
+	audio.set_volume("Music", 0.5)
+	_check(absf(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")) - linear_to_db(0.5)) < 0.01, "配樂 50% 套用到 bus")
+	audio.set_volume("SFX", 0.0)
+	_check(AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")), "音效 0% ＝ 靜音")
+	gs.meta = {}
+	gs.load_meta()
+	_check(absf(audio.get_volume("Music") - 0.5) < 0.01, "音量設定存在 meta.json，重開還在")
+	audio.set_volume("SFX", 0.9)
+	var bgm := "res://audio/ch2/bgm/ch2_bgm01_bleach_town.ogg"
+	audio.play_music(bgm)
+	for i in 120:
+		await process_frame
+	_check(audio.music_path() == bgm, "播放配樂")
+	audio.stop_music()
+	for i in 120:
+		await process_frame
+	_check(audio.music_path() == "", "淡出後停止")
 	DirAccess.remove_absolute(gs._path(gs.META_PATH))
 	DirAccess.remove_absolute(gs._path(gs.META_PATH) + ".bak")
 

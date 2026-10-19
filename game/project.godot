@@ -12,6 +12,7 @@ config/features=PackedStringArray("4.3", "GL Compatibility")
 
 GameState="*res://scripts/autoload/game_state.gd"
 Dialogue="*res://scripts/autoload/dialogue.gd"
+Audio="*res://scripts/autoload/audio.gd"
 
 [display]
 

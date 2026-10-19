@@ -149,7 +149,6 @@ var board: CanvasLayer
 var tint: CanvasModulate
 var fade: ColorRect
 var overlay: CanvasLayer
-var music: AudioStreamPlayer
 var _bgm_name := ""
 
 
@@ -174,9 +173,6 @@ func _ready() -> void:
 	if town.has_map():
 		player.blocked = PackedVector2Array(BleachTown.BLOCKED)
 	add_child(player)
-	music = AudioStreamPlayer.new()
-	music.volume_db = -8.0
-	add_child(music)
 	Dialogue.portrait_state = _portrait_state
 	for a in actors.values():
 		a.target = player
@@ -219,15 +215,8 @@ func _bgm(name: String) -> void:
 	if name == _bgm_name:
 		return
 	_bgm_name = name
-	music.stop()
-	var path: String = BGM_DIR % BGM.get(name, "")
-	if name == "" or not ResourceLoader.exists(path):
-		return
-	var s: AudioStream = load(path)
-	if s is AudioStreamOggVorbis:
-		s.loop = not name in BGM_ONCE
-	music.stream = s
-	music.play()
+	var path: String = BGM_DIR % BGM.get(name, "") if name != "" else ""
+	Audio.play_music(path, not name in BGM_ONCE, -8.0)
 
 
 ## 小遊戲時換配樂，結束後換回來
@@ -240,6 +229,7 @@ func _with_bgm(name: String, game: Node, method := "play") -> Variant:
 
 
 func _exit_tree() -> void:
+	Audio.stop_music()
 	Dialogue.portrait_state = Callable()
 	if Dialogue.event_requested.is_connected(_on_event):
 		Dialogue.event_requested.disconnect(_on_event)
@@ -873,6 +863,7 @@ func _set_ambience(name: String) -> void:
 	if _ambience == null:
 		_ambience = AudioStreamPlayer.new()
 		_ambience.volume_db = -20.0
+		_ambience.bus = "SFX"
 		add_child(_ambience)
 	_ambience.stop()
 	var st := Sfx.stream(name) if name != "" else null
