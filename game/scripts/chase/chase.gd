@@ -644,7 +644,7 @@ func _draw_hud() -> void:
 	c.draw_string_outline(f, Vector2(0, 24), label, HORIZONTAL_ALIGNMENT_CENTER, W, 20, 7, Color("#3a1426"))
 	c.draw_string(f, Vector2(0, 24), label, HORIZONTAL_ALIGNMENT_CENTER, W, 20, Color("#fff0f5"))
 	if _run < 20.0 and _attempts < 2 and _state != "door":
-		var hint := "左右推：換道躲開　·　往上推：衝刺" if DisplayServer.is_touchscreen_available() else "← → 換道躲開　·　按住 ↑ 衝刺"
+		var hint := GameState.hint("← → 換道躲開　·　按住 ↑ 衝刺")
 		# 提示放在框的右下角外面（不擋畫面、不擋字幕）
 		c.draw_string_outline(f, Vector2(W - 560, 708), hint, HORIZONTAL_ALIGNMENT_RIGHT, 520, 16, 6, Color("#3a1426"))
 		c.draw_string(f, Vector2(W - 560, 708), hint, HORIZONTAL_ALIGNMENT_RIGHT, 520, 16, Color("#ffd9e6"))

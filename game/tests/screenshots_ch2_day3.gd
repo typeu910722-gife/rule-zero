@@ -92,7 +92,7 @@ func _run() -> void:
 	# 結算
 	gs.meta = {"runs": 1, "chapters_done": 2, "ch2_fates": {"baimian": "aboard", "xiaoji": "graduated", "tiaoma": "dead",
 		"gaga": "aboard", "zhongzhong": "dead", "youyou": "unknown"}}
-	var E = load("res://scripts/ui/end_card.gd").new()
+	var E = load("res://scripts/ch2/end_card.gd").new()
 	E.mode = "c2_done"
 	root.add_child(E)
 	await _shot("c2_d3_06_summary")

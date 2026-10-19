@@ -338,11 +338,9 @@ func run_chapter() -> void:
 	player.can_move = true
 	var depth := GameState.memory_depth()
 	if depth > 0:
-		hud.toast("記憶加深了：%s　%s（Tab 打開日記）" % ["●".repeat(depth) + "○".repeat(GameState.MAX_DEPTH - depth), GameState.DEPTH_NAMES[depth]], 6.0)
-	elif DisplayServer.is_touchscreen_available():
-		hud.toast("用左下角的方向鍵走路，靠近有「！」的地方按「互動」。", 7.0)
+		hud.toast(GameState.hint("記憶加深了：%s　%s（Tab 打開日記）") % ["●".repeat(depth) + "○".repeat(GameState.MAX_DEPTH - depth), GameState.DEPTH_NAMES[depth]], 6.0)
 	else:
-		hud.toast("WASD／方向鍵走路　·　靠近按 E 互動　·　Tab 打開日記", 7.0)
+		hud.toast(GameState.hint("WASD／方向鍵走路　·　靠近按 E 互動　·　Tab 打開日記"), 7.0)
 	hud.toast("頭上有「！」的地方，就是今天可以去的地方。不在畫面裡時，邊緣的粉紅箭頭會指給你看。", 6.0)
 
 
@@ -767,7 +765,7 @@ func _process(_delta: float) -> void:
 		return
 	_update_guide()
 	var it: Interactable = player.nearest()
-	var key := "互動" if DisplayServer.is_touchscreen_available() else "E"
+	var key := GameState.interact_key_label()
 	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
 	if it:
 		_first_time_tip(it)
@@ -816,7 +814,7 @@ func _first_time_tip(it: Interactable) -> void:
 	tips.append(kind)
 	GameState.meta["tips"] = tips
 	GameState.save_meta()
-	hud.toast(text.replace("按 E", "按「互動」") if DisplayServer.is_touchscreen_available() else text, 5.0)
+	hud.toast(GameState.hint(text), 5.0)
 
 
 func _touch_mode() -> String:

@@ -28,7 +28,7 @@ func _run() -> void:
 	var town: Node2D = load("res://scripts/world/town.gd").new()
 	root.add_child(town)
 	var cam := Camera2D.new()
-	cam.position = Vector2(300, 600)
+	cam.position = Vector2(700, 520)
 	town.add_child(cam)
 	cam.make_current()
 	for touch in [false, true]:

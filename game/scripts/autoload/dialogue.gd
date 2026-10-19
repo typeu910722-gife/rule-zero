@@ -348,7 +348,7 @@ func _say(who: String, text: String) -> void:
 func _process(delta: float) -> void:
 	# 一句話打完了：右下角的 ▼ 輕輕跳動，告訴玩家可以按下一句
 	_hint.visible = running and _box.visible and not _choosing and not GameState.touch_ui()
-	_hint.text = GameState.hint("按住 E 快轉").replace("（START）", "")
+	_hint.text = GameState.hint("按住 E 快轉")
 	if running and _box.visible and not _typing and not _choosing:
 		_more.visible = true
 		var bob := sin(Time.get_ticks_msec() / 160.0) * 3.0

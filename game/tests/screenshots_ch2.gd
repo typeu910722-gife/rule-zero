@@ -112,7 +112,7 @@ func _run() -> void:
 	# 對話框（漂白鎮的配色）
 	ch.player.position = Vector2(790, 500)
 	dlg._apply_style()
-	dlg._show_portrait("和平鴿")
+	dlg._show_portrait_ch2("和平鴿")
 	dlg._box.visible = true
 	dlg._name.text = "和平鴿"
 	dlg._text.text = "我會很愛你。愛到你變好為止。"

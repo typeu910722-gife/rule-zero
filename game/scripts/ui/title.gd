@@ -10,6 +10,9 @@ signal new_game
 signal continue_game
 signal chapter2
 
+const LOGO_TEX := "res://art/branding/logo.png"
+var _logo_tex: Texture2D
+
 const BG := preload("res://art/title_platform.jpg")
 ## 月台上的小布：期待 → 疑惑 → 沉重 → 記起自己（抱著拆下來的名牌）
 const BU_POSES := [preload("res://art/title_bu_1.png"), preload("res://art/title_bu_2.png"),
@@ -161,17 +164,23 @@ func _draw_area() -> void:
 	var veil := Color(1, 0.95, 0.96).lerp(Color(0.16, 0.13, 0.18), h)
 	for k in 40:
 		_area.draw_rect(Rect2(k * 14, 0, 14, 720), Color(veil.r, veil.g, veil.b, 0.8 * (1.0 - k / 40.0)))
-	var ink := Color("#6d4c5c").lerp(Color("#e9dde6"), h)
-	_area.draw_string_outline(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, 10, Color(1, 0.97, 0.97, 0.9 * (1.0 - h)))
-	_area.draw_string(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, ink)
 	var halo := Color(1, 0.97, 0.97, 0.75 * (1.0 - h))
-	_area.draw_string_outline(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, 6, halo)
-	_area.draw_string(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576").lerp(Color("#c9a3b8"), h))
+	# 正式 Logo（docs/marketing/logo_rule_zero.png）；越重越黯淡。缺檔時退回文字標題
+	if ResourceLoader.exists(LOGO_TEX):
+		if _logo_tex == null:
+			_logo_tex = load(LOGO_TEX)
+		_area.draw_texture_rect(_logo_tex, Rect2(100, 4, 310, 310), false, Color(1, 1, 1).lerp(Color(0.78, 0.74, 0.82), h))
+	else:
+		var ink := Color("#6d4c5c").lerp(Color("#e9dde6"), h)
+		_area.draw_string_outline(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, 10, Color(1, 0.97, 0.97, 0.9 * (1.0 - h)))
+		_area.draw_string(f, Vector2(110, 200), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, ink)
+		_area.draw_string_outline(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, 6, halo)
+		_area.draw_string(f, Vector2(116, 258), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576").lerp(Color("#c9a3b8"), h))
 	var sub: String = SUBTITLES[_heavy]
 	if _heavy >= 5 and GameState.ever("true_name"):
 		sub = "我叫遙。"
-	_area.draw_string_outline(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, halo)
-	_area.draw_string(f, Vector2(116, 308), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e").lerp(Color("#d8c6d2"), h))
+	_area.draw_string_outline(f, Vector2(116, 344), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, halo)
+	_area.draw_string(f, Vector2(116, 344), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#8e6f7e").lerp(Color("#d8c6d2"), h))
 
 	# 車票：結束過一輪以上，背面就蓋著戳章
 	var stamps := clampi(GameState.loop_number() - GameState.FIRST_LOOP, 0, 15)

@@ -174,7 +174,7 @@ func _draw() -> void:
 	if _state != "play":
 		return
 	var f: Font = GameState.font
-	var key := "連點畫面" if DisplayServer.is_touchscreen_available() else "連點滑鼠／連按 E"
+	var key := GameState.hint("連點滑鼠／連按 E")
 	var pulse := 1.0 + 0.06 * sin(_t * 12.0)
 	var msg := "%s！不要停！" % key
 	c.draw_string_outline(f, Vector2(0, 70), msg, HORIZONTAL_ALIGNMENT_CENTER, 1280, int(38 * pulse), 12, Color("#3a1426"))

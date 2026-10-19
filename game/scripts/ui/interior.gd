@@ -180,7 +180,7 @@ func _draw_room() -> void:
 		c.draw_string(f, Vector2(0, 52), room.name, HORIZONTAL_ALIGNMENT_CENTER, 1280, 34, Color(INK, a))
 	# 操作提示
 	if not Dialogue.running:
-		var hint := "點一下東西來調查" if DisplayServer.is_touchscreen_available() else "滑鼠點一下，或用方向鍵選、按 E 調查　·　Tab 離開"
+		var hint := GameState.hint("滑鼠點一下，或用方向鍵選、按 E 調查　·　Tab 離開")
 		c.draw_string_outline(f, Vector2(20, 700), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 17, 5, Color(1, 1, 1, 0.8))
 		c.draw_string(f, Vector2(20, 700), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 17, INK)
 

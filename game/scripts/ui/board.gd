@@ -47,7 +47,7 @@ func _ready() -> void:
 		_board.add_child(r)
 		_rows.append(r)
 	_hint = Label.new()
-	_hint.text = "按 E／空白鍵，或點一下畫面 關閉"
+	_hint.text = GameState.hint("按 E／空白鍵，或點一下畫面 關閉")
 	_hint.add_theme_font_size_override("font_size", 16)
 	_hint.add_theme_color_override("font_color", Color("#f3e9f1"))
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -81,6 +81,7 @@ func open() -> void:
 	var lines := rules()
 	for i in _rows.size():
 		_rows[i].text = "[center]%s[/center]" % lines[i]
+	_hint.text = GameState.hint("按 E／空白鍵，或點一下畫面 關閉")
 	visible = true
 	if GameState.fast:
 		close()

@@ -21,6 +21,7 @@ var checklist: Array = []
 var _menu: PanelContainer
 var _menu_text: RichTextLabel
 var _tag_button: Button
+var _menu_hint: Label
 
 
 func _ready() -> void:
@@ -155,6 +156,7 @@ func toggle_menu(allow_tag: bool) -> void:
 	Sound.sfx("menu")
 	_tag_button.visible = allow_tag
 	if menu_open:
+		_menu_hint.text = GameState.hint("Tab / Esc 關閉")
 		_fill_menu()
 		_tag_button.grab_focus.call_deferred()
 
@@ -263,16 +265,48 @@ func _build_menu() -> void:
 	_style_button(_tag_button)
 	_tag_button.pressed.connect(func(): tag_toggle_requested.emit())
 	v.add_child(_tag_button)
+	for kind in [["Music", "配樂"], ["SFX", "音效"]]:
+		v.add_child(_volume_row(kind[0], kind[1]))
 	var title_btn := Button.new()
 	title_btn.text = "回到標題（從今天早上的存檔繼續）"
 	_style_button(title_btn)
 	title_btn.pressed.connect(func(): title_requested.emit())
 	v.add_child(title_btn)
 	var hint := Label.new()
-	hint.text = "Tab / Esc 關閉"
+	_menu_hint = hint
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)
+
+
+## 音量列：「配樂 ───●── 80%」。鍵盤／手把選到滑桿後按左右調整；設定兩章共用
+func _volume_row(kind: String, label: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	var title := Label.new()
+	title.text = label
+	title.custom_minimum_size.x = 56
+	title.add_theme_color_override("font_color", Color("#4a3b47"))
+	row.add_child(title)
+	var slider := HSlider.new()
+	slider.min_value = 0
+	slider.max_value = 100
+	slider.step = 10
+	slider.value = round(Audio.get_volume(kind) * 100)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	slider.custom_minimum_size.y = 32
+	row.add_child(slider)
+	var pct := Label.new()
+	pct.custom_minimum_size.x = 64
+	pct.text = "%d%%" % slider.value
+	pct.add_theme_color_override("font_color", Color("#a39ba8"))
+	row.add_child(pct)
+	slider.value_changed.connect(func(value: float):
+		pct.text = "%d%%" % value
+		Audio.set_volume(kind, value / 100.0)
+		Sound.sfx("choice"))
+	return row
 
 
 
