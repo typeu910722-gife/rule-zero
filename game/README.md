@@ -9,6 +9,13 @@
 1. 安裝 [Godot 4.3](https://godotengine.org/download)（標準版即可，不需要 .NET）。
 2. Godot → 匯入 → 選擇本資料夾的 `project.godot` → 按 F5。
 
+## Windows／Android 版
+```
+GODOT=/path/to/godot tools/build_platforms.sh            # 兩個都做
+GODOT=/path/to/godot tools/build_platforms.sh windows    # 只做 Windows
+```
+產生 `build/windows/RuleZero.exe`（單一執行檔）與 `build/android/RuleZero-debug.apk`（debug 簽章，側載測試用）。需要的工具與 iOS 的狀況見 `docs/platform_plan.md` 第 9 節。
+
 ## 網頁版／手機試玩
 ```
 GODOT=/path/to/godot tools/build_site.sh   # 需要 Godot 4.3 Web 匯出範本

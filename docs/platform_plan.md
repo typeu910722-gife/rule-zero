@@ -176,3 +176,23 @@
 | 輪次 | 日期 | 做了什麼 | 驗證 |
 |---|---|---|---|
 | 1 | 2026-10-19 | 手把綁定（左搖桿／十字鍵、A、START／BACK）；互動提示依最後使用的裝置顯示 E／A／互動；存檔改成「.tmp → 讀回確認 → 換上，舊檔留 .bak」，主檔壞掉時讀 .bak；新增 `tests/save_test.gd`；README 過期段落更新 | 5 個測試在 Godot 4.3 headless 全過；**手把沒有實機測試** |
+| 2 | 2026-10-19 | 音效管理（Music／SFX bus、配樂淡入淡出、日記裡的音量滑桿，設定存在 meta.json） | save_test 新增音量、配樂測試 |
+| 3 | 2026-10-19 | 操作說明依裝置切換（鍵盤「按 E」／手把「按 A」／觸控「點畫面」），小遊戲、公告欄、日記全部套用 | save_test 新增說明文字測試 |
+| 4 | 2026-10-19 | 恐怖畫面效果：`@fx`（夢境褪色、鏡子顆粒、錯位、閃字）；第一章加三處，台詞不變 | xvfb 實際截圖確認（`tests/screenshots_fx.gd`） |
+| 5 | 2026-10-19 | 序章粉紅車廂：窗外三層視差、車廂搖晃（程式繪製佔位） | 截圖確認 |
+| 6 | 2026-10-19 | 手機版面：觸控時字級、對話框、選項按鈕加大；浮動搖桿 | 電腦版／手機版對照截圖（`tests/screenshots_mobile.gd`） |
+| 7 | 2026-10-19 | Windows、Android 匯出設定與 `tools/build_platforms.sh`；手機橫向、ETC2/ASTC；重新產生內建字型 | 實際產生 `RuleZero.exe`（118MB）與 debug APK（80MB，apksigner 驗證通過）；匯出的資源包在 Linux 引擎單獨啟動 240 格無錯誤、標題畫面截圖正常。**exe 沒在 Windows 上執行過、APK 沒在手機上安裝過** |
+
+---
+
+## 9. 匯出狀態與待辦
+
+| 平台 | 狀態 | 還需要什麼 |
+|---|---|---|
+| Windows | `tools/build_platforms.sh windows` → `build/windows/RuleZero.exe`（單一執行檔） | 你在 Windows 上實際試玩（含手把）；App 圖示；正式發行前可考慮程式碼簽章 |
+| Android | `tools/build_platforms.sh android` → `build/android/RuleZero-debug.apk`（debug 簽章，arm64＋armv7） | 你在手機上側載試玩；App 圖示；**套件名稱 `com.rulezero.prototype` 是暫定的**，上架後不能改，正式名稱請你決定；上架要用 release keystore 與 AAB（需要 Gradle 建置）；確認 Google Play 當時要求的 target API 等級 |
+| iOS | 在 Linux 上試產 Xcode 專案：大部分檔案都產生了，但因為**沒有 App 圖示**而失敗（iOS 一定要圖示）。設定沒有提交（Apple 團隊 ID 要用你的帳號） | App 圖示（1024×1024）；Mac＋Xcode；Apple 開發者帳號與團隊 ID |
+| 網頁 | `tools/build_site.sh`（既有） | `public/` 還沒用這幾輪的新版本重建 |
+
+這個雲端環境的網路政策擋住了 Google 的 Android SDK 下載網址（`dl.google.com`），這次改用 Ubuntu 套件庫的 `apksigner`、`zipalign`、`adb` 組出最小 SDK 完成 debug 匯出。要做 Gradle 建置（AAB、上架）時，需要在環境設定裡允許這個網域，或在你的電腦上建置。
+

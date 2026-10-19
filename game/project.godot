@@ -20,6 +20,7 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
+window/handheld/orientation=4
 
 [gui]
 
@@ -29,4 +30,5 @@ theme/custom_font="res://fonts/NotoSansTC-Game.otf"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.96, 0.93, 0.95, 1)
