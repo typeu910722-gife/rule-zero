@@ -13,6 +13,9 @@ const BTN_RADIUS := 62.0
 
 var enabled := false
 var _joy_index := -1
+## 浮動搖桿：手指按在左半邊哪裡，搖桿就出現在哪裡；放開回到預設位置
+var _joy_center := JOY_CENTER
+const JOY_ZONE := Rect2(0, 160, 560, 560)
 var _joy_vec := Vector2.ZERO
 var _area: Control
 var _rotate_hint: Label
@@ -59,9 +62,11 @@ func _input(event: InputEvent) -> void:
 	if not enabled:
 		return
 	if event is InputEventScreenTouch:
+		GameState.last_device = "touch"
 		if event.pressed:
-			if _joy_visible and event.position.distance_to(JOY_CENTER) < JOY_RADIUS * 1.6 and _joy_index == -1:
+			if _joy_visible and _joy_index == -1 and (JOY_ZONE.has_point(event.position) or event.position.distance_to(JOY_CENTER) < JOY_RADIUS * 1.6):
 				_joy_index = event.index
+				_joy_center = event.position.clamp(Vector2(JOY_RADIUS + 10, 160 + JOY_RADIUS), Vector2(560, 720 - JOY_RADIUS - 10))
 				_update_joystick(event.position)
 				get_viewport().set_input_as_handled()
 			elif _buttons_visible and event.position.distance_to(BTN_INTERACT) < BTN_RADIUS and not _menu_only:
@@ -78,7 +83,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _update_joystick(pos: Vector2) -> void:
-	_joy_vec = ((pos - JOY_CENTER) / JOY_RADIUS).limit_length(1.0)
+	_joy_vec = ((pos - _joy_center) / JOY_RADIUS).limit_length(1.0)
 	var dirs := {"move_left": -_joy_vec.x, "move_right": _joy_vec.x, "move_up": -_joy_vec.y, "move_down": _joy_vec.y}
 	for action in dirs:
 		var v: float = dirs[action]
@@ -91,6 +96,7 @@ func _update_joystick(pos: Vector2) -> void:
 func _release_joystick() -> void:
 	_joy_index = -1
 	_joy_vec = Vector2.ZERO
+	_joy_center = JOY_CENTER
 	for action in ["move_left", "move_right", "move_up", "move_down"]:
 		Input.action_release(action)
 
@@ -111,9 +117,9 @@ func _draw_area() -> void:
 		return
 	var f: Font = GameState.font
 	if _joy_visible:
-		_area.draw_circle(JOY_CENTER, JOY_RADIUS, Color(1, 1, 1, 0.35))
-		_area.draw_arc(JOY_CENTER, JOY_RADIUS, 0, TAU, 40, Color(0.9, 0.6, 0.75, 0.7), 4)
-		_area.draw_circle(JOY_CENTER + _joy_vec * JOY_RADIUS * 0.6, 38, Color(1, 0.85, 0.9, 0.85))
+		_area.draw_circle(_joy_center, JOY_RADIUS, Color(1, 1, 1, 0.35))
+		_area.draw_arc(_joy_center, JOY_RADIUS, 0, TAU, 40, Color(0.9, 0.6, 0.75, 0.7), 4)
+		_area.draw_circle(_joy_center + _joy_vec * JOY_RADIUS * 0.6, 38, Color(1, 0.85, 0.9, 0.85))
 	if _buttons_visible:
 		if not _menu_only:
 			_area.draw_circle(BTN_INTERACT, BTN_RADIUS, Color(1, 0.88, 0.92, 0.8))

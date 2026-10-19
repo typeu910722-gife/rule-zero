@@ -17,7 +17,8 @@ GODOT=/path/to/godot tools/build_site.sh   # 需要 Godot 4.3 Web 匯出範本
 Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸出目錄：`public`」，推送後會自動更新網站。
 - Cloudflare Pages 單檔上限 25 MiB：引擎 `index.wasm`（約 35MB）會被切成 `index.wasm.part0/1`，頁面載入時再接回來。
 - 使用單執行緒版本，不需要伺服器設定特殊標頭，一般靜態網站主機都能放。
-- 手機請橫放；左下搖桿移動、右下「互動」「日記」，對話點畫面任何地方前進。
+- 手機請橫放；左半邊按住任何地方就出現搖桿（浮動搖桿）、右下「互動」「日記」，對話點畫面任何地方前進。
+- 手機版面：觸控操作時對話字級 26→34、對話框加高加寬、選項按鈕加高到 72（對照圖：`docs/images/proto_mobile_compare.jpg`，上電腦版、下手機版）。畫面維持 16:9，瀏海與圓角落在左右黑邊裡。
 - 網頁版本身沒有密碼；需要保護請用外層網站或 Cloudflare Access。
 - 中文字型為內建的 Noto Sans TC 子集（`game/fonts/`，SIL OFL 1.1）。對話新增文字後要重跑 `python3 tools/subset_font.py <NotoSansCJK-Regular.ttc>`。
 
@@ -150,6 +151,7 @@ game/
     ├── rhythm_test.gd          # 揉麵團判定
     ├── save_test.gd            # 存檔壞掉時退回 .bak、音量、操作說明、手把綁定
     ├── screenshots_fx.gd       # 畫面效果與序章車廂截圖
+    ├── screenshots_mobile.gd   # 電腦版／手機版對話與選項、浮動搖桿截圖
     ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     └── screenshots_day3.gd     # 第三天畫面截圖

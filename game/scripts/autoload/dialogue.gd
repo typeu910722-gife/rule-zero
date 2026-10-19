@@ -293,8 +293,10 @@ func _choose(opts: Array) -> int:
 		var b := Button.new()
 		b.text = o.text
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.add_theme_font_size_override("font_size", 22)
+		b.add_theme_font_size_override("font_size", 30 if GameState.touch_ui() else 22)
 		_style_button(b)
+		if GameState.touch_ui():
+			b.custom_minimum_size.y = 72
 		if o.cost > 0:
 			b.text = "★ %s　（違反守則・膽量 -%d）" % [o.text, o.cost]
 			if GameState.courage < o.cost:
@@ -439,6 +441,23 @@ func _apply_style() -> void:
 	sb.border_color = Color("#9a9a9a") if cold else Color("#e8a0bf")
 	_name.add_theme_color_override("font_color", Color("#555555") if cold else Color("#c2558a"))
 	_text.add_theme_color_override("default_color", Color("#2e2e2e") if cold else Color("#4a3b47"))
+	_apply_layout()
+
+
+## 手機版面：字放大、對話框加高加寬、選項按鈕放大（不是把電腦畫面縮小）
+func _apply_layout() -> void:
+	var touch := GameState.touch_ui()
+	_name.add_theme_font_size_override("font_size", 28 if touch else 22)
+	_text.add_theme_font_size_override("normal_font_size", 34 if touch else 26)
+	_box.offset_left = 24 if touch else 60
+	_box.offset_right = -24 if touch else -60
+	_box.offset_top = -252 if touch else -200
+	_box.offset_bottom = -16 if touch else -24
+	_choices.offset_left = -500 if touch else -360
+	_choices.offset_right = 500 if touch else 360
+	_choices.offset_top = -560 if touch else -420
+	_choices.offset_bottom = -268 if touch else -215
+	_choices.add_theme_constant_override("separation", 14 if touch else 8)
 
 
 func _style_button(b: Button) -> void:

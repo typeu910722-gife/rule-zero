@@ -380,7 +380,17 @@ func hint(text: String) -> String:
 	return text
 
 
+## 手機版面：觸控操作時字級加大、按鈕加大（force_touch_ui：截圖與測試用）
+var force_touch_ui := false
+
+
+func touch_ui() -> bool:
+	return force_touch_ui or _hint_device() == "touch"
+
+
 func _hint_device() -> String:
+	if force_touch_ui:
+		return "touch"
 	if last_device == "" and DisplayServer.is_touchscreen_available():
 		return "touch"
 	return last_device
