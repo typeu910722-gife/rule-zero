@@ -2,19 +2,19 @@ class_name DialogueParser
 extends RefCounted
 ## 解析 res://dialogue/*.txt 的對話腳本。語法見 docs/dialogue-format.md。
 
-const KNOWN_OPS := ["set", "unset", "sus", "conduct", "courage", "goto", "if", "end", "wait", "bg", "event", "sfx", "face", "bgm", "fx"]
-const KNOWN_BG := ["none", "black", "train", "dream", "grey_train", "white",
+const KNOWN_OPS := ["roll", "mem", "set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event", "idle", "sfx", "show", "scare",
+	# 第二章
+	"conduct", "bgm", "face"]
+const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bakery", "repair", "clocktower", "room_night", "hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2", "mem_sea", "mem_class", "mem_toilet", "mem_hospital", "nt_lulu", "nt_popo", "nt_tama", "nt_mochi", "nt_dog", "glove", "mayor_broken",
 	# 第二章：室內背景與 CG（見 dialogue.gd 的 BG_ART／CG_ART）
-	"classroom", "dining", "laundry", "treatment", "treatment_window", "dorm_night", "office", "platform",
+	"grey_train", "white",
+	"dining", "laundry", "treatment", "treatment_window", "dorm_night", "office",
 	"platform_negative", "fence", "incinerator", "graduation", "ending_grey", "ending_color",
 	"cg01_referral", "cg01_referral_stitch_04", "cg02_ticket", "cg02_ticket_ending", "cg03_arrival_pat",
 	"cg04_photo_hallway", "cg05_photo_mailbox", "cg06_photo_nirvana", "cg07_silhouette", "cg08_diary",
 	"cg09_clipboard", "cg10_platform_two", "cg11_popo_fence", "cg12_mochi_hug", "cg13_paper_plane",
 	"cg14_tiaoma_last", "cg15_mask_break", "cg16_conductor_photo", "cg17_dream_orphanage",
 	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all"]
-
-## @fx 可用的效果（scripts/fx/anomaly_fx.gd）
-const FX_NAMES := ["off", "dream", "mirror", "glitch", "flash"]
 
 var cmds: Array = []
 var labels := {}
@@ -115,13 +115,13 @@ func validate(known_events: Array) -> Array:
 				"bg":
 					if c.args.size() != 1 or not c.args[0] in KNOWN_BG:
 						out.append("%s 未知背景 %s" % [c.where, c.args])
-				"fx":
-					if c.args.is_empty() or not c.args[0] in FX_NAMES or (c.args[0] == "flash" and c.args.size() < 2):
-						out.append("%s @fx 參數錯誤 %s" % [c.where, c.args])
+				"show":
+					if c.args.size() != 1 or (c.args[0] != "none" and not ResourceLoader.exists("res://art/item_%s.png" % c.args[0])):
+						out.append("%s 找不到物件圖 %s" % [c.where, c.args])
 				"face":
 					if c.args.is_empty() or c.args.size() > 2:
 						out.append("%s @face 參數錯誤" % c.where)
-				"set", "unset", "sus", "conduct", "courage", "wait", "sfx":
+				"set", "unset", "add", "sus", "courage", "wait", "mem", "roll", "conduct":
 					if c.args.is_empty():
 						out.append("%s @%s 缺少參數" % [c.where, c.op])
 	return out

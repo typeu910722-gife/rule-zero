@@ -22,6 +22,7 @@
 | `@fx dream / mirror / off` | 畫面效果（`scripts/fx/anomaly_fx.gd`）：夢境褪色、鏡子顆粒、關掉。`@bg dream` 會自動套用夢境效果 |
 | `@fx glitch 0.5` / `@fx flash 文字` | 短暫的色差錯位（秒數）／文字在畫面中央閃一下。異常不配提示音、不解釋（GDD 5.5） |
 | `@event 名稱` | 交給程式處理的事件：`candy`、`board`、`mirror_stare`、`to_plaza` |
+| `@scare` | 驚悚的一瞬間：低沉的一聲＋畫面閃一下、色偏（0.3 秒） |
 | `{name}` | 替換成玩家目前的名字（拆下名牌時會變成「新朋友」） |
 | `// 註解` | 註解 |
 

@@ -220,7 +220,7 @@ func _draw_fallback() -> void:
 		var opts := {}
 		if i == _odd and round_no == 2:
 			opts["thread"] = true
-		Critter.draw(a, "puppy", Color("#a9a9a6"), 1.0, Vector2.ZERO, true, i == _odd and round_no == 1, false, opts)
+		Ch2Critter.draw(a, "puppy", Color("#a9a9a6"), 1.0, Vector2.ZERO, true, i == _odd and round_no == 1, false, opts)
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		if i == _odd and round_no == 1:
 			# 一隻眼睛是相機鏡頭

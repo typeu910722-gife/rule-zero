@@ -2,7 +2,8 @@ extends SceneTree
 ## 對話腳本檢查：godot --headless -s tests/lint_dialogue.gd
 
 const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", "fen_taken",
-	"lulu_appears", "mayor_shadow", "sew", "bread",
+	"lulu_appears", "mayor_shadow", "sew", "bread", "good_kid_station",
+	"jumpscare_fen", "jumpscare_mayor", "breakdown", "chase", "scissors", "mayor_falls", "conductor_enters", "night_train",
 	# 第二章
 	"report_card", "apology", "roll_list", "c2_take_models", "c2_dove_appears", "c2_fence_lineup",
 	"scrub", "find_1", "find_2", "find_3", "treatment_hold", "sneak", "photo_1", "photo_2", "photo_nirvana",

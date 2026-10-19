@@ -35,13 +35,4 @@ func _run() -> void:
 	await _shot("21_title_after_ch1")
 	t.queue_free()
 
-	var B = load("res://scripts/minigames/bread_knead.gd")
-	var b = B.new()
-	root.add_child(b)
-	b._running = true
-	b._t = 0.0
-	b.max_streak = 8
-	b._streak = 9
-	await create_timer(4.4).timeout
-	await _shot("22_bread")
 	quit()

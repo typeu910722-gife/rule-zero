@@ -134,7 +134,7 @@ func _finish() -> void:
 	done.emit()
 
 
-## 斑紋在畫面上的位置（對應 Critter.draw 的 zebra）
+## 斑紋在畫面上的位置（對應 Ch2Critter.draw 的 zebra）
 func _stripe_rect(k: int) -> Rect2:
 	if _art_tiaoma():
 		# 美術版：k / 2 是第幾條斑紋（stripe_01..03），k % 2 是上半／下半
@@ -274,7 +274,7 @@ func _draw_area() -> void:
 			a.draw_texture_rect_region(_tex["stripe_%02d" % (k / 2 + 1)], Rect2(TIAOMA_ORIGIN + src.position, src.size), src, Color(1, 1, 1, v))
 	else:
 		a.draw_set_transform(POS, 0.0, Vector2(SCALE, SCALE))
-		Critter.draw(a, "zebra", Color("#f4f4f2"), 1.0, Vector2.ZERO, false, false, false, {"stripes": 0})
+		Ch2Critter.draw(a, "zebra", Color("#f4f4f2"), 1.0, Vector2.ZERO, false, false, false, {"stripes": 0})
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		_draw_fallback_stripes()
 	# 曬衣夾：把條碼夾在洗衣板上
@@ -372,7 +372,7 @@ func _draw_fallback() -> void:
 	for k in 14:
 		a.draw_line(Vector2(POS.x - 220, POS.y - 290 + k * 23), Vector2(POS.x + 220, POS.y - 290 + k * 23), Color("#b9ae9e"), 3)
 	a.draw_set_transform(POS, 0.0, Vector2(SCALE, SCALE))
-	Critter.draw(a, "zebra", Color("#f4f4f2"), 1.0, Vector2.ZERO, false, false, false, {"stripes": 0})
+	Ch2Critter.draw(a, "zebra", Color("#f4f4f2"), 1.0, Vector2.ZERO, false, false, false, {"stripes": 0})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	_draw_fallback_stripes()
 	for side in [-1, 1]:

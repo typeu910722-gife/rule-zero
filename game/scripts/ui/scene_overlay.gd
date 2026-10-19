@@ -95,7 +95,7 @@ func _photo_hallway(r: Rect2) -> void:
 	# 白臉狐狸把書包倒進垃圾桶
 	var fox := r.position + Vector2(170, 380)
 	a.draw_set_transform(fox, 0.0, Vector2(2.6, 2.6))
-	Critter.draw(a, "fox", Color("#d9d6cf"), 1.0, Vector2(1, 0), true, false, false, {"pale": true})
+	Ch2Critter.draw(a, "fox", Color("#d9d6cf"), 1.0, Vector2(1, 0), true, false, false, {"pale": true})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	var bin := r.position + Vector2(300, 330)
 	a.draw_rect(Rect2(bin, Vector2(70, 80)), Color("#6e6a64"))
@@ -128,7 +128,7 @@ func _photo_mailbox(r: Rect2) -> void:
 	# 黑色刺蝟拿著一疊信
 	var hog := r.position + Vector2(270, 420)
 	a.draw_set_transform(hog, 0.0, Vector2(2.8, 2.8))
-	Critter.draw(a, "hedgehog", Color("#3a3836"), 1.0, Vector2(-0.5, 0), true, false, false, {"quills": 9})
+	Ch2Critter.draw(a, "hedgehog", Color("#3a3836"), 1.0, Vector2(-0.5, 0), true, false, false, {"quills": 9})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for k in 4:
 		var l := hog + Vector2(50 + k * 6, -90 - k * 6)
@@ -176,7 +176,7 @@ func _silhouette(r: Rect2) -> void:
 	a.draw_rect(Rect2(big + Vector2(-50, -330), Vector2(100, 330)), Color(0.35, 0.36, 0.4, 0.55))
 	a.draw_circle(big + Vector2(0, -370), 44, Color(0.35, 0.36, 0.4, 0.55))
 	var small := r.position + Vector2(190, r.size.y - 60)
-	Critter.ellipse(a, small, Vector2(78, 62), Color(0.35, 0.36, 0.4, 0.5))
+	Ch2Critter.ellipse(a, small, Vector2(78, 62), Color(0.35, 0.36, 0.4, 0.5))
 	a.draw_circle(small + Vector2(-40, -50), 34, Color(0.35, 0.36, 0.4, 0.5))
 	# 霧
 	for k in 30:

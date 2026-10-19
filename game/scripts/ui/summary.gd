@@ -9,21 +9,36 @@ const HOLD := 4.0
 func _ready() -> void:
 	layer = 60
 	var bg := ColorRect.new()
-	bg.color = Color("#2a2230")
+	bg.color = Color("#1b1620")
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	var pic := TextureRect.new()
+	pic.texture = load("res://art/ui_chapter_end_bg.jpg")
+	pic.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	pic.modulate = Color(1, 1, 1, 1)
+	add_child(pic)
+	var shade := ColorRect.new()
+	shade.color = Color(0.1, 0.06, 0.1, 0.12)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(shade)
 	var t := RichTextLabel.new()
 	t.position = Vector2(340, 150)
 	t.size = Vector2(600, 420)
 	t.bbcode_enabled = true
-	t.add_theme_color_override("default_color", Color("#f3e9f1"))
+	t.add_theme_color_override("default_color", Color("#4a3b47"))
 	t.add_theme_font_size_override("normal_font_size", 24)
 	var found := GameState.secrets_found()
-	var stars := "★".repeat(found.size()) + "☆".repeat(GameState.secret_defs().size() - found.size())
+	var stars := "★".repeat(found.size()) + "☆".repeat(GameState.SECRETS.size() - found.size())
 	var txt := "[center][font_size=36]第一章　歡迎回來　—　完[/font_size][/center]\n\n\n"
-	txt += "發現的秘密　　%s　(%d / %d)\n\n" % [stars, found.size(), GameState.secret_defs().size()]
-	txt += "帶走的線頭　　%d 條\n\n" % GameState.threads_earned()
-	txt += "懷疑值　　　　%d" % GameState.suspicion
+	txt += "發現的秘密　　%s　(%d / %d)\n" % [stars, found.size(), GameState.SECRETS.size()]
+	var names: Array = found.map(func(k): return GameState.SECRETS[k])
+	if not names.is_empty():
+		txt += "[font_size=20]%s[/font_size]\n" % "、".join(names)
+	txt += "\n鎮長懷疑值　　%d / 100" % GameState.suspicion
+	txt += "\n記憶碎片　　　%d / 10" % GameState.tuft_count()
+	txt += "\n用了幾輪　　　%d 輪" % (GameState.loop_number() - GameState.FIRST_LOOP + 1)
 	t.text = txt
 	add_child(t)
 

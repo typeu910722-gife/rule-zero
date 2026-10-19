@@ -137,7 +137,7 @@ func _draw_art(bg: Texture2D, dove: Texture2D, coat: Texture2D) -> void:
 		a.draw_texture_rect(ptex, Rect2(pip + Vector2(-68, -150), Vector2(136, 153)), false)
 	else:
 		a.draw_set_transform(pip, 0.0, Vector2(1.8, 1.8))
-		Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
+		Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
 			{"grey_patch": GameState.has("c2_grey_patch")})
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if caught:
@@ -163,11 +163,11 @@ func _draw_procedural() -> void:
 	# 和平鴿（只穿襯衫，背對你）
 	var facing := _state == "look"
 	a.draw_set_transform(Vector2(760, 640), 0.0, Vector2(2.4, 2.4))
-	Critter.draw_dove(a, 1.0, false, 1.0)
+	Ch2Critter.draw_dove(a, 1.0, false, 1.0)
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if not facing:
 		# 背影：用頭髮蓋住面具
-		Critter.ellipse(a, Vector2(760, 640) + Vector2(0, -166) * 2.4, Vector2(17, 19) * 2.4, Color("#1d1d1d"))
+		Ch2Critter.ellipse(a, Vector2(760, 640) + Vector2(0, -166) * 2.4, Vector2(17, 19) * 2.4, Color("#1d1d1d"))
 	if _state == "warn":
 		a.draw_string(f, Vector2(700, 160), "……", HORIZONTAL_ALIGNMENT_CENTER, 120, 34, Color("#333333"))
 	if facing:
@@ -177,7 +177,7 @@ func _draw_procedural() -> void:
 	# 小布
 	var pip := START.lerp(GOAL, _p)
 	a.draw_set_transform(pip, 0.0, Vector2(1.8, 1.8))
-	Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
+	Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
 		{"grey_patch": GameState.has("c2_grey_patch")})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if caught:

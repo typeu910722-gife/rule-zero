@@ -329,7 +329,7 @@ func _draw_fallback() -> void:
 	a.draw_rect(Rect2(ORIGIN + Vector2(-200, 10), Vector2(400, 30)), Color("#bdbdbd"))
 	var shake := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 10.0 * _zap
 	a.draw_set_transform(ORIGIN + shake, 0.0, Vector2(SCALE, SCALE))
-	Critter.draw(a, "hedgehog", Color("#3a3a3a"), 1.0, Vector2.ZERO, _smile > 0.4, false, false, {"quills": 0})
+	Ch2Critter.draw(a, "hedgehog", Color("#3a3a3a"), 1.0, Vector2.ZERO, _smile > 0.4, false, false, {"quills": 0})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	var head := ORIGIN + Vector2(0, -24) * SCALE + shake
 	for k in quills:

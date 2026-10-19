@@ -1,37 +1,48 @@
 extends Node
-## 兩章共用的聲音管理（Autoload：Audio）。
-## - 三條 Audio Bus：Music（配樂）、SFX（音效、環境音）、底下都接 Master。
-## - 配樂切換時淡出舊的、淡入新的。
-## - 音量設定（0～100%）存在跨周目資料 meta.json 的 "volume"。
+## 音量設定與第二章的配樂（Autoload：Audio）。
+## - 音量（0～100%）存在跨周目資料 meta.json 的 "volume"：Music（配樂、環境音）、SFX（音效）。
+## - 不新增 Audio Bus：Godot 4.3 網頁版執行中才新增的 bus 會沒有聲音（見 sound.gd），
+##   所以音量直接加在每個播放器的 volume_db 上（music_db()／sfx_db()）。
+## - 第一章的聲音由 Sound 負責，也會套用這裡的音量；第二章的配樂由這裡播放（淡入淡出）。
 
-const BUSES := ["Music", "SFX"]
-const DEFAULT_VOLUME := {"Master": 1.0, "Music": 0.8, "SFX": 0.9}
+signal volume_changed
+
+const DEFAULT_VOLUME := {"Music": 0.8, "SFX": 0.9}
 const FADE := 0.8
+const SILENT := -60.0
 
 var _music: AudioStreamPlayer
 var _music_path := ""
+var _music_db := 0.0
 var _fade: Tween
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	for bus in BUSES:
-		if AudioServer.get_bus_index(bus) == -1:
-			AudioServer.add_bus()
-			var idx := AudioServer.bus_count - 1
-			AudioServer.set_bus_name(idx, bus)
-			AudioServer.set_bus_send(idx, "Master")
 	_music = AudioStreamPlayer.new()
-	_music.bus = "Music"
+	_music.volume_db = SILENT
 	add_child(_music)
-	apply_volume()
 
 
-## 播放配樂（res:// 路徑）。同一首不會重頭播；"" 或找不到檔案 → 淡出停止。
+## 這個類別的音量（dB），加在播放器原本的音量上；0% 時幾乎無聲
+func music_db() -> float:
+	return _to_db(get_volume("Music"))
+
+
+func sfx_db() -> float:
+	return _to_db(get_volume("SFX"))
+
+
+func _to_db(v: float) -> float:
+	return SILENT if v <= 0.001 else linear_to_db(v)
+
+
+## 播放第二章配樂（res:// 路徑）。同一首不會重頭播；"" 或找不到檔案 → 淡出停止。
 func play_music(path: String, loop := true, volume_db := 0.0) -> void:
 	if path == _music_path and _music.playing:
 		return
 	_music_path = path
+	_music_db = volume_db
 	var stream: AudioStream = null
 	if path != "" and ResourceLoader.exists(path):
 		stream = load(path)
@@ -41,15 +52,15 @@ func play_music(path: String, loop := true, volume_db := 0.0) -> void:
 		_fade.kill()
 	_fade = create_tween()
 	if _music.playing:
-		_fade.tween_property(_music, "volume_db", -40.0, FADE * 0.5)
+		_fade.tween_property(_music, "volume_db", SILENT, FADE * 0.5)
 	_fade.tween_callback(func():
 		_music.stop()
 		if stream:
 			_music.stream = stream
-			_music.volume_db = -40.0
+			_music.volume_db = SILENT
 			_music.play())
 	if stream:
-		_fade.tween_property(_music, "volume_db", volume_db, FADE)
+		_fade.tween_property(_music, "volume_db", volume_db + music_db(), FADE)
 
 
 func stop_music() -> void:
@@ -61,24 +72,16 @@ func music_path() -> String:
 
 
 ## 音量 0.0～1.0
-func get_volume(bus: String) -> float:
+func get_volume(kind: String) -> float:
 	var v: Dictionary = GameState.meta.get("volume", {})
-	return clampf(float(v.get(bus, DEFAULT_VOLUME.get(bus, 1.0))), 0.0, 1.0)
+	return clampf(float(v.get(kind, DEFAULT_VOLUME.get(kind, 1.0))), 0.0, 1.0)
 
 
-func set_volume(bus: String, value: float) -> void:
+func set_volume(kind: String, value: float) -> void:
 	var v: Dictionary = GameState.meta.get("volume", {}).duplicate()
-	v[bus] = clampf(value, 0.0, 1.0)
+	v[kind] = clampf(value, 0.0, 1.0)
 	GameState.meta["volume"] = v
-	apply_volume()
 	GameState.save_meta()
-
-
-func apply_volume() -> void:
-	for bus in DEFAULT_VOLUME:
-		var idx := AudioServer.get_bus_index(bus)
-		if idx == -1:
-			continue
-		var value := get_volume(bus)
-		AudioServer.set_bus_mute(idx, value <= 0.001)
-		AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(value, 0.001)))
+	if _music.playing and not (_fade and _fade.is_running()):
+		_music.volume_db = _music_db + music_db()
+	volume_changed.emit()

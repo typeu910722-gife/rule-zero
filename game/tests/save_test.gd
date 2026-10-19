@@ -62,11 +62,19 @@ func _run() -> void:
 
 	print("[聲音]")
 	var audio := root.get_node("Audio")
-	_check(AudioServer.get_bus_index("Music") != -1 and AudioServer.get_bus_index("SFX") != -1, "有 Music、SFX 兩條 bus")
+	_check(AudioServer.bus_count == 1, "沒有在執行中新增 bus（Godot 4.3 網頁版新增的 bus 會沒聲音）")
 	audio.set_volume("Music", 0.5)
-	_check(absf(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music")) - linear_to_db(0.5)) < 0.01, "配樂 50% 套用到 bus")
+	_check(absf(audio.music_db() - linear_to_db(0.5)) < 0.01, "配樂 50%：音量 -6dB")
 	audio.set_volume("SFX", 0.0)
-	_check(AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")), "音效 0% ＝ 靜音")
+	_check(audio.sfx_db() <= -59.0, "音效 0% ＝ 幾乎無聲")
+	audio.set_volume("SFX", 0.5)
+	var snd := root.get_node("Sound")
+	snd.sfx("interact")
+	var hit := false
+	for p in snd._sfx_pool:
+		if p.playing and absf(p.volume_db - (-4.0 + linear_to_db(0.5))) < 0.01:
+			hit = true
+	_check(hit, "第一章的音效也套用音量設定")
 	gs.meta = {}
 	gs.load_meta()
 	_check(absf(audio.get_volume("Music") - 0.5) < 0.01, "音量設定存在 meta.json，重開還在")

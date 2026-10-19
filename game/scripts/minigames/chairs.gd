@@ -214,7 +214,7 @@ func _draw_art() -> void:
 		a.draw_texture_rect(dt, Rect2(DOVE_POS - Vector2(dt.get_width() * 0.5, dt.get_height() - 6) * ds, dt.get_size() * ds), false)
 	else:
 		a.draw_set_transform(Vector2(1000, 640), 0.0, Vector2(1.4, 1.4))
-		Critter.draw_dove(a, 1.0)
+		Ch2Critter.draw_dove(a, 1.0)
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if _phase == "music":
 		_sticker(a, _sticker_top, Vector2(640, 108), "♪ ～ ♪ ～", 30, Color("#999999"))
@@ -243,7 +243,7 @@ func _draw_kid(a: Control, p: Vector2, id: String, dir: int) -> void:
 		a.draw_texture_rect(t, Rect2(p - Vector2(80, 152) * s, t.get_size() * s), false)
 	else:
 		a.draw_set_transform(p + Vector2(0, -26), 0.0, Vector2(1.6, 1.6))
-		Critter.draw(a, SPECIES[id], COLORS[id], 1.0, Vector2.ZERO, id != "tiaoma", false, id == "pip",
+		Ch2Critter.draw(a, SPECIES[id], COLORS[id], 1.0, Vector2.ZERO, id != "tiaoma", false, id == "pip",
 			{"stripes": 1, "quills": 1 if GameState.has("xiaoji_last_quill") else 0, "sewn": not GameState.has("reported_gaga"),
 			"grey_patch": id == "pip" and GameState.has("c2_grey_patch")})
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
@@ -279,14 +279,14 @@ func _draw_fallback() -> void:
 		if _phase == "result" and id == out:
 			p = Vector2(1120, 600)
 		a.draw_set_transform(p, 0.0, Vector2(1.6, 1.6))
-		Critter.draw(a, SPECIES[id], COLORS[id], 1.0, Vector2.ZERO, id != "tiaoma", false, id == "pip",
+		Ch2Critter.draw(a, SPECIES[id], COLORS[id], 1.0, Vector2.ZERO, id != "tiaoma", false, id == "pip",
 			{"stripes": 1, "quills": 1 if GameState.has("xiaoji_last_quill") else 0, "sewn": not GameState.has("reported_gaga"),
 			"grey_patch": id == "pip" and GameState.has("c2_grey_patch")})
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		a.draw_string(f, p + Vector2(-60, 34), NAMES[id], HORIZONTAL_ALIGNMENT_CENTER, 120, 18, Color("#444444"))
 	# 和平鴿在圓圈中間打拍子
 	a.draw_set_transform(Vector2(1000, 640), 0.0, Vector2(1.4, 1.4))
-	Critter.draw_dove(a, 1.0)
+	Ch2Critter.draw_dove(a, 1.0)
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if _phase == "music":
 		a.draw_string(f, Vector2(0, 110), "♪ ～ ♪ ～", HORIZONTAL_ALIGNMENT_CENTER, 1280, 30, Color("#999999"))

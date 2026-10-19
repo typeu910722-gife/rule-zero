@@ -51,6 +51,9 @@ func _run() -> void:
 	await _do("fen")
 	_check(main.phase == "day1_explore", "拜訪 1 處後仍在探索")
 	await _do("clocktower")
+	_check(main.phase == "day1_explore", "拜訪 2 處還不夠（要 4 處）")
+	await _do("mayor_door")
+	await _do("repair_room")
 	await _wait_phase("day1_night")
 	_check(gs.has("lulu_slip"), "傍晚露露叫錯名字")
 	await _do("mirror", [1])
@@ -65,10 +68,15 @@ func _run() -> void:
 	for i in 10:
 		await process_frame
 	_check(gs.has("tag_off") and not gs.has("tag_on") and gs.courage == 1, "拆下名牌")
-	await _do("lulu")
-	_check(gs.has("bread_done") and not gs.has("lulu_song"), "揉麵團（沒有連續 Perfect → 沒有哼歌）")
+	await _do("lulu", [1])
+	_check(gs.has("bread_done") and not gs.has("lulu_song"), "揉麵團（照自己的速度 → 沒有哼歌）")
 	await _do("popo")
-	_check(gs.has("letter_done") and gs.has("blank_letter"), "拿到沒有收件人的信")
+	_check(gs.has("q_letters") and gs.has("blank_letter") and not gs.has("letter_done"), "波波給三封信＋一封沒有收件人的信")
+	await _do("lulu_mailbox")
+	await _do("mayor_door")
+	await _do("mirror_house")
+	await _do("popo")
+	_check(gs.has("letter_done") and gs.has("mirror_letter"), "三封信送完，鏡之屋回信了")
 	_check(gs.has("fen_invited") and main.phase == "day2_evening", "Fen 的邀請")
 	await _do("popo", [0])
 	_check(gs.has("asked_past") and gs.courage == 0, "問波波「以前」")
@@ -90,26 +98,32 @@ func _run() -> void:
 	await _do("forest_bow")
 	_check(main.phase == "forest", "只調查 2 個還不會觸發鐘聲")
 	await _do("forest_tags", [0])
-	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：第四十七個小布 → 衝出去")
-	_check(main.phase == "ended" and gs.has("chapter2"), "修理 → 結算 → 第二章開場")
-	_check(int(gs.meta.chapters_done) == 1, "章節完成：標題畫面多一個戳章")
-	_check(gs.chapter == 2 and gs.checkpoint == "c2_start" and gs.has_save(), "第二章開場後存檔：繼續會從第二章開始")
+	_check(gs.has("heard_47") and gs.has("brave_end"), "Fen：這是第幾次了 → 衝出去")
+	_check(main.phase == "ended" and gs.has("loop_done") and gs.meta.last_ending == "brave", "修理 → 結局③勇敢 → 這一輪結束")
+	_check(not gs.has_save() and int(gs.meta.loops_done) == 1 and gs.remembers("knows_47"), "輪迴：刪除當輪存檔、記得「第幾次了」")
 	_check(gs.has("found_sheep") and gs.has("found_lulu_bow"), "線索記進日記")
 	print("  秘密：", gs.secrets_found(), "　懷疑值：", gs.suspicion)
 
 	print("[第二天晚上：偷溜出門路線]")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	await _wait_phase("day1_explore")
 	await _do("lulu")
 	await _do("popo")
+	await _do("mayor_door")
+	await _do("repair_room")
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
 	await _do("lulu")
+	await _do("popo")
+	await _do("lulu_mailbox")
+	await _do("mayor_door")
+	await _do("mirror_house")
 	await _do("popo")
 	await _do("bed", [0])
 	await _wait_phase("night_out")
@@ -127,13 +141,14 @@ func _run() -> void:
 	_check(main.phase == "forest", "沒看到小綿羊之前不會觸發鐘聲")
 	await _do("forest_sheep", [1])
 	_check(gs.has("lulu_betrayal") and not gs.has("brave_end"), "躲著不動 → 露露告發")
-	_check(main.phase == "ended" and gs.has("chapter2"), "第二章開場")
+	_check(main.phase == "ended" and gs.meta.last_ending == "betrayed", "結局④被出賣")
 	for i in 5:
 		await process_frame
 
 	print("[存檔與繼續、揉麵團秘密]")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
@@ -141,12 +156,15 @@ func _run() -> void:
 	_check(gs.has_save() and gs.checkpoint == "day1_explore", "第一天：自動存檔")
 	await _do("lulu")
 	await _do("popo")
+	await _do("mayor_door")
+	await _do("repair_room")
 	await _wait_phase("day1_night")
 	await _do("bed", [0])
 	await _wait_phase("day2_explore")
 	_check(gs.checkpoint == "day2_explore", "第二天早上：自動存檔")
 	main.queue_free()
 	await process_frame
+	gs.meta = {"runs": 0, "chapters_done": 0}
 	gs.reset()
 	gs.resume_on_start = true
 	main = load("res://scenes/main.tscn").instantiate()
@@ -154,9 +172,8 @@ func _run() -> void:
 	await _wait_phase("day2_explore")
 	gs.resume_on_start = false
 	_check(gs.day == 2 and gs.has("visited_lulu") and gs.has("lulu_slip"), "讀檔：回到第二天早上，旗標都還在")
-	gs.fast_rhythm_streak = 8
-	await _do("lulu")
-	_check(gs.has("lulu_song"), "連續 8 個 Perfect → 露露哼另一首歌（秘密）")
+	await _do("lulu", [0])
+	_check(gs.has("lulu_song"), "跟著露露的拍子揉 → 露露哼另一首歌（秘密）")
 	gs.delete_save()
 
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])

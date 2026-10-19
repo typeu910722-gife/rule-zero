@@ -159,7 +159,7 @@ func _draw_procedural() -> void:
 	a.draw_rect(Rect2(hog + Vector2(-90, 0), Vector2(180, 24)), Color("#9a9a9a"))
 	a.draw_set_transform(hog, 0.0, Vector2(4.0, 4.0))
 	var c := Color("#2f2f2f").lerp(Color("#d6d6d2"), 1.0 - color)
-	Critter.draw(a, "hedgehog", c, 1.0, Vector2.ZERO, _i < 5, false, false, {"quills": 5})
+	Ch2Critter.draw(a, "hedgehog", c, 1.0, Vector2.ZERO, _i < 5, false, false, {"quills": 5})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for k in 3:
 		a.draw_line(hog + Vector2(-80, -60 + k * 22), hog + Vector2(80, -60 + k * 22), Color("#7a6a5a"), 4)

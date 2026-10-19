@@ -256,7 +256,7 @@ func _draw_area() -> void:
 	else:
 		a.draw_rect(Rect2(ZZ_POS + Vector2(-70, -10), Vector2(140, 16)), Color("#8d8d8d"))
 		a.draw_set_transform(ZZ_POS + shake + zz_lift, 0.0, Vector2(3.0, 3.0))
-		Critter.draw(a, "hippo", Color("#9c9c9c") if _jolt < 0.5 or not zz_hit else Color("#f4f4f2"), 1.0, Vector2(0.5, 0), false)
+		Ch2Critter.draw(a, "hippo", Color("#9c9c9c") if _jolt < 0.5 or not zz_hit else Color("#f4f4f2"), 1.0, Vector2(0.5, 0), false)
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		for side in [-1, 1]:
 			a.draw_arc(ZZ_POS + shake + zz_lift + Vector2(side * 52, -40), 10, 0, TAU, 16, Color("#5a5a5a"), 4)
@@ -270,7 +270,7 @@ func _draw_area() -> void:
 	if _phase == "hold" and (Input.is_action_pressed("interact") or _mouse_down):
 		pip_shake = Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 8.0
 	a.draw_set_transform(PIP_POS + pip_shake, 0.0, Vector2(2.6, 2.6))
-	Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(-0.5, 0), _phase == "play", false, true,
+	Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(-0.5, 0), _phase == "play", false, true,
 		{"grey_patch": GameState.has("c2_grey_patch")})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if took_shock:

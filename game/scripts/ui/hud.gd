@@ -10,25 +10,44 @@ var show_debug := false
 
 var _status: Label
 var _objective: Label
+var _status_panel: PanelContainer
 var _prompt: Label
+var _toast: PanelContainer
+var _toast_text: Label
+var _toast_queue: Array = []
+var _toast_busy := false
+## 今天要做的事（main.gd 設定）：[[名稱, 是否完成], …]
+var checklist: Array = []
 var _menu: PanelContainer
 var _menu_text: RichTextLabel
 var _tag_button: Button
-var _menu_hint: Label
-## 第二章的狀態框（外包美術；缺檔時用原本的文字列）
-const HUD_TEX := "res://art/ch2/ui/ch2_ui_05_hud.png"
-const STAR_ON_TEX := "res://art/ch2/ui/ch2_ui_05_star_bright.png"
-const STAR_OFF_TEX := "res://art/ch2/ui/ch2_ui_05_star_dark.png"
-const FRAME_POS := Vector2(16, 10)
-var _frame: Control
-var _status_on := true
 
 
 func _ready() -> void:
 	layer = 20
-	_status = _label(Vector2(24, 18), 24, Color("#6d597a"))
-	_objective = _label(Vector2(24, 54), 18, Color("#8e7d8a"))
-	_prompt = _label(Vector2(0, 0), 20, Color("#ffffff"))
+	# 左上角：半透明的小卡片墊在字後面，地圖再花也看得清楚
+	_status_panel = PanelContainer.new()
+	_status_panel.position = Vector2(14, 10)
+	var psb := StyleBoxFlat.new()
+	psb.bg_color = Color(1.0, 0.98, 0.95, 0.86)
+	psb.border_color = Color("#e8c4d4")
+	psb.set_border_width_all(2)
+	psb.set_corner_radius_all(14)
+	psb.content_margin_left = 16
+	psb.content_margin_right = 18
+	psb.content_margin_top = 8
+	psb.content_margin_bottom = 10
+	_status_panel.add_theme_stylebox_override("panel", psb)
+	_status_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_status_panel)
+	var sv := VBoxContainer.new()
+	sv.add_theme_constant_override("separation", 2)
+	_status_panel.add_child(sv)
+	_status = _label(Vector2.ZERO, 22, Color("#6d597a"), sv)
+	_objective = _label(Vector2.ZERO, 17, Color("#7a6576"), sv)
+	_objective.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	_objective.custom_minimum_size = Vector2(380, 0)
+	_prompt = _label(Vector2(0, 0), 22, Color("#ffffff"))
 	_prompt.anchor_left = 0.5
 	_prompt.anchor_right = 0.5
 	_prompt.anchor_top = 1.0
@@ -39,48 +58,85 @@ func _ready() -> void:
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.add_theme_color_override("font_outline_color", Color("#b56576"))
 	_prompt.add_theme_constant_override("outline_size", 6)
-	_frame = Control.new()
-	_frame.position = FRAME_POS
-	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_frame.draw.connect(_draw_frame)
-	add_child(_frame)
-	move_child(_frame, 0)
 	_build_menu()
+	_build_toast()
 	GameState.changed.connect(refresh)
 	refresh()
 
 
-func _label(pos: Vector2, font_size: int, col: Color) -> Label:
+func _label(pos: Vector2, font_size: int, col: Color, parent: Node = null) -> Label:
 	var l := Label.new()
 	l.position = pos
 	l.add_theme_font_size_override("font_size", font_size)
 	l.add_theme_color_override("font_color", col)
 	l.add_theme_color_override("font_outline_color", Color(1, 1, 1, 0.9))
 	l.add_theme_constant_override("outline_size", 5)
-	add_child(l)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	(parent if parent else self).add_child(l)
 	return l
+
+
+## 畫面上方中間跳出的小提示（第一次看到某樣東西時），幾秒後自己消失
+func toast(text: String, seconds := 5.0) -> void:
+	_toast_queue.append([text, seconds])
+	if not _toast_busy:
+		_next_toast()
+
+
+func _next_toast() -> void:
+	if _toast_queue.is_empty():
+		_toast_busy = false
+		return
+	_toast_busy = true
+	var item: Array = _toast_queue.pop_front()
+	_toast_text.text = item[0]
+	_toast.visible = true
+	_toast.modulate.a = 0.0
+	_toast.reset_size()
+	_toast.position = Vector2(640 - _toast.size.x / 2, 18)
+	if GameState.fast:
+		_toast.visible = false
+		_next_toast()
+		return
+	var tw := create_tween()
+	tw.tween_property(_toast, "modulate:a", 1.0, 0.25)
+	tw.tween_interval(item[1])
+	tw.tween_property(_toast, "modulate:a", 0.0, 0.4)
+	await tw.finished
+	_toast.visible = false
+	_next_toast()
+
+
+func _build_toast() -> void:
+	_toast = PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("#4a3b47", 0.88)
+	sb.set_corner_radius_all(16)
+	sb.content_margin_left = 22
+	sb.content_margin_right = 22
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 12
+	_toast.add_theme_stylebox_override("panel", sb)
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.visible = false
+	add_child(_toast)
+	_toast_text = Label.new()
+	_toast_text.add_theme_font_size_override("font_size", 19)
+	_toast_text.add_theme_color_override("font_color", Color("#fff3f8"))
+	_toast_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.add_child(_toast_text)
 
 
 func refresh() -> void:
 	var day_names := ["", "第一天", "第二天", "第三天"]
 	var stars := "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)
 	_status.text = "%s　｜　膽量 %s" % [day_names[mini(GameState.day, 3)], stars]
-	if GameState.chapter == 2:
-		_status.text += "　｜　操行 %d" % GameState.conduct
-	var cold := GameState.chapter == 2
-	_status.add_theme_color_override("font_color", Color("#444444") if cold else Color("#6d597a"))
-	_objective.add_theme_color_override("font_color", Color("#6a6a6a") if cold else Color("#8e7d8a"))
+	_status.text += "　｜　記憶碎片 %d / 10" % GameState.tuft_count()
 	if show_debug:
-		_status.text += "　｜　[debug] 懷疑值 %d" % GameState.suspicion
+		_status.text += "　｜　[debug] 鎮長懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
-	# 第二章：用狀態框取代文字列（文字仍照舊更新）
-	var framed := _use_frame()
-	_frame.visible = framed and _status_on
-	_status.visible = _status_on and not framed
-	_objective.position.y = 96 if framed else 54
-	_frame.queue_redraw()
+	_objective.visible = _status_panel.visible and GameState.objective != ""
 	if menu_open:
-		_menu_hint.text = GameState.hint("Tab / Esc 關閉")
 		_fill_menu()
 
 
@@ -89,63 +145,87 @@ func set_prompt(text: String) -> void:
 
 
 func set_status_visible(v: bool) -> void:
-	_status_on = v
-	_status.visible = v and not _use_frame()
-	_frame.visible = v and _use_frame()
-	_objective.visible = v
-
-
-func _use_frame() -> bool:
-	return GameState.chapter == 2 and ResourceLoader.exists(HUD_TEX)
-
-
-## 狀態框（原圖座標）：「第」「天」之間寫日子，中間是膽量的星星，「操行」後面寫分數
-func _draw_frame() -> void:
-	if not _use_frame():
-		return
-	var f: Font = GameState.font
-	var ink := Color("#444444")
-	_frame.draw_texture(_tex(HUD_TEX), Vector2.ZERO)
-	var nums := ["", "一", "二", "三"]
-	_frame.draw_string(f, Vector2(42, 46), nums[mini(GameState.day, 3)], HORIZONTAL_ALIGNMENT_CENTER, 26, 21, ink)
-	_frame.draw_string(f, Vector2(118, 46), "膽量", HORIZONTAL_ALIGNMENT_LEFT, -1, 21, ink)
-	for k in GameState.MAX_COURAGE:
-		var on := k < GameState.courage
-		var path := STAR_ON_TEX if on else STAR_OFF_TEX
-		var r := Rect2(170 + k * 38, 19, 36, 36)
-		if ResourceLoader.exists(path):
-			_frame.draw_texture_rect(_tex(path), r, false)
-		else:
-			_frame.draw_string(f, r.position + Vector2(4, 28), "★" if on else "☆", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, ink)
-	_frame.draw_string(f, Vector2(424, 46), "%d" % GameState.conduct, HORIZONTAL_ALIGNMENT_LEFT, -1, 21, ink)
-	if show_debug:
-		_frame.draw_string(f, Vector2(540, 46), "[debug] 懷疑值 %d" % GameState.suspicion, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, ink)
+	_status_panel.visible = v
+	_objective.visible = v and GameState.objective != ""
 
 
 func toggle_menu(allow_tag: bool) -> void:
 	menu_open = not menu_open
 	_menu.visible = menu_open
+	Sound.sfx("menu")
 	_tag_button.visible = allow_tag
 	if menu_open:
-		_menu_hint.text = GameState.hint("Tab / Esc 關閉")
 		_fill_menu()
 		_tag_button.grab_focus.call_deferred()
 
 
 func _fill_menu() -> void:
 	var t := "[font_size=28]小布的日記[/font_size]\n\n"
-	t += "名字：%s\n膽量：%d / %d\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE]
-	if GameState.chapter == 2:
-		t += "操行：%d 分\n" % GameState.conduct
-	t += "\n[font_size=22]發現的事情[/font_size]\n"
-	var defs := GameState.secret_defs()
-	for k in defs:
-		t += ("・%s\n" % defs[k]) if GameState.has(k) else "・？？？\n"
+	t += "名字：%s\n膽量：%d / %d\n車票上的戳章：%d 個\n\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE,
+		GameState.loop_number() - GameState.FIRST_LOOP + 1]
+	# 記憶深度：每走完一輪多想起一層
+	var depth := GameState.memory_depth()
+	if depth > 0:
+		var dots := "●".repeat(depth) + "○".repeat(GameState.MAX_DEPTH - depth)
+		t += "[color=#7b4fa0]記憶　%s　%s[/color]\n\n" % [dots, GameState.DEPTH_NAMES[depth]]
+	# 今天要做的事
+	if GameState.objective != "":
+		t += "[font_size=22]今天要做的事[/font_size]\n%s\n" % GameState.objective.split("\n")[0]
+		for item in checklist:
+			t += ("[color=#9bb59a]　✓ %s[/color]\n" % item[0]) if item[1] else ("　□ %s\n" % item[0])
+		t += "\n"
+	# 收到的東西
+	var gifts: Array = GameState.GIFTS.keys().filter(func(k): return GameState.has(k))
+	if not gifts.is_empty():
+		t += "[font_size=22]口袋裡的東西[/font_size]\n"
+		for k in gifts:
+			t += "・%s\n" % GameState.GIFTS[k]
+		t += "\n"
+	# 進行中的委託（支線）
+	var quests := []
+	if GameState.has("q_letters") and not GameState.has("letter_done"):
+		quests.append("波波：送三封信（%d / 3）" % int(GameState.flags.get("letters", 0)))
+	if GameState.has("q_mochi") and not GameState.has("q_mochi_done"):
+		quests.append("麻糬：問大家他本來的名字（%d / 3）" % mini(int(GameState.flags.get("mq_count", 0)), 3))
+	if GameState.has("q_tama") and not GameState.has("tama_done"):
+		quests.append("小玉：找回三顆糖果（%d / 3）" % int(GameState.flags.get("candies", 0)))
+	if GameState.has("q_notes") and not GameState.has("notes_returned"):
+		quests.append("Fen：撿回被吹散的筆記（%d / 3）" % int(GameState.flags.get("notes", 0)))
+	if not quests.is_empty():
+		t += "[font_size=22]委託[/font_size]\n"
+		for q in quests:
+			t += "・%s\n" % q
+		t += "\n"
+	t += "[font_size=22]發現的事情[/font_size]\n"
+	for k in GameState.SECRETS:
+		t += ("・%s\n" % GameState.SECRETS[k]) if GameState.has(k) else "・？？？\n"
 	var clues: Array = GameState.CLUES.keys().filter(func(k): return GameState.has(k))
 	if not clues.is_empty():
 		t += "\n[font_size=22]記下的事[/font_size]\n"
 		for k in clues:
 			t += "・%s\n" % GameState.CLUES[k]
+	# 記憶碎片（棉花）：跨輪保留
+	var tufts: Array = GameState.meta.get("tufts", [])
+	t += "\n[font_size=22][color=#c2558a]記憶碎片　%d / 10[/color][/font_size]\n" % tufts.size()
+	for k in GameState.TUFT_TEXT:
+		if k in tufts:
+			t += "[color=#c2558a]・%s[/color]\n" % GameState.TUFT_TEXT[k]
+	# 想起來的事：「遙」的過去，每一層一頁
+	var pages: Array = GameState.STORY_TEXT.keys().filter(func(k): return GameState.remembers(k))
+	if not pages.is_empty():
+		t += "\n[font_size=22][color=#3f6f8f]想起來的事　%d / %d[/color][/font_size]\n" % [pages.size(), GameState.STORY_TEXT.size()]
+		for k in pages:
+			t += "[color=#3f6f8f]・%s[/color]\n" % GameState.STORY_TEXT[k]
+	# 上一輪記下的事：跨輪保留，但被修理過的那幾頁被剪掉了
+	var past: Array = GameState.meta.get("past_clues", [])
+	if GameState.is_repeat() and not past.is_empty():
+		var cut: Array = GameState.meta.get("cut_clues", [])
+		t += "\n[font_size=22][color=#7b4fa0]上一輪記得的事[/color][/font_size]\n"
+		for k in past:
+			if k in cut:
+				t += "[color=#b8aab4]・（這一頁被剪掉了一半）%s……[/color]\n" % GameState.CLUES[k].left(4)
+			else:
+				t += "[color=#7b4fa0]・%s[/color]\n" % GameState.CLUES[k]
 	_menu_text.text = t
 	if GameState.has("tag_on"):
 		_tag_button.text = "★ 拆下名牌　（違反守則 5・膽量 -1）"
@@ -157,15 +237,10 @@ func _fill_menu() -> void:
 
 func _build_menu() -> void:
 	_menu = PanelContainer.new()
-	_menu.position = Vector2(740, 30)
-	_menu.custom_minimum_size = Vector2(500, 560)
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("#fffaf3")
-	sb.border_color = Color("#cdb4db")
-	sb.set_border_width_all(4)
-	sb.set_corner_radius_all(16)
-	sb.set_content_margin_all(24)
-	_menu.add_theme_stylebox_override("panel", sb)
+	_menu.position = Vector2(690, 10)
+	_menu.custom_minimum_size = Vector2(570, 700)
+	# 日記本的紙（art/ui_diary.png）
+	_menu.add_theme_stylebox_override("panel", UiSkin.tex("ui_diary", 100, 100, 100, 100, Vector4(92, 64, 84, 56)))
 	_menu.visible = false
 	add_child(_menu)
 	var v := VBoxContainer.new()
@@ -173,65 +248,34 @@ func _build_menu() -> void:
 	_menu.add_child(v)
 	_menu_text = RichTextLabel.new()
 	_menu_text.bbcode_enabled = true
-	_menu_text.fit_content = true
+	# 內容會越來越多（委託、碎片、上一輪的事）：固定高度、可以捲動
+	_menu_text.fit_content = false
+	_menu_text.scroll_active = true
+	_menu_text.custom_minimum_size = Vector2(394, 380)
 	_menu_text.add_theme_color_override("default_color", Color("#4a3b47"))
 	v.add_child(_menu_text)
 	var board_btn := Button.new()
 	board_btn.text = "看守則"
+	_style_button(board_btn)
 	board_btn.pressed.connect(func(): board_requested.emit())
 	v.add_child(board_btn)
 	_tag_button = Button.new()
+	_style_button(_tag_button)
 	_tag_button.pressed.connect(func(): tag_toggle_requested.emit())
 	v.add_child(_tag_button)
-	for bus in [["Music", "配樂"], ["SFX", "音效"]]:
-		v.add_child(_volume_row(bus[0], bus[1]))
 	var title_btn := Button.new()
 	title_btn.text = "回到標題（從今天早上的存檔繼續）"
+	_style_button(title_btn)
 	title_btn.pressed.connect(func(): title_requested.emit())
 	v.add_child(title_btn)
 	var hint := Label.new()
-	_menu_hint = hint
+	hint.text = "Tab / Esc 關閉"
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#a39ba8"))
 	v.add_child(hint)
 
 
-## 音量列：「配樂 ───●── 80%」。鍵盤／手把選到滑桿後按左右調整。
-func _volume_row(bus: String, label: String) -> HBoxContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	var title := Label.new()
-	title.text = label
-	title.custom_minimum_size.x = 56
-	title.add_theme_color_override("font_color", Color("#4a3b47"))
-	row.add_child(title)
-	var slider := HSlider.new()
-	slider.min_value = 0
-	slider.max_value = 100
-	slider.step = 10
-	slider.value = round(Audio.get_volume(bus) * 100)
-	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	slider.custom_minimum_size.y = 32
-	row.add_child(slider)
-	var pct := Label.new()
-	pct.custom_minimum_size.x = 64
-	pct.text = "%d%%" % slider.value
-	pct.add_theme_color_override("font_color", Color("#a39ba8"))
-	row.add_child(pct)
-	slider.value_changed.connect(func(value: float):
-		pct.text = "%d%%" % value
-		Audio.set_volume(bus, value / 100.0)
-		if GameState.chapter == 2:  # 第一章還沒有自己的介面音效
-			Sfx.play(self, "cursor", -10.0))
-	return row
 
-
-## 畫圖時用到的貼圖要留著參照，不然畫完就被釋放、畫面上只剩白色
-var _tex_cache := {}
-
-
-func _tex(path: String) -> Texture2D:
-	if not _tex_cache.has(path):
-		_tex_cache[path] = load(path)
-	return _tex_cache[path]
+func _style_button(b: Button) -> void:
+	UiSkin.button(b, 18)
+	b.custom_minimum_size.y = 52

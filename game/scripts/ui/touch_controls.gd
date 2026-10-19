@@ -18,7 +18,9 @@ var _joy_center := JOY_CENTER
 const JOY_ZONE := Rect2(0, 160, 560, 560)
 var _joy_vec := Vector2.ZERO
 var _area: Control
-var _rotate_hint: Label
+var _rotate_hint: ColorRect
+var _rotate_dismissed := false
+var _was_portrait := false
 var _joy_visible := false
 var _buttons_visible := false
 var _menu_only := false
@@ -32,14 +34,24 @@ func _ready() -> void:
 	_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_area.draw.connect(_draw_area)
 	add_child(_area)
-	_rotate_hint = Label.new()
-	_rotate_hint.text = "請把手機橫過來玩 ↻"
+	# 直拿手機：整個畫面變暗，清楚寫著請轉橫；點一下可以先關掉
+	_rotate_hint = ColorRect.new()
+	_rotate_hint.color = Color(0.1, 0.07, 0.12, 0.82)
 	_rotate_hint.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_rotate_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_rotate_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_rotate_hint.add_theme_font_size_override("font_size", 40)
-	_rotate_hint.add_theme_color_override("font_color", Color("#b56576"))
+	_rotate_hint.mouse_filter = Control.MOUSE_FILTER_STOP
 	_rotate_hint.visible = false
+	var msg := Label.new()
+	msg.text = "請把手機橫過來玩\n\n（點一下畫面先繼續）"
+	msg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	msg.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	msg.add_theme_font_size_override("font_size", 64)
+	msg.add_theme_color_override("font_color", Color("#fff4f7"))
+	_rotate_hint.add_child(msg)
+	_rotate_hint.gui_input.connect(func(e: InputEvent):
+		if (e is InputEventScreenTouch or e is InputEventMouseButton) and e.pressed:
+			_rotate_dismissed = true
+			_rotate_hint.visible = false)
 	add_child(_rotate_hint)
 
 
@@ -47,7 +59,11 @@ func _process(_delta: float) -> void:
 	if not enabled:
 		return
 	var win := get_window().size
-	_rotate_hint.visible = win.y > win.x
+	var portrait := win.y > win.x
+	if portrait != _was_portrait:
+		_was_portrait = portrait
+		_rotate_dismissed = false
+	_rotate_hint.visible = portrait and not _rotate_dismissed
 	var mode: String = mode_provider.call() if mode_provider.is_valid() else ""
 	var joystick_game := get_tree().get_nodes_in_group("touch_joystick").size() > 0
 	_joy_visible = mode == "explore" or joystick_game

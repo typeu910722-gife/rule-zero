@@ -232,11 +232,11 @@ func _draw_fallback() -> void:
 	a.draw_set_transform(body, 0.0, Vector2(5.0, 5.0))
 	var hog_q := 1 if GameState.has("xiaoji_last_quill") else 0
 	var c := Color("#2f2f2f").lerp(Color("#f4f4f2"), clampf(step / 3.0, 0.0, 1.0))
-	Critter.draw(a, "hedgehog", c, 1.0, Vector2.ZERO, true, step >= 3, false, {"quills": hog_q})
+	Ch2Critter.draw(a, "hedgehog", c, 1.0, Vector2.ZERO, true, step >= 3, false, {"quills": hog_q})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if step >= 1 and step < 3:
 		# 拉開的肚子
-		Critter.ellipse(a, body + Vector2(0, -70), Vector2(60, 30), Color("#3a3030"))
+		Ch2Critter.ellipse(a, body + Vector2(0, -70), Vector2(60, 30), Color("#3a3030"))
 		for k in 5 - step * 2:
 			a.draw_circle(body + Vector2(-40 + k * 20, -70), 12, Color("#1a1a1a"))
 	if step >= 2:
@@ -254,5 +254,5 @@ func _draw_fallback() -> void:
 		a.draw_rect(Rect2(440, 160, 400, 300), Color(0.75, 0.72, 0.66, _flash))
 		a.draw_rect(Rect2(600, 220, 90, 200), Color(0.55, 0.5, 0.45, _flash))
 		a.draw_set_transform(Vector2(560, 420), 0.0, Vector2(2.2, 2.2))
-		Critter.draw(a, "hamster", Color(0.98, 0.95, 0.9, _flash), 1.0, Vector2.ZERO, true)
+		Ch2Critter.draw(a, "hamster", Color(0.98, 0.95, 0.9, _flash), 1.0, Vector2.ZERO, true)
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

@@ -119,7 +119,7 @@ func _draw_chair_and_pip(chair: Texture2D, shake: Vector2) -> void:
 		a.draw_texture_rect(pip_tex, Rect2(pip + Vector2(-80, -150), Vector2(160, 180)), false)
 	else:
 		a.draw_set_transform(pip, 0.0, Vector2(2.6, 2.6))
-		Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(0, -0.4), false, false, true,
+		Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(0, -0.4), false, false, true,
 			{"grey_patch": GameState.has("c2_grey_patch")})
 		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	# 手腕上的鐵環
@@ -190,14 +190,14 @@ func _draw_procedural() -> void:
 	a.draw_rect(Rect2(570, 470, 12, 70), Color("#8a8a8a"))
 	a.draw_rect(Rect2(698, 470, 12, 70), Color("#8a8a8a"))
 	a.draw_set_transform(Vector2(640, 450) + shake, 0.0, Vector2(2.6, 2.6))
-	Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(0, -0.4), false, false, true,
+	Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(0, -0.4), false, false, true,
 		{"grey_patch": GameState.has("c2_grey_patch")})
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	for side in [-1, 1]:
 		a.draw_arc(Vector2(640 + side * 44, 414) + shake, 9, 0, TAU, 16, Color("#5a5a5a"), 4)
 	# 和平鴿（只看得到大衣和手套）
 	a.draw_set_transform(Vector2(980, 760), 0.0, Vector2(3.2, 3.2))
-	Critter.draw_dove(a, 1.0)
+	Ch2Critter.draw_dove(a, 1.0)
 	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if _i < questions.size():
 		a.draw_string(f, Vector2(0, 200), "和平鴿：%s" % questions[_i][0], HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#333333"))

@@ -2,6 +2,8 @@ extends CanvasLayer
 ## 修理室：第一次看見門的後面。最後畫面被一針一針縫起來。
 
 const SEW_TIME := 3.5
+const BG := preload("res://art/bg_repair.jpg")
+const MAYOR := preload("res://art/item_stand_mayor.png")
 
 var _area: Control
 var _sew := 0.0
@@ -31,33 +33,17 @@ func sew() -> void:
 
 
 func _draw_area() -> void:
-	var f: Font = GameState.font
-	_area.draw_rect(Rect2(0, 0, 1280, 720), Color("#4a3a3a"))
-	_area.draw_rect(Rect2(0, 470, 1280, 250), Color("#3a2c2c"))
-	# 牆上一整排「小布」名牌
-	for k in 14:
-		var p := Vector2(90 + k * 80, 70 + (k % 2) * 14)
-		_area.draw_line(p + Vector2(20, -10), p + Vector2(20, 0), Color("#8d7b6b"), 2)
-		_area.draw_rect(Rect2(p, Vector2(42, 24)), Color("#f6efe6"))
-		_area.draw_rect(Rect2(p, Vector2(42, 24)), Color("#e8a0bf"), false, 2)
-		_area.draw_string(f, p + Vector2(0, 18), "小布", HORIZONTAL_ALIGNMENT_CENTER, 42, 13, Color("#7a6a78"))
-	# 工作台、縫紉機、棉花籃
-	_area.draw_rect(Rect2(380, 380, 520, 40), Color("#8d6e63"))
-	_area.draw_rect(Rect2(400, 420, 20, 120), Color("#6d4c41"))
-	_area.draw_rect(Rect2(860, 420, 20, 120), Color("#6d4c41"))
-	_area.draw_rect(Rect2(700, 300, 140, 80), Color("#2f3a2f"))
-	_area.draw_rect(Rect2(700, 260, 30, 50), Color("#2f3a2f"))
-	_area.draw_line(Vector2(780, 380), Vector2(780, 395), Color("#c0c0c0"), 3)
-	Critter.ellipse(_area, Vector2(300, 520), Vector2(70, 40), Color("#c9a37a"))
-	for k in 6:
-		_area.draw_circle(Vector2(260 + k * 16, 490 - (k % 2) * 8), 14, Color("#fbfbfb"))
-	# 工作台上的小布
-	_area.draw_set_transform(Vector2(560, 380), -PI / 2.4, Vector2(2.2, 2.2))
+	# 修理室（美術：bg_repair.jpg）：工作台、縫紉機、一整排「小布」名牌
+	_area.draw_texture_rect(BG, Rect2(0, 0, 1280, 720), false)
+	_area.draw_rect(Rect2(0, 0, 1280, 720), Color(0.1, 0.05, 0.08, 0.25))
+	# 工作台上的小布（躺著）
+	_area.draw_set_transform(Vector2(470, 300), -PI / 2.2, Vector2(1.25, 1.25))
 	Critter.draw(_area, "sheep", Color("#fffdf8"), 1.0, Vector2.ZERO, false, false, true)
-	# 鎮長
-	_area.draw_set_transform(Vector2(1060, 560), 0.0, Vector2(4.2, 4.2))
-	Critter.draw(_area, "bear", Color("#c4894f"), 1.0, Vector2(-1, 0), true)
 	_area.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# 鎮長（立繪），站在右邊
+	var mh := 520.0
+	var mw := mh * MAYOR.get_width() / MAYOR.get_height()
+	_area.draw_texture_rect(MAYOR, Rect2(1180 - mw, 700 - mh, mw, mh), false)
 
 	# 縫合：上下兩片布往中間合起來，邊緣有縫線
 	if _sew > 0.0:

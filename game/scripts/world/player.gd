@@ -1,73 +1,129 @@
 extends Node2D
 ## 小布。
 
-const SPEED := 230.0
+const SPEED := 260.0
+const STEP_TIME := 0.14      # 每一步動畫的時間
+const FOOTSTEP_TIME := 0.32  # 腳步聲間隔
 
-var bounds := Rect2(20, 40, 1560, 1000)
-## 走不進去的區域（第二章：鐵絲網另一邊的河與模範生宿舍）
-var blocked := PackedVector2Array()
+var bounds := Rect2(40, 110, 1800, 1540):
+	set(v):
+		bounds = v
+		_update_camera()
 var can_move := true
+## 在房間裡畫大一點（房間的美術比例比小鎮地圖大）
+var draw_scale := 1.0
+## 在森林裡：用森林的小徑判斷能不能走
+var in_forest := false:
+	set(v):
+		in_forest = v
+		_update_camera()
+## 鏡頭輕微晃動（0～1：森林越深越晃）
+var sway := 0.0
+## 是否套用小鎮的建築碰撞
+var collide := true
 var _facing := Vector2.DOWN
-## 第二章：外包的小布小人（4 方向 × 4 格；由上到下：下、左、右、上）
-const SHEET := "res://art/ch2/characters/sprites/ch2_pip_sprite_walk_sheet.png"
-const SHEET_MARKS := "res://art/ch2/characters/sprites/ch2_pip_sprite_walk_marks_sheet.png"
-var _sheets := {}
-var _walk_t := 0.0
-var _moving := false
+var _step := -1
+var _step_t := 0.0
+var _foot_t := 0.0
+var _slide_side := 1.0
+var _cam: Camera2D
 
 
 func _ready() -> void:
 	GameState.changed.connect(queue_redraw)
-	var cam := Camera2D.new()
-	cam.limit_left = 0
-	cam.limit_top = 0
-	cam.limit_right = 1600
-	cam.limit_bottom = 1150
-	cam.position_smoothing_enabled = true
-	add_child(cam)
+	_cam = Camera2D.new()
+	_cam.position_smoothing_enabled = true
+	add_child(_cam)
+	_update_camera()
+
+
+## 鏡頭範圍：小鎮、森林、小布的房間各自不同
+func _update_camera() -> void:
+	if _cam == null:
+		return
+	var area: Rect2
+	draw_scale = 1.0
+	if bounds.position.x > 2000:
+		area = preload("res://scripts/world/town.gd").ROOM_VIEW
+		draw_scale = 1.9
+	elif in_forest:
+		var F := preload("res://scripts/world/forest.gd")
+		area = Rect2(0, 0, F.W, F.H)
+	else:
+		var T := preload("res://scripts/world/town.gd")
+		area = Rect2(0, 0, T.W, T.H)
+	_cam.limit_left = int(area.position.x)
+	_cam.limit_top = int(area.position.y)
+	_cam.limit_right = int(area.end.x)
+	_cam.limit_bottom = int(area.end.y)
+	_cam.reset_smoothing.call_deferred()
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
-	if not can_move:
+	if _cam:
+		var t := Time.get_ticks_msec() / 1000.0
+		_cam.offset = Vector2(sin(t * 0.7) * 5.0 + sin(t * 1.9) * 1.5, sin(t * 0.53) * 3.5) * sway
+	var dir := Vector2.ZERO
+	if can_move:
+		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if dir == Vector2.ZERO:
+		if _step != -1:
+			_step = -1
+			queue_redraw()
 		return
-	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if (dir != Vector2.ZERO) != _moving:
-		_moving = dir != Vector2.ZERO
-		queue_redraw()
-	if dir != Vector2.ZERO:
-		_walk_t += delta
-		_facing = dir
-		var before := position
-		position += dir * SPEED * delta
-		position = position.clamp(bounds.position, bounds.end)
-		if not blocked.is_empty() and Geometry2D.is_point_in_polygon(position, blocked):
-			position = before
-		queue_redraw()
-
-
-func _sheet() -> Texture2D:
-	if GameState.chapter != 2:
-		return null
-	# 第二天夜晚的治療室之後，手腕上有兩圈紅痕
-	var path := SHEET_MARKS if GameState.day >= 3 else SHEET
-	if not _sheets.has(path):
-		_sheets[path] = load(path) if ResourceLoader.exists(path) else null
-	return _sheets[path]
+	_facing = dir
+	var T: GDScript = preload("res://scripts/world/forest.gd") if in_forest else preload("res://scripts/world/town.gd")
+	var check: bool = collide and (in_forest or (bounds.position.x < 2000 and bounds.end.x > 1600))
+	var move := dir * SPEED * delta
+	# 分軸移動：碰到建築時可以沿著牆滑過去
+	# 萬一被劇情放在路外面（例如草地上）：先移到最近的路上
+	if check and T.blocked(position):
+		position = T.nearest_walkable(position)
+	# 先試原本的方向；被擋住就往左右各偏 25°、50°、75° 找路，沿著路邊、轉角自然滑過去。
+	# 角色之間不會互相擋路（不會被 NPC 卡住）。
+	var step := move.length()
+	var moved_any := false
+	# 上一次往哪一邊繞，這次先試同一邊（沿著草地邊緣一路滑過去，不會左右抖）
+	var angs := [0.0, 0.44, -0.44, 0.87, -0.87, 1.31, -1.31, 1.57, -1.57]
+	if _slide_side < 0.0:
+		angs = [0.0, -0.44, 0.44, -0.87, 0.87, -1.31, 1.31, -1.57, 1.57]
+	for ang in angs:
+		var d: Vector2 = dir.normalized().rotated(ang) * step * (1.0 if ang == 0.0 else maxf(cos(ang), 0.35))
+		var np: Vector2 = (position + d).clamp(bounds.position, bounds.end)
+		if not (check and T.blocked(np)):
+			position = np
+			moved_any = true
+			if ang != 0.0:
+				_slide_side = signf(ang)
+			break
+	# 最後才試分軸（貼著直直的牆走）
+	if not moved_any:
+		for axis in [Vector2(move.x, 0), Vector2(0, move.y)]:
+			if axis == Vector2.ZERO:
+				continue
+			var np: Vector2 = (position + axis).clamp(bounds.position, bounds.end)
+			if not (check and T.blocked(np)):
+				position = np
+				break
+	_step_t += delta
+	if _step < 0 or _step_t >= STEP_TIME:
+		_step_t = 0.0
+		_step = (_step + 1) % 4
+	_foot_t -= delta
+	if _foot_t <= 0.0:
+		_foot_t = FOOTSTEP_TIME
+		Sound.sfx("step")
+	queue_redraw()
 
 
 func _draw() -> void:
-	var tex := _sheet()
-	if tex:
-		var row := 0
-		if absf(_facing.x) > absf(_facing.y):
-			row = 1 if _facing.x < 0 else 2
-		elif _facing.y < 0:
-			row = 3
-		var col := int(_walk_t * 8.0) % 4 if _moving else 0
-		draw_texture_rect_region(tex, Rect2(Vector2(-40, -76), Vector2(80, 80)), Rect2(col * 160, row * 160, 160, 160))
-		return
-	Critter.draw(self, "sheep", Color("#fffdf8"), 1.0, _facing * 0.6, true, false, GameState.has("tag_on"),
-		{"grey_patch": GameState.has("c2_grey_patch")})
+	Critter.draw(self, "sheep", Color.WHITE, Critter.WORLD_SCALE * draw_scale, _facing, true, false, GameState.has("tag_on"), _step)
+
+
+func face(dir: Vector2) -> void:
+	_facing = dir
+	queue_redraw()
 
 
 func nearest(max_dist := -1.0) -> Interactable:
@@ -79,7 +135,25 @@ func nearest(max_dist := -1.0) -> Interactable:
 			continue
 		var d := position.distance_to(it.position)
 		var limit := it.reach() if max_dist < 0 else max_dist
-		if d < limit and d < best_d:
+		if d >= limit:
+			continue
+		# 森林裡 Fen 一直跟在旁邊：附近有東西時，先調查東西，不要每次都跟 Fen 說話
+		if in_forest and it.id == "fen":
+			d += 1000.0
+		if d < best_d:
 			best = it
 			best_d = d
 	return best
+
+
+## 不要穿過其他角色（只擋「越走越近」的方向，所以永遠不會被卡住）
+func _bumps_npc(np: Vector2) -> bool:
+	for n in get_tree().get_nodes_in_group("interactable"):
+		var it := n as Interactable
+		if it.kind != "npc" or not it.visible or (in_forest and it.id == "fen"):
+			continue
+		var d_new := (np - it.position) * Vector2(1.0, 1.8)
+		var d_old := (position - it.position) * Vector2(1.0, 1.8)
+		if d_new.length() < 40.0 and d_new.length() < d_old.length():
+			return true
+	return false

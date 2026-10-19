@@ -13,18 +13,32 @@ var stitched := false
 ## 夜晚異常：鈕扣眼睛跟著玩家轉
 var follow_eyes := false
 var covered := true        # 鏡子是否蓋著布
-## 第二章的外觀細節（斑紋數、縫起來的嘴……），見 Critter.draw 的 opts
-var opts := {}
-## 外包的小人圖：{tex, cols, frame, origin, frames, fps, requires}
-## 一個角色可以有好幾張（sprites，依序檢查）：requires 寫這張圖畫的是哪個狀態（例如條碼 3 條斑紋）。
-## 第一張符合目前 opts 的圖就用它；都不符合（還沒有對應的圖）時，退回程式繪製的樣子
-var sprites: Array = []
-var sprite := {}
-var _texs := {}
-var _anim_t := 0.0
+## 頭上的「！」：今天可以去的地方（main.gd 的 _refresh_objective 設定）
+var marked := false
 var target: Node2D
-## 平常待的位置。小人圖可以用 requires {"home": true} 指定「在老位置時」的樣子（例如坐在屋頂晃腳）
-var home := Vector2.INF
+## 面向（行走圖的方向）；follow_eyes 時改為看著玩家
+var facing := Vector2.DOWN
+var _last_pos := Vector2.INF
+var _step := -1
+var _step_t := 0.0
+## 第三天：站著一動也不動，一直盯著小布（不呼吸、不跳）
+var stare := false
+## 小布走近時轉頭看他
+var _noticed := false
+var _hop_t := 0.0
+var _hop_next := randf_range(3.0, 9.0)
+const HOP_TIME := 0.32
+
+const MIRROR_TEX := preload("res://art/mirror_states.png")
+const PHOTO_TEX := preload("res://art/item_photo.png")
+const SACK_TEX := preload("res://art/item_sack.png")
+const TREEHOUSE_TEX := preload("res://art/fen_treehouse.png")
+const FOREST_TEX := {
+	"forest_bow": preload("res://art/item_bow_ear.png"),
+	"forest_tags": preload("res://art/item_tags_pile.png"),
+	"forest_tail": preload("res://art/item_fox_tail.png"),
+	"forest_sheep": preload("res://art/item_sheep_pile.png"),
+}
 
 
 func setup(p_id: String, data: Dictionary) -> Interactable:
@@ -37,158 +51,195 @@ func setup(p_id: String, data: Dictionary) -> Interactable:
 	smile = data.get("smile", true)
 	stitched = data.get("stitched", false)
 	position = data.get("pos", Vector2.ZERO)
-	home = position
-	opts = data.get("opts", {}).duplicate()
-	sprites = data.get("sprites", [data.sprite] if data.has("sprite") else [])
-	for sp in sprites:
-		if ResourceLoader.exists(sp.tex):
-			_texs[sp.tex] = load(sp.tex)
 	add_to_group("interactable")
 	return self
 
 
+func _glint(p: Vector2) -> void:
+	var a := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 250.0)
+	draw_circle(p, 3, Color(1, 1, 1, a))
+
+
 func reach() -> float:
-	return 70.0 * size
+	# 角色的圖比較寬：站在旁邊（不用正對）就能說話
+	return 110.0 * maxf(size, 1.0) if kind == "npc" else 95.0
+
+
+func face_toward(p: Vector2) -> void:
+	facing = (p - global_position).normalized()
+	queue_redraw()
 
 
 func _process(delta: float) -> void:
-	if follow_eyes:
+	# 被程式移動時（例如 Fen 跟在後面）播放走路動畫，朝移動方向
+	if _last_pos != Vector2.INF and kind == "npc":
+		var moved := position - _last_pos
+		if moved.length() > 0.6:
+			facing = moved.normalized()
+			_step_t += delta
+			if _step < 0 or _step_t > 0.14:
+				_step_t = 0.0
+				_step = (_step + 1) % 4
+			queue_redraw()
+		elif _step != -1:
+			_step = -1
+			queue_redraw()
+	_last_pos = position
+	if kind == "npc":
+		if target:
+			var d := global_position.distance_to(target.global_position)
+			var was := _noticed
+			_noticed = d < (250.0 if _noticed else 200.0)
+			if was != _noticed:
+				queue_redraw()
+		# 偶爾輕輕跳一下（看起來是活的）
+		if not stare and not follow_eyes and _step == -1:
+			_hop_next -= delta
+			if _hop_next <= 0.0:
+				_hop_t = HOP_TIME
+				_hop_next = randf_range(5.0, 12.0)
+		_hop_t = maxf(_hop_t - delta, 0.0)
 		queue_redraw()
-	if sprite_matches() and sprite.get("frames", [0]).size() > 1:
-		_anim_t += delta
+	if marked or follow_eyes or id.begins_with("tuft_") or id.begins_with("candy_") or id.begins_with("note_") or kind == "obj":
 		queue_redraw()
-
-
-## 目前的樣子有沒有對應的外包小人圖（順便記下要用哪一張）
-func sprite_matches() -> bool:
-	sprite = {}
-	opts["home"] = position.distance_to(home) < 4.0
-	for sp in sprites:
-		if not _texs.has(sp.tex):
-			continue
-		var req: Dictionary = sp.get("requires", {})
-		var ok := true
-		for k in req:
-			if opts.get(k, null) != req[k]:
-				ok = false
-				break
-		if ok:
-			sprite = sp
-			return true
-	return false
-
-
-func _draw_sprite() -> void:
-	var frames: Array = sprite.get("frames", [0])
-	var i: int = frames[int(_anim_t * sprite.get("fps", 4)) % frames.size()]
-	var fs: Vector2 = sprite.frame
-	var cols: int = sprite.get("cols", 1)
-	var src := Rect2(Vector2(i % cols, i / cols) * fs, fs)
-	var sc: float = sprite.get("scale", 0.5)
-	draw_texture_rect_region(_texs[sprite.tex], Rect2(-sprite.origin * sc, fs * sc), src)
 
 
 func _draw() -> void:
 	if kind == "npc":
-		var look := Vector2.ZERO
-		if follow_eyes and target:
-			look = (target.global_position - global_position).normalized()
-		var label_col := Color("#6d597a")
-		if sprite_matches():
-			_draw_sprite()
-			label_col = Color("#555555")
-		elif species == "dove":
-			Critter.draw_dove(self, size, opts.get("unmasked", false), opts.get("crack", 1.0))
-			label_col = Color("#555555")
-		elif species == "conductor":
-			Critter.draw_conductor(self, size)
-			label_col = Color("#555555")
-		else:
-			Critter.draw(self, species, body_color, size, look, smile, stitched, false, opts)
-			if GameState.chapter == 2:
-				label_col = Color("#555555")
+		var look := facing
+		var to_player := Vector2.ZERO
+		if target:
+			to_player = (target.global_position - global_position).normalized()
+		if (follow_eyes or stare) and target:
+			look = to_player
+		elif _noticed and _step == -1 and target:
+			# 小布走近：轉頭看他
+			look = to_player
+		var alive := not stare and not follow_eyes
+		if alive:
+			# 呼吸：身體輕輕上下伸縮；偶爾跳一下
+			var t := Time.get_ticks_msec() / 1000.0
+			var breath := sin(t * 2.2 + position.x * 0.013) * 0.016 if _step == -1 else 0.0
+			var hop := sin(PI * (1.0 - _hop_t / HOP_TIME)) * 7.0 if _hop_t > 0.0 else 0.0
+			draw_set_transform(Vector2(0, -hop), 0.0, Vector2(1.0 - breath * 0.5, 1.0 + breath))
+		Critter.draw(self, species, body_color, size * Critter.WORLD_SCALE, look, smile, stitched, false, _step)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		var f: Font = GameState.font
-		draw_string(f, Vector2(-60, 22 * size), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, label_col)
+		draw_string_outline(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, 5, Color(1, 1, 1, 0.85))
+		draw_string(f, Vector2(-60, 24), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("#6d597a"))
 	else:
 		_draw_object()
+	if marked and id.begins_with("tuft_"):
+		_draw_tuft_label()
+	elif marked:
+		_draw_mark()
+
+
+## 棉花頭上的小牌子：「記憶碎片」，讓玩家一眼知道這是可以撿的
+func _draw_tuft_label() -> void:
+	var bob := sin(Time.get_ticks_msec() / 260.0) * 3.0
+	var r := Rect2(-46, -82 + bob, 92, 28)
+	draw_rect(r, Color("#e05780"))
+	draw_rect(r.grow(-2), Color("#fff4f8"), false, 2)
+	draw_colored_polygon(PackedVector2Array([Vector2(-6, r.end.y), Vector2(6, r.end.y), Vector2(0, r.end.y + 8)]), Color("#e05780"))
+	draw_string(GameState.font, Vector2(r.position.x, r.position.y + 21), "記憶碎片", HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 17, Color.WHITE)
+
+
+## 頭上的「！」小泡泡
+func _draw_mark() -> void:
+	var top := -Critter.BASE_HEIGHT * Critter.WORLD_SCALE * size - 22.0 if kind == "npc" else -70.0
+	if id == "bed":
+		top = -140.0
+	var bob := sin(Time.get_ticks_msec() / 220.0) * 4.0
+	var c := Vector2(0, top + bob)
+	draw_circle(c, 15, Color("#ffffff"))
+	draw_arc(c, 15, 0, TAU, 24, Color("#e05780"), 3)
+	draw_colored_polygon(PackedVector2Array([c + Vector2(-5, 12), c + Vector2(5, 12), c + Vector2(0, 21)]), Color("#ffffff"))
+	draw_string(GameState.font, c + Vector2(-15, 8), "！", HORIZONTAL_ALIGNMENT_CENTER, 30, 20, Color("#e05780"))
 
 
 func _draw_object() -> void:
+	# 支線物件（素材還沒畫，先用簡單的形狀，外加一點閃光讓玩家找得到）
+	if id.begins_with("candy_"):
+		var c: Color = [Color("#ffb3c7"), Color("#b5e8d5"), Color("#ffe08a")][int(id.right(1)) % 3]
+		draw_circle(Vector2(0, -10), 9, c)
+		draw_colored_polygon(PackedVector2Array([Vector2(-9, -10), Vector2(-18, -16), Vector2(-18, -4)]), c)
+		draw_colored_polygon(PackedVector2Array([Vector2(9, -10), Vector2(18, -16), Vector2(18, -4)]), c)
+		_glint(Vector2(10, -22))
+		return
+	if id.begins_with("note_"):
+		draw_set_transform(Vector2(0, -8), 0.25, Vector2.ONE)
+		draw_rect(Rect2(-12, -15, 24, 30), Color("#fffaf0"))
+		for k in 4:
+			draw_line(Vector2(-8, -9 + k * 6), Vector2(7, -9 + k * 6), Color("#9b8b7a"), 1.5)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		_glint(Vector2(12, -24))
+		return
+	if id.begins_with("tuft_"):
+		# 記憶碎片：大一點、會呼吸的粉紅光暈、往上飄的小光點，遠遠就看得到
+		var t := Time.get_ticks_msec() / 1000.0
+		var bob := sin(t * 2.0 + position.x) * 3.0
+		var c := Vector2(0, -16 + bob)
+		var pulse := 0.5 + 0.5 * sin(t * 3.0 + position.y)
+		draw_circle(c, 40 + 8 * pulse, Color(1, 0.45, 0.7, 0.16 + 0.12 * pulse))
+		draw_circle(c, 26 + 4 * pulse, Color(1, 0.6, 0.8, 0.35))
+		draw_arc(c, 30 + 10 * pulse, 0, TAU, 32, Color(1, 0.4, 0.65, 0.75 * (1.0 - pulse)), 3)
+		for o in [Vector2(-8, 0), Vector2(8, 0), Vector2(0, -8), Vector2(0, 6), Vector2(-5, -5), Vector2(5, -4)]:
+			draw_circle(o + c, 10, Color(1, 1, 1, 0.96))
+		for k in 3:
+			var ph := fmod(t * 0.6 + k / 3.0 + position.x * 0.01, 1.0)
+			draw_circle(c + Vector2(sin(k * 2.1 + t) * 14, -ph * 46), 3.0 * (1.0 - ph) + 1.0, Color(1, 0.85, 0.95, 1.0 - ph))
+		return
+	if id == "lulu_mailbox":
+		draw_rect(Rect2(-3, -30, 6, 30), Color("#8d6e63"))
+		draw_rect(Rect2(-16, -50, 32, 22), Color("#f4b6c2"))
+		draw_rect(Rect2(-16, -50, 32, 22), Color("#c27a8c"), false, 2)
+		draw_rect(Rect2(12, -56, 3, 12), Color("#e05780"))
+		return
 	match id:
 		"board":
-			draw_rect(Rect2(-36, -20, 6, 40), Color("#8d6e63"))
-			draw_rect(Rect2(30, -20, 6, 40), Color("#8d6e63"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#fff3e0"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#a1887f"), false, 3)
-			for k in 5:
-				draw_line(Vector2(-36, -60 + k * 9), Vector2(30 - (k % 3) * 10, -60 + k * 9), Color("#bcaaa4"), 2)
+			# 地圖上已經畫了公告欄，這裡不再疊一張（以前會擋住小布）
+			_glint_ring(Vector2(0, -6))
 		"mirror":
-			Critter.ellipse(self, Vector2(0, -30), Vector2(18, 28), Color("#e9c46a"))
-			Critter.ellipse(self, Vector2(0, -30), Vector2(14, 24), Color("#cfe8ef"))
-			if covered:
-				draw_colored_polygon(PackedVector2Array([Vector2(-20, -60), Vector2(20, -60), Vector2(24, -2), Vector2(-24, -2)]), Color("#f7c5d3"))
-				for k in 6:
-					draw_circle(Vector2(-14 + (k % 3) * 14, -48 + (k / 3) * 22), 3, Color("#ffffff"))
-		"c2_bed":
-			# 地圖上已經畫了鐵製上下舖：只留一個小小的閃光提示
-			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
-			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
-		"c2_pillow":
-			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#f5f5f5"))
-			Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#cfcfcf"))
-			Critter.ellipse(self, Vector2(0, -9), Vector2(16, 7), Color("#fafafa"))
-			if not GameState.has("c2_pillow_done"):
-				draw_circle(Vector2(10, -3), 3, Color("#f28fb0"))
-		"c2_board":
-			# 地圖上已經有公告欄：只留閃光提示
-			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
-			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
-		"c2_board_old":
-			draw_rect(Rect2(-36, -20, 6, 40), Color("#6e6e6e"))
-			draw_rect(Rect2(30, -20, 6, 40), Color("#6e6e6e"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#f4f4f2"))
-			draw_rect(Rect2(-46, -70, 92, 56), Color("#7a7a7a"), false, 3)
-			for k in 7:
-				draw_line(Vector2(-36, -63 + k * 7), Vector2(30 - (k % 3) * 10, -63 + k * 7), Color("#a8a8a8"), 2)
+			# 房間的美術圖上已經畫了蓋著布的立鏡；掀開布之後，在原處畫出鏡子
+			if not covered:
+				draw_rect(Rect2(-86, -288, 172, 276), Color("#2a2230"))
+				draw_texture_rect_region(MIRROR_TEX, Rect2(-86, -288, 172, 276), Rect2(30, 0, 196, 256))
+			_glint_ring(Vector2(0, -150))
 		"bed":
-			draw_rect(Rect2(-40, -50, 80, 60), Color("#bde0fe"))
-			draw_rect(Rect2(-36, -46, 72, 16), Color("#ffffff"))
-			draw_rect(Rect2(-40, -24, 80, 34), Color("#a2d2ff"))
+			_glint_ring(Vector2(-110, -40))
+		"home_exit":
+			_glint_ring(Vector2(-20, -60))
 		"bakery_photo":
-			draw_rect(Rect2(-14, -40, 28, 22), Color("#ffffff"))
-			draw_rect(Rect2(-14, -40, 28, 22), Color("#8d6e63"), false, 2)
-			draw_rect(Rect2(-12, -38, 12, 18), Color("#e0d6cc"))
+			draw_texture_rect(PHOTO_TEX, Rect2(-17, -46, 34, 40), false)
+			_glint_ring(Vector2(0, -26))
 		"mail_sack":
-			Critter.ellipse(self, Vector2(0, -14), Vector2(18, 16), Color("#c9a37a"))
-			draw_line(Vector2(-8, -22), Vector2(8, -6), Color("#5c3d2e"), 2)
-			draw_line(Vector2(8, -22), Vector2(-8, -6), Color("#5c3d2e"), 2)
+			Critter.ellipse(self, Vector2(0, -2), Vector2(24, 6), Color(0, 0, 0, 0.15))
+			draw_texture_rect(SACK_TEX, Rect2(-28, -56, 56, 55), false)
+			_glint_ring(Vector2(0, -28))
+		"fen_tree":
+			# 石橋旁的樹屋（繩梯底部＝這個點）
+			draw_texture_rect(TREEHOUSE_TEX, Rect2(-100, -232, 200, 240), false)
+			_glint_ring(Vector2(0, -40))
 		"mayor_door":
-			draw_rect(Rect2(-20, -60, 40, 60), Color("#8d5524"))
-			draw_circle(Vector2(12, -30), 3, Color("#ffd166"))
-		"forest_bow":
-			Critter.ellipse(self, Vector2(0, -14), Vector2(7, 22), Color("#c9a3aa"), 1.2)
-			draw_circle(Vector2(-14, -22), 6, Color("#f2d16b"))
-			draw_circle(Vector2(-4, -22), 6, Color("#f2d16b"))
-			draw_circle(Vector2(-9, -22), 3, Color("#c9a227"))
-		"forest_tags":
-			for k in 9:
-				var p := Vector2(-30 + (k % 3) * 20, -30 + (k / 3) * 12) + Vector2((k * 7) % 5, 0)
-				draw_rect(Rect2(p, Vector2(16, 9)), Color("#ece4da"))
-				draw_rect(Rect2(p, Vector2(16, 9)), Color("#b08d9a"), false, 1)
-		"forest_tail":
-			Critter.ellipse(self, Vector2(0, -12), Vector2(26, 9), Color("#a8552a"), -0.3)
-			draw_circle(Vector2(24, -20), 7, Color("#efe6da"))
-			for k in 4:
-				draw_line(Vector2(-14 + k * 8, -18), Vector2(-10 + k * 8, -6), Color("#4a2e1f"), 1.5)
-		"forest_sheep":
-			for k in 5:
-				var off := Vector2(-56 + k * 28, -8 - (k % 2) * 16)
-				draw_set_transform(off, 0.4 * (k - 2) * 0.3, Vector2(0.85, 0.85))
-				Critter.draw(self, "sheep", Color("#e9e4dc"), 1.0, Vector2.ZERO, k != 2, k == 2)
-			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-			draw_rect(Rect2(-8, 0, 30, 14), Color("#f6efe6"))
-			draw_string(GameState.font, Vector2(-8, 11), "No.46", HORIZONTAL_ALIGNMENT_CENTER, 30, 10, Color("#5c3d2e"))
+			# 門是地圖原圖上的；這裡只在門框外加一圈淡淡的光
+			_glint_ring(Vector2(0, -34))
+		"forest_bow", "forest_tags", "forest_tail", "forest_sheep":
+			var tex: Texture2D = FOREST_TEX[id]
+			var w := 170.0 if id == "forest_sheep" else 110.0
+			var h := w * tex.get_height() / tex.get_width()
+			Critter.ellipse(self, Vector2(0, -4), Vector2(w * 0.45, 9), Color(0, 0, 0, 0.18))
+			draw_texture_rect(tex, Rect2(-w / 2, -h, w, h), false)
+			_glint_ring(Vector2(w * 0.3, -h * 0.8))
 		_:
-			# 鐘塔門、森林、車站等：只畫一個小小的閃光提示
-			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
-			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
+			# 鐘塔門、森林、車站等：一圈會呼吸的光圈
+			_glint_ring(Vector2(0, -10))
+
+
+## 可以調查的地方：一圈慢慢呼吸的白色光圈
+func _glint_ring(c: Vector2) -> void:
+	var t := Time.get_ticks_msec() / 1000.0
+	var a := 0.55 + 0.35 * sin(t * 2.4 + position.x * 0.01)
+	var r := 10.0 + 3.0 * sin(t * 2.4 + position.x * 0.01)
+	draw_circle(c, 5, Color(1, 1, 1, a))
+	draw_arc(c, r, 0, TAU, 20, Color(1, 0.82, 0.9, a), 2.5)

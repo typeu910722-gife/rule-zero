@@ -4,11 +4,11 @@ extends Node2D
 ## 互動時依序尋找對話標籤：c2_<id>_<phase> → c2_<id>_d<day> → c2_<id>
 
 const BleachTown := preload("res://scripts/world/bleach_town.gd")
-const Player := preload("res://scripts/world/player.gd")
-const Board := preload("res://scripts/ui/board.gd")
-const Hud := preload("res://scripts/ui/hud.gd")
-const EndCard := preload("res://scripts/ui/end_card.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
+const Player := preload("res://scripts/ch2/player.gd")
+const Board := preload("res://scripts/ch2/board.gd")
+const Hud := preload("res://scripts/ch2/hud.gd")
+const EndCard := preload("res://scripts/ch2/end_card.gd")
+const TouchControls := preload("res://scripts/ch2/touch_controls.gd")
 const Apology := preload("res://scripts/minigames/apology.gd")
 const RollList := preload("res://scripts/ui/roll_list.gd")
 const Scrub := preload("res://scripts/minigames/scrub.gd")
@@ -159,13 +159,13 @@ func _ready() -> void:
 	town = BleachTown.new()
 	add_child(town)
 	for id in ACTORS:
-		var a := Interactable.new().setup(id, ACTORS[id])
+		var a := Ch2Interactable.new().setup(id, ACTORS[id])
 		add_child(a)
 		actors[id] = a
 	for id in OBJECTS:
 		var data: Dictionary = OBJECTS[id].duplicate()
 		data["kind"] = "obj"
-		var o := Interactable.new().setup(id, data)
+		var o := Ch2Interactable.new().setup(id, data)
 		add_child(o)
 		actors[id] = o
 	player = Player.new()
@@ -515,7 +515,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if hud.menu_open:
 		return
 	if event.is_action_pressed("interact"):
-		var it: Interactable = player.nearest()
+		var it: Ch2Interactable = player.nearest()
 		if it:
 			get_viewport().set_input_as_handled()
 			interact(it.id)
@@ -551,7 +551,7 @@ func _process(_delta: float) -> void:
 	if busy or Dialogue.running or hud.menu_open or board.visible:
 		hud.set_prompt("")
 		return
-	var it: Interactable = player.nearest()
+	var it: Ch2Interactable = player.nearest()
 	var key := GameState.interact_key_label()
 	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
 
@@ -585,7 +585,7 @@ func _on_event(event_name: String) -> void:
 				actors[id].visible = false
 		"c2_dove_appears":
 			_bgm("dove")
-			var dove: Interactable = actors.dove
+			var dove: Ch2Interactable = actors.dove
 			dove.visible = true
 			dove.position = Vector2(560, 935)
 		"scrub":
@@ -627,7 +627,7 @@ func _on_event(event_name: String) -> void:
 			# 月台：和平鴿沒有戴面具，背對著小布；對面是車掌
 			for id in RESIDENTS:
 				actors[id].visible = false
-			var dove: Interactable = actors.dove
+			var dove: Ch2Interactable = actors.dove
 			dove.visible = true
 			dove.position = Vector2(420, 965)
 			dove.opts["unmasked"] = true
@@ -734,7 +734,7 @@ func _on_event(event_name: String) -> void:
 
 func _layout(mode: String) -> void:
 	for id in ACTORS:
-		var a: Interactable = actors[id]
+		var a: Ch2Interactable = actors[id]
 		a.position = ACTORS[id].pos
 		a.visible = not id in HIDDEN
 	for id in OBJECTS:
@@ -862,8 +862,7 @@ var _ambience: AudioStreamPlayer
 func _set_ambience(name: String) -> void:
 	if _ambience == null:
 		_ambience = AudioStreamPlayer.new()
-		_ambience.volume_db = -20.0
-		_ambience.bus = "SFX"
+		_ambience.volume_db = -20.0 + Audio.music_db()
 		add_child(_ambience)
 	_ambience.stop()
 	var st := Sfx.stream(name) if name != "" else null

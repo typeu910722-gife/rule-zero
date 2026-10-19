@@ -29,8 +29,7 @@ static func music_box(freq: float, length := 0.6) -> AudioStreamWAV:
 static func play(parent: Node, freq: float, volume_db := -6.0) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = music_box(freq)
-	p.volume_db = volume_db
-	p.bus = "SFX"
+	p.volume_db = volume_db + Audio.sfx_db()
 	parent.add_child(p)
 	p.play()
 	p.finished.connect(p.queue_free)
@@ -67,8 +66,7 @@ static func buzz(parent: Node, length := 0.3, volume_db := -10.0) -> void:
 		return
 	var p := AudioStreamPlayer.new()
 	p.stream = buzz_wave(snappedf(length, 0.05))
-	p.volume_db = volume_db
-	p.bus = "SFX"
+	p.volume_db = volume_db + Audio.sfx_db()
 	parent.add_child(p)
 	p.play()
 	p.finished.connect(p.queue_free)
