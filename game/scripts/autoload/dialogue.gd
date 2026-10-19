@@ -50,6 +50,8 @@ var parser := DialogueParser.new()
 var _bg: ColorRect
 ## 恐怖畫面效果（背景之上、對話框之下）
 var fx: AnomalyFX
+## 序章的粉紅車廂（@bg train）
+var _train: TrainView
 var _box: PanelContainer
 var _name: Label
 var _text: RichTextLabel
@@ -209,6 +211,7 @@ func set_bg(mode: String) -> void:
 		fx.set_preset("off")
 	_bg.visible = mode != "none"
 	_bg_art.visible = false
+	_train.visible = mode == "train"
 	for layer in _bg_art.get_children():
 		layer.queue_free()
 	if not _bg.visible:
@@ -323,6 +326,9 @@ func _build_ui() -> void:
 	_bg_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_bg_art.visible = false
 	_bg.add_child(_bg_art)
+	_train = TrainView.new()
+	_train.visible = false
+	_bg.add_child(_train)
 	fx = AnomalyFX.new()
 	add_child(fx)
 

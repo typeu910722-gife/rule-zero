@@ -56,6 +56,18 @@ func _run() -> void:
 	# 第 10 秒人影消失時的輕微錯位
 	m._t = 9.99
 	await _shot("fx_05_mirror_end", 4)
+	if is_instance_valid(m):
+		m.queue_free()
+	# 序章的粉紅車廂
+	dlg.run("prologue")
+	await create_timer(0.5).timeout
+	dlg._advance.emit()
+	await create_timer(0.3).timeout
+	dlg._advance.emit()
+	await create_timer(1.2).timeout
+	await _shot("fx_06_train")
+	await create_timer(1.0).timeout
+	await _shot("fx_07_train_later")
 	quit()
 
 

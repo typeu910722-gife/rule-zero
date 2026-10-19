@@ -54,6 +54,14 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 
 ![標題畫面](../docs/images/proto_title.png)
 
+## 畫面效果與序章車廂
+- 序章的粉紅車廂（`@bg train`）：程式繪製的紙偶風車廂，窗外遠雲、近雲、電線桿三層視差，車廂輕輕搖晃（`scripts/world/train_view.gd`）。
+- 恐怖畫面效果（`@fx`，`scripts/fx/anomaly_fx.gd`＋`shaders/anomaly.gdshader`）：夢境褪色與顆粒（`@bg dream` 自動套用）、鏡子凝視的顆粒與暗角、下午三點鐘聲的錯位、夢境 2 敲鏡子的閃字。效果層在對話框之下，字幕不受影響；異常不配提示音（GDD 5.5）。
+- 截圖：`xvfb-run godot --path . --rendering-driver opengl3 -s tests/screenshots_fx.gd -- <資料夾>`
+
+![序章車廂](../docs/images/proto_train.png)
+![夢境](../docs/images/proto_fx_dream.jpg)
+
 ## 存檔位置
 `user://save.json`（當章進度）與 `user://meta.json`（跨周目）。寫檔時先寫 `.tmp`、讀回確認後才換上，上一份留成 `.bak`；主檔壞掉時自動讀 `.bak`（手機在存檔途中被關掉也不會壞檔）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
 
@@ -140,7 +148,8 @@ game/
     ├── screenshots_ch2_day2.gd # 第二章第二天截圖
     ├── screenshots_ch2_day3.gd # 第二章第三天、結算、標題畫面截圖
     ├── rhythm_test.gd          # 揉麵團判定
-    ├── save_test.gd            # 存檔壞掉時退回 .bak、手把綁定
+    ├── save_test.gd            # 存檔壞掉時退回 .bak、音量、操作說明、手把綁定
+    ├── screenshots_fx.gd       # 畫面效果與序章車廂截圖
     ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     └── screenshots_day3.gd     # 第三天畫面截圖
