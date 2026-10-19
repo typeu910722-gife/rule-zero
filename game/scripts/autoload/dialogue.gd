@@ -48,6 +48,8 @@ var _bg_serial := 0
 var parser := DialogueParser.new()
 
 var _bg: ColorRect
+## 恐怖畫面效果（背景之上、對話框之下）
+var fx: AnomalyFX
 var _box: PanelContainer
 var _name: Label
 var _text: RichTextLabel
@@ -149,6 +151,8 @@ func _command(op: String, args: Array) -> int:
 				await get_tree().create_timer(float(args[0])).timeout
 		"bg":
 			set_bg(args[0])
+		"fx":
+			fx.command(args)
 		"bgm":
 			bgm_requested.emit("" if args.is_empty() or args[0] == "stop" else args[0])
 		"face":
@@ -198,6 +202,11 @@ func set_bg_layers(paths: Array) -> void:
 
 func set_bg(mode: String) -> void:
 	_bg_serial += 1
+	# 夢境自動褪色、加顆粒；離開夢境就關掉
+	if mode == "dream":
+		fx.set_preset("dream")
+	elif fx.preset == "dream":
+		fx.set_preset("off")
 	_bg.visible = mode != "none"
 	_bg_art.visible = false
 	for layer in _bg_art.get_children():
@@ -314,6 +323,8 @@ func _build_ui() -> void:
 	_bg_art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_bg_art.visible = false
 	_bg.add_child(_bg_art)
+	fx = AnomalyFX.new()
+	add_child(fx)
 
 	_portrait = TextureRect.new()
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

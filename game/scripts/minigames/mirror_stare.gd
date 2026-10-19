@@ -22,15 +22,19 @@ func play() -> void:
 	if GameState.fast:
 		queue_free()
 		return
+	Dialogue.fx.set_preset("mirror")
 	await done
+	Dialogue.fx.set_preset("off")
 	queue_free()
 
 
 func _process(delta: float) -> void:
 	_t += delta
 	_area.queue_redraw()
+	# 第 10 秒，人影不見的那一瞬間：畫面輕輕錯開一下
 	if _t >= LENGTH:
 		set_process(false)
+		Dialogue.fx.glitch(0.25, 0.5)
 		done.emit()
 
 
