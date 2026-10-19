@@ -81,6 +81,9 @@ const SAVE_PATH := "user://save.json"
 const META_PATH := "user://meta.json"
 var save_dir := "user://"
 var checkpoint := ""
+const PAD_DEADZONE := 0.25
+## 最後使用的輸入裝置："keyboard"、"pad"、"touch"（"" ＝還沒操作過）
+var last_device := ""
 var meta := {"runs": 0, "chapters_done": 0}
 var font: Font
 
@@ -204,20 +207,15 @@ func save_game(cp: String) -> void:
 	checkpoint = cp
 	var data := {"version": 2, "checkpoint": cp, "chapter": chapter, "day": day, "courage": courage,
 		"suspicion": suspicion, "conduct": conduct, "flags": flags}
-	var f := FileAccess.open(_path(SAVE_PATH), FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(data, "\t"))
+	_write_json(_path(SAVE_PATH), data)
 
 
 func has_save() -> bool:
-	return FileAccess.file_exists(_path(SAVE_PATH))
+	return FileAccess.file_exists(_path(SAVE_PATH)) or FileAccess.file_exists(_path(SAVE_PATH) + ".bak")
 
 
 func load_game() -> bool:
-	var f := FileAccess.open(_path(SAVE_PATH), FileAccess.READ)
-	if f == null:
-		return false
-	var data = JSON.parse_string(f.get_as_text())
+	var data = _read_json(_path(SAVE_PATH))
 	if typeof(data) != TYPE_DICTIONARY:
 		return false
 	checkpoint = data.get("checkpoint", "")
@@ -232,24 +230,61 @@ func load_game() -> bool:
 
 
 func delete_save() -> void:
-	if has_save():
-		DirAccess.remove_absolute(_path(SAVE_PATH))
+	for suffix in ["", ".bak", ".tmp"]:
+		if FileAccess.file_exists(_path(SAVE_PATH) + suffix):
+			DirAccess.remove_absolute(_path(SAVE_PATH) + suffix)
 
 
 func load_meta() -> void:
-	var f := FileAccess.open(_path(META_PATH), FileAccess.READ)
-	if f == null:
-		return
-	var data = JSON.parse_string(f.get_as_text())
+	var data = _read_json(_path(META_PATH))
 	if typeof(data) == TYPE_DICTIONARY:
 		for k in data:
 			meta[k] = data[k]
 
 
 func save_meta() -> void:
-	var f := FileAccess.open(_path(META_PATH), FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(meta, "\t"))
+	_write_json(_path(META_PATH), meta)
+
+
+## 安全寫檔：先寫 .tmp、讀回確認，再把舊檔留成 .bak 後換上新檔。
+## 手機在寫到一半被系統關掉時，最多只會失去這一次存檔，不會把舊存檔弄壞。
+func _write_json(path: String, data: Dictionary) -> bool:
+	var tmp := path + ".tmp"
+	var text := JSON.stringify(data, "\t")
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		push_warning("存檔失敗：無法寫入 %s" % tmp)
+		return false
+	f.store_string(text)
+	f.close()
+	if typeof(_parse_file(tmp)) != TYPE_DICTIONARY:
+		push_warning("存檔失敗：%s 讀回來不完整" % tmp)
+		return false
+	if FileAccess.file_exists(path):
+		if FileAccess.file_exists(path + ".bak"):
+			DirAccess.remove_absolute(path + ".bak")
+		DirAccess.rename_absolute(path, path + ".bak")
+	return DirAccess.rename_absolute(tmp, path) == OK
+
+
+## 讀檔：主檔壞掉或不見時，改讀上一次的 .bak。
+func _read_json(path: String) -> Variant:
+	var data = _parse_file(path)
+	if typeof(data) == TYPE_DICTIONARY:
+		return data
+	return _parse_file(path + ".bak")
+
+
+func _parse_file(path: String) -> Variant:
+	if not FileAccess.file_exists(path):
+		return null
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return null
+	var json := JSON.new()
+	if json.parse(f.get_as_text()) != OK:
+		return null
+	return json.data
 
 
 func _value(key: String) -> int:
@@ -271,14 +306,62 @@ func _setup_input() -> void:
 		"menu": [KEY_TAB, KEY_ESCAPE],
 		"debug": [KEY_F3],
 	}
+	# 手把（Xbox 配置；PlayStation 為 ✕／OPTIONS，Switch 為 B／＋，Godot 會自動對應）
+	var pad_buttons := {
+		"move_left": [JOY_BUTTON_DPAD_LEFT],
+		"move_right": [JOY_BUTTON_DPAD_RIGHT],
+		"move_up": [JOY_BUTTON_DPAD_UP],
+		"move_down": [JOY_BUTTON_DPAD_DOWN],
+		"interact": [JOY_BUTTON_A],
+		"menu": [JOY_BUTTON_START, JOY_BUTTON_BACK],
+	}
+	var pad_axes := {
+		"move_left": [JOY_AXIS_LEFT_X, -1.0],
+		"move_right": [JOY_AXIS_LEFT_X, 1.0],
+		"move_up": [JOY_AXIS_LEFT_Y, -1.0],
+		"move_down": [JOY_AXIS_LEFT_Y, 1.0],
+	}
 	for action in binds:
 		if InputMap.has_action(action):
 			continue
-		InputMap.add_action(action)
+		InputMap.add_action(action, PAD_DEADZONE if action in pad_axes else 0.5)
 		for key in binds[action]:
 			var ev := InputEventKey.new()
 			ev.physical_keycode = key
 			InputMap.action_add_event(action, ev)
+		for button in pad_buttons.get(action, []):
+			var jb := InputEventJoypadButton.new()
+			jb.button_index = button
+			InputMap.action_add_event(action, jb)
+		if action in pad_axes:
+			var jm := InputEventJoypadMotion.new()
+			jm.axis = pad_axes[action][0]
+			jm.axis_value = pad_axes[action][1]
+			InputMap.action_add_event(action, jm)
+
+
+## 記住玩家最後用的是鍵盤、手把還是觸控，畫面上的按鍵提示跟著換
+func _input(event: InputEvent) -> void:
+	var dev := last_device
+	if event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf(event.axis_value) > PAD_DEADZONE):
+		dev = "pad"
+	elif event is InputEventKey:
+		dev = "keyboard"
+	elif event is InputEventScreenTouch:
+		dev = "touch"
+	elif event is InputEventMouseButton and not DisplayServer.is_touchscreen_available():
+		dev = "keyboard"
+	last_device = dev
+
+
+## 互動鍵的提示文字（「E：公告欄」「A：公告欄」「互動：公告欄」）
+func interact_key_label() -> String:
+	match last_device:
+		"pad": return "A"
+		"touch": return "互動"
+	if last_device == "" and DisplayServer.is_touchscreen_available():
+		return "互動"
+	return "E"
 
 
 func _setup_font() -> void:

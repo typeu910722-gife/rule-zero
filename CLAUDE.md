@@ -32,5 +32,5 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 3. 其他世界觀（慈愛組織、涅槃計畫、和平鴿、車掌、熊熊鎮長）見 `docs/GDD.md` 第 2 節與 `docs/script/chapter2.md` 第 2 節。
 
 ## 開發
-- 測試：`godot --headless --path game -s tests/<lint_dialogue|smoke_test|rhythm_test|chapter2_test>.gd`
+- 測試：`godot --headless --path game -s tests/<lint_dialogue|smoke_test|rhythm_test|chapter2_test|save_test>.gd`
 - 對話新增文字後，要重跑 `tools/subset_font.py` 更新內建字型；網頁版用 `tools/build_site.sh` 產生 `public/`。

@@ -562,7 +562,7 @@ func _process(_delta: float) -> void:
 		hud.set_prompt("")
 		return
 	var it: Interactable = player.nearest()
-	var key := "互動" if DisplayServer.is_touchscreen_available() else "E"
+	var key := GameState.interact_key_label()
 	hud.set_prompt("%s：%s" % [key, it.display_name] if it else "")
 
 

@@ -27,6 +27,7 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 | WASD / 方向鍵 | 移動 |
 | E / 空白鍵 / Enter | 互動、下一句 |
 | Tab / Esc | 日記（守則、發現的事情、拆下名牌） |
+| 手把 | 左搖桿／十字鍵移動、A 互動與下一句、START／BACK 日記（PlayStation、Switch 手把由 Godot 自動對應） |
 | 手機 | 左下搖桿、右下「互動」「日記」、點畫面前進對話 |
 | F3 | 除錯：顯示隱藏的懷疑值 |
 
@@ -54,7 +55,7 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 ![標題畫面](../docs/images/proto_title.png)
 
 ## 存檔位置
-`user://save.json`（當章進度）與 `user://meta.json`（跨周目）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
+`user://save.json`（當章進度）與 `user://meta.json`（跨周目）。寫檔時先寫 `.tmp`、讀回確認後才換上，上一份留成 `.bak`；主檔壞掉時自動讀 `.bak`（手機在存檔途中被關掉也不會壞檔）。Windows 為 `%APPDATA%\Godot\app_userdata\Rule Zero 第零條規則（原型）\`。
 
 ## 第二章「漂白鎮」
 劇本：`docs/script/chapter2.md`。程式：`scripts/chapter2.gd`（流程）、`scenes/chapter2.tscn`、`dialogue/chapter2.txt`（標籤以 `c2_` 開頭）。
@@ -101,16 +102,17 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 ## 外包素材（第二章 P0，已接入）
 交件說明與檔案表：`docs/vendor/ch2_p0/`（AI 生成，Steam 上架需揭露；提示詞在 `generation_prompts.json`）。
 - 地圖：`art/ch2/backgrounds/ch2_bg_town_day.jpg`（原檔 3200×2300 縮成 1600×1150）。鐵絲網另一邊走不過去（`BleachTown.BLOCKED`）。
-- 小人：`art/ch2/characters/sprites/`，以 0.5 倍顯示。劇情狀態還沒有對應的圖時（條碼少斑紋、小棘剪刺、嘎嘎拆線、鼬鼬沒紅毛線、和平鴿破面具／沒戴面具），自動退回程式繪製的樣子。
+- 小人：`art/ch2/characters/sprites/`，以 0.5 倍顯示。缺圖時自動退回程式繪製的樣子。
 - 立繪：`art/ch2/characters/portraits/`（縮成 512×768），對話時顯示在右邊；狀態不符時不顯示。
 - 配樂：漂白鎮（自由時間）、和平鴿（點名、治療室、畢業典禮）、矯正時間（洗白白、找出壞孩子、反省會、修剪、重新塞棉花）。
 - 音效：對話打字聲、哨音（腳本裡的 `@sfx`）、電擊（所有小遊戲的電擊都換成外包音效）。
 
 ## 尚未實作（下一步）
 - 第三章「慈愛綜合醫院」
-- 第二章的正式美術、音樂、音效（需求清單：`docs/chapter2_asset_requests.txt`）
-- 音樂、環境音（目前只有揉麵團的程式合成音樂盒音色）
-- 正式美術（目前角色與地圖都是程式繪製的佔位圖）
+- 第二章：外包素材已全部交件，但還有約 82 張圖、4 首配樂、35 種音效沒接進遊戲（清單：`docs/asset_inventory.md` 2-3、2-4 節）
+- 第一章的音樂、音效（目前只有揉麵團的程式合成音樂盒音色）
+- 第一章的正式美術（目前角色與地圖都是程式繪製的佔位圖）
+- Windows／Android／iOS 匯出與手機版面（計畫：`docs/platform_plan.md`）
 - 牆壁碰撞（目前只限制地圖邊界）
 
 ## 專案結構
@@ -138,6 +140,7 @@ game/
     ├── screenshots_ch2_day2.gd # 第二章第二天截圖
     ├── screenshots_ch2_day3.gd # 第二章第三天、結算、標題畫面截圖
     ├── rhythm_test.gd          # 揉麵團判定
+    ├── save_test.gd            # 存檔壞掉時退回 .bak、手把綁定
     ├── screenshots_ui.gd       # 標題畫面、揉麵團截圖
     ├── screenshots.gd          # 產生截圖（需要顯示環境）
     └── screenshots_day3.gd     # 第三天畫面截圖
@@ -149,6 +152,7 @@ godot --headless --path . -s tests/lint_dialogue.gd
 godot --headless --path . -s tests/smoke_test.gd
 godot --headless --path . -s tests/rhythm_test.gd
 godot --headless --path . -s tests/chapter2_test.gd
+godot --headless --path . -s tests/save_test.gd
 ```
 
 ## 字型
