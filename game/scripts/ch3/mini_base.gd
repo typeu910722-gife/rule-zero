@@ -69,7 +69,8 @@ func play() -> Variant:
 		return fast_result
 	Motif.play(self, "start")
 	var r = await done
-	Motif.play(self, "clear" if r != false else "fail")
+	# 回傳 false 才算失敗（有的小遊戲回傳次數、字串）
+	Motif.play(self, "fail" if (r is bool and r == false) else "clear")
 	await get_tree().create_timer(0.6).timeout
 	queue_free()
 	return r

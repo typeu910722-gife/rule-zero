@@ -4,6 +4,16 @@
 > 依前四章的選擇與條件，分成好結局（終章 A）與壞結局（終章 B，再分三種）。**兩個終章的遊戲內容完全不同，都以懸念收尾**（使用者決定）。
 > ⚠ 本章含自殺（和平鴿自縊：只用影子與聲音）、死亡。內容警告要標明；`[gentle]` 版本見各節。
 
+## 實作狀態（2026-10-20：基礎可玩版，佔位美術）
+- 程式：`game/scripts/chapter5.gd`（段落：opening → director → choice → ending；存檔 `c5_<段落>`；走哪個終章存在旗標 `c5_route`）
+- 對話：`game/dialogue/chapter5.txt`；小遊戲：`game/scripts/ch5/`（終章 A 呼吸 breath_walk、終章 B-2 守住走廊 guard）
+- 判定 `chapter5.gd` 的 `scores()`：兩項各自 **≥ 4** 才算足夠。
+  - 想起來：true_name +2、lulu_doubt +1、found_fox_tail +1、overheard_conductor +1、nirvana_clipboard +1、special_love_cut −2、c3_chart_pip +1、c4_dove_seen +2；丟掉糖果 +2、吃下糖果 −3
+  - 沒有放手：第二章救下（帶上車）的每個人 +1、信（letter_to_lulu／kept_letter）+1、c3_ecg_saved +1、第三章大家的棉花平均 ≥ 5 +1、c4_letter_not_taken +1、c4_lien_told +1；握住 Fen 的手 +2、不握 −2
+- 第三章沒有「丟下同伴」的旗標，用棉花平均代替；之後第三章加上旗標再換
+- 理事支線：和平鴿是不是理事殺的，四個終章都只留疑點、不回答（等使用者決定）
+- 測試：`tests/chapter5_test.gd`（四種終章＋翻盤一次）
+
 ## 1. 開場：槍聲之後（使用者決定 2026-10-20：和平鴿自縊，引出車掌的哥哥）
 
 > 接第三章結尾（實驗室、槍聲）。第四章是過去的校園故事，第五章回到現在。

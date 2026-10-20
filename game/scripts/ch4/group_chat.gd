@@ -4,7 +4,7 @@ extends Ch3Mini
 ## 最後一則：名字被打上去（「遙」）。這一則可以不按：什麼都不做，訊息框會停很久，然後畫面自己暗下去。
 ## 回傳：最後一則有沒有按讚（true／false）。
 
-const PHONE := Rect2(440, 90, 400, 560)
+const PHONE := Rect2(440, 80, 400, 550)
 const COUNT := 7          # 前面幾則（看不清楚）
 const WAIT_LAST := 9.0    # 最後一則停多久
 
@@ -94,7 +94,7 @@ func _paint(c: Control) -> void:
 		var lr := Rect2(r.end.x - 86, r.end.y - 26, 80, 22)
 		c.draw_string(f, lr.position + Vector2(0, 17), "讚 %d" % likes[k], HORIZONTAL_ALIGNMENT_RIGHT, 76, 16, PINK if liked[k] else Color("#8a8590"))
 	# 讚的按鈕
-	var btn := Rect2(PHONE.position.x + 120, PHONE.end.y + 26, 160, 44)
+	var btn := Rect2(PHONE.end.x + 40, PHONE.end.y - 70, 150, 56)
 	if not _ended:
 		c.draw_rect(btn, PINK if not (_is_last() and last_wait > 2.0) else Color("#6b5b62"))
 		c.draw_string(f, btn.position + Vector2(0, 31), "讚", HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, 24, Color.WHITE)

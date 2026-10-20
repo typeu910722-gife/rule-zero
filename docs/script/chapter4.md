@@ -4,6 +4,14 @@
 > 目標長度：約 2 小時。
 > ⚠ 本章處理校園霸凌（含性霸凌的暗示）、墜樓、組織介入。**廁所裡的事畫面與文字都不呈現，只用隔著門的聲音暗示**（見 6.2 聲音清單）；「減少驚嚇與敏感內容」開啟時，只留畫面與一聲關門。章節開頭要有內容警告與求助資源（各平台在地的兒少保護專線）。
 
+## 實作狀態（2026-10-20：基礎可玩版，佔位美術）
+- 程式：`game/scripts/chapter4.gd`（段落：opening → haruka → mochi → tiaoma → lulu → xinhe → popo → teacher → fen → theday → org → night；每段開頭存檔 `c4_<段落>`）
+- 對話：`game/dialogue/chapter4.txt`；小遊戲：`game/scripts/ch4/`（自我介紹 speech、群組 group_chat、擋在門前 hold_door）；把風的鞋子、秋歌的取景框、電閘在導演裡
+- 聲音：`tools/make_ch45_sfx.py` → `game/audio/ch4/`（只有 6.2 允許的門外聲音）；「那一天」與結尾關掉自動語音
+- 背景：有圖就用 `game/art/ch4/bg/ch4_bg_<名字>.jpg`，沒有就是底色（`dialogue.gd` 的 BG_COLORS_45）
+- 開頭有內容提醒與求助專線（台灣 113、1925）
+- 測試：`tests/chapter4_test.gd`、`tests/minigames_real_ch345.gd`、截圖 `tests/screenshots_ch45.gd`
+
 ## 0. 本章資訊
 
 | 項目 | 內容 |

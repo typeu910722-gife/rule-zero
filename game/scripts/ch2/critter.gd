@@ -9,10 +9,15 @@ const PIP_SHEET_MARKS := "res://art/ch2/characters/sprites/ch2_pip_sprite_walk_m
 
 ## 小遊戲裡的小布：用地圖上同一張小人圖（160×160 一格，腳底在 (80, 152)）。
 ## row：0 正面、1 朝左、2 朝右、3 背面。沒有圖時退回程式畫的羊。
+static var _pip_tex := {}   # 要留住：只用區域變數的話，圖在畫面真的畫出來之前就被釋放了（會畫成白框）
+
+
 static func draw_pip(ci: CanvasItem, foot: Vector2, sc := 1.0, row := 0) -> void:
 	var path := PIP_SHEET_MARKS if GameState.day >= 3 else PIP_SHEET
-	if ResourceLoader.exists(path):
-		var t: Texture2D = load(path)
+	if not _pip_tex.has(path):
+		_pip_tex[path] = load(path) if ResourceLoader.exists(path) else null
+	if _pip_tex[path]:
+		var t: Texture2D = _pip_tex[path]
 		ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2(0, row * 160, 160, 160))
 		return
 	ci.draw_set_transform(foot, 0.0, Vector2(2.6, 2.6) * sc)

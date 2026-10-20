@@ -100,7 +100,7 @@ func _press(down: bool, e: InputEvent) -> void:
 
 
 func _rect(i: int) -> Rect2:
-	return Rect2(390, 300 + i * 74, 500, 60)
+	return Rect2(390, 290 + i * 66, 500, 56)
 
 
 func _paint(c: Control) -> void:
@@ -109,8 +109,8 @@ func _paint(c: Control) -> void:
 	# 講台與台下（一排排的頭，看不清楚臉）
 	for row in 3:
 		for k in 9:
-			var p := Vector2(110 + k * 132 + row * 20, 600 - row * 30) + sh * (row + 1) * 0.3
-			c.draw_circle(p, 22, Color("#5c5246").lightened(row * 0.15))
+			var p := Vector2(110 + k * 132 + row * 20, 630 - row * 22) + sh * (row + 1) * 0.3
+			c.draw_circle(p, 18, Color("#5c5246").lightened(row * 0.15))
 	c.draw_string(f, Vector2(0, 150), "三年二班。黑板上寫著：「轉學生」", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, INK)
 	c.draw_string(f, Vector2(0, 250) + sh, LAUGH[laugh - 1] if laugh > 0 else "（安靜）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#a0583c") if laugh > 2 else SOFT)
 	for i in LINES.size():
