@@ -28,7 +28,7 @@ func _run() -> void:
 	var dlg := root.get_node("Dialogue")
 	# 火車上想起的一段（第三層：廁所門外）
 	dlg.set_bg("black")
-	dlg._say("", "鞋帶上，掛著一個小小的狐狸吊飾。")
+	dlg._say("", "過了一陣子，換成另一雙。又換了一雙。")
 	await _shot("mem_1_story3")
 	dlg._box.visible = false
 	dlg.set_bg("none")

@@ -23,7 +23,7 @@ func _run() -> void:
 	var gs := root.get_node("GameState")
 	gs.save_dir = "user://shot_saves"
 	var dlg := root.get_node("Dialogue")
-	for pair in [["mem_toilet", "鞋帶上，掛著一個小小的狐狸吊飾。"], ["nt_popo", "「謝謝你那天，在大家都在笑的時候，沒有笑。」"]]:
+	for pair in [["mem_toilet", "過了一陣子，換成另一雙。又換了一雙。"], ["nt_popo", "「謝謝你那天，在大家都在笑的時候，沒有笑。」"]]:
 		dlg.set_bg(pair[0])
 		dlg._say("", pair[1])
 		await _shot("a3_" + pair[0])

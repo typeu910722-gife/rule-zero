@@ -73,7 +73,7 @@ func _run() -> void:
 
 	print("[第四輪：記得大家]")
 	await _loop(3)
-	_check(gs.remembers("story_3"), "火車上想起：廁所門外的狐狸吊飾、發抖的老師")
+	_check(gs.remembers("story_3"), "火車上想起：廁所門外輪流把風的鞋子、發抖的老師")
 	gs.auto_choices = [0]
 	await main.interact("fen")
 	_check(gs.has("fen_knows_you") and gs.has("fen_trust"), "Fen 第一天就主動找你")
