@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""第二章漂白鎮：「可以走的地方」遮罩 game/art/ch2/walk_mask_ch2.png（跟第一章一樣只能走在路上）
+"""第二章漂白鎮（v2：手描道路＋自動抓石板地）：「可以走的地方」遮罩 game/art/ch2/walk_mask_ch2.png（跟第一章一樣只能走在路上）
 
 漂白鎮的屋頂顏色跟石板路幾乎一樣，用顏色自動抓會把屋頂當成路，所以道路是照地圖手動描的：
 每條路是一串中心點＋路寬。廣場是一個橢圓。最後扣掉高台、公告欄、鐵絲網另一邊。
@@ -47,7 +47,23 @@ BLOCK = [
 FENCE = [(640, 1150), (668, 1010), (800, 872), (880, 808), (1000, 748), (1250, 658), (1600, 626), (1600, 1150)]
 
 
-def build():
+# 建築物、屋頂、高塔、焚化爐、車站屋頂、鐵軌：一律走不進去（屋頂顏色跟石板很像，所以要手動扣掉）
+BUILDINGS = [
+    [(40, 20), (605, 20), (605, 245), (470, 268), (440, 288), (200, 288), (150, 270), (40, 250)],  # 宿舍
+    [(40, 185), (185, 185), (185, 275), (40, 275)],                                                 # 宿舍旁的箱子
+    [(20, 415), (130, 350), (562, 350), (562, 548), (470, 590), (20, 590)],                         # 教室
+    [(575, 522), (1002, 522), (1002, 682), (575, 682)],                                             # 食堂
+    [(690, 0), (912, 0), (912, 238), (690, 238)],                                                   # 廣播塔
+    [(985, 0), (1525, 0), (1525, 278), (1200, 290), (1040, 290), (985, 268)],                      # 診所（治療室）
+    [(1392, 0), (1600, 0), (1600, 640), (1392, 640)],                                               # 焚化爐
+    [(1050, 330), (1392, 330), (1392, 640), (1300, 640), (1300, 545), (1050, 545)],                # 洗衣房
+    [(0, 812), (655, 812), (655, 956), (0, 956)],                                                   # 車站屋頂
+    [(0, 1016), (1600, 1016), (1600, 1150), (0, 1150)],                                             # 鐵軌
+]
+SEED = (790, 500)   # 從廣場連得到的才算
+
+
+def build_v1():
     img = Image.new("L", (W, H), 0)
     d = ImageDraw.Draw(img)
     for width, pts in ROADS:
@@ -63,6 +79,30 @@ def build():
         d.rectangle((x, y, x + w, y + h), fill=0)
     d.polygon(FENCE, fill=0)
     return np.asarray(img) > 0
+
+
+def build():
+    """石板地：亮度夠、跟廣場連在一起；再加上原本手描的路（保證主要路線一定通）。"""
+    import cv2
+    im = np.asarray(Image.open(SRC).convert("RGB")).astype(np.float32)
+    lum = cv2.GaussianBlur(im.mean(axis=2), (0, 0), 6)
+    ground = (lum > 150).astype(np.uint8)
+    ground = cv2.morphologyEx(ground, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11)))
+    ground = cv2.morphologyEx(ground, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (19, 19)))
+    ground = ground > 0
+    ground |= build_v1()
+    block = Image.new("L", (W, H), 0)
+    d = ImageDraw.Draw(block)
+    for poly in BUILDINGS:
+        d.polygon(poly, fill=255)
+    for x, y, w, h in BLOCK:
+        d.rectangle((x, y, x + w, y + h), fill=255)
+    d.polygon(FENCE, fill=255)
+    keep = ground & (np.asarray(block) == 0)
+    for x, y, w, h in RECTS:   # 月台、洗衣房走廊：就算在屋頂下面也能走
+        keep[y:y + h, x:x + w] = True
+    n, lab = cv2.connectedComponents(keep.astype(np.uint8))
+    return lab == lab[SEED[1], SEED[0]]
 
 
 def main():

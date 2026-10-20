@@ -49,7 +49,7 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 3. 其他世界觀（慈愛組織、涅槃計畫、和平鴿、車掌、熊熊鎮長）見 `docs/GDD.md` 第 2 節與 `docs/script/chapter2.md` 第 2 節。
 
 ## 開發
-- 測試：`godot --headless --path game -s tests/<lint_dialogue|smoke_test|rhythm_test|chapter2_test|chapter3_test|save_test|walkmask_ch2_test>.gd`
+- 測試：`godot --headless --path game -s tests/<lint_dialogue|smoke_test|chapter2_test|chapter3_test|save_test|walkmask_ch2_test>.gd`；第二章小遊戲實際亂玩：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/minigames_real_ch2.gd`
 - 對話新增文字後，要重跑 `tools/subset_font.py` 更新內建字型；網頁版用 `tools/build_site.sh` 產生 `public/`；Windows／Android 用 `tools/build_platforms.sh`（輸出到 `build/`，不進 Git）。
 - 畫面截圖（需要 xvfb）：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/<screenshots_fx|screenshots_mobile>.gd -- <資料夾>`。
 - 跨平台計畫與進度：`docs/platform_plan.md`。

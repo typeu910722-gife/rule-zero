@@ -96,7 +96,7 @@ const MODELS := ["lulu", "mochi", "popo", "fen"]
 const HIDDEN := ["lulu", "mochi", "popo", "fen", "conductor"]
 
 const OBJECTS := {
-	"c2_board": {"name": "公告欄", "pos": Vector2(790, 385)},
+	"c2_board": {"name": "公告欄", "pos": Vector2(790, 385), "reach_home": 110.0},
 	"treatment_door": {"name": "治療室的門", "pos": Vector2(1150, 285)},
 	"laundry": {"name": "洗衣房", "pos": Vector2(1170, 560)},
 	"tower": {"name": "廣播塔", "pos": Vector2(790, 285)},
@@ -157,6 +157,11 @@ var _bgm_name := ""
 
 func _ready() -> void:
 	GameState.chapter = 2
+	# 標題畫面的「回憶」配樂（第一章的音樂系統，會變慢走音）不能帶進來，不然兩首疊在一起
+	Sound.override_bgm("")
+	Sound.bgm("")
+	Sound.ambience("")
+	Sound.set_wear(0)
 	tint = CanvasModulate.new()
 	add_child(tint)
 	town = BleachTown.new()

@@ -135,10 +135,7 @@ func _draw_art(bg: Texture2D, dove: Texture2D, coat: Texture2D) -> void:
 	if ptex:
 		a.draw_texture_rect(ptex, Rect2(pip + Vector2(-68, -150), Vector2(136, 153)), false)
 	else:
-		a.draw_set_transform(pip, 0.0, Vector2(1.8, 1.8))
-		Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
-			{"grey_patch": GameState.has("c2_grey_patch")})
-		a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		Ch2Critter.draw_pip(a, pip, 0.8, 2)
 	if caught:
 		a.draw_rect(Rect2(0, 666, 1280, 36), Color(1, 1, 1, 0.75))
 		a.draw_string(f, Vector2(0, 692), "和平鴿：小布想幫我拿衣服嗎？好乖。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color("#555555"))
@@ -175,9 +172,6 @@ func _draw_procedural() -> void:
 		a.draw_string(f, Vector2(600, 150), "♪ ～", HORIZONTAL_ALIGNMENT_CENTER, 320, 30, Color("#999999"))
 	# 小布
 	var pip := START.lerp(GOAL, _p)
-	a.draw_set_transform(pip, 0.0, Vector2(1.8, 1.8))
-	Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(1, 0), not caught, false, true,
-		{"grey_patch": GameState.has("c2_grey_patch")})
-	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	Ch2Critter.draw_pip(a, pip, 0.8, 2)
 	if caught:
 		a.draw_string(f, Vector2(0, 690), "和平鴿：小布想幫我拿衣服嗎？好乖。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color("#555555"))

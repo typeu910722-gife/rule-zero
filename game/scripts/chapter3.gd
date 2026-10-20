@@ -67,6 +67,11 @@ var _lights_layer: CanvasLayer
 
 func _ready() -> void:
 	GameState.chapter = 3
+	# 標題畫面的「回憶」配樂（第一章的音樂系統，會變慢走音）不能帶進來，不然兩首疊在一起
+	Sound.override_bgm("")
+	Sound.bgm("")
+	Sound.ambience("")
+	Sound.set_wear(0)
 	Dialogue.portrait_state = Callable()
 	Dialogue.event_requested.connect(_on_event)
 	Dialogue.bgm_requested.connect(_bgm)

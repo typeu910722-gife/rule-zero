@@ -268,10 +268,7 @@ func _draw_area() -> void:
 	var pip_shake := Vector2.ZERO
 	if _phase == "hold" and (Input.is_action_pressed("interact") or _mouse_down):
 		pip_shake = Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 8.0
-	a.draw_set_transform(PIP_POS + pip_shake, 0.0, Vector2(2.6, 2.6))
-	Ch2Critter.draw(a, "sheep", Color("#fffdf8"), 1.0, Vector2(-0.5, 0), _phase == "play", false, true,
-		{"grey_patch": GameState.has("c2_grey_patch")})
-	a.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	Ch2Critter.draw_pip(a, PIP_POS + pip_shake, 1.0, 1)
 	if took_shock:
 		for side in [-1, 1]:
 			a.draw_arc(PIP_POS + pip_shake + Vector2(side * 44, -36), 9, 0, TAU, 16, Color("#5a5a5a"), 4)

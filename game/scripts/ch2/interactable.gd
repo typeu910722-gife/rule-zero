@@ -59,7 +59,8 @@ func reach() -> float:
 func _process(delta: float) -> void:
 	if follow_eyes:
 		queue_redraw()
-	if sprite_matches() and sprite.get("frames", [0]).size() > 1:
+	# 待機的幾格是分開畫的，連續播放會像在發抖：只在 sprite 寫了 "loop": true 時才播
+	if sprite_matches() and sprite.get("loop", false) and sprite.get("frames", [0]).size() > 1:
 		_anim_t += delta
 		queue_redraw()
 
@@ -85,7 +86,9 @@ func sprite_matches() -> bool:
 
 func _draw_sprite() -> void:
 	var frames: Array = sprite.get("frames", [0])
-	var i: int = frames[int(_anim_t * sprite.get("fps", 4)) % frames.size()]
+	var i: int = frames[0]
+	if sprite.get("loop", false):
+		i = frames[int(_anim_t * sprite.get("fps", 4)) % frames.size()]
 	var fs: Vector2 = sprite.frame
 	var cols: int = sprite.get("cols", 1)
 	var src := Rect2(Vector2(i % cols, i / cols) * fs, fs)

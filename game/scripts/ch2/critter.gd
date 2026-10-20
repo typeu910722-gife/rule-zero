@@ -3,6 +3,23 @@ extends RefCounted
 ## 用程式繪製的絨毛娃娃角色（原型用，正式版替換為美術素材）。
 
 
+const PIP_SHEET := "res://art/ch2/characters/sprites/ch2_pip_sprite_walk_sheet.png"
+const PIP_SHEET_MARKS := "res://art/ch2/characters/sprites/ch2_pip_sprite_walk_marks_sheet.png"
+
+
+## 小遊戲裡的小布：用地圖上同一張小人圖（160×160 一格，腳底在 (80, 152)）。
+## row：0 正面、1 朝左、2 朝右、3 背面。沒有圖時退回程式畫的羊。
+static func draw_pip(ci: CanvasItem, foot: Vector2, sc := 1.0, row := 0) -> void:
+	var path := PIP_SHEET_MARKS if GameState.day >= 3 else PIP_SHEET
+	if ResourceLoader.exists(path):
+		var t: Texture2D = load(path)
+		ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2(0, row * 160, 160, 160))
+		return
+	ci.draw_set_transform(foot, 0.0, Vector2(2.6, 2.6) * sc)
+	draw(ci, "sheep", Color("#fffdf8"), 1.0, Vector2.ZERO, false, false, true, {"grey_patch": GameState.has("c2_grey_patch")})
+	ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
 ## opts（第二章）：stripes 斑馬剩下的斑紋數、sewn 嘴被縫起來、thread 紅毛線、
 ## pale 慘白的臉、no_tail 沒有尾巴、grey_patch 被摸過褪色的地方
 static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := Vector2.ZERO,

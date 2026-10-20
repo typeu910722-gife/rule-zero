@@ -232,6 +232,16 @@ var intro_played := false
 var font: Font
 
 
+## Android 的返回鍵／返回手勢：不要直接關掉遊戲（project.godot quit_on_go_back=false），當成「打開選單」
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		for pressed in [true, false]:
+			var ev := InputEventAction.new()
+			ev.action = "menu"
+			ev.pressed = pressed
+			Input.parse_input_event(ev)
+
+
 func _ready() -> void:
 	_setup_input()
 	_setup_font()

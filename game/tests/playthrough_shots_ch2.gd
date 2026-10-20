@@ -32,7 +32,13 @@ func _on_event_started(event_name: String) -> void:
 		cover_issues["事件 " + event_name] = true
 
 
+var peak_ram := 0.0
+var peak_vram := 0.0
+
+
 func _process(_delta: float) -> bool:
+	peak_ram = maxf(peak_ram, Performance.get_monitor(Performance.MEMORY_STATIC))
+	peak_vram = maxf(peak_vram, Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED))
 	if dlg == null or ch == null or not is_instance_valid(ch):
 		return false
 	var ov = ch.get("overlay")
@@ -247,5 +253,6 @@ func _run() -> void:
 	fa.store_string("\n".join(index))
 	fa.close()
 	print("截圖 %d 張" % shot_n)
+	print("記憶體高峰：RAM %.0f MB，貼圖 %.0f MB" % [peak_ram / 1048576.0, peak_vram / 1048576.0])
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures > 0 else 0)
