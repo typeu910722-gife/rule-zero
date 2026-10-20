@@ -44,3 +44,4 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 - 對話新增文字後，要重跑 `tools/subset_font.py` 更新內建字型；網頁版用 `tools/build_site.sh` 產生 `public/`；Windows／Android 用 `tools/build_platforms.sh`（輸出到 `build/`，不進 Git）。
 - 畫面截圖（需要 xvfb）：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/<screenshots_fx|screenshots_mobile>.gd -- <資料夾>`。
 - 跨平台計畫與進度：`docs/platform_plan.md`。
+- **美術不外包，一律自己出圖**（2026-10-20 決定）：先 `tools/art/setup.sh`，再用 `python3 tools/art/gen.py <預設> …`。畫風 LoRA 與用法見 `docs/art_pipeline.md`；生成的圖記在 `docs/art_generated.md`。

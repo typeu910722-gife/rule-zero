@@ -1,0 +1,151 @@
+{
+ "bu": {
+  "名字": "小布",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "pip, cream curly wool sheep plush, green hooded cloak, brown leather satchel"
+ },
+ "lulu": {
+  "名字": "露露",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "lulu, pink long-eared rabbit plush, mint green bow, pink dress with heart patch"
+ },
+ "mayor": {
+  "名字": "熊熊鎮長",
+  "章": [
+   1
+  ],
+  "外觀": "bear mayor, brown teddy bear plush, black top hat"
+ },
+ "fen": {
+  "名字": "Fen",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "rzfen, red fox plush, orange fur, cream chest, dark grey patched hooded vest, brown leather satchel strap",
+  "lora": "rzfen"
+ },
+ "popo": {
+  "名字": "波波",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "popo, navy blue penguin plush, mail carrier"
+ },
+ "mochi": {
+  "名字": "麻糬",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "mochi, white hamster plush, blank name tag"
+ },
+ "tama": {
+  "名字": "小玉",
+  "章": [
+   1
+  ],
+  "外觀": "tama, calico cat plush, blue dress, pearl buttons"
+ },
+ "conductor": {
+  "名字": "車掌",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "conductor, dark train conductor plush, uniform cap"
+ },
+ "puppy": {
+  "名字": "小狗居民",
+  "章": [
+   1
+  ],
+  "外觀": "puppy resident, tan puppy plush, blue vest, yellow scarf"
+ },
+ "mirror_child": {
+  "名字": "鏡中的孩子",
+  "章": [
+   1
+  ],
+  "外觀": "mirror child, small human child"
+ },
+ "baimian": {
+  "名字": "白面",
+  "章": [
+   2
+  ],
+  "外觀": "baimian, pale white fox plush, grey hood"
+ },
+ "xiaoji": {
+  "名字": "小棘",
+  "章": [
+   2
+  ],
+  "外觀": "xiaoji, black hedgehog plush"
+ },
+ "tiaoma": {
+  "名字": "條碼",
+  "章": [
+   2
+  ],
+  "外觀": "tiaoma, zebra plush"
+ },
+ "gaga": {
+  "名字": "嘎嘎",
+  "章": [
+   2
+  ],
+  "外觀": "gaga, black crow plush"
+ },
+ "zhongzhong": {
+  "名字": "重重",
+  "章": [
+   2
+  ],
+  "外觀": "zhongzhong, grey hippo plush"
+ },
+ "youyou": {
+  "名字": "鼬鼬",
+  "章": [
+   2
+  ],
+  "外觀": "youyou, grey weasel plush, red scarf"
+ },
+ "dove": {
+  "名字": "和平鴿",
+  "章": [
+   2
+  ],
+  "外觀": "peace dove, principal, tall white figure with white bird beak mask, white doctor coat, stethoscope"
+ },
+ "mechbird": {
+  "名字": "機械鳥",
+  "章": [
+   2
+  ],
+  "外觀": "mechanical bird, wind-up metal bird"
+ },
+ "staff": {
+  "名字": "漂白鎮職員",
+  "章": [
+   2
+  ],
+  "外觀": "bleach town staff plush"
+ },
+ "haruka_human": {
+  "名字": "遙（人類時期）",
+  "章": [
+   1,
+   2
+  ],
+  "外觀": "human boy, junior high school student, boys school uniform, hiding a small pink hair clip in his hand, face partly hidden",
+  "注意": "隱藏設定（CLAUDE.md 第 1 條）：只能用細節暗示，不能畫成笑點或懲罰；人類時期的場景一律用人類本名。"
+ }
+}
