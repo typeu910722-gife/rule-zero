@@ -1,0 +1,57 @@
+# iOS 未簽章 .ipa：在 GitHub 的 macOS 機器上用 Godot 匯出 Xcode 專案，再用 xcodebuild 編譯（不簽章）。
+# 拿到 .ipa 後用 Sideloadly／AltStore 以自己的 Apple ID 簽章安裝（免費帳號 7 天有效）。
+name: iOS 未簽章版
+
+on:
+  push:
+    branches: [claude/confident-bohr-fchdn2]
+    paths: [".github/workflows/ios.yml", "game/**"]
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      GODOT_VER: "4.3-stable"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 下載 Godot 與匯出範本
+        run: |
+          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/${GODOT_VER}/Godot_v${GODOT_VER}_macos.universal.zip
+          unzip -q godot.zip
+          curl -sSL -o tpl.tpz https://github.com/godotengine/godot/releases/download/${GODOT_VER}/Godot_v${GODOT_VER}_export_templates.tpz
+          T="$HOME/Library/Application Support/Godot/export_templates/4.3.stable"
+          mkdir -p "$T"
+          unzip -q -j tpl.tpz "templates/ios.zip" "templates/version.txt" -d "$T"
+          ls "$T"
+
+      - name: 匯出 Xcode 專案
+        run: |
+          G="$PWD/Godot.app/Contents/MacOS/Godot"
+          cd game
+          # 團隊 ID 只是讓 Godot 願意匯出；不簽章，安裝時由 Sideloadly 用你的 Apple ID 重新簽
+          sed -i '' 's/^application\/app_store_team_id=""/application\/app_store_team_id="ABCDE12345"/' export_presets.cfg
+          "$G" --headless --path . --import > /dev/null 2>&1 || true
+          mkdir -p ../build/ios
+          "$G" --headless --path . --export-release "iOS" ../build/ios/RuleZero.ipa
+          ls ../build/ios
+
+      - name: 編譯（不簽章）並打包 .ipa
+        run: |
+          cd build/ios
+          xcodebuild -project RuleZero.xcodeproj -scheme RuleZero -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$PWD/RuleZero.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" \
+            archive | tail -40
+          mkdir -p Payload
+          cp -R RuleZero.xcarchive/Products/Applications/RuleZero.app Payload/
+          zip -qry ../../RuleZero-iOS-unsigned.ipa Payload
+          ls -la ../../RuleZero-iOS-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RuleZero-iOS-unsigned
+          path: RuleZero-iOS-unsigned.ipa
+          retention-days: 30
