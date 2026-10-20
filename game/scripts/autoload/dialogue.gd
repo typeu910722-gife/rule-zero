@@ -20,7 +20,7 @@ const BG_COLORS := {
 	"white": Color("#f4f4f2"),
 }
 ## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
-const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt"]
+const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt", "res://dialogue/chapter3.txt"]
 
 ## ───── 第二章「漂白鎮」 ─────
 ## 立繪：說話的人有立繪時顯示在右邊。
@@ -35,6 +35,13 @@ const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
 ## 室內背景與 CG（@bg 的名字 → 圖）。第二章時優先找這裡；沒有圖時退回 BG_COLORS 的底色
 const BG_ART := "res://art/ch2/backgrounds/ch2_bg_%s.jpg"
 const CG_ART := "res://art/ch2/cg/ch2_%s.jpg"
+## 第三章：背景圖放 art/ch3/bg/ch3_bg_<名字>.jpg（自製美術，之後陸續補上）；沒有圖時用這裡的底色
+const BG_ART_3 := "res://art/ch3/bg/ch3_bg_%s.jpg"
+const BG_COLORS_3 := {
+	"c3_platform": Color("#d9dcdc"), "c3_hall": Color("#f2f4f4"), "c3_nurse": Color("#eef1f2"),
+	"c3_nirvana": Color("#dfe6ea"), "c3_records": Color("#d7d9d6"), "c3_director": Color("#cfc9c0"),
+	"c3_wild": Color("#9aa3a3"), "c3_b2": Color("#1d2224"), "c3_monitor": Color("#11181b"), "c3_lab": Color("#e8eef0"),
+}
 const BG_FALLBACK := {"platform_negative": "white", "ending_grey": "grey_train", "ending_color": "grey_train"}
 ## 有美術的背景（game/art/bg_*.jpg）。@bg 名稱 → 全畫面背景圖
 const BG_IMAGES := ["train", "platform", "plaza", "bakery", "repair", "clocktower", "room_night",
@@ -259,8 +266,9 @@ func _command(op: String, args: Array) -> int:
 	return -1
 
 
+## 第二章之後（第三章也用第二章的立繪與對話框）
 func _ch2() -> bool:
-	return GameState.chapter == 2
+	return GameState.chapter >= 2
 
 
 func set_bg(mode: String) -> void:
@@ -285,6 +293,13 @@ func _set_bg_ch2(mode: String) -> void:
 	_bg_img.visible = false
 	_cg_shown = false
 	if not _bg.visible:
+		return
+	if mode.begins_with("c3_"):
+		var art3 := BG_ART_3 % mode.trim_prefix("c3_")
+		if ResourceLoader.exists(art3):
+			_bg_img.texture = load(art3)
+			_bg_img.visible = true
+		_bg.color = BG_COLORS_3.get(mode, BG_COLORS.black)
 		return
 	var art := ""
 	if mode.begins_with("cg"):

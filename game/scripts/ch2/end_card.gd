@@ -55,7 +55,8 @@ func _ready() -> void:
 		_build_results(t, hint)
 		box.position = Vector2(440, 556)
 		box.custom_minimum_size = Vector2(400, 0)
-		first = _button(box, "回到標題", _to_title)
+		first = _button(box, "繼續第三章", func(): load("res://scripts/main.gd").enter_chapter3(get_tree()))
+		_button(box, "回到標題", _to_title)
 	else:
 		box.position = Vector2(340, 70)
 		box.custom_minimum_size = Vector2(600, 300)
@@ -78,12 +79,13 @@ func _ready() -> void:
 		fates.text = "[center]%s[/center]" % "　　".join(lines.slice(0, 3)) + "\n[center]%s[/center]" % "　　".join(lines.slice(3))
 		box.add_child(fates)
 		var next := Label.new()
-		next.text = "第三章「慈愛綜合醫院」（製作中）"
+		next.text = "第三章「慈愛實驗醫院」"
 		next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		next.add_theme_font_size_override("font_size", 20)
 		next.add_theme_color_override("font_color", Color("#a39ba8"))
 		box.add_child(next)
-		first = _button(box, "回到標題", _to_title)
+		first = _button(box, "繼續第三章", func(): load("res://scripts/main.gd").enter_chapter3(get_tree()))
+		_button(box, "回到標題", _to_title)
 	if not OS.has_feature("web"):
 		_button(box, "離開遊戲", func(): get_tree().quit())
 	first.grab_focus.call_deferred()
@@ -129,7 +131,7 @@ func _build_results(t: Label, hint: Label) -> void:
 	move_child(area, 1)
 	# 第三章預告：空白的章節框
 	var next := Label.new()
-	next.text = "第三章「慈愛綜合醫院」（製作中）"
+	next.text = "第三章「慈愛實驗醫院」"
 	next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	next.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	next.add_theme_font_size_override("font_size", 20)

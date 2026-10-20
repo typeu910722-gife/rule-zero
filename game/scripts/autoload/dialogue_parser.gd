@@ -16,7 +16,9 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"cg04_photo_hallway", "cg05_photo_mailbox", "cg06_photo_nirvana", "cg07_silhouette", "cg08_diary",
 	"cg09_clipboard", "cg10_platform_two", "cg11_popo_fence", "cg12_mochi_hug", "cg13_paper_plane",
 	"cg14_tiaoma_last", "cg15_mask_break", "cg16_conductor_photo", "cg17_dream_orphanage",
-	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all"]
+	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all",
+	# 第三章（dialogue.gd 的 BG_ART_3／BG_COLORS_3）
+	"c3_platform", "c3_hall", "c3_nurse", "c3_nirvana", "c3_records", "c3_director", "c3_wild", "c3_b2", "c3_monitor", "c3_lab"]
 
 var cmds: Array = []
 var labels := {}

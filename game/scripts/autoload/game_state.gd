@@ -261,6 +261,27 @@ func start_chapter2() -> void:
 	changed.emit()
 
 
+## 第三章：接第二章結束時的旗標（meta.ch2_flags）與居民去向（meta.ch2_fates）
+func start_chapter3() -> void:
+	chapter = 3
+	day = 1
+	courage = MAX_COURAGE
+	var carry: Dictionary = meta.get("ch2_flags", {})
+	for k in carry:
+		flags[k] = carry[k]
+	var fates: Dictionary = meta.get("ch2_fates", {})
+	for id in ["xiaoji", "zhongzhong", "gaga", "youyou"]:
+		if fates.get(id, "") == "aboard":
+			flags["with_%s" % id] = true
+	if fates.get("youyou", "") == "unknown":
+		flags["youyou_lost"] = true
+	if fates.get("xiaoji", "") == "graduated":
+		flags["xiaoji_grad"] = true
+	objective = ""
+	checkpoint = ""
+	changed.emit()
+
+
 func add_conduct(amount: int) -> void:
 	conduct = clampi(conduct + amount, 0, 100)
 	changed.emit()

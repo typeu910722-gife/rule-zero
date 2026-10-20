@@ -206,3 +206,12 @@ godot --headless --path . -s tests/save_test.gd
 ## 字型
 原型使用系統的中文字型（Windows：微軟正黑體；macOS：蘋方）。
 正式版需要打包可商用授權的字型（例如 Noto Sans TC 或圓體），再上架 Steam。
+
+## 第三章「慈愛實驗醫院」（基礎可玩版，2026-10-20）
+- 劇本：`docs/script/chapter3.md`；對話：`game/dialogue/chapter3.txt`；章節導演：`game/scripts/chapter3.gd`
+- 房間調查（`scripts/ch3/room.gd`）：一樓走廊、涅槃計畫區、病歷室、地下二樓；沒有美術時用程式畫的佔位圖，之後放 `art/ch3/bg/ch3_bg_<房間>.jpg` 就會自動換上
+- 小遊戲（`scripts/ch3/`）：心臟病、量體溫、點滴、縫合、心臟按壓、追逐（三線道，之後換成裸眼 3D）、廣播點名
+- 棉花：追逐撞到會掉、縫合補回；結算畫面顯示每個人剩下的棉花
+- 第二章結束 →「繼續第三章」；標題「選擇篇章」也可以直接進第三章
+- 測試：`tests/chapter3_test.gd`；截圖：`tests/screenshots_ch3.gd`
+

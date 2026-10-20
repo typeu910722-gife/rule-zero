@@ -262,6 +262,9 @@ func _show_title() -> void:
 	title.continue_game.connect(func():
 		title.queue_free()
 		_continue())
+	title.chapter3.connect(func():
+		GameState.reset()
+		enter_chapter3(get_tree()))
 	title.chapter2.connect(func():
 		# 從「選擇篇章」進第二章：從第二章的序章重新開始
 		GameState.reset()
@@ -277,6 +280,9 @@ func _continue() -> void:
 		return
 	if GameState.chapter == 2:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
+		return
+	if GameState.chapter == 3:
+		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter3.tscn")
 		return
 	var cp := GameState.checkpoint
 	Dialogue.set_bg("none")
@@ -304,6 +310,15 @@ static func enter_chapter2(tree: SceneTree) -> void:
 	GameState.start_chapter2()
 	GameState.checkpoint = ""
 	tree.change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
+
+
+static func enter_chapter3(tree: SceneTree) -> void:
+	Sound.bgm("")
+	Sound.ambience("")
+	Audio.stop_music()
+	Dialogue.set_bg("none")
+	GameState.start_chapter3()
+	tree.change_scene_to_file.call_deferred("res://scenes/chapter3.tscn")
 
 
 # ───────────────────────── 章節流程 ─────────────────────────
