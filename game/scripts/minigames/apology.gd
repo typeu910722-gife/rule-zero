@@ -12,7 +12,6 @@ const LEAD := 2.0
 const PERFECT := 0.12
 const GOOD := 0.25
 const WORDS := ["對", "不", "起"]
-const MELODY := [523.3, 659.3, 784.0, 659.3, 587.3, 523.3]
 const TARGET := Vector2(430, 560)
 const SPAWN_X := 1180.0
 const OVERLOAD := 5          # 連續按錯幾次會爆表
@@ -197,7 +196,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_wrong(true)
 		return
 	var idx := _notes.find(best)
-	Tones.play(self, MELODY[idx % MELODY.size()])
+	Motif.note(self, idx)
 	_wrong_streak = 0
 	if best_dt <= PERFECT:
 		best.state = "perfect"

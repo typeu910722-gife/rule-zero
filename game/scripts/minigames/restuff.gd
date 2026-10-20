@@ -99,7 +99,7 @@ func play() -> void:
 
 func _tap() -> void:
 	_taps += 1
-	Tones.play(self, [523.3, 659.3, 784.0, 1046.5][step], -10.0)
+	Motif.note(self, step, -10.0)
 	if step == 1 and _taps == 1:
 		_flash = 1.2
 	if _taps >= TAPS:

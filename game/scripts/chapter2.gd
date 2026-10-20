@@ -225,9 +225,12 @@ func _bgm(name: String) -> void:
 ## 小遊戲時換配樂，結束後換回來
 func _with_bgm(name: String, game: Node, method := "play") -> Variant:
 	var prev := _bgm_name
+	Motif.play(self, "start")          # 小遊戲開始：主旋律的開頭兩個音
 	_bgm(name)
 	var r = await game.call(method)
 	_bgm(prev)
+	# 偷溜（sneak）回傳「被抓到」；其他小遊戲做完就算過關
+	Motif.play(self, "fail" if r is bool and r else "clear")
 	return r
 
 
@@ -587,6 +590,7 @@ func _on_event(event_name: String) -> void:
 			for id in MODELS:
 				actors[id].visible = false
 		"c2_dove_appears":
+			Motif.play(self, "whistle", -6.0)   # 和平鴿的口哨：主旋律，最後一個音往上滑
 			_bgm("dove")
 			var dove: Ch2Interactable = actors.dove
 			dove.visible = true
@@ -600,7 +604,10 @@ func _on_event(event_name: String) -> void:
 			add_child(fo)
 			var n := int(event_name.right(1))
 			_bgm("correction")
-			GameState.set_flag("c2_found_%d" % n, await fo.play(n))
+			Motif.play(self, "start")
+			var found: bool = await fo.play(n)
+			Motif.play(self, "clear" if found else "fail")
+			GameState.set_flag("c2_found_%d" % n, found)
 		"treatment_hold":
 			var h := HoldEndure.new()
 			h.questions = [["第一題。你為什麼沒有笑？", 3.0], ["第二題。你在看誰？", 4.0],
@@ -641,6 +648,7 @@ func _on_event(event_name: String) -> void:
 			actors.conductor.position = Vector2(600, 965)
 			player.position = Vector2(250, 960)
 		"c2_dove_mask_on":
+			Motif.play(self, "whistle", -8.0)
 			actors.dove.opts["unmasked"] = false
 			actors.dove.queue_redraw()
 		"c2_popo_fence":

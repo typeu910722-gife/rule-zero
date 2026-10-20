@@ -28,7 +28,6 @@ func _ready() -> void:
 	add_child(_area)
 
 
-const HUM := [523.3, 587.3, 659.3, 784.0, 659.3, 587.3, 523.3, 440.0]
 var _hum_t := 0.0
 var _hum_i := 0
 
@@ -41,7 +40,7 @@ func _process(delta: float) -> void:
 		_hum_t -= delta
 		if _hum_t <= 0 and _t > 2.0 and not ResourceLoader.exists(HUM_BGM):
 			_hum_t = 0.7
-			Tones.play(self, HUM[_hum_i % HUM.size()] * 0.5, -16.0)
+			Tones.play(self, Motif.NOTES[_hum_i % Motif.NOTES.size()] * 0.5, -16.0)
 			_hum_i += 1
 
 

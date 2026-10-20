@@ -19,7 +19,6 @@ var _mouse_down := false
 var _hum_t := 0.0
 var _hum_i := 0
 var _rng := RandomNumberGenerator.new()
-const HUM := [523.3, 587.3, 659.3, 784.0, 659.3, 587.3]
 ## 外包美術（見 art/ch2/minigames/sneak/）；檔案不在就退回程式畫的版本
 const ART := "res://art/ch2/minigames/sneak/ch2_sneak_"
 const BG := "res://art/ch2/backgrounds/ch2_bg_laundry.jpg"
@@ -67,7 +66,7 @@ func _process(delta: float) -> void:
 			_hum_t -= delta
 			if _hum_t <= 0:
 				_hum_t = 0.45
-				Tones.play(self, HUM[_hum_i % HUM.size()] * 0.5, -14.0)
+				Tones.play(self, Motif.NOTES[_hum_i % Motif.NOTES.size()] * 0.5, -14.0)
 				_hum_i += 1
 			if _state_t <= 0:
 				_state = "warn"

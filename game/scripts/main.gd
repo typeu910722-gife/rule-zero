@@ -878,11 +878,14 @@ func _on_event(event_name: String) -> void:
 			actors.mayor.visible = true
 			actors.mayor.position = player.position + Vector2(-20, 70)
 		"sew":
+			Motif.play(self, "start")
 			await repair_scene.sew()
+			Motif.play(self, "clear")
 		"scissors":
 			Sound.bgm("chase")
 			var sc := ScissorsScene.new()
 			add_child(sc)
+			Motif.play(self, "start")
 			await sc.play()
 			sc.queue_free()
 			Sound.bgm("memory")

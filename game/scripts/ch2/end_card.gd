@@ -23,6 +23,7 @@ const NAMES := {"baimian": "白面", "xiaoji": "小棘", "tiaoma": "條碼", "ga
 
 func _ready() -> void:
 	layer = 60
+	Motif.play(self, "sting")
 	var bg := ColorRect.new()
 	bg.color = Color("#1b1620") if mode == "to_ch2" else Color("#1c1c1c")
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)

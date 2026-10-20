@@ -11,7 +11,6 @@ const SPECIES := {"pip": "sheep", "xiaoji": "hedgehog", "tiaoma": "zebra", "gaga
 const WALK_CYCLE := ["xiaoji", "zhongzhong"]
 const COLORS := {"pip": Color("#fffdf8"), "xiaoji": Color("#2f2f2f"), "tiaoma": Color("#f4f4f2"),
 	"gaga": Color("#4a4a4a"), "zhongzhong": Color("#9c9c9c"), "youyou": Color("#b8b8b4")}
-const MELODY := [523.3, 659.3, 784.0, 659.3, 587.3, 523.3, 587.3, 659.3]
 const CENTER := Vector2(640, 400)
 
 var players: Array = []
@@ -123,7 +122,7 @@ func _process(delta: float) -> void:
 			_note_t -= delta
 			if _note_t <= 0:
 				_note_t = randf_range(0.25, 0.5)
-				Tones.play(self, MELODY[_note_i % MELODY.size()], -8.0)
+				Motif.note(self, _note_i)
 				_note_i += 1
 			if _t >= _stop_at:
 				_phase = "stopped"

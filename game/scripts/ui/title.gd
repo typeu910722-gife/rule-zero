@@ -64,6 +64,8 @@ func _ready() -> void:
 	_heavy = GameState.heaviness()
 	Sound.set_wear(_heavy)
 	Sound.bgm("memory")
+	# 主旋律：標題出現一下下之後，音樂盒小小聲地彈一次
+	get_tree().create_timer(1.6).timeout.connect(func(): Motif.play(self, "musicbox", -12.0))
 	_bg = TextureRect.new()
 	_bg.texture = BG
 	_bg.set_anchors_preset(Control.PRESET_FULL_RECT)

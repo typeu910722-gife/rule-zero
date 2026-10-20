@@ -3,6 +3,7 @@ extends CanvasLayer
 
 func _ready() -> void:
 	layer = 60
+	Motif.play(self, "sting")
 	var bg := ColorRect.new()
 	bg.color = Color("#1b1620")
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
