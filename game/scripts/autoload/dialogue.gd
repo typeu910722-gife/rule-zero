@@ -226,13 +226,17 @@ func _command(op: String, args: Array) -> int:
 			_more.visible = false
 			if _ch2():
 				# 第二章：背景圖在對話層（比小遊戲、照片高），事件進行時先收起來，不然會把小遊戲整個蓋住
+				# 背景色塊（_bg）和背景圖（_bg_img）是兩個並排的節點，兩個都要收
 				var bg_was := _bg.visible
+				var img_was := _bg_img.visible
 				var serial := _bg_serial
 				_bg.visible = false
+				_bg_img.visible = false
 				event_requested.emit(args[0])
 				await event_done
 				if serial == _bg_serial:
 					_bg.visible = bg_was
+					_bg_img.visible = img_was
 			else:
 				event_requested.emit(args[0])
 				await event_done

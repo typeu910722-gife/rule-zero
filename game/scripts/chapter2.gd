@@ -614,6 +614,8 @@ func _on_event(event_name: String) -> void:
 				GameState.set_flag("c2_sneak_caught")
 				GameState.add_conduct(-10)
 		"photo_1", "photo_2", "photo_nirvana", "silhouette":
+			# 照片在 layer 25，對話層的背景圖（layer 50）會蓋住它：投影期間不要有背景圖
+			Dialogue.set_bg("none")
 			if overlay == null:
 				overlay = SceneOverlay.new()
 				add_child(overlay)

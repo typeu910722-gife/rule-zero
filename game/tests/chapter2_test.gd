@@ -3,6 +3,26 @@ extends SceneTree
 
 var ch: Node
 var failures := 0
+## 畫面遮擋檢查：小遊戲、照片出現時，對話層（layer 50）的背景圖不能蓋在上面
+var cover_issues := {}
+var dlg: Node
+
+
+func _on_event_started(event_name: String) -> void:
+	if dlg._bg.visible or dlg._bg_img.visible:
+		cover_issues["事件 " + event_name] = true
+
+
+func _process(_delta: float) -> bool:
+	if dlg == null or ch == null or not is_instance_valid(ch):
+		return false
+	var ov = ch.get("overlay")
+	if ov != null and is_instance_valid(ov) and ov.visible and dlg._bg_img.visible:
+		cover_issues["照片 " + str(ov.mode) + " 被背景圖蓋住"] = true
+	for c in ch.get_children():
+		if c is CanvasLayer and c.layer == 30 and c.visible and (dlg._bg.visible or dlg._bg_img.visible):
+			cover_issues["小遊戲 " + c.get_script().resource_path.get_file() + " 被背景蓋住"] = true
+	return false
 
 
 func _init() -> void:
@@ -58,6 +78,8 @@ func _start_day3(gs: Node, flags: Dictionary, conduct: int) -> void:
 func _run() -> void:
 	var gs := root.get_node("GameState")
 	gs.fast = true
+	dlg = root.get_node("Dialogue")
+	dlg.event_requested.connect(_on_event_started)
 	gs.save_dir = "user://test_saves"
 	DirAccess.make_dir_recursive_absolute(gs.save_dir)
 	gs.delete_save()
@@ -197,5 +219,6 @@ func _run() -> void:
 	gs.delete_save()
 	gs.chapter = 1
 
+	_check(cover_issues.is_empty(), "小遊戲、照片沒有被背景圖蓋住" + ("" if cover_issues.is_empty() else "：" + ", ".join(cover_issues.keys())))
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures > 0 else 0)
