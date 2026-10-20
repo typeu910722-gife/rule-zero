@@ -1,0 +1,57 @@
+# 網頁版＋iPhone 安裝頁發布到 Cloudflare Pages 的「預覽」網址（不動正式站 try.yzprojecttw.com）：
+#   https://rule-zero.yz-try.pages.dev/ios/   ← iPhone 用 Safari 開這個安裝
+#   https://rule-zero.yz-try.pages.dev/rule-zero/
+# 需要 GitHub 儲存庫的 Secrets：CLOUDFLARE_API_TOKEN（Cloudflare Pages：編輯 權限）、CLOUDFLARE_ACCOUNT_ID
+name: 網頁預覽版（含 iPhone 安裝頁）
+
+on:
+  push:
+    branches: [claude/confident-bohr-fchdn2]
+    paths: [".github/workflows/web-preview.yml", "game/**", "site/**", "tools/build_site.sh", "tools/make_ios_profile.py"]
+  workflow_dispatch:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GODOT_VER: "4.3-stable"
+      CF_PROJECT: yz-try
+      CF_BRANCH: rule-zero
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 檢查 Cloudflare 金鑰
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::缺少 Secrets：CLOUDFLARE_API_TOKEN 或 CLOUDFLARE_ACCOUNT_ID（GitHub 儲存庫 → Settings → Secrets and variables → Actions）"
+            exit 1
+          fi
+
+      - name: 下載 Godot 與 Web 匯出範本
+        run: |
+          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/${GODOT_VER}/Godot_v${GODOT_VER}_linux.x86_64.zip
+          unzip -q godot.zip
+          curl -sSL -o tpl.tpz https://github.com/godotengine/godot/releases/download/${GODOT_VER}/Godot_v${GODOT_VER}_export_templates.tpz
+          T="$HOME/.local/share/godot/export_templates/4.3.stable"
+          mkdir -p "$T"
+          unzip -q -j tpl.tpz "templates/web_nothreads_release.zip" "templates/web_nothreads_debug.zip" "templates/version.txt" -d "$T"
+          pip install -q pillow
+
+      - name: 打包網站
+        run: |
+          export GODOT="$PWD/Godot_v${GODOT_VER}_linux.x86_64"
+          "$GODOT" --headless --path game --import > /dev/null 2>&1 || true
+          SITE_URL="https://${CF_BRANCH}.${CF_PROJECT}.pages.dev" tools/build_site.sh
+          ls public public/ios
+
+      - name: 發布到 Cloudflare Pages（預覽）
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx --yes wrangler@3 pages deploy public --project-name "$CF_PROJECT" --branch "$CF_BRANCH" --commit-dirty=true
+          echo "iPhone 安裝頁：https://${CF_BRANCH}.${CF_PROJECT}.pages.dev/ios/"

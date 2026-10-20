@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 產生試玩網站：public/（入口頁＋各專案），Cloudflare Pages 直接發布這個資料夾。
 # 需要 Godot 4.3 與 Web 匯出範本（web_nothreads_release.zip）。
+# SITE_URL：要發布的網址（iPhone 描述檔會指向 $SITE_URL/rule-zero/），預設 https://try.yzprojecttw.com
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 GODOT="${GODOT:-godot}"
@@ -48,6 +49,10 @@ m.save(f"{out}/mayor.png", optimize=True)
 PY
 cp "$ROOT/site/index.html" "$OUT/index.html"
 cp "$ROOT/site/_headers" "$OUT/_headers"
+# iPhone 安裝頁＋描述檔（主畫面圖示）。SITE_URL＝這次要發布到的網址
+mkdir -p "$OUT/ios"
+cp "$ROOT/site/ios/index.html" "$ROOT/site/ios/icon.png" "$OUT/ios/"
+python3 "$ROOT/tools/make_ios_profile.py" "${SITE_URL:-https://try.yzprojecttw.com}" "$OUT/rule-zero.mobileconfig"
 python3 - "$ROOT" "$OUT" <<'PY'
 import json, sys
 from PIL import Image

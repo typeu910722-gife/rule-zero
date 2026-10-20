@@ -1013,7 +1013,7 @@
 			<key>PayloadType</key>
 			<string>com.apple.webClip.managed</string>
 			<key>PayloadUUID</key>
-			<string>DA7DA50A-F802-5F6C-8A58-97DC4C2158BD</string>
+			<string>D3954BCF-94EA-5C71-9530-EE2016BA2D8D</string>
 			<key>PayloadVersion</key>
 			<integer>1</integer>
 			<key>Precomposed</key>
@@ -1023,19 +1023,19 @@
 		</dict>
 	</array>
 	<key>PayloadDescription</key>
-	<string>在主畫面加入「第零條規則」圖示，用全螢幕開啟網頁試玩版。不會讀取或更改手機上的任何資料，隨時可以在「設定 → 一般 → VPN 與裝置管理」移除。</string>
+	<string>在主畫面加入「第零條規則」圖示，用全螢幕開啟試玩版。不會讀取或更改手機上的任何資料，隨時可以在「設定 → 一般 → VPN 與裝置管理」移除。</string>
 	<key>PayloadDisplayName</key>
 	<string>第零條規則（試玩）</string>
 	<key>PayloadIdentifier</key>
 	<string>com.yzprojecttw.rulezero</string>
 	<key>PayloadOrganization</key>
-	<string>Rule Zero</string>
+	<string>歪計劃 YZ ProJect</string>
 	<key>PayloadRemovalDisallowed</key>
 	<false/>
 	<key>PayloadType</key>
 	<string>Configuration</string>
 	<key>PayloadUUID</key>
-	<string>3D0DC6B0-CFEE-51D5-A5D3-316BCE53269A</string>
+	<string>54A6F1CA-2E9D-52E7-A593-66004D34B0DE</string>
 	<key>PayloadVersion</key>
 	<integer>1</integer>
 </dict>
