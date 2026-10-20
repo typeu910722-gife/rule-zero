@@ -52,6 +52,8 @@ cp "$ROOT/site/_headers" "$OUT/_headers"
 # iPhone 安裝頁＋描述檔（主畫面圖示）。SITE_URL＝這次要發布到的網址
 mkdir -p "$OUT/ios"
 cp "$ROOT/site/ios/index.html" "$ROOT/site/ios/icon.png" "$OUT/ios/"
+# 同一頁（iPhone＋Android）也放在 /android/ 和 /download/
+for d in android download; do mkdir -p "$OUT/$d"; cp "$ROOT/site/ios/index.html" "$OUT/$d/index.html"; done
 python3 "$ROOT/tools/make_ios_profile.py" "${SITE_URL:-https://try.yzprojecttw.com}" "$OUT/rule-zero.mobileconfig"
 python3 - "$ROOT" "$OUT" <<'PY'
 import json, sys

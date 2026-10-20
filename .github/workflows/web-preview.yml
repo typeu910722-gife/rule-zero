@@ -1,14 +1,18 @@
 # 網頁版＋iPhone 安裝頁發布到 Cloudflare Pages 的「預覽」網址（不動正式站 try.yzprojecttw.com）：
 #   https://rule-zero.yz-try.pages.dev/ios/   ← iPhone 用 Safari 開這個安裝
 #   https://rule-zero.yz-try.pages.dev/rule-zero/
+#   https://github.com/typeu910722-gife/rule-zero/releases/download/preview/RuleZero.apk  ← Android 測試版（GitHub Release「preview」）
 # 需要 GitHub 儲存庫的 Secrets：CLOUDFLARE_API_TOKEN（Cloudflare Pages：編輯 權限）、CLOUDFLARE_ACCOUNT_ID
 name: 網頁預覽版（含 iPhone 安裝頁）
 
 on:
   push:
     branches: [claude/confident-bohr-fchdn2]
-    paths: [".github/workflows/web-preview.yml", "game/**", "site/**", "tools/build_site.sh", "tools/make_ios_profile.py"]
+    paths: [".github/workflows/web-preview.yml", "game/**", "site/**", "tools/build_site.sh", "tools/make_ios_profile.py", "tools/android/**"]
   workflow_dispatch:
+
+permissions:
+  contents: write   # 更新 Release「preview」裡的 APK
 
 jobs:
   web:
@@ -38,7 +42,7 @@ jobs:
           curl -sSL -o tpl.tpz https://github.com/godotengine/godot/releases/download/${GODOT_VER}/Godot_v${GODOT_VER}_export_templates.tpz
           T="$HOME/.local/share/godot/export_templates/4.3.stable"
           mkdir -p "$T"
-          unzip -q -j tpl.tpz "templates/web_nothreads_release.zip" "templates/web_nothreads_debug.zip" "templates/version.txt" -d "$T"
+          unzip -q -j tpl.tpz "templates/web_nothreads_release.zip" "templates/web_nothreads_debug.zip" "templates/android_debug.apk" "templates/android_release.apk" "templates/version.txt" -d "$T"
           pip install -q pillow
 
       - name: 打包網站
@@ -48,10 +52,44 @@ jobs:
           SITE_URL="https://${CF_BRANCH}.${CF_PROJECT}.pages.dev" tools/build_site.sh
           ls public public/ios
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: 編譯 Android 測試版 APK
+        run: |
+          export GODOT="$PWD/Godot_v${GODOT_VER}_linux.x86_64"
+          mkdir -p ~/.config/godot
+          cat > ~/.config/godot/editor_settings-4.3.tres <<EOT
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$ANDROID_HOME"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/debug_keystore = "$PWD/tools/android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOT
+          sed -i 's/^          //' ~/.config/godot/editor_settings-4.3.tres
+          mkdir -p build/android
+          "$GODOT" --headless --path game --export-debug "Android" "$PWD/build/android/RuleZero.apk"
+          ls -la build/android/RuleZero.apk
+
+      - name: 更新 Release「preview」的 APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view preview > /dev/null 2>&1; then
+            gh release create preview --prerelease --target "$GITHUB_SHA" --title "測試版（自動更新）" \
+              --notes "每次推送都會自動更新。iPhone 與 Android 安裝說明：https://${CF_BRANCH}.${CF_PROJECT}.pages.dev/download/"
+          fi
+          gh release upload preview build/android/RuleZero.apk --clobber
+
       - name: 發布到 Cloudflare Pages（預覽）
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           npx --yes wrangler@3 pages deploy public --project-name "$CF_PROJECT" --branch "$CF_BRANCH" --commit-dirty=true
-          echo "iPhone 安裝頁：https://${CF_BRANCH}.${CF_PROJECT}.pages.dev/ios/"
+          echo "手機安裝頁：https://${CF_BRANCH}.${CF_PROJECT}.pages.dev/download/"
