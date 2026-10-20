@@ -141,10 +141,6 @@ static func draw(ci: CanvasItem, species: String, col: Color, s: float, look := 
 			ellipse(ci, head + Vector2(-r * 0.9, -2 * s), Vector2(6, 11) * s, col.darkened(0.15), 0.3)
 			ellipse(ci, head + Vector2(r * 0.9, -2 * s), Vector2(6, 11) * s, col.darkened(0.15), -0.3)
 			ci.draw_circle(head, r, col)
-		"cat":
-			_tri(ci, head + Vector2(-16, -8) * s, head + Vector2(-4, -18) * s, head + Vector2(-15, -28) * s, col)
-			_tri(ci, head + Vector2(16, -8) * s, head + Vector2(4, -18) * s, head + Vector2(15, -28) * s, col)
-			ci.draw_circle(head, r, col)
 		_:
 			ci.draw_circle(head, r, col)
 	# 眼睛（鈕扣）

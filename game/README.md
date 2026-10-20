@@ -142,7 +142,6 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 - 正式 Logo 與 App 圖示：`docs/marketing/`、`game/art/branding/`。
 
 ## 尚未實作（下一步）
-- 貓居民只有表情圖（沒有行走圖），目前不在地圖上
 - 地圖上的建築遮擋（角色走到屋簷後面時不會被擋住）
 
 ## 專案結構

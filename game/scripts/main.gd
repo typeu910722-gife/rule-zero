@@ -31,7 +31,6 @@ const ACTORS := {
 	"tama": {"name": "小玉", "species": "calico", "color": Color("#fbf1df"), "pos": Vector2(645, 1330)},
 	"conductor": {"name": "車掌", "species": "conductor", "color": Color("#4a2a32"), "pos": Vector2(1260, 1620), "size": 1.5},
 	"extra1": {"name": "小狗居民", "species": "puppy", "color": Color("#e6ccb2"), "pos": Vector2(645, 940)},
-	"extra2": {"name": "居民", "species": "cat", "color": Color("#d8e2dc"), "pos": Vector2(-500, -500)},
 	"extra3": {"name": "居民", "species": "puppy", "color": Color("#e2ece9"), "pos": Vector2(-500, -500)},
 }
 
