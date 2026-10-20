@@ -83,6 +83,8 @@ func _ready() -> void:
 
 
 func scare() -> void:
+	if GameState.gentle():
+		return  # 減少驚嚇：不閃屏、不放尖銳的音效
 	Sound.sfx("creepy")
 	if GameState.fast:
 		return

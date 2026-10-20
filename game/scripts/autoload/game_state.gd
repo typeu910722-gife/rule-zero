@@ -571,6 +571,8 @@ func check(cond: String) -> bool:
 		return str(meta.get("last_ending", "")) == cond.substr(5)
 	if cond.begins_with("end."):
 		return cond.substr(4) in meta.get("endings", [])
+	if cond == "gentle":
+		return gentle()
 	for op in [">=", "<=", "==", ">", "<"]:
 		var i := cond.find(op)
 		if i > 0:
@@ -687,7 +689,19 @@ func _value(key: String) -> int:
 		"tufts": return tuft_count()
 		"depth": return memory_depth()
 		"opening": return opening_index()
+		"gentle": return 1 if gentle() else 0
 	return int(flags.get(key, 0))
+
+
+## 設定「減少驚嚇與敏感內容」（跨周目、兩章共用）：不閃屏、不突臉、敏感段落只留畫面。
+## 劇本可以用 [gentle]／[!gentle] 條件分開寫。
+func gentle() -> bool:
+	return bool(meta.get("gentle", false))
+
+
+func set_gentle(on: bool) -> void:
+	meta["gentle"] = on
+	save_meta()
 
 
 func _setup_input() -> void:

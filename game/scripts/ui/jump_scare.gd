@@ -44,6 +44,20 @@ func play() -> void:
 	if GameState.fast:
 		done.emit()
 		return
+	if GameState.gentle():
+		# 減少驚嚇：臉慢慢浮現、慢慢消失，沒有聲音、不抖動
+		_rect.scale = Vector2(0.9, 0.9)
+		var tg := create_tween().set_parallel()
+		tg.tween_property(_rect, "modulate:a", 0.55, 0.6)
+		tg.tween_property(_shade, "color:a", 0.5, 0.6)
+		await tg.finished
+		await get_tree().create_timer(0.6).timeout
+		var tg2 := create_tween().set_parallel()
+		tg2.tween_property(_rect, "modulate:a", 0.0, 0.6)
+		tg2.tween_property(_shade, "color:a", 0.0, 0.6)
+		await tg2.finished
+		done.emit()
+		return
 	Sound.sfx("glitch")
 	Dialogue.fx.scare()
 	var tw := create_tween().set_parallel()

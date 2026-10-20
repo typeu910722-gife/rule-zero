@@ -126,5 +126,12 @@ func _run() -> void:
 	_check(gs.interact_key_label() == "互動", "觸控：互動提示")
 	gs.last_device = ""
 
+	print("[減少驚嚇與敏感內容]")
+	gs.set_gentle(true)
+	_check(gs.gentle() and gs.check("gentle"), "開啟後劇本條件 [gentle] 成立")
+	gs.load_meta()
+	_check(gs.gentle(), "設定存在跨周目資料，重新讀取還在")
+	gs.set_gentle(false)
+	_check(not gs.check("gentle"), "關閉後 [gentle] 不成立")
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

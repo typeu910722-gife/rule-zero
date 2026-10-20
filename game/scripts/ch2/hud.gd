@@ -185,6 +185,7 @@ func _build_menu() -> void:
 	v.add_child(_tag_button)
 	for bus in [["Music", "配樂"], ["SFX", "音效"]]:
 		v.add_child(_volume_row(bus[0], bus[1]))
+	v.add_child(_gentle_row())
 	var title_btn := Button.new()
 	title_btn.text = "回到標題（從今天早上的存檔繼續）"
 	title_btn.pressed.connect(func(): title_requested.emit())
@@ -235,3 +236,16 @@ func _tex(path: String) -> Texture2D:
 	if not _tex_cache.has(path):
 		_tex_cache[path] = load(path)
 	return _tex_cache[path]
+
+## 「減少驚嚇與敏感內容」：兩章共用（存在跨周目資料）
+func _gentle_row() -> CheckButton:
+	var c := CheckButton.new()
+	c.text = "減少驚嚇與敏感內容（不閃屏、不突臉）"
+	c.button_pressed = GameState.gentle()
+	c.add_theme_color_override("font_color", Color("#4a3b47"))
+	c.add_theme_color_override("font_pressed_color", Color("#4a3b47"))
+	c.add_theme_color_override("font_hover_color", Color("#4a3b47"))
+	c.add_theme_color_override("font_focus_color", Color("#4a3b47"))
+	c.add_theme_font_size_override("font_size", 18)
+	c.toggled.connect(func(on: bool): GameState.set_gentle(on))
+	return c
