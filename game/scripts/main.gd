@@ -641,6 +641,9 @@ func interact(id: String) -> void:
 	busy = true
 	player.can_move = false
 	hud.set_prompt("")
+	# 任何互動（包括信箱、門、物件）改變了進度，大家「說過了」的標記都要清掉，
+	# 不然回去找人時會一直是閒聊，接不到新的劇情（例：送完信回郵局，波波沒反應）
+	var state_before := _state_snapshot()
 	var it: Interactable = actors[id]
 	if it.kind == "npc":
 		it.face_toward(player.position)
@@ -684,6 +687,8 @@ func interact(id: String) -> void:
 		if GameState.has("want_enter_" + room):
 			GameState.set_flag("want_enter_" + room, false)
 			await _enter_interior(room)
+	if _state_snapshot() != state_before:
+		_stale.clear()
 	await _after_interaction()
 	_refresh_objects()
 	if phase != "ended":

@@ -1515,6 +1515,8 @@ Fen：對了，我的筆記又被風吹散了。撿到的話……你大概知�
 露露：掰掰～！
 
 === popo_d2
+// 送完信一定可以交差（就算問過「以前」的事，波波不再多說話，也還是會收下）
+[q_letters&!letter_done] @if letters>=3 p2_done
 @if asked_popo p2_silent
 @if letter_done p2_menu
 @if q_letters p2_progress
@@ -1577,12 +1579,18 @@ Fen：對了，我的筆記又被風吹散了。撿到的話……你大概知�
 @goto p2_menu
 # p2_done
 @set letter_done
+@if asked_popo p2_done_quiet
 波波：全部送完了？嘿咻！辛苦了！
 [mirror_letter] 波波：咦？鏡之屋……回信了？
 [mirror_letter] > 波波盯著那張反過來的紙，看了很久很久。
 [mirror_letter] 波波：……那間屋子，沒有人住喔。
 [depth>=2] 波波：……可是你每次，都帶回這張紙。
 波波：這是謝禮！郵局的紀念郵票！上面是鐘塔喔～
+@end
+# p2_done_quiet
+> 波波收下了空空的郵袋。他沒有看你。
+[mirror_letter] > 鏡之屋的回信，他看了很久，然後收進了抽屜最裡面。
+> 他把一張紀念郵票推到你面前。上面是鐘塔。
 @end
 # p2_menu
 [letter_done] 波波：今天的信都送完囉！

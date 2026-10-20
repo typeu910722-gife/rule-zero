@@ -167,6 +167,7 @@ game/
     ├── lint_dialogue.gd        # 檢查對話腳本（兩章）
     ├── chapter2_test.gd        # 第二章四條路線（含刺向面具、壞結局）跑到結尾、存檔讀檔
     ├── transition_test.gd      # 第一章結尾 → 第二章、讀第二章存檔、選擇篇章
+    ├── letters_test.gd         # 送信任務：中途回郵局、問過「以前」，送完都能交差
     ├── save_test.gd            # 安全存檔、音量、手把、操作說明
     ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）、存檔讀檔
     ├── world_test.gd           # 走路、碰撞（只能走在路上）、互動點都站得到
@@ -199,6 +200,7 @@ godot --headless --path . -s tests/interiors_test.gd
 godot --headless --path . -s tests/chase_test.gd
 godot --headless --path . -s tests/chapter2_test.gd
 godot --headless --path . -s tests/transition_test.gd
+godot --headless --path . -s tests/letters_test.gd
 godot --headless --path . -s tests/save_test.gd
 ```
 
