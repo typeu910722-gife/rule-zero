@@ -29,6 +29,7 @@ const PORTRAITS := {
 	"白面": "baimian", "小棘": "xiaoji", "條碼": "tiaoma", "嘎嘎": "gaga",
 	"重重": "zhongzhong", "鼬鼬": "youyou", "和平鴿": "dove",
 	"露露": "lulu", "麻糬": "mochi", "波波": "popo", "小布": "pip", "車掌": "conductor", "職員": "staff",
+	"Fen": "fen",
 }
 const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
 ## 室內背景與 CG（@bg 的名字 → 圖）。第二章時優先找這裡；沒有圖時退回 BG_COLORS 的底色

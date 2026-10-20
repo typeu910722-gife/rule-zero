@@ -80,6 +80,9 @@ const ACTORS := {
 	"mochi": {"name": "麻糬", "species": "hamster", "color": Color("#fbf3e6"), "pos": Vector2(1415, 920), "smile": false, "sprites": [
 		{"tex": SP + "mochi_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
 		{"tex": SP + "mochi_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
+	# Fen：和露露他們一起住河對岸（模範生）。地圖小人是白面的身體換回赭橘色（同一個身體）
+	"fen": {"name": "Fen", "species": "fox", "color": Color("#c8642b"), "pos": Vector2(1535, 950), "smile": false, "sprites": [
+		{"tex": SP + "fen_sprite_stand_sheet.png", "cols": 1, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
 	"popo": {"name": "波波", "species": "penguin", "color": Color("#2f3352"), "pos": Vector2(1475, 935), "sprites": [
 		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1], "fps": 2, "requires": {"home": true}},
 		{"tex": SP + "popo_sprite_wave_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152)}]},
@@ -88,9 +91,9 @@ const ACTORS := {
 		{"tex": SP + "conductor_sprite_stand_sheet.png", "cols": 1, "frame": Vector2(384, 416), "origin": Vector2(192, 408)}]},
 }
 const RESIDENTS := ["baimian", "xiaoji", "tiaoma", "gaga", "zhongzhong", "youyou"]
-const MODELS := ["lulu", "mochi", "popo"]
+const MODELS := ["lulu", "mochi", "popo", "fen"]
 ## 平常不在場的人
-const HIDDEN := ["lulu", "mochi", "popo", "conductor"]
+const HIDDEN := ["lulu", "mochi", "popo", "fen", "conductor"]
 
 const OBJECTS := {
 	"c2_board": {"name": "公告欄", "pos": Vector2(790, 385)},
@@ -641,6 +644,9 @@ func _on_event(event_name: String) -> void:
 		"c2_popo_fence":
 			actors.popo.visible = true
 			actors.popo.position = Vector2(1240, 935)
+			# Fen 跟在波波後面（把他從鐵絲網拉開的人）
+			actors.fen.visible = true
+			actors.fen.position = Vector2(1300, 950)
 			for id in ["lulu", "mochi"]:
 				actors[id].visible = true
 			actors.xiaoji.position = Vector2(920, 755)
@@ -709,7 +715,8 @@ func _on_event(event_name: String) -> void:
 		"c2_ending_cg":
 			# 結尾的車廂：上車的人每人一層（外包 CG-20 分層）
 			var layers := ["res://art/ch2/backgrounds/ch2_bg_ending_color.jpg"]
-			var aboard := ["pip", "lulu", "mochi", "popo", "conductor"]
+			# Fen 的分層還沒有圖（缺圖時自動略過）：見 docs/chapter2_asset_requests.txt 追加需求
+			var aboard := ["pip", "lulu", "mochi", "popo", "fen", "conductor"]
 			for id in ["baimian", "zhongzhong", "gaga", "youyou"]:
 				if GameState.has("fate_%s_aboard" % id):
 					aboard.append(id)

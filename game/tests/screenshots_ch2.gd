@@ -118,7 +118,13 @@ func _run() -> void:
 	dlg._text.text = "我會很愛你。愛到你變好為止。"
 	dlg._text.visible_characters = -1
 	await _shot("c2_11_dialogue")
+	# Fen（第二章新加入）：抵達月台時的立繪
+	dlg._show_portrait_ch2("Fen")
+	dlg._name.text = "Fen"
+	dlg._text.text = "……他也是我們這邊的。"
+	await _shot("c2_11b_fen")
 	dlg._box.visible = false
+	dlg._ch2_portrait.visible = false
 
 	# 夜晚的宿舍
 	ch._layout("night")
