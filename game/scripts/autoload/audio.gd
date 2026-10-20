@@ -7,7 +7,7 @@ extends Node
 
 signal volume_changed
 
-const DEFAULT_VOLUME := {"Music": 0.8, "SFX": 0.9}
+const DEFAULT_VOLUME := {"Music": 0.9, "SFX": 1.0}
 const FADE := 0.8
 const SILENT := -60.0
 

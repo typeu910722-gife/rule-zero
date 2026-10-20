@@ -35,13 +35,13 @@ const AMB := {
 	"forest": "res://audio/amb_forest.ogg",
 	"night": "res://audio/amb_night.ogg",
 }
-const AMB_DB := -12.0
+const AMB_DB := -8.0
 ## 各音效的音量（沒列的用 -4）
 const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0, "heartbeat": -2.0, "stab": 0.0, "tear": 0.0, "boom": 0.0, "growl": -1.0, "impact": 0.0, "whoosh": -3.0}
-const BGM_DB := -8.0
+const BGM_DB := -3.0
 ## 追逐戰的音樂大聲一點
 const BGM_EXTRA := {"chase": 3.0}
-const DUCK_DB := -22.0
+const DUCK_DB := -17.0
 const FADE := 1.0
 const SILENT := -60.0
 
@@ -172,7 +172,7 @@ func sfx(name: String) -> void:
 
 func _target_db() -> float:
 	# 記憶越深，音樂越遠、越小聲
-	return (DUCK_DB if _ducked else BGM_DB) + BGM_EXTRA.get(_current, 0.0) - 1.2 * _wear + Audio.music_db()
+	return (DUCK_DB if _ducked else BGM_DB) + BGM_EXTRA.get(_current, 0.0) - 0.6 * _wear + Audio.music_db()
 
 
 func _apply() -> void:

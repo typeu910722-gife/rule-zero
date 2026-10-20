@@ -61,6 +61,19 @@ var _face_tex := {}
 var portrait_state: Callable
 ## 第二章：@face 指定的表情（每段對話開始時清空）
 var _faces := {}
+## 角色的小聲音（嘆氣、笑、啜泣…）：game/audio/voice/，tools/make_voice_sfx.py 產生
+const VOICE_DIR := "res://audio/voice/%s_%d.ogg"
+const VOICE_COUNT := {"sigh": 3, "laugh": 3, "giggle": 3, "chuckle": 2, "gasp": 3, "sob": 3, "sniff": 2, "hmm": 2, "gulp": 1}
+const VOICE_DB := -3.0
+## 每個角色的聲音高低（布偶越小越高）；沒有列的角色 1.0。嘎嘎的嘴被縫起來了：沒有聲音
+const VOICE_PITCH := {
+	"小布": 1.12, "露露": 1.25, "麻糬": 1.38, "波波": 1.05, "Fen": 0.98, "白面": 0.92, "熊熊鎮長": 0.68, "鎮長": 0.68,
+	"小玉": 1.22, "小狗居民": 1.1, "居民": 1.1, "車掌": 0.8, "小棘": 1.18, "條碼": 1.0, "重重": 0.66, "鼬鼬": 1.06,
+	"和平鴿": 0.86, "嘎嘎": 0.0, "鏡子裡的小孩": 1.15,
+}
+var _voice_player: AudioStreamPlayer
+var _voice_at := -10000
+var _last_speaker := ""
 var _portrait_cache := {}
 ## 第二章的立繪（右邊，大張）
 var _ch2_portrait: TextureRect
@@ -211,6 +224,9 @@ func _command(op: String, args: Array) -> int:
 			while has_label("idle_%s_%d" % [args[0], pool + 1]):
 				pool += 1
 			return parser.labels[GameState.idle_label(args[0], pool)]
+		"voice":
+			if args.size() >= 2:
+				play_voice(args[0], args[1], true)
 		"sfx":
 			if not GameState.fast:
 				if _ch2():
@@ -324,6 +340,9 @@ func show_item(name: String) -> void:
 
 func _say(who: String, text: String) -> void:
 	text = GameState.fill(text)
+	_auto_voice(who, text)
+	if who != "":
+		_last_speaker = who
 	_box.visible = true
 	# 名字放在對話框左上角的布標上；旁白時留空（版面不跳動）
 	_name.visible = true
@@ -768,3 +787,93 @@ func _style_button(b: Button) -> void:
 	b.add_theme_color_override("font_focus_color", Color("#c2558a"))
 	b.add_theme_color_override("font_disabled_color", Color("#b8aab4"))
 
+
+## 依台詞自動配上角色的小聲音。回傳 [說話的人（決定音高）, 種類]；沒有就回傳 []
+func voice_cue(who: String, text: String) -> Array:
+	var t := text.strip_edges()
+	var subject := who
+	if subject == "":
+		subject = _subject_of(t)
+	var kind := ""
+	var re := RegEx.new()
+	if "嘆氣" in t or "嘆了口氣" in t or "嘆了一口氣" in t or "嘆息" in t:
+		kind = "sigh"
+	elif not "喵嗚" in t and _matches(t, "(嗚嗚|嗚……|哭了起來|哭出來|哭了。|在哭|抽泣|啜泣)") and not _matches(t, "(沒有|不|別|不要|沒)哭"):
+		kind = "sob"
+	elif t.begins_with("嗚，") or t.begins_with("唉"):
+		kind = "sigh"
+	elif _matches(t, "(^|[^笑])嘻嘻|咯咯"):
+		kind = "giggle"
+	elif who == "麻糬" and "笑嘻嘻" in t:
+		kind = "giggle"
+	elif "哈哈" in t or "嘿嘿" in t or "呵呵" in t or "噗哧" in t or _matches(t, "(笑出聲|笑了出來|笑了起來|笑了。|笑了一下|輕輕地笑|輕輕笑|笑著說)"):
+		if _matches(t, "(沒有|不|沒|別|不要|不會)[^，。]{0,2}笑") or "笑容" in t and not "笑了" in t:
+			return []
+		kind = "chuckle" if subject == "和平鴿" or "呵呵" in t else "laugh"
+	elif "吸鼻子" in t or "吸了吸鼻子" in t:
+		kind = "sniff"
+	elif "倒抽" in t or "嚇了一跳" in t or "吸了一口氣" in t or (who != "" and ("！？" in t or "？！" in t)):
+		kind = "gasp"
+	elif "吞了吞口水" in t or "嚥了" in t or "吞了一口口水" in t:
+		kind = "gulp"
+	elif who != "" and t.begins_with("……") and _matches(t, "(算了|沒關係|反正|好吧|又來了|果然)"):
+		kind = "sigh"
+	elif who == "" and _matches(t, "(低下頭|垂下|肩膀垮|沒有說話。)") and subject != "":
+		kind = "sigh"
+	elif who != "" and (t == "……" or t == "……嗯。" or t == "嗯……" or t == "……嗯"):
+		kind = "hmm"
+	if kind == "":
+		return []
+	return [subject, kind]
+
+
+func _matches(t: String, pattern: String) -> bool:
+	var re := RegEx.new()
+	re.compile(pattern)
+	return re.search(t) != null
+
+
+## 旁白在說誰：第一個出現的角色名；「你」＝小布；「他／她」＝上一個說話的人
+func _subject_of(t: String) -> String:
+	var best := ""
+	var best_i := 1 << 20
+	for name in VOICE_PITCH:
+		var i := t.find(name)
+		if i >= 0 and i < best_i:
+			best = name
+			best_i = i
+	if best != "":
+		return best
+	if t.begins_with("你"):
+		return "小布"
+	if t.begins_with("他") or t.begins_with("她"):
+		return _last_speaker
+	return ""
+
+
+func _auto_voice(who: String, text: String) -> void:
+	var cue := voice_cue(who, text)
+	if not cue.is_empty():
+		play_voice(cue[0], cue[1])
+
+
+func play_voice(who: String, kind: String, force := false) -> void:
+	if GameState.fast or not VOICE_COUNT.has(kind):
+		return
+	var pitch: float = VOICE_PITCH.get(who, 1.0)
+	if pitch <= 0.0:
+		return
+	var now := Time.get_ticks_msec()
+	if not force and now - _voice_at < 1500:
+		return
+	_voice_at = now
+	var path := VOICE_DIR % [kind, randi_range(1, VOICE_COUNT[kind])]
+	if not ResourceLoader.exists(path):
+		return
+	if _voice_player == null:
+		_voice_player = AudioStreamPlayer.new()
+		add_child(_voice_player)
+	_voice_player.stream = load(path)
+	_voice_player.pitch_scale = pitch * randf_range(0.96, 1.04)
+	_voice_player.volume_db = VOICE_DB + Audio.sfx_db()
+	_voice_player.play()

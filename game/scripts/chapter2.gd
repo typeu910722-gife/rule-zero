@@ -32,7 +32,7 @@ const EXPLORE_PHASES := ["day1_explore", "day1_night", "day2_explore", "night_ou
 ## 漂白鎮的六個居民（不跟棉花糖鎮的好孩子混在一起）＋和平鴿；露露他們在河對岸
 const SP := "res://art/ch2/characters/sprites/ch2_"
 const ACTORS := {
-	"baimian": {"name": "白面", "species": "fox", "color": Color("#e2e2df"), "pos": Vector2(330, 92),
+	"baimian": {"name": "白面", "species": "fox", "color": Color("#e2e2df"), "pos": Vector2(585, 128), "reach_home": 180.0,
 		"opts": {"pale": true, "no_tail": true}, "sprites": [
 			# 平常坐在宿舍屋頂晃腳；其他時候站著
 			{"tex": SP + "baimian_sprite_sheet.png", "cols": 2, "frame": Vector2(160, 160), "origin": Vector2(80, 152), "frames": [0, 1, 2, 3], "fps": 4, "requires": {"home": true}},
@@ -219,7 +219,7 @@ func _bgm(name: String) -> void:
 		return
 	_bgm_name = name
 	var path: String = BGM_DIR % BGM.get(name, "") if name != "" else ""
-	Audio.play_music(path, not name in BGM_ONCE, -8.0)
+	Audio.play_music(path, not name in BGM_ONCE, -3.0)
 
 
 ## 小遊戲時換配樂，結束後換回來
@@ -871,7 +871,7 @@ var _ambience: AudioStreamPlayer
 func _set_ambience(name: String) -> void:
 	if _ambience == null:
 		_ambience = AudioStreamPlayer.new()
-		_ambience.volume_db = -20.0 + Audio.music_db()
+		_ambience.volume_db = -15.0 + Audio.music_db()
 		add_child(_ambience)
 	_ambience.stop()
 	var st := Sfx.stream(name) if name != "" else null

@@ -25,6 +25,8 @@ var _anim_t := 0.0
 var target: Node2D
 ## 平常待的位置。小人圖可以用 requires {"home": true} 指定「在老位置時」的樣子（例如坐在屋頂晃腳）
 var home := Vector2.INF
+## 在老位置時的互動距離（白面坐在屋頂上：站在下面的路上就能說話）
+var reach_home := 0.0
 
 
 func setup(p_id: String, data: Dictionary) -> Ch2Interactable:
@@ -38,6 +40,7 @@ func setup(p_id: String, data: Dictionary) -> Ch2Interactable:
 	stitched = data.get("stitched", false)
 	position = data.get("pos", Vector2.ZERO)
 	home = position
+	reach_home = data.get("reach_home", 0.0)
 	opts = data.get("opts", {}).duplicate()
 	sprites = data.get("sprites", [data.sprite] if data.has("sprite") else [])
 	for sp in sprites:
@@ -48,6 +51,8 @@ func setup(p_id: String, data: Dictionary) -> Ch2Interactable:
 
 
 func reach() -> float:
+	if reach_home > 0.0 and position.distance_to(home) < 1.0:
+		return reach_home
 	return 70.0 * size
 
 

@@ -4,7 +4,9 @@ extends RefCounted
 
 const KNOWN_OPS := ["roll", "mem", "set", "unset", "add", "sus", "courage", "goto", "if", "end", "wait", "bg", "event", "idle", "sfx", "show", "scare",
 	# 第二章
-	"conduct", "bgm", "face"]
+	"conduct", "bgm", "face",
+	# 角色的小聲音（嘆氣、笑…）：@voice 名字 種類
+	"voice"]
 const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bakery", "repair", "clocktower", "room_night", "hospital_child", "hospital_empty", "hospital_haruka", "classroom", "train_night", "town2", "mem_sea", "mem_class", "mem_toilet", "mem_hospital", "nt_lulu", "nt_popo", "nt_tama", "nt_mochi", "nt_dog", "glove", "mayor_broken",
 	# 第二章：室內背景與 CG（見 dialogue.gd 的 BG_ART／CG_ART）
 	"grey_train", "white",

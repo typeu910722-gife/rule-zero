@@ -1,11 +1,16 @@
 extends Node2D
 ## 小布。
 
+const BleachTown := preload("res://scripts/world/bleach_town.gd")
+
 const SPEED := 230.0
 
 var bounds := Rect2(20, 40, 1560, 1000)
 ## 走不進去的區域（第二章：鐵絲網另一邊的河與模範生宿舍）
 var blocked := PackedVector2Array()
+## 只能走在路上（小鎮地圖；夜晚在宿舍裡面走動時不用）
+var roads_only := true
+var _slide_side := 1.0
 var can_move := true
 var _facing := Vector2.DOWN
 ## 第二章：外包的小布小人（4 方向 × 4 格；由上到下：下、左、右、上）
@@ -30,6 +35,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not can_move:
 		return
+	# 劇情把小布放在路外面（讀檔、轉場）：一能走就先站回最近的路上
+	if roads_only and bounds.size.x > 1000.0 and BleachTown.blocked(position):
+		position = BleachTown.nearest_walkable(position)
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if (dir != Vector2.ZERO) != _moving:
 		_moving = dir != Vector2.ZERO
@@ -37,12 +45,32 @@ func _process(delta: float) -> void:
 	if dir != Vector2.ZERO:
 		_walk_t += delta
 		_facing = dir
-		var before := position
-		position += dir * SPEED * delta
-		position = position.clamp(bounds.position, bounds.end)
-		if not blocked.is_empty() and Geometry2D.is_point_in_polygon(position, blocked):
-			position = before
+		if roads_only and bounds.size.x > 1000.0:
+			_move_on_roads(dir, SPEED * delta)
+		else:
+			var before := position
+			position += dir * SPEED * delta
+			position = position.clamp(bounds.position, bounds.end)
+			if not blocked.is_empty() and Geometry2D.is_point_in_polygon(position, blocked):
+				position = before
 		queue_redraw()
+
+
+## 跟第一章一樣：被擋住時往左右偏 25°、50°、75° 找路，沿著路邊滑過去
+func _move_on_roads(dir: Vector2, step: float) -> void:
+	if BleachTown.blocked(position):
+		position = BleachTown.nearest_walkable(position)
+	var angs := [0.0, 0.44, -0.44, 0.87, -0.87, 1.31, -1.31]
+	if _slide_side < 0.0:
+		angs = [0.0, -0.44, 0.44, -0.87, 0.87, -1.31, 1.31]
+	for ang in angs:
+		var d: Vector2 = dir.normalized().rotated(ang) * step * (1.0 if ang == 0.0 else maxf(cos(ang), 0.35))
+		var np: Vector2 = (position + d).clamp(bounds.position, bounds.end)
+		if not BleachTown.blocked(np):
+			position = np
+			if ang != 0.0:
+				_slide_side = signf(ang)
+			return
 
 
 func _sheet() -> Texture2D:

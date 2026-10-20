@@ -37,6 +37,38 @@ const BLOCKED := [Vector2(640, 1150), Vector2(668, 1010), Vector2(800, 872), Vec
 	Vector2(1000, 748), Vector2(1250, 658), Vector2(1600, 626), Vector2(1600, 1150)]
 
 
+## 可以走的地方（tools/build_walk_mask_ch2.py 照地圖描的路）：原圖一半解析度，白＝可以走
+const WALK_MASK := "res://art/ch2/walk_mask_ch2.png"
+static var _mask: Image
+
+
+static func blocked(p: Vector2) -> bool:
+	if _mask == null:
+		if not ResourceLoader.exists(WALK_MASK):
+			return false
+		_mask = load(WALK_MASK).get_image()
+		if _mask.is_compressed():
+			_mask.decompress()
+	var x := int(p.x / 2.0)
+	var y := int(p.y / 2.0)
+	if x < 0 or y < 0 or x >= _mask.get_width() or y >= _mask.get_height():
+		return true
+	return _mask.get_pixel(x, y).r < 0.5
+
+
+## 離 p 最近、可以走的位置
+static func nearest_walkable(p: Vector2) -> Vector2:
+	if not blocked(p):
+		return p
+	for r in range(4, 500, 4):
+		var steps := maxi(8, int(r / 3.0))
+		for k in steps:
+			var q := p + Vector2.from_angle(TAU * k / steps) * r
+			if not blocked(q):
+				return q
+	return p
+
+
 func has_map() -> bool:
 	return _map != null
 

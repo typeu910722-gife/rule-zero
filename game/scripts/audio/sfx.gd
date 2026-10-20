@@ -79,7 +79,7 @@ static func stream(name: String) -> AudioStream:
 	return _cache[path]
 
 
-static func play(parent: Node, name: String, volume_db := -6.0) -> bool:
+static func play(parent: Node, name: String, volume_db := -3.0) -> bool:
 	var s := stream(name)
 	if s == null or parent == null or not parent.is_inside_tree():
 		return false
