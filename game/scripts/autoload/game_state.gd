@@ -211,6 +211,8 @@ var fast_sneak_caught := false
 ## 自動測試用：跳過等待與小遊戲
 var fast := false
 var auto_choices: Array = []
+## 截圖測試用：fast 模式下每句對話出現時呼叫（可以 await），平常是空的
+var on_line: Callable = Callable()
 var resume_on_start := false
 
 ## 存檔：每天早上自動存一次（檢查點）。meta 是跨周目的記錄，標題畫面會依它改變。

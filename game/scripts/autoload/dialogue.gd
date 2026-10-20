@@ -341,6 +341,8 @@ func _say(who: String, text: String) -> void:
 	else:
 		_text.text = text
 	if GameState.fast:
+		if GameState.on_line.is_valid():
+			await GameState.on_line.call(who, text)
 		return
 	_text.visible_characters = 0
 	_typing = true
