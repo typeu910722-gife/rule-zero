@@ -8,6 +8,8 @@ extends CanvasLayer
 signal picked(id: String)
 
 var room_id := ""
+## 背景圖路徑（空＝第三章的 art/ch3/bg/ch3_bg_<id>.jpg）。第四、五章由導演指定
+var art_path := ""
 var spots: Array = []
 var _bg_tex: Texture2D
 var _draw: Control
@@ -17,7 +19,7 @@ var busy := false
 
 func _ready() -> void:
 	layer = 10
-	var art := "res://art/ch3/bg/ch3_bg_%s.jpg" % room_id
+	var art := art_path if art_path != "" else "res://art/ch3/bg/ch3_bg_%s.jpg" % room_id
 	if ResourceLoader.exists(art):
 		_bg_tex = load(art)
 	_draw = Control.new()
@@ -102,6 +104,15 @@ func _paint() -> void:
 			wall = Color("#dcdcd6"); floor_col = Color("#c9c9c2")
 		"nirvana":
 			wall = Color("#e3eaee"); floor_col = Color("#d3dde2")
+		"classroom", "hallway", "stairs", "toilet_door", "gate":
+			# 第四章：人類時期的學校，舊照片的暖色
+			wall = Color("#e2d6c2"); floor_col = Color("#b9a68a"); line = Color("#8f7d64")
+		"ward4":
+			wall = Color("#d6dcdc"); floor_col = Color("#bfc7c8")
+		"real_ward", "real_hall":
+			wall = Color("#eef0ee"); floor_col = Color("#d8dcd8"); line = Color("#b6bcb6")
+		"town_office":
+			wall = Color("#f4dfe6"); floor_col = Color("#d9b9a5"); line = Color("#b48a74")
 	c.draw_rect(Rect2(0, 0, 1280, 720), wall)
 	c.draw_rect(Rect2(0, 470, 1280, 250), floor_col)
 	c.draw_line(Vector2(0, 470), Vector2(1280, 470), line, 3.0)
@@ -147,6 +158,58 @@ func _paint() -> void:
 			for k in 3:
 				c.draw_rect(Rect2(140 + k * 320, 360, 220, 80), Color("#2c3436"))
 			c.draw_rect(Rect2(60, 160, 120, 300), Color("#2a3133"))
+		"classroom":
+			c.draw_rect(Rect2(340, 80, 600, 220), Color("#3f5446"))           # 黑板
+			c.draw_rect(Rect2(340, 80, 600, 220), Color("#8f7d64"), false, 6.0)
+			c.draw_rect(Rect2(60, 90, 220, 300), Color("#f3ead8"))            # 班規
+			for k in 8:
+				c.draw_line(Vector2(80, 120 + k * 32), Vector2(250 - (k % 3) * 30, 120 + k * 32), Color("#9b8b74"), 3.0)
+			for row in 2:
+				for k in 5:
+					var x := 120.0 + k * 220.0 + row * 30.0
+					var y := 470.0 + row * 120.0
+					c.draw_rect(Rect2(x, y, 150, 50), Color("#c9a77c"))
+					c.draw_rect(Rect2(x + 20, y + 50, 10, 50), Color("#7d6a52"))
+					c.draw_rect(Rect2(x + 120, y + 50, 10, 50), Color("#7d6a52"))
+			c.draw_rect(Rect2(1080, 100, 160, 250), Color("#cfe0e6"))         # 窗
+			c.draw_rect(Rect2(1080, 100, 160, 250), Color("#8f7d64"), false, 5.0)
+		"hallway", "toilet_door":
+			# 一條長走廊，盡頭一扇門
+			c.draw_colored_polygon(PackedVector2Array([Vector2(0, 720), Vector2(520, 380), Vector2(760, 380), Vector2(1280, 720)]), floor_col)
+			c.draw_rect(Rect2(560, 200, 160, 180), Color("#9d8f7a") if room_id == "hallway" else Color("#7f7466"))
+			c.draw_rect(Rect2(560, 200, 160, 180), line, false, 4.0)
+			c.draw_circle(Vector2(700, 300), 6, Color("#4a4238"))
+			for k in 4:
+				c.draw_rect(Rect2(60 + k * 110, 140 + k * 20, 70, 160 - k * 30), Color("#cfe0e6"))
+			if room_id == "toilet_door":
+				c.draw_rect(Rect2(560, 372, 160, 8), Color("#2a2620"))       # 門縫
+		"stairs":
+			for k in 7:
+				c.draw_rect(Rect2(380 + k * 20, 470 + k * 34, 520 - k * 40, 34), Color("#a69378").darkened(k * 0.04))
+			c.draw_rect(Rect2(980, 120, 220, 240), Color("#cfe0e6"))         # 窗
+			c.draw_line(Vector2(980, 330), Vector2(1200, 330), Color("#8f7d64"), 6.0)   # 欄杆
+		"gate":
+			c.draw_rect(Rect2(100, 260, 40, 330), Color("#8f7d64"))
+			c.draw_rect(Rect2(1140, 260, 40, 330), Color("#8f7d64"))
+			for k in 12:
+				c.draw_line(Vector2(140 + k * 85, 300), Vector2(140 + k * 85, 470), Color("#6f6252"), 4.0)
+		"ward4":
+			c.draw_line(Vector2(640, 120), Vector2(640, 720), Color.WHITE, 6.0)   # 中間的白線
+			for side in 2:
+				for k in 4:
+					var x := 60.0 + side * 660.0 + (k % 2) * 280.0
+					var y := 300.0 + (k / 2) * 190.0
+					c.draw_rect(Rect2(x, y, 220, 90), Color.WHITE)
+					c.draw_rect(Rect2(x, y, 220, 90), line, false, 2.0)
+			c.draw_rect(Rect2(1180, 140, 70, 120), Color("#5d6466"))              # 電閘
+		"real_ward", "real_hall":
+			for k in 4:
+				c.draw_rect(Rect2(80 + k * 300, 330, 220, 100), Color.WHITE)
+				c.draw_rect(Rect2(80 + k * 300, 330, 220, 100), line, false, 2.0)
+				c.draw_rect(Rect2(150 + k * 300, 200, 80, 60), Color("#20302a"))
+		"town_office":
+			c.draw_rect(Rect2(420, 360, 440, 110), Color("#8d5524"))              # 鎮長的桌子
+			c.draw_rect(Rect2(560, 150, 160, 120), Color("#fff3e0"))              # 守則
 	# 夜裡的燈一閃一閃
 	if room_id == "wild" and fmod(Time.get_ticks_msec() / 1000.0, 3.1) < 0.12:
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.5))

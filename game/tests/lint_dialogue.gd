@@ -13,7 +13,8 @@ const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", 
 	"c2_graduation_layout", "restuff_1", "restuff_2", "c2_tiaoma_gone", "c2_mask_crack", "c2_fates",
 	"c2_special_love_cost", "c2_train_arrives", "c2_ending_cg",
 	# 第三章
-	"c3_whistle", "c3_rules", "c3_heart", "c3_thermo", "c3_chase1", "c3_sew", "c3_chase2", "c3_cpr", "c3_lights", "c3_gun"]
+	"c3_whistle", "c3_rules", "c3_heart", "c3_thermo", "c3_chase1", "c3_sew", "c3_chase2", "c3_cpr", "c3_lights", "c3_gun",
+	"c4_speech", "c4_chat", "c4_viewfinder", "c4_shoes", "c4_hold_door", "c4_whistle", "c4_breaker"]
 
 
 func _init() -> void:
@@ -21,6 +22,8 @@ func _init() -> void:
 	p.parse_file("res://dialogue/chapter1.txt")
 	p.parse_file("res://dialogue/chapter2.txt")
 	p.parse_file("res://dialogue/chapter3.txt")
+	p.parse_file("res://dialogue/chapter4.txt")
+	p.parse_file("res://dialogue/chapter5.txt")
 	var errs := p.validate(EVENTS)
 	for e in errs:
 		printerr(e)

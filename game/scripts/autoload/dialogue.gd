@@ -20,7 +20,8 @@ const BG_COLORS := {
 	"white": Color("#f4f4f2"),
 }
 ## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
-const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt", "res://dialogue/chapter3.txt"]
+const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt", "res://dialogue/chapter3.txt",
+	"res://dialogue/chapter4.txt", "res://dialogue/chapter5.txt"]
 
 ## ───── 第二章「漂白鎮」 ─────
 ## 立繪：說話的人有立繪時顯示在右邊。
@@ -41,6 +42,21 @@ const BG_COLORS_3 := {
 	"c3_platform": Color("#d9dcdc"), "c3_hall": Color("#f2f4f4"), "c3_nurse": Color("#eef1f2"),
 	"c3_nirvana": Color("#dfe6ea"), "c3_records": Color("#d7d9d6"), "c3_director": Color("#cfc9c0"),
 	"c3_wild": Color("#9aa3a3"), "c3_b2": Color("#1d2224"), "c3_monitor": Color("#11181b"), "c3_lab": Color("#e8eef0"),
+}
+## 第四、五章：art/ch4/bg/ch4_bg_<名字>.jpg、art/ch5/bg/ch5_bg_<名字>.jpg；沒有圖時用底色
+const BG_ART_45 := "res://art/ch%s/bg/ch%s_bg_%s.jpg"
+const BG_COLORS_45 := {
+	# 第四章：人類時期的學校（暖一點的舊照片色）
+	"c4_classroom": Color("#d8cbb6"), "c4_hallway": Color("#cfc6b6"), "c4_toilet_door": Color("#b9b5ab"),
+	"c4_stairs": Color("#bdb3a2"), "c4_gate": Color("#d9d3c4"), "c4_window": Color("#c9d2d3"),
+	"c4_phone": Color("#1b1d22"), "c4_home": Color("#c7b9b0"), "c4_mailbox": Color("#cdbfae"),
+	"c4_orphanage": Color("#c4bcae"), "c4_office": Color("#bfb7a6"), "c4_downstairs": Color("#a9a296"),
+	"c4_principal": Color("#b7a990"), "c4_hospital": Color("#e4e8e8"), "c4_ward": Color("#cfd6d8"),
+	"c4_ward_dark": Color("#20272a"), "c4_platform": Color("#d0d3d3"),
+	# 第五章
+	"c5_lab": Color("#e8eef0"), "c5_lab_dark": Color("#141a1c"), "c5_real_ward": Color("#e9ecea"),
+	"c5_real_hall": Color("#dfe3e1"), "c5_outside": Color("#f4efe2"), "c5_town": Color("#f7e3ea"),
+	"c5_town_office": Color("#e9d2c4"), "c5_ward_empty": Color("#d9dedd"), "c5_school_gate": Color("#e6e0d0"),
 }
 const BG_FALLBACK := {"platform_negative": "white", "ending_grey": "grey_train", "ending_color": "grey_train"}
 ## 有美術的背景（game/art/bg_*.jpg）。@bg 名稱 → 全畫面背景圖
@@ -78,6 +94,8 @@ const VOICE_PITCH := {
 	"小玉": 1.22, "小狗居民": 1.1, "居民": 1.1, "車掌": 0.8, "小棘": 1.18, "條碼": 1.0, "重重": 0.66, "鼬鼬": 1.06,
 	"和平鴿": 0.86, "嘎嘎": 0.0, "鏡子裡的小孩": 1.15,
 }
+## 自動語音（嘆氣、笑聲…）：第四章「那一天」等段落關掉，聲音全部由劇本指定
+var auto_voice := true
 var _voice_player: AudioStreamPlayer
 var _voice_at := -10000
 var _last_speaker := ""
@@ -293,6 +311,14 @@ func _set_bg_ch2(mode: String) -> void:
 	_bg_img.visible = false
 	_cg_shown = false
 	if not _bg.visible:
+		return
+	if mode.begins_with("c4_") or mode.begins_with("c5_"):
+		var n := mode.substr(1, 1)
+		var art45 := BG_ART_45 % [n, n, mode.substr(3)]
+		if ResourceLoader.exists(art45):
+			_bg_img.texture = load(art45)
+			_bg_img.visible = true
+		_bg.color = BG_COLORS_45.get(mode, BG_COLORS.black)
 		return
 	if mode.begins_with("c3_"):
 		var art3 := BG_ART_3 % mode.trim_prefix("c3_")
@@ -805,6 +831,8 @@ func _style_button(b: Button) -> void:
 
 ## 依台詞自動配上角色的小聲音。回傳 [說話的人（決定音高）, 種類]；沒有就回傳 []
 func voice_cue(who: String, text: String) -> Array:
+	if not auto_voice:
+		return []
 	var t := text.strip_edges()
 	var subject := who
 	if subject == "":

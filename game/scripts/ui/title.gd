@@ -10,6 +10,8 @@ signal new_game
 signal continue_game
 signal chapter2
 signal chapter3
+signal chapter4
+signal chapter5
 
 const LOGO_TEX := "res://art/branding/logo.png"
 var _logo_tex: Texture2D
@@ -317,8 +319,8 @@ const CHAPTERS := [
 	["第一章　歡迎回來", "從還沒開始輪迴的第一天，重新開始。看過的結局和蒐藏會留著。"],
 	["第二章　漂白鎮", "「壞孩子」被送去的鎮。從灰色的車廂開始。"],
 	["第三章　慈愛實驗醫院", "活下來的人，被帶到醫院。和平鴿趴在車頂上，跟來了。（基礎版：美術陸續補上）"],
-	["第四章　三年二班", "製作中。"],
-	["第五章　終章", "製作中。"],
+	["第四章　三年二班", "很久以前，大家還是人類的時候。同一天，用不同人的眼睛走好幾次。（基礎版：美術陸續補上）"],
+	["第五章　終章", "槍聲之後。理事、最後的選擇，兩個完全不同的終章。（基礎版：美術陸續補上）"],
 ]
 
 
@@ -346,11 +348,17 @@ func _open_chapters() -> void:
 			if idx == 2:
 				chapter3.emit()
 				return
+			if idx == 3:
+				chapter4.emit()
+				return
+			if idx == 4:
+				chapter5.emit()
+				return
 			# 第一章：從還沒開始輪迴的第一天、空白的紀錄開始（看過的結局和蒐藏會留著）
 			GameState.restart_chapter1()
 			new_game.emit(), 18)
 		b.custom_minimum_size = Vector2(560, 70)
-		b.disabled = i > 2
+		b.disabled = i > 4
 		_panel_chapters.add_child(b)
 		if first == null:
 			first = b

@@ -72,7 +72,11 @@ static var _cache := {}
 
 static func stream(name: String) -> AudioStream:
 	if not FILES.has(name):
-		return null
+		# 第四、五章的合成音效（tools/make_ch45_sfx.py）
+		var extra := "res://audio/ch4/%s.ogg" % name
+		if not _cache.has(extra):
+			_cache[extra] = load(extra) if ResourceLoader.exists(extra) else null
+		return _cache[extra]
 	var path: String = DIR + FILES[name] % randi_range(1, 3)
 	if not _cache.has(path):
 		_cache[path] = load(path) if ResourceLoader.exists(path) else null

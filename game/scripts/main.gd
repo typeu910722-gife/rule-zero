@@ -265,6 +265,12 @@ func _show_title() -> void:
 	title.chapter3.connect(func():
 		GameState.reset()
 		enter_chapter3(get_tree()))
+	title.chapter4.connect(func():
+		GameState.reset()
+		enter_chapter4(get_tree()))
+	title.chapter5.connect(func():
+		GameState.reset()
+		enter_chapter5(get_tree()))
 	title.chapter2.connect(func():
 		# 從「選擇篇章」進第二章：從第二章的序章重新開始
 		GameState.reset()
@@ -281,8 +287,8 @@ func _continue() -> void:
 	if GameState.chapter == 2:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
 		return
-	if GameState.chapter == 3:
-		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter3.tscn")
+	if GameState.chapter in [3, 4, 5]:
+		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter%d.tscn" % GameState.chapter)
 		return
 	var cp := GameState.checkpoint
 	Dialogue.set_bg("none")
@@ -310,6 +316,24 @@ static func enter_chapter2(tree: SceneTree) -> void:
 	GameState.start_chapter2()
 	GameState.checkpoint = ""
 	tree.change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
+
+
+static func enter_chapter4(tree: SceneTree) -> void:
+	Sound.bgm("")
+	Sound.ambience("")
+	Audio.stop_music()
+	Dialogue.set_bg("none")
+	GameState.start_chapter4()
+	tree.change_scene_to_file.call_deferred("res://scenes/chapter4.tscn")
+
+
+static func enter_chapter5(tree: SceneTree) -> void:
+	Sound.bgm("")
+	Sound.ambience("")
+	Audio.stop_music()
+	Dialogue.set_bg("none")
+	GameState.start_chapter5()
+	tree.change_scene_to_file.call_deferred("res://scenes/chapter5.tscn")
 
 
 static func enter_chapter3(tree: SceneTree) -> void:

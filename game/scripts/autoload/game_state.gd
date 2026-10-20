@@ -292,6 +292,38 @@ func start_chapter3() -> void:
 	changed.emit()
 
 
+## 第四章：前面三章的旗標都帶著走（第三章結束時存在 meta.ch3_flags，裡面已經有第二章的）
+func start_chapter4() -> void:
+	chapter = 4
+	day = 1
+	courage = MAX_COURAGE
+	var carry: Dictionary = meta.get("ch3_flags", meta.get("ch2_flags", {}))
+	for k in carry:
+		flags[k] = carry[k]
+	var fates: Dictionary = meta.get("ch2_fates", {})
+	if fates.get("zhongzhong", "") == "dead":
+		flags["zz_dead"] = true
+	objective = ""
+	checkpoint = ""
+	changed.emit()
+
+
+## 第五章（終章）：帶著第四章結束時的旗標（含前面所有章）
+func start_chapter5() -> void:
+	chapter = 5
+	day = 1
+	courage = MAX_COURAGE
+	var carry: Dictionary = meta.get("ch4_flags", meta.get("ch3_flags", meta.get("ch2_flags", {})))
+	for k in carry:
+		flags[k] = carry[k]
+	var fates: Dictionary = meta.get("ch2_fates", {})
+	if fates.get("zhongzhong", "") == "dead":
+		flags["zz_dead"] = true
+	objective = ""
+	checkpoint = ""
+	changed.emit()
+
+
 func add_conduct(amount: int) -> void:
 	conduct = clampi(conduct + amount, 0, 100)
 	changed.emit()

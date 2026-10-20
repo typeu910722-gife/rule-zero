@@ -9,6 +9,8 @@ signal done(result)
 var title := ""
 var hint := ""
 var fast_result: Variant = true
+## 底色（第四章用舊照片的暖色）
+var bg_color := BG
 var _canvas: Control
 var _title: Label
 var _hint: Label
@@ -27,8 +29,9 @@ const RED := Color("#d65a5a")
 
 func _ready() -> void:
 	layer = 30
+	_setup()
 	var bg := ColorRect.new()
-	bg.color = BG
+	bg.color = bg_color
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
@@ -39,7 +42,6 @@ func _ready() -> void:
 	add_child(_canvas)
 	_title = _label(Vector2(0, 28), 34, INK)
 	_hint = _label(Vector2(0, 660), 20, SOFT)
-	_setup()
 	_title.text = title
 	_hint.text = hint
 

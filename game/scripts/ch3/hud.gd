@@ -5,6 +5,8 @@ extends CanvasLayer
 signal title_requested
 
 var place := ""
+## 第四、五章：狀態列只顯示這一行（空＝第三章的膽量、棉花）
+var header := ""
 var party: Array = []   # [[id, 名字]]
 var _label: RichTextLabel
 var _menu: PanelContainer
@@ -45,6 +47,9 @@ func _ready() -> void:
 
 
 func refresh() -> void:
+	if header != "":
+		_label.text = "%s　%s" % [header, place]
+		return
 	var t := "[b]第三章[/b]　%s　　膽量 %s\n棉花　" % [place, "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)]
 	var parts := []
 	for p in party:

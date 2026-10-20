@@ -429,11 +429,11 @@ func _chapter_end() -> void:
 		l.add_theme_font_size_override("font_size", 22)
 		l.add_theme_color_override("font_color", Color("#c9d3d6"))
 		box.add_child(l)
-	var next := Label.new()
-	next.text = "第四章「三年二班」　製作中"
-	next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	next.add_theme_font_size_override("font_size", 20)
-	next.add_theme_color_override("font_color", Color("#7d8a8e"))
+	var next := Button.new()
+	next.text = "繼續第四章「三年二班」"
+	next.custom_minimum_size = Vector2(320, 56)
+	next.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	next.pressed.connect(func(): load("res://scripts/main.gd").enter_chapter4(get_tree()))
 	box.add_child(next)
 	var b := Button.new()
 	b.text = "回到標題"
@@ -441,7 +441,7 @@ func _chapter_end() -> void:
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	b.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/main.tscn"))
 	box.add_child(b)
-	b.grab_focus.call_deferred()
+	next.grab_focus.call_deferred()
 	_finished = true
 
 
