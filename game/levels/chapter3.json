@@ -6,7 +6,8 @@
   "c3_ph_ledger": "處方簿的一頁",
   "c3_small_key": "小鑰匙",
   "c3_key_records": "病歷室的鑰匙",
-  "c3_fuse": "保險絲"
+  "c3_fuse": "保險絲",
+  "c3_b2_keycard": "B2 鑰匙卡"
  },
  "keypads": {
   "c3_pad_pharmacy": {
@@ -19,6 +20,12 @@
    "title": "理事室的密碼鎖",
    "code": "0705",
    "flag": "c3_director_open",
+   "hint": "四個數字。"
+  },
+  "c3_pad_monitor": {
+   "title": "監控室的密碼鎖",
+   "code": "1113",
+   "flag": "c3_monitor_open",
    "hint": "四個數字。"
   }
  },
@@ -2511,6 +2518,514 @@
      "spawn": "from_end"
     }
    ]
+  },
+  "b2_hall": {
+   "name": "地下二樓　走廊",
+   "size": [
+    2800,
+    720
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "dark": true,
+   "on_enter": "c3_b2_hall_enter",
+   "spawns": {
+    "start": [
+     140,
+     450
+    ],
+    "from_lockers": [
+     600,
+     220
+    ],
+    "from_ward": [
+     1250,
+     220
+    ],
+    "from_special": [
+     1900,
+     220
+    ],
+    "from_monitor": [
+     2650,
+     450
+    ]
+   },
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      2700,
+      120,
+      60,
+      24
+     ],
+     "color": "#3fa36b"
+    }
+   ],
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      880,
+      520,
+      200,
+      70
+     ]
+    },
+    {
+     "kind": "machine",
+     "rect": [
+      1500,
+      170,
+      120,
+      50
+     ],
+     "label": "心電圖"
+    },
+    {
+     "kind": "crate",
+     "rect": [
+      2200,
+      560,
+      90,
+      50
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_b2_ecg",
+     "name": "門外的心電圖",
+     "pos": [
+      1560,
+      270
+     ]
+    },
+    {
+     "id": "c3_b2_gurney",
+     "name": "推床",
+     "pos": [
+      980,
+      620
+     ]
+    },
+    {
+     "id": "c3_b2_monitor_pad",
+     "name": "監控室門上的密碼鎖",
+     "pos": [
+      2690,
+      300
+     ],
+     "when": "!c3_monitor_open",
+     "done_when": "c3_monitor_open"
+    }
+   ],
+   "patrols": [
+    {
+     "id": "c3_patrol_dove_b2",
+     "char": "dove",
+     "path": [
+      [
+       400,
+       430
+      ],
+      [
+       2400,
+       430
+      ]
+     ],
+     "speed": 65,
+     "view": 230,
+     "fov": 0.7,
+     "pause": 2.2,
+     "when": "c3_b2_keycard",
+     "catch": "c3_b2_caught"
+    }
+   ],
+   "hides": [
+    {
+     "id": "c3_hide_b2_gurney",
+     "name": "推床底下",
+     "pos": [
+      980,
+      560
+     ],
+     "kind": "rug",
+     "size": [
+      120,
+      30
+     ]
+    },
+    {
+     "id": "c3_hide_b2_crate",
+     "name": "箱子後面",
+     "pos": [
+      2245,
+      520
+     ],
+     "kind": "crate",
+     "size": [
+      70,
+      40
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_b2_lockers",
+     "name": "置物間",
+     "pos": [
+      600,
+      125
+     ],
+     "size": [
+      110,
+      30
+     ],
+     "to": "b2_lockers",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c3_door_b2_ward",
+     "name": "病房",
+     "pos": [
+      1250,
+      125
+     ],
+     "size": [
+      110,
+      30
+     ],
+     "to": "b2_ward",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c3_door_b2_special",
+     "name": "特別病房",
+     "pos": [
+      1900,
+      125
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "b2_special",
+     "spawn": "from_hall",
+     "open": "c3_b2_keycard",
+     "locked_label": "c3_b2_special_locked"
+    },
+    {
+     "id": "c3_door_b2_monitor",
+     "name": "監控室",
+     "pos": [
+      2760,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b2_monitor",
+     "spawn": "from_hall",
+     "open": "c3_monitor_open",
+     "locked_label": "c3_b2_monitor_locked"
+    }
+   ]
+  },
+  "b2_lockers": {
+   "name": "地下二樓　置物間",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "dark": true,
+   "spawns": {
+    "from_hall": [
+     640,
+     620
+    ]
+   },
+   "props": [
+    {
+     "kind": "locker",
+     "rect": [
+      100,
+      160,
+      400,
+      40
+     ]
+    },
+    {
+     "kind": "locker",
+     "rect": [
+      780,
+      160,
+      400,
+      40
+     ]
+    },
+    {
+     "kind": "table",
+     "rect": [
+      520,
+      400,
+      240,
+      60
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_b2_locker",
+     "name": "最左邊的置物櫃",
+     "pos": [
+      180,
+      250
+     ],
+     "done_when": "c3_b2_keycard"
+    },
+    {
+     "id": "c3_b2_lockers_other",
+     "name": "其他的置物櫃",
+     "pos": [
+      980,
+      250
+     ]
+    },
+    {
+     "id": "c3_b2_bench",
+     "name": "長椅上的東西",
+     "pos": [
+      640,
+      500
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_lockers_out",
+     "name": "回走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "b2_hall",
+     "spawn": "from_lockers"
+    }
+   ]
+  },
+  "b2_ward": {
+   "name": "地下二樓　病房",
+   "size": [
+    1400,
+    720
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "dark": true,
+   "spawns": {
+    "from_hall": [
+     700,
+     620
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      160,
+      300,
+      180,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      460,
+      300,
+      180,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      760,
+      300,
+      180,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1060,
+      300,
+      180,
+      70
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_b2_bed",
+     "name": "病床底下",
+     "pos": [
+      550,
+      420
+     ]
+    },
+    {
+     "id": "c3_b2_ward_chart",
+     "name": "床尾的夾板",
+     "pos": [
+      1150,
+      420
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_ward_out",
+     "name": "回走廊",
+     "pos": [
+      700,
+      700
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "b2_hall",
+     "spawn": "from_ward"
+    }
+   ]
+  },
+  "b2_special": {
+   "name": "地下二樓　特別病房",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "lab",
+   "wall_h": 110,
+   "dark": true,
+   "on_enter": "c3_b2_special_enter",
+   "spawns": {
+    "from_hall": [
+     640,
+     620
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      520,
+      300,
+      240,
+      80
+     ]
+    },
+    {
+     "kind": "machine",
+     "rect": [
+      860,
+      250,
+      110,
+      60
+     ]
+    },
+    {
+     "kind": "cabinet",
+     "rect": [
+      160,
+      160,
+      120,
+      40
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_b2_sp_bed",
+     "name": "空的病床",
+     "pos": [
+      640,
+      440
+     ]
+    },
+    {
+     "id": "c3_b2_sp_machine",
+     "name": "還在跑的機器",
+     "pos": [
+      915,
+      360
+     ]
+    },
+    {
+     "id": "c3_b2_sp_drawer",
+     "name": "床頭櫃",
+     "pos": [
+      220,
+      250
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_special_out",
+     "name": "回走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "b2_hall",
+     "spawn": "from_special"
+    }
+   ]
+  },
+  "b2_monitor": {
+   "name": "地下二樓　監控室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "on_enter": "c3_monitor",
+   "spawns": {
+    "from_hall": [
+     160,
+     450
+    ]
+   },
+   "props": [
+    {
+     "kind": "machine",
+     "rect": [
+      300,
+      160,
+      700,
+      60
+     ]
+    }
+   ],
+   "spots": [],
+   "doors": []
   }
  }
 }

@@ -65,6 +65,21 @@ func _run() -> void:
 				if not c._bfs(c._start, Vector2i(x, y)).is_empty() or Vector2i(x, y) == c._start:
 					reach += 1
 	_check(reach == total, "迷宮每一格都走得到（%d / %d）" % [reach, total])
+	# 第二段（點名）的迷宮也要每一格都連得到、走得到出口
+	var c3 = load("res://scripts/ch3/chase3d.gd").new()
+	c3.maze = c3.MAZE_ROLLCALL.duplicate()
+	root.add_child(c3)
+	await process_frame
+	var t3 := 0
+	var r3 := 0
+	for y in c3.maze.size():
+		for x in c3.maze[y].length():
+			if c3.walkable(Vector2i(x, y)):
+				t3 += 1
+				if Vector2i(x, y) == c3._start or not c3._bfs(c3._start, Vector2i(x, y)).is_empty():
+					r3 += 1
+	_check(r3 == t3 and not c3._bfs(c3._start, c3._exit).is_empty(), "點名的迷宮：走得到出口、每一格都連得到（%d / %d）" % [r3, t3])
+	c3.queue_free()
 	# 站著不動：追的人要追得到（不然沒有威脅）
 	var c2 = load("res://scripts/ch3/chase3d.gd").new()
 	root.add_child(c2)

@@ -192,6 +192,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		var was := busy
 		busy = true
 		await Dialogue.run(on_enter)
+		Dialogue.set_bg("none")
 		busy = was
 
 
@@ -393,6 +394,7 @@ func interact(s: Dictionary) -> void:
 				var lab: String = s.get("locked_label", "")
 				if lab != "" and Dialogue.has_label(lab):
 					await Dialogue.run(lab)
+					Dialogue.set_bg("none")
 				else:
 					toast(s.get("locked_text", "鎖住了。"))
 		"hides":
@@ -406,6 +408,8 @@ func interact(s: Dictionary) -> void:
 			var lab2: String = s.get("label", id)
 			if Dialogue.has_label(lab2):
 				await Dialogue.run(lab2)
+				# 對話裡換過背景（黑屏、CG）：回到地圖
+				Dialogue.set_bg("none")
 			if s.get("set", "") != "":
 				GameState.set_flag(s.set)
 			GameState.flags["done_" + id] = true

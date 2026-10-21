@@ -11,9 +11,9 @@ const Cpr := preload("res://scripts/ch3/cpr.gd")
 const Runner := preload("res://scripts/ch3/runner.gd")
 const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
-const SEGMENTS := ["arrival", "floor1", "floor2", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
+const SEGMENTS := ["arrival", "floor1", "floor2", "wild", "chase1", "b2", "chase2", "cpr", "ending"]
 const PLACES := {"arrival": "地下月台", "floor1": "一樓", "floor2": "二樓",
-	"wild": "舊病棟　失控區", "chase1": "醫院長廊", "b2": "地下二樓", "monitor": "地下二樓　監控室",
+	"wild": "舊病棟　失控區", "chase1": "醫院長廊", "b2": "地下二樓",
 	"chase2": "醫院長廊", "cpr": "地下二樓", "ending": "實驗室"}
 
 ## 第二章的配樂沿用（第三章自製配樂之後補上）
@@ -24,12 +24,6 @@ const BGM_ONCE := ["escape"]
 
 ## 各房間的調查點（座標是 1280×720 的畫面）
 const ROOMS := {
-	"b2": [
-		{"id": "c3_b2_locker", "name": "置物櫃", "rect": Rect2(50, 300, 160, 56)},
-		{"id": "c3_b2_bed", "name": "病床底下", "rect": Rect2(470, 380, 180, 56)},
-		{"id": "c3_b2_ecg", "name": "門外的心電圖", "rect": Rect2(800, 300, 200, 56)},
-		{"id": "exit", "name": "監控室　→", "rect": Rect2(1040, 590, 200, 60), "when": "c3_scare_locker|c3_scare_bed|c3_scare_ecg", "exit": true},
-	],
 }
 
 var segment := "arrival"
@@ -70,7 +64,7 @@ func _ready() -> void:
 	_lights_layer.add_child(_blackout)
 	var cp := GameState.checkpoint
 	# 舊存檔：改成地圖探索之前的檢查點
-	cp = {"c3_hall": "c3_floor1", "c3_nirvana": "c3_floor2", "c3_records": "c3_floor2"}.get(cp, cp)
+	cp = {"c3_hall": "c3_floor1", "c3_nirvana": "c3_floor2", "c3_records": "c3_floor2", "c3_monitor": "c3_b2"}.get(cp, cp)
 	if cp.begins_with("c3_") and cp.trim_prefix("c3_") in SEGMENTS:
 		segment = cp.trim_prefix("c3_")
 	_run.call_deferred()
@@ -195,15 +189,13 @@ func _seg_chase1() -> void:
 	await Dialogue.run("c3_hideseek")
 
 
+## 地下二樓：縫補 → 置物間（鑰匙卡）、病房、特別病房（遙的空床、監控室密碼）；和平鴿開始在走廊巡 → 監控室
 func _seg_b2() -> void:
-	Dialogue.set_bg("c3_b2")
-	await Dialogue.run("c3_b2_intro")
-	Dialogue.set_bg("none")
-	await _room("b2", "")
-
-
-func _seg_monitor() -> void:
-	await Dialogue.run("c3_monitor")
+	if not GameState.has("c3_b2_sewn"):
+		Dialogue.set_bg("c3_b2")
+		await Dialogue.run("c3_b2_intro")
+		GameState.set_flag("c3_b2_sewn")
+	await _explore_until("b2_hall", "start", "c3_monitor_seen")
 
 
 func _seg_chase2() -> void:
@@ -298,10 +290,13 @@ func _on_event(event_name: String) -> void:
 			for id in crooked:
 				GameState.set_flag("c3_crooked_%s" % id, crooked[id])
 		"c3_chase2":
-			var r2 := Runner.new()
-			r2.rollcall = true
-			add_child(r2)
-			_lose_cotton(await r2.play(), 2)
+			# 廣播點名：第二段 3D 追逐（比較長的迷宮）
+			var c3d2 := Chase3DScript.new()
+			c3d2.maze = Chase3DScript.MAZE_ROLLCALL.duplicate()
+			c3d2.title = "點名"
+			c3d2.hint = "被點到名之前，跑到電梯。上：往前　左右：轉身　按住互動鍵：跑"
+			add_child(c3d2)
+			_lose_cotton(await c3d2.play(), 2)
 			_lose_all(2)
 		"c3_cpr":
 			var c := Cpr.new()
