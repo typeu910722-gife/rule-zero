@@ -57,7 +57,7 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 
 ## 給 Claude 的工作規則（使用者 2026-10-21 指定）
 - **溝通**：一律用繁體中文回報。
-- **升級循環**：每一輪：處理使用者回饋（沒有的話自己挑一個改進）→ 跑驗證 → 更新文件 → commit + push → 用中文簡短回報 → 5 分鐘後開始下一輪，直到使用者說「暫停」。使用者的新回饋永遠優先。
+- **升級循環**：每一輪：處理使用者回饋（沒有的話自己挑一個改進）→ 跑驗證 → 更新文件 → commit + push → 用中文簡短回報 → 直接開始下一輪（2026-10-21 使用者：不用等 5 分鐘），直到使用者說「暫停」。使用者的新回饋永遠優先。
 - **驗證**（全部通過才能 push）：
   - `/tmp/claude-0/bin/rt.sh`（或逐一）：`godot --headless --path game -s tests/<lint_dialogue|save_test|smoke_test|chapter2_test|chapter3_test|chapter4_test|chapter5_test|walkmask_ch2_test|explore_test|chase3d_test|endings_test|memory_test|quests_test|interiors_test|chase_test|scissors_test|forest_test|world_test|idle_test>.gd`
   - 動到小遊戲時加跑：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/<minigames_real_ch2|minigames_real_ch345>.gd`

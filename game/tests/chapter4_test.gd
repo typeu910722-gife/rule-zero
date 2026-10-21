@@ -62,6 +62,7 @@ func _run() -> void:
 	_check(gs.has("c4_m_bag_done") and gs.has("c4_m_found_shoes") and gs.has("c4_m_done"), "小滿：書包、鞋子、等到辛禾")
 	_check(gs.has("c4_t_done") and gs.has("c4_l_done") and gs.has("c4_x_done") and gs.has("c4_p_done"), "薙文、希露飛、辛禾、銘越的地圖都走完了")
 	_check(gs.has("c4_d1_done") and gs.has("c4_d2_done") and gs.has("c4_d5_called") and gs.has("c4_d5_done") and gs.has("c4_d8_done"), "那一天：遙、值日生、芬（找老師、擋在門前）、李恩的地圖都走完")
+	_check(gs.has("c4_d5_ran") and not gs.has("c4_d5_late"), "那一天：芬跑過走廊（3D）之後接到廁所前")
 	_check(gs.has("c4_o_done") and gs.has("done_c4_org_board") and gs.has("done_c4_org_father"), "那一天之後：校長室、黑板、醫院、月台")
 	_check(gs.has("done_c4_n_left") and gs.has("done_c4_n_right") and gs.has("done_c4_n_haruka") and gs.has("c4_n_done"), "第一個晚上：看過兩邊的床、電閘")
 	_check(gs.has("c4_te_night") and gs.has("c4_te_done"), "導師：留到晚上、重寫班規")

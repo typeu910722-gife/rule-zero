@@ -7,6 +7,7 @@ extends Node2D
 const Speech := preload("res://scripts/ch4/speech.gd")
 const GroupChat := preload("res://scripts/ch4/group_chat.gd")
 const HoldDoor := preload("res://scripts/ch4/hold_door.gd")
+const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
 const SEGMENTS := ["opening", "haruka", "mochi", "tiaoma", "lulu", "xinhe", "popo", "teacher", "fen", "theday", "org", "night"]
 const POV := {"opening": "", "haruka": "視角：遙", "mochi": "視角：小滿", "tiaoma": "視角：薙文", "lulu": "視角：希露飛",
@@ -293,6 +294,21 @@ func _on_event(event_name: String) -> void:
 				await get_tree().create_timer(2.5).timeout
 		"c4_breaker":
 			await _breaker()
+		"c4_run":
+			# 3D：芬一個人跑過放學後的走廊（沒有追的人，只有時間）
+			var r := Chase3DScript.new()
+			r.maze = Chase3DScript.MAZE_SCHOOL.duplicate()
+			r.look = Chase3DScript.LOOK_SCHOOL
+			r.has_enemy = false
+			r.time_limit = 50.0
+			r.start_motif = ""
+			r.title = "走廊盡頭"
+			r.hint = "上：往前　左右：轉身　按住互動鍵：跑"
+			add_child(r)
+			if await r.play() > 0:
+				GameState.set_flag("c4_d5_late")
+			if explore:
+				await explore.enter("toilet_hall", "from_hall1")
 	Dialogue.event_done.emit()
 
 

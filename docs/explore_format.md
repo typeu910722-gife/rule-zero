@@ -44,3 +44,15 @@ await explore.until("c3_heart_done")   # 自由探索，直到條件成立
 explore.save_state()                     # 檢查點：記住房間與位置；讀檔用 restore_or()
 ```
 劇本的 `@event` 先給 `explore.handle_event(name)`（密碼鎖），回傳 false 再由導演處理。
+
+## 3D 段落（`scripts/ch3/chase3d.gd`，class Chase3D）
+格子迷宮（`#` 牆、`.` 路、`S` 起點、`E` 出口、`C` 檢查點、`D` 追的人出發點、`W` 地上的白線）。用 Godot 內建形狀，之後可換 Blender 的 .glb。
+| 欄位 | 說明 |
+|---|---|
+| `maze` | 迷宮（內建：`maze` 預設、`MAZE_ROLLCALL`、`MAZE_SCHOOL`、`MAZE_REAL_HALL`） |
+| `look` | 配色（`LOOK_SCHOOL`、`LOOK_REAL`；空＝第三章的暗醫院＋手電筒） |
+| `has_enemy` | false：沒有追的人 |
+| `time_limit` | > 0：限時；超過也走得完，`play()` 回傳 1 |
+| `breath` | 呼吸模式：走路會喘，喘到底停 1.5 秒（`breath_stops` 記次數） |
+| `title`、`hint`、`start_motif` | 畫面上的字、開始的音效（空字串＝不放） |
+測試：`tests/chase3d_test.gd`（每張迷宮都要每一格連得到、模擬按鍵走得到出口）。

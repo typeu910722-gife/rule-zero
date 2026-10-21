@@ -6,6 +6,7 @@ extends Node2D
 
 const BreathWalk := preload("res://scripts/ch5/breath_walk.gd")
 const Guard := preload("res://scripts/ch5/guard.gd")
+const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
 const SEGMENTS := ["opening", "director", "choice", "ending"]
 const PLACES := {"opening": "實驗室", "director": "實驗室", "choice": "實驗室　最後一堂課", "ending": ""}
@@ -180,7 +181,11 @@ func _seg_ending() -> void:
 				var w := BreathWalk.new()
 				add_child(w)
 				GameState.set_flag("c5_breath_falls", await w.play())
-			await _explore("a", "a_ward5", "start", "c5_a_done")
+			if not GameState.has("c5_baimian_returned"):
+				await _explore("a", "a_ward5", "start", "c5_baimian_returned")
+			if not GameState.has("c5_a_walked"):
+				await _walk_out()
+			await _explore("a", "a_lobby5", "from_hall", "c5_a_done")
 		"b1":
 			_bgm("dream")
 			if not GameState.has("explore_room"):
@@ -198,6 +203,24 @@ func _seg_ending() -> void:
 			if not GameState.has("explore_room"):
 				await Dialogue.run("c5_b3_intro")
 			await _explore("b3", "b3_ward5", "start", "c5_b3_done")
+
+
+## 3D：走出真的醫院（終章 A）。人類的身體走很慢，喘不過氣就要停下來
+func _walk_out() -> void:
+	await Dialogue.run("c5_a_walk")
+	var r := Chase3DScript.new()
+	r.maze = Chase3DScript.MAZE_REAL_HALL.duplicate()
+	r.look = Chase3DScript.LOOK_REAL
+	r.has_enemy = false
+	r.breath = true
+	r.start_motif = ""
+	r.title = "走出去"
+	r.hint = "上：往前　左右：轉身　喘不過氣的時候，停下來"
+	add_child(r)
+	await r.play()
+	GameState.set_flag("c5_a_walked")
+	GameState.set_flag("c5_a_breath_stops", r.breath_stops)
+	GameState.save_game("c5_ending")
 
 
 ## 地圖探索：設定階段旗標 c5_st_<stage>，走到條件成立為止（讀檔時從記住的房間繼續）

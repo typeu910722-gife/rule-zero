@@ -45,11 +45,47 @@ const MAZE_ROLLCALL := [
 	"#.....#...#......E#",
 	"###################",
 ]
+## 第四章：芬一個人跑過放學後的走廊（沒有追的人，有時間限制）
+const MAZE_SCHOOL := [
+	"#####################",
+	"#S.....#.....#......#",
+	"###.##.#.###.#.####.#",
+	"#...#..#...#...#....#",
+	"#.###.####.#####.##.#",
+	"#.....#..........#..#",
+	"#####.#.#.######.#.##",
+	"#.......#......#...E#",
+	"#####################",
+]
+## 第五章終章 A：走出真的醫院（W＝地上的白線；沒有追的人，要注意呼吸）
+const MAZE_REAL_HALL := [
+	"#################",
+	"#S..W.....#.....#",
+	"####.####.#.###.#",
+	"#....#....#...#.#",
+	"#.####.######.#.#",
+	"#......W......#E#",
+	"#################",
+]
+## 配色：預設是第三章的醫院（暗、有霧、手電筒）
+const LOOK_SCHOOL := {"wall": "#e2d6c2", "floor": "#a8957a", "ceil": "#efe6d6", "bg": "#e9c9a0", "fog": "#e8c49a",
+	"fog_density": 0.035, "ambient": "#f0d2b0", "ambient_energy": 0.75, "lamp": false, "light": "#ffd9a8"}
+const LOOK_REAL := {"wall": "#eef0ee", "floor": "#c9cec9", "ceil": "#f7f8f7", "bg": "#f4f6f4", "fog": "#f4f6f4",
+	"fog_density": 0.03, "ambient": "#ffffff", "ambient_energy": 0.7, "lamp": false, "light": "#ffffff"}
+
 var title := "捉迷藏"
 var hint := "上：往前　左右：轉身　按住互動鍵：跑"
 var enemy_char := "dove"           # 之後換模型用
 var enemy_delay := 4.0             # 「我不數了」：幾秒後開始追
 var enemy_speed := 2.3            # 比走路（2.6）慢：只有走錯路、停下來才會被追上
+var has_enemy := true             # false：沒有追的人（只是走到出口）
+var time_limit := 0.0             # > 0：要在幾秒內走到；超過也照樣能走完，只是回傳 1（「來不及了」）
+var breath := false               # 終章 A：人類的身體。走路也會喘，喘不過氣就要停下來
+var look := {}                    # 配色（LOOK_SCHOOL／LOOK_REAL；空＝醫院）
+var start_motif := "whistle"
+var late := false
+var breath_stops := 0             # 喘不過氣、停下來的次數
+var _stop_t := 0.0
 
 var _vp: SubViewport
 var _world: Node3D
@@ -142,17 +178,18 @@ func _build() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("#0b0d0e")
+	e.background_color = Color(look.get("bg", "#0b0d0e"))
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color("#3a4448")
-	e.ambient_light_energy = 0.35
+	e.ambient_light_color = Color(look.get("ambient", "#3a4448"))
+	e.ambient_light_energy = look.get("ambient_energy", 0.35)
 	e.fog_enabled = true
-	e.fog_light_color = Color("#0e1214")
-	e.fog_density = 0.09
+	e.fog_light_color = Color(look.get("fog", "#0e1214"))
+	e.fog_density = look.get("fog_density", 0.09)
 	env.environment = e
 	_world.add_child(env)
-	var wall_mat := _mat(Color("#cfd8db"))
-	var floor_mat := _mat(Color("#8f9a9d"))
+	var wall_mat := _mat(Color(look.get("wall", "#cfd8db")))
+	var floor_mat := _mat(Color(look.get("floor", "#8f9a9d")))
+	var line_mat := _mat(Color.WHITE, 0.4)
 	var h := maze.size()
 	var w: int = maze[0].length()
 	var fl := MeshInstance3D.new()
@@ -165,7 +202,7 @@ func _build() -> void:
 	var ceil := fl.duplicate()
 	ceil.position.y = 2.6
 	ceil.rotation.x = PI
-	ceil.material_override = _mat(Color("#5c6669"))
+	ceil.material_override = _mat(Color(look.get("ceil", "#5c6669")))
 	_world.add_child(ceil)
 	var box := BoxMesh.new()
 	box.size = Vector3(CELL, 2.6, CELL)
@@ -180,6 +217,17 @@ func _build() -> void:
 					m.material_override = wall_mat
 					m.position = Vector3((x + 0.5) * CELL, 1.3, (y + 0.5) * CELL)
 					_world.add_child(m)
+				"W":
+					# 地上的白線（橫過走廊）
+					var st := MeshInstance3D.new()
+					var sm := BoxMesh.new()
+					sm.size = Vector3(CELL, 0.01, 0.12)
+					st.mesh = sm
+					st.material_override = line_mat
+					st.position = Vector3((x + 0.5) * CELL, 0.006, (y + 0.5) * CELL)
+					var horiz := walkable(Vector2i(x - 1, y)) or walkable(Vector2i(x + 1, y))
+					st.rotation.y = PI / 2.0 if horiz else 0.0
+					_world.add_child(st)
 				"S":
 					_start = c
 				"E":
@@ -198,7 +246,7 @@ func _build() -> void:
 				l.position = Vector3((x + 0.5) * CELL, 2.3, (y + 0.5) * CELL)
 				l.omni_range = 4.5
 				l.light_energy = 0.7
-				l.light_color = Color("#dfe9ea")
+				l.light_color = Color(look.get("light", "#dfe9ea"))
 				l.set_meta("flicker", k)
 				_world.add_child(l)
 				k += 1
@@ -226,9 +274,11 @@ func _build() -> void:
 	lamp.spot_angle = 32
 	lamp.light_energy = 2.2
 	lamp.light_color = Color("#fff4e0")
+	lamp.visible = look.get("lamp", true)
 	_cam.add_child(lamp)
 	# 追的人（之後換成 Blender 的和平鴿模型）
 	_enemy = _make_enemy()
+	_enemy.visible = has_enemy
 	_world.add_child(_enemy)
 	if not _has_d:
 		_enemy_start = _start
@@ -302,7 +352,8 @@ func play() -> int:
 		await get_tree().process_frame
 		queue_free()
 		return 0
-	Motif.play(self, "whistle", -6.0)
+	if start_motif != "":
+		Motif.play(self, start_motif, -6.0)
 	var r: int = await done
 	await get_tree().create_timer(0.6).timeout
 	queue_free()
@@ -317,14 +368,28 @@ func _process(delta: float) -> void:
 	for l in _world.get_children():
 		if l is OmniLight3D and l.has_meta("flicker"):
 			var k: int = l.get_meta("flicker")
-			l.light_energy = 0.0 if fmod(_t * 1.3 + k * 0.77, 4.0) < 0.12 else 0.7
+			if look.is_empty():   # 只有第三章的醫院會一閃一閃
+				l.light_energy = 0.0 if fmod(_t * 1.3 + k * 0.77, 4.0) < 0.12 else 0.7
 	# 移動
 	var turn := Input.get_axis("move_right", "move_left")
 	var fwd := Input.get_axis("move_down", "move_up")
 	_yaw += turn * TURN * delta
-	var running := Input.is_action_pressed("interact") and _stamina > 0.05 and fwd > 0.0
-	_stamina = clampf(_stamina + (-0.35 if running else 0.18) * delta, 0.0, 1.0)
+	var running := Input.is_action_pressed("interact") and _stamina > 0.05 and fwd > 0.0 and not breath
 	var speed := RUN if running else WALK
+	if breath:
+		# 呼吸：往前走會慢慢喘，停下來才會恢復；喘到底就要停一下
+		if _stop_t > 0.0:
+			_stop_t -= delta
+			fwd = 0.0
+			_stamina = clampf(_stamina + 0.3 * delta, 0.0, 1.0)
+		else:
+			_stamina = clampf(_stamina + (-0.12 if fwd != 0.0 else 0.3) * delta, 0.0, 1.0)
+			if _stamina <= 0.0:
+				_stop_t = 1.5
+				breath_stops += 1
+		speed = WALK * 0.75
+	else:
+		_stamina = clampf(_stamina + (-0.35 if running else 0.18) * delta, 0.0, 1.0)
 	var dir := Vector2(-sin(_yaw), -cos(_yaw)) * fwd * speed * delta
 	_try_move(Vector2(dir.x, 0))
 	_try_move(Vector2(0, dir.y))
@@ -334,8 +399,18 @@ func _process(delta: float) -> void:
 		_cam.position.y = EYE + sin(_step_t * 9.0) * 0.03
 	if _cell(_pos) == _check:
 		_start = _check
+	if not has_enemy:
+		var s := ""
+		if time_limit > 0.0:
+			if _t > time_limit and not late:
+				late = true
+				_caught += 1
+			s = "……來不及了。" if late else "　還有 %d 秒" % ceili(time_limit - _t)
+		if breath:
+			s = ("……喘不過氣。停下來，慢慢吸氣。" if _stop_t > 0.0 else "呼吸 " + "■".repeat(int(_stamina * 5)) + "□".repeat(5 - int(_stamina * 5)))
+		_status.text = s
 	# 追的人
-	if _t > enemy_delay:
+	elif _t > enemy_delay:
 		_repath -= delta
 		if _repath <= 0.0:
 			_repath = 0.4
