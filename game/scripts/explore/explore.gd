@@ -541,6 +541,8 @@ func restore_or(room_default: String, spawn_default: Variant = "start") -> void:
 
 ## 依序：還沒調查過的調查點／NPC → 打得開、還沒走過的門。用 BFS 走過所有房間。
 var _auto_seen := {}
+## 按過、但當時什麼都沒改變的東西：旗標狀態沒變之前不要再按（例如還沒有鑰匙卡的電梯）
+var _auto_tried := {}
 
 
 func _auto_step(_cond: String) -> void:
@@ -548,9 +550,15 @@ func _auto_step(_cond: String) -> void:
 	if busy:
 		return
 	for s in _things():
-		if s._kind in ["spots", "npcs"] and not GameState.has("done_" + str(s.get("id", ""))) and not s.get("auto_skip", false):
+		var sid := str(s.get("id", ""))
+		var pending: bool = not GameState.check(s.done_when) if s.has("done_when") else not GameState.has("done_" + sid)
+		if pending and _auto_tried.get(sid, -1) == _flags_hash():
+			pending = false
+		if s._kind in ["spots", "npcs"] and pending and not s.get("auto_skip", false):
 			player.place(_v(s.pos) + Vector2(0, 30))
+			var before := _flags_hash()
 			await interact(s)
+			_auto_tried[sid] = _flags_hash() if _flags_hash() == before else -1
 			return
 	# 換房間：挑一扇打得開、最久沒走過的門
 	var doors: Array = _things().filter(func(s): return s._kind == "doors" and _door_open(s))
@@ -561,6 +569,12 @@ func _auto_step(_cond: String) -> void:
 	var key := room_id + ">" + str(d.to)
 	_auto_seen[key] = int(_auto_seen.get(key, 0)) + 1
 	await interact(d)
+
+
+func _flags_hash() -> int:
+	var keys := GameState.flags.keys().filter(func(k): return not str(k).begins_with("explore_") and not str(k).begins_with("seen_") and not str(k).begins_with("done_"))
+	keys.sort()
+	return str(keys).hash()
 
 
 static func _v(a) -> Vector2:

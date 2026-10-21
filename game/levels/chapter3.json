@@ -1,0 +1,162 @@
+{
+  "items": {
+    "c3_tweezers": "鑷子",
+    "c3_ticket": "號碼牌",
+    "c3_heart_done": "鑰匙卡",
+    "c3_ph_ledger": "處方簿的一頁"
+  },
+  "keypads": {
+    "c3_pad_pharmacy": {"title": "藥局的密碼鎖", "code": "0312", "flag": "c3_pharmacy_open", "hint": "四個數字。"}
+  },
+  "rooms": {
+    "platform": {
+      "name": "地下月台", "size": [1800, 720], "theme": "platform", "wall_h": 100,
+      "spawns": {"start": [320, 470], "from_lobby": [1600, 560]},
+      "walls": [[0, 100, 1800, 110]],
+      "decals": [
+        {"kind": "rect", "rect": [0, 210, 1800, 14], "color": "#e8d36b"},
+        {"kind": "text", "pos": [700, 300], "text": "慈愛實驗醫院", "w": 400, "size": 26, "color": "#6f7a7d"}
+      ],
+      "props": [
+        {"kind": "chair", "rect": [440, 600, 180, 40]},
+        {"kind": "machine", "rect": [1160, 260, 90, 50]},
+        {"kind": "pillar", "rect": [820, 520, 50, 40]},
+        {"kind": "pillar", "rect": [1420, 520, 50, 40]}
+      ],
+      "npcs": [
+        {"id": "c3_plat_conductor", "name": "車掌", "char": "conductor", "pos": [380, 330], "label": "c3_plat_conductor", "reach": 110}
+      ],
+      "spots": [
+        {"id": "c3_plat_sign", "name": "站名牌", "pos": [800, 260]},
+        {"id": "c3_plat_timetable", "name": "時刻表", "pos": [980, 260]},
+        {"id": "c3_plat_vending", "name": "自動販賣機", "pos": [1205, 330]},
+        {"id": "c3_plat_bench", "name": "長椅", "pos": [530, 680]}
+      ],
+      "doors": [
+        {"id": "c3_door_plat_up", "name": "往上的樓梯", "pos": [1720, 560], "size": [70, 120], "to": "lobby", "spawn": "from_platform"}
+      ]
+    },
+    "lobby": {
+      "name": "一樓　白色大廳", "size": [2400, 900], "theme": "hospital", "wall_h": 110,
+      "on_enter": "c3_hall_intro",
+      "spawns": {"from_platform": [160, 700], "from_waiting": [700, 210], "from_corridor": [2250, 620], "from_pharmacy": [1900, 220]},
+      "decals": [
+        {"kind": "line", "points": [[0, 760], [1900, 760], [2150, 190]], "color": "#f5a3b8", "width": 6},
+        {"kind": "line", "points": [[0, 790], [1930, 790], [2180, 190]], "color": "#9cc8e6", "width": 6},
+        {"kind": "line", "points": [[0, 820], [1960, 820], [2210, 190]], "color": "#9fd8b0", "width": 6},
+        {"kind": "text", "pos": [1960, 860], "text": "涅槃計畫區　→　電梯", "w": 360, "size": 20, "color": "#8aa4ad"}
+      ],
+      "props": [
+        {"kind": "chair", "rect": [560, 440, 420, 40]},
+        {"kind": "chair", "rect": [560, 560, 420, 40]},
+        {"kind": "desk", "rect": [1300, 330, 380, 70], "label": "護理站"},
+        {"kind": "plant", "rect": [120, 200, 60, 40]},
+        {"kind": "plant", "rect": [1740, 200, 60, 40]},
+        {"kind": "window", "rect": [300, 20, 260, 80], "solid": false}
+      ],
+      "npcs": [
+        {"id": "c3_hall_nurse", "name": "值班護士", "char": "staff", "pos": [1490, 262], "label": "c3_hall_nurse", "reach": 140, "done_when": "c3_heart_done"}
+      ],
+      "spots": [
+        {"id": "c3_hall_doves", "name": "窗台的白鴿", "pos": [430, 150]},
+        {"id": "c3_hall_chair", "name": "候診椅", "pos": [770, 640]},
+        {"id": "c3_hall_board", "name": "醫院守則", "pos": [1100, 150]},
+        {"id": "c3_pharmacy_pad", "name": "藥局門上的密碼鎖", "pos": [1990, 160], "when": "!c3_pharmacy_open", "done_when": "c3_pharmacy_open"},
+        {"id": "c3_elevator", "name": "電梯", "pos": [2160, 160], "done_when": "c3_took_elevator"},
+        {"id": "c3_lobby_stairs", "name": "往二樓的樓梯", "pos": [2330, 170]}
+      ],
+      "doors": [
+        {"id": "c3_door_lobby_down", "name": "往月台的樓梯", "pos": [50, 700], "size": [60, 120], "to": "platform", "spawn": "from_lobby"},
+        {"id": "c3_door_waiting", "name": "候診室", "pos": [700, 125], "size": [110, 30], "to": "waiting", "spawn": "from_lobby"},
+        {"id": "c3_door_corridor", "name": "往診間的走廊", "pos": [2360, 620], "size": [60, 120], "to": "corridor", "spawn": "from_lobby"},
+        {"id": "c3_door_pharmacy", "name": "藥局", "pos": [1900, 125], "size": [110, 30], "to": "pharmacy", "spawn": "from_lobby", "open": "c3_pharmacy_open", "locked_label": "c3_pharmacy_locked"}
+      ]
+    },
+    "waiting": {
+      "name": "一樓　候診室", "size": [1400, 720], "theme": "hospital", "wall_h": 110,
+      "spawns": {"from_lobby": [700, 620]},
+      "props": [
+        {"kind": "chair", "rect": [380, 380, 640, 40]},
+        {"kind": "chair", "rect": [380, 500, 640, 40]},
+        {"kind": "machine", "rect": [250, 170, 100, 50]},
+        {"kind": "shelf", "rect": [1050, 160, 140, 40]},
+        {"kind": "rug", "rect": [1080, 460, 240, 160], "solid": false},
+        {"kind": "crate", "rect": [1200, 470, 70, 50]}
+      ],
+      "spots": [
+        {"id": "c3_wait_ticket", "name": "號碼牌機", "pos": [300, 250], "done_when": "c3_ticket"},
+        {"id": "c3_wait_tv", "name": "電視", "pos": [700, 140]},
+        {"id": "c3_wait_magazine", "name": "雜誌架", "pos": [1120, 230]},
+        {"id": "c3_wait_toys", "name": "玩具角", "pos": [1160, 600]},
+        {"id": "c3_wait_under", "name": "椅子底下", "pos": [560, 600]}
+      ],
+      "doors": [
+        {"id": "c3_door_waiting_out", "name": "回大廳", "pos": [700, 700], "size": [120, 30], "to": "lobby", "spawn": "from_waiting"}
+      ]
+    },
+    "corridor": {
+      "name": "一樓　診間走廊", "size": [2000, 620], "theme": "hospital", "wall_h": 110,
+      "on_enter": "c3_corr_enter",
+      "spawns": {"from_lobby": [120, 420], "from_clinic": [1850, 420]},
+      "props": [
+        {"kind": "bed", "rect": [560, 470, 180, 60]},
+        {"kind": "bed", "rect": [1180, 470, 180, 60]},
+        {"kind": "cabinet", "rect": [1550, 140, 120, 40]}
+      ],
+      "hides": [
+        {"id": "c3_hide_curtain", "name": "布簾後面", "pos": [520, 170], "kind": "cabinet", "size": [90, 40]},
+        {"id": "c3_hide_cart", "name": "推車底下", "pos": [1020, 560], "kind": "table", "size": [100, 40]},
+        {"id": "c3_hide_cabinet", "name": "櫃子旁邊", "pos": [1460, 170], "kind": "locker", "size": [70, 40]}
+      ],
+      "patrols": [
+        {"id": "c3_patrol_nurse", "char": "staff", "path": [[300, 330], [1700, 330]], "speed": 70, "view": 200, "fov": 0.7, "pause": 1.4, "catch": "c3_corr_caught"}
+      ],
+      "spots": [
+        {"id": "c3_corr_poster", "name": "牆上的海報", "pos": [880, 160]}
+      ],
+      "doors": [
+        {"id": "c3_door_corr_lobby", "name": "回大廳", "pos": [40, 420], "size": [60, 120], "to": "lobby", "spawn": "from_corridor"},
+        {"id": "c3_door_clinic", "name": "診間", "pos": [1960, 420], "size": [60, 120], "to": "clinic", "spawn": "from_corridor"}
+      ]
+    },
+    "clinic": {
+      "name": "一樓　診間", "size": [1280, 720], "theme": "hospital", "wall_h": 110,
+      "spawns": {"from_corridor": [640, 600]},
+      "props": [
+        {"kind": "desk", "rect": [820, 360, 220, 70]},
+        {"kind": "bed", "rect": [120, 420, 200, 70]},
+        {"kind": "sink", "rect": [150, 150, 110, 40]},
+        {"kind": "machine", "rect": [270, 330, 70, 40]}
+      ],
+      "spots": [
+        {"id": "c3_clinic_scale", "name": "體重計", "pos": [305, 400]},
+        {"id": "c3_clinic_chart", "name": "視力表", "pos": [640, 140]},
+        {"id": "c3_clinic_xray", "name": "看 X 光的燈箱", "pos": [430, 140]},
+        {"id": "c3_clinic_mirror", "name": "洗手台的鏡子", "pos": [205, 220]},
+        {"id": "c3_clinic_desk", "name": "桌子的抽屜", "pos": [930, 460], "set": "c3_tweezers"},
+        {"id": "c3_clinic_calendar", "name": "月曆", "pos": [1100, 140]}
+      ],
+      "doors": [
+        {"id": "c3_door_clinic_out", "name": "回走廊", "pos": [640, 700], "size": [120, 30], "to": "corridor", "spawn": "from_clinic"}
+      ]
+    },
+    "pharmacy": {
+      "name": "一樓　藥局", "size": [1280, 720], "theme": "hospital", "wall_h": 110,
+      "spawns": {"from_lobby": [640, 600]},
+      "props": [
+        {"kind": "shelf", "rect": [140, 170, 520, 40]},
+        {"kind": "shelf", "rect": [140, 330, 360, 40]},
+        {"kind": "desk", "rect": [720, 380, 220, 70]},
+        {"kind": "cabinet", "rect": [1040, 170, 120, 50], "label": "冰箱"}
+      ],
+      "spots": [
+        {"id": "c3_ph_jars", "name": "藥罐", "pos": [400, 260]},
+        {"id": "c3_ph_ledger", "name": "處方簿", "pos": [830, 480], "set": "c3_ph_ledger"},
+        {"id": "c3_ph_fridge", "name": "冰箱", "pos": [1100, 270]}
+      ],
+      "doors": [
+        {"id": "c3_door_ph_out", "name": "回大廳", "pos": [640, 700], "size": [120, 30], "to": "lobby", "spawn": "from_pharmacy"}
+      ]
+    }
+  }
+}

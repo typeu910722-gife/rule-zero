@@ -10,8 +10,8 @@ const Sew := preload("res://scripts/ch3/sew.gd")
 const Cpr := preload("res://scripts/ch3/cpr.gd")
 const Runner := preload("res://scripts/ch3/runner.gd")
 
-const SEGMENTS := ["arrival", "hall", "nirvana", "records", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
-const PLACES := {"arrival": "地下月台", "hall": "一樓　白色走廊", "nirvana": "二樓　涅槃計畫區", "records": "二樓　病歷室",
+const SEGMENTS := ["arrival", "floor1", "nirvana", "records", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
+const PLACES := {"arrival": "地下月台", "floor1": "一樓", "nirvana": "二樓　涅槃計畫區", "records": "二樓　病歷室",
 	"wild": "舊病棟　失控區", "chase1": "醫院長廊", "b2": "地下二樓", "monitor": "地下二樓　監控室",
 	"chase2": "醫院長廊", "cpr": "地下二樓", "ending": "實驗室"}
 
@@ -23,13 +23,6 @@ const BGM_ONCE := ["escape"]
 
 ## 各房間的調查點（座標是 1280×720 的畫面）
 const ROOMS := {
-	"hall": [
-		{"id": "c3_hall_doves", "name": "窗台的白鴿", "rect": Rect2(150, 250, 200, 56)},
-		{"id": "c3_hall_chair", "name": "候診椅", "rect": Rect2(480, 400, 160, 56)},
-		{"id": "c3_hall_board", "name": "護理站的白板", "rect": Rect2(780, 240, 200, 56)},
-		{"id": "c3_hall_nurse", "name": "值班護士", "rect": Rect2(1010, 360, 180, 56)},
-		{"id": "exit", "name": "上二樓　→", "rect": Rect2(1060, 560, 180, 60), "when": "c3_heart_done", "exit": true},
-	],
 	"nirvana": [
 		{"id": "c3_bed_lulu", "name": "希露飛的床", "rect": Rect2(70, 250, 170, 50)},
 		{"id": "c3_bed_popo", "name": "銘越的床", "rect": Rect2(270, 250, 170, 50)},
@@ -63,6 +56,9 @@ var room: Ch3Room
 var _bgm_name := ""
 var _blackout: ColorRect
 var _lights_layer: CanvasLayer
+## 地圖探索（levels/chapter3.json）：一樓已經改成自由走動；其他段落陸續改
+var explore: Explore
+const LEVEL := "res://levels/chapter3.json"
 
 
 func _ready() -> void:
@@ -90,6 +86,8 @@ func _ready() -> void:
 	_blackout.visible = false
 	_lights_layer.add_child(_blackout)
 	var cp := GameState.checkpoint
+	if cp == "c3_hall":
+		cp = "c3_floor1"   # 舊存檔：一樓改成地圖探索之前的檢查點
 	if cp.begins_with("c3_") and cp.trim_prefix("c3_") in SEGMENTS:
 		segment = cp.trim_prefix("c3_")
 	_run.call_deferred()
@@ -143,8 +141,40 @@ func _seg_arrival() -> void:
 	await Dialogue.run("c3_arrival")
 
 
-func _seg_hall() -> void:
-	await _room("hall", "c3_hall_intro")
+## 一樓：從地下月台開始自由探索，拿到鑰匙卡、搭上電梯就到二樓
+func _seg_floor1() -> void:
+	await _explore_until("platform", "start", "c3_took_elevator")
+
+
+## 地圖探索：進到某個房間（讀檔時回到存檔的房間與位置），直到條件成立
+func _explore_until(room_id: String, spawn: Variant, cond: String) -> void:
+	Dialogue.set_bg("none")
+	if explore == null:
+		explore = Explore.new()
+		explore.load_level(LEVEL)
+		explore.party = party.map(func(p): return p[0]).filter(func(id): return id != "pip")
+		add_child(explore)
+		explore.room_entered.connect(_on_room_entered)
+	explore.visible = true
+	await explore.restore_or(room_id, spawn)
+	await explore.until(cond)
+	# 這一段結束：下一段從頭開始，不要回到這裡的位置
+	GameState.flags.erase("explore_room")
+	GameState.flags.erase("explore_pos")
+	explore.queue_free()
+	explore = null
+
+
+func _on_room_entered(id: String) -> void:
+	hud.place = explore.room.get("name", PLACES.get(segment, ""))
+	hud.refresh()
+	explore.save_state()
+	GameState.save_game("c3_" + segment)
+
+
+func _process(_d: float) -> void:
+	if explore:
+		explore.paused = hud.menu_open
 
 
 func _seg_nirvana() -> void:
@@ -232,6 +262,9 @@ func _room(id: String, intro: String) -> void:
 
 func _on_event(event_name: String) -> void:
 	await get_tree().process_frame
+	if explore and await explore.handle_event(event_name):
+		Dialogue.event_done.emit()
+		return
 	match event_name:
 		"c3_whistle":
 			Motif.play(self, "whistle", -6.0)

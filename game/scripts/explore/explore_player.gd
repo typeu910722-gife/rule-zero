@@ -57,7 +57,7 @@ func place(p: Vector2) -> void:
 	trail.clear()
 	# 同伴一開始排在小布後面（往下排成一列）
 	for k in 60:
-		trail.append(p + Vector2(0, k * 5.0))
+		trail.append(p + Vector2(0, k * 8.0))
 	queue_redraw()
 
 

@@ -24,7 +24,34 @@ func _init() -> void:
 	p.parse_file("res://dialogue/chapter3.txt")
 	p.parse_file("res://dialogue/chapter4.txt")
 	p.parse_file("res://dialogue/chapter5.txt")
-	var errs := p.validate(EVENTS)
+	# 關卡（levels/*.json）：密碼鎖是合法的 @event；調查點、NPC、門的對話標籤都要存在
+	var events := EVENTS.duplicate()
+	var level_errs: Array = []
+	for n in ["chapter3", "chapter4", "chapter5"]:
+		var path := "res://levels/%s.json" % n
+		if not FileAccess.file_exists(path):
+			continue
+		var lv = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if not lv is Dictionary:
+			level_errs.append("%s JSON 格式錯誤" % path)
+			continue
+		events.append_array(lv.get("keypads", {}).keys())
+		for rid in lv.get("rooms", {}):
+			var r: Dictionary = lv.rooms[rid]
+			for key in ["spots", "npcs"]:
+				for sp in r.get(key, []):
+					var lab: String = sp.get("label", sp.get("id", ""))
+					if not p.labels.has(lab):
+						level_errs.append("%s 房間 %s 的 %s 沒有對話標籤 %s" % [n, rid, key, lab])
+			for d in r.get("doors", []):
+				if not lv.rooms.has(d.get("to", "")):
+					level_errs.append("%s 房間 %s 的門通往不存在的房間 %s" % [n, rid, d.get("to", "")])
+				if d.get("locked_label", "") != "" and not p.labels.has(d.locked_label):
+					level_errs.append("%s 房間 %s 的門缺少對話 %s" % [n, rid, d.locked_label])
+			if r.get("on_enter", "") != "" and not p.labels.has(r.on_enter):
+				level_errs.append("%s 房間 %s 的 on_enter 沒有對話 %s" % [n, rid, r.on_enter])
+	var errs := p.validate(events)
+	errs.append_array(level_errs)
 	for e in errs:
 		printerr(e)
 	print("dialogue lint: %d labels, %d commands, %d errors" % [p.labels.size(), p.cmds.size(), errs.size()])

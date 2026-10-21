@@ -67,6 +67,9 @@ func _run() -> void:
 		_check(ch._finished, "走到第三章結尾")
 		_check(gs.has("c3_heart_done") and gs.has("c3_haruka_slip") and gs.has("c3_chart_pip") and gs.has("c3_hairpin"), "心臟病、找遙的床、轉介單、實驗室的髮夾都經過了")
 		_check(int(gs.meta.get("chapters_done", 0)) >= 3, "記錄第三章完成")
+		# 一樓地圖探索：鑷子 → 號碼牌 → 心臟病 → 鑰匙卡 → 電梯（自動玩家要能自己解開，不會卡在按電梯）
+		_check(gs.has("c3_tweezers") and gs.has("c3_ticket") and gs.has("c3_took_elevator"), "一樓的謎題串都解開了（鑷子、號碼牌、電梯）")
+		_check(gs.has("c3_pharmacy_open") and gs.has("c3_ph_ledger"), "藥局支線：密碼鎖、處方簿")
 		_check(gs.has("with_zhongzhong") == (case.fates.zhongzhong == "aboard"), "重重在不在隊伍裡，照第二章的去向")
 		var cotton_ok := true
 		for p in ch.party:
