@@ -59,6 +59,13 @@ func _play(gs: Node, choices: Array, zz_dead: bool) -> void:
 	_check(gs.auto_choices.is_empty(), "預設選項剛好用完（剩 %s）" % [gs.auto_choices])
 
 
+func GameState_pov_clear(gs: Node) -> bool:
+	for k in gs.flags:
+		if str(k).begins_with("c4_pov_"):
+			return false
+	return true
+
+
 func _run() -> void:
 	var gs := root.get_node("GameState")
 	gs.fast = true
@@ -75,7 +82,9 @@ func _run() -> void:
 	# 地圖探索：遙的第一天（看班規 → 自我介紹）、小滿放學後（書包、鞋子、校門口）
 	_check(gs.has("c4_saw_rules") and gs.has("c4_h_spoke"), "遙：看了班規、上台自我介紹")
 	_check(gs.has("c4_m_bag_done") and gs.has("c4_m_found_shoes") and gs.has("c4_m_done"), "小滿：書包、鞋子、等到辛禾")
-	_check(not gs.has("c4_pov_haruka") and not gs.has("c4_pov_mochi"), "視角旗標用完就清掉")
+	_check(gs.has("c4_t_done") and gs.has("c4_l_done") and gs.has("c4_x_done") and gs.has("c4_p_done"), "薙文、希露飛、辛禾、銘越的地圖都走完了")
+	_check(gs.has("done_c4_l_shard1") and gs.has("done_c4_l_shard2") and gs.has("done_c4_l_shard3"), "希露飛：三片鏡子碎片都翻過去了")
+	_check(GameState_pov_clear(gs), "視角旗標用完就清掉")
 	_check(int(gs.meta.get("chapters_done", 0)) >= 4, "記錄第四章完成")
 	_check(gs.meta.get("ch4_flags", {}).has("c4_dove_seen"), "第四章旗標存給第五章")
 	ch.queue_free()

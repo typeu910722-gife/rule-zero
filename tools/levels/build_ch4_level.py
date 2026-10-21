@@ -11,6 +11,10 @@ def room(name, size, theme, **kw):
 
 H = "c4_pov_haruka"
 M = "c4_pov_mochi"
+T = "c4_pov_tiaoma"
+L = "c4_pov_lulu"
+X = "c4_pov_xinhe"
+P = "c4_pov_popo"
 
 rooms = {}
 # ── 校門 ──
@@ -23,8 +27,12 @@ rooms["gate"] = room("校門", [1600, 720], "school",
         {"id": "c4_h_gate_tree", "name": "校門口的樹", "pos": [160, 520], "when": H},
         {"id": "c4_m_gate", "name": "在校門口等", "pos": [800, 520], "when": M + "&c4_m_bag_done", "done_when": "c4_m_done"},
         {"id": "c4_m_gate_early", "name": "校門口", "pos": [800, 520], "when": M + "&!c4_m_bag_done"},
+        {"id": "c4_x_mailbox", "name": "郵筒", "pos": [1420, 420], "when": X, "label": "c4_xinhe", "done_when": "c4_x_done"},
+        {"id": "c4_p_mailbox", "name": "學校的信箱", "pos": [1420, 420], "when": P + "&done_c4_p_crowd", "done_when": "c4_p_done"},
+        {"id": "c4_l_gate", "name": "校門口", "pos": [800, 520], "when": L},
     ],
-    doors=[{"id": "c4_door_gate_in", "name": "玄關", "pos": [800, 125], "size": [140, 30], "to": "entrance", "spawn": "from_gate"}])
+    doors=[{"id": "c4_door_gate_in", "name": "玄關", "pos": [800, 125], "size": [140, 30], "to": "entrance", "spawn": "from_gate"},
+           {"id": "c4_door_gate_home", "name": "回家", "pos": [800, 700], "size": [160, 30], "to": "lulu_room", "spawn": "start", "when": L}])
 # ── 玄關（鞋櫃）──
 rooms["entrance"] = room("玄關", [1400, 720], "school",
     spawns={"from_gate": [700, 640], "from_hall": [1250, 420]},
@@ -33,6 +41,8 @@ rooms["entrance"] = room("玄關", [1400, 720], "school",
         {"id": "c4_h_shoebox", "name": "你的鞋櫃", "pos": [400, 270], "when": H},
         {"id": "c4_h_notice", "name": "布告欄", "pos": [1000, 270], "when": H},
         {"id": "c4_m_shoes", "name": "小滿的鞋櫃", "pos": [400, 270], "when": M},
+        {"id": "c4_l_shoebox", "name": "自己的鞋櫃", "pos": [560, 270], "when": L},
+        {"id": "c4_p_shoes", "name": "自己的鞋櫃", "pos": [900, 270], "when": P},
     ],
     doors=[{"id": "c4_door_ent_gate", "name": "回校門", "pos": [700, 700], "size": [140, 30], "to": "gate", "spawn": "from_entrance"},
            {"id": "c4_door_ent_hall", "name": "一樓走廊", "pos": [1360, 420], "size": [60, 120], "to": "hall1", "spawn": "from_entrance"}])
@@ -45,8 +55,12 @@ rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
         {"id": "c4_h_trophy", "name": "獎盃櫃", "pos": [600, 250], "when": H},
         {"id": "c4_h_classsign", "name": "班級牌", "pos": [1350, 160], "when": H},
         {"id": "c4_m_hall", "name": "走廊", "pos": [900, 500], "when": M},
+        {"id": "c4_p_trophy", "name": "獎盃櫃", "pos": [600, 250], "when": P},
+        {"id": "c4_x_hall", "name": "走廊角落的聲音", "pos": [1700, 500], "when": X},
     ],
-    npcs=[{"id": "c4_h_li_en", "name": "李恩", "char": "human:#5b6b78", "pos": [800, 420], "when": H}],
+    npcs=[{"id": "c4_h_li_en", "name": "李恩", "char": "human:#5b6b78", "pos": [800, 420], "when": H},
+          {"id": "c4_l_whisper", "name": "同學們", "char": "human:#8a7f75", "pos": [1500, 420], "when": L},
+          {"id": "c4_p_crowd", "name": "圍過來的人", "char": "human:#8a7f75", "pos": [1000, 420], "when": P}],
     doors=[{"id": "c4_door_hall_ent", "name": "玄關", "pos": [40, 450], "size": [60, 120], "to": "entrance", "spawn": "from_hall"},
            {"id": "c4_door_hall_class", "name": "三年二班", "pos": [1200, 125], "size": [130, 30], "to": "classroom", "spawn": "from_hall"},
            {"id": "c4_door_hall_office", "name": "教師辦公室", "pos": [1900, 125], "size": [130, 30], "to": "office", "spawn": "from_hall",
@@ -68,6 +82,11 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_m_bag", "name": "講台上的書包", "pos": [800, 330], "when": M, "done_when": "c4_m_bag_done"},
         {"id": "c4_m_board", "name": "黑板", "pos": [800, 160], "when": M},
         {"id": "c4_m_window", "name": "窗外", "pos": [1460, 160], "when": M},
+        {"id": "c4_l_desk", "name": "自己的座位", "pos": [330, 480], "when": L},
+        {"id": "c4_l_popo", "name": "銘越的背影", "pos": [560, 600], "when": L},
+        {"id": "c4_x_trash", "name": "垃圾桶", "pos": [130, 300], "when": X},
+        {"id": "c4_x_desk", "name": "銘越的座位", "pos": [560, 600], "when": X},
+        {"id": "c4_p_desk", "name": "自己的座位", "pos": [560, 600], "when": P},
     ],
     npcs=[
         {"id": "c4_h_teacher", "name": "導師", "char": "human:#6f6a5e", "pos": [800, 210], "when": H, "done_when": "c4_h_spoke", "reach": 120},
@@ -87,6 +106,31 @@ rooms["office"] = room("教師辦公室", [1280, 720], "school",
     props=[{"kind": "desk", "rect": [200, 260, 260, 70]}, {"kind": "desk", "rect": [820, 260, 260, 70]}, {"kind": "cabinet", "rect": [520, 150, 240, 40]}],
     spots=[{"id": "c4_h_office", "name": "導師的桌子", "pos": [330, 380], "when": H}],
     doors=[{"id": "c4_door_office_out", "name": "走廊", "pos": [640, 700], "size": [140, 30], "to": "hall1", "spawn": "from_office"}])
+
+# ── 薙文的房間（夜晚）──
+rooms["tiaoma_room"] = room("薙文的房間", [1280, 720], "home",
+    spawns={"start": [640, 560]},
+    props=[{"kind": "desk", "rect": [140, 260, 260, 70]}, {"kind": "bed", "rect": [860, 300, 280, 110]},
+           {"kind": "shelf", "rect": [480, 150, 200, 40]}, {"kind": "window", "rect": [980, 20, 200, 80], "solid": False}],
+    spots=[
+        {"id": "c4_t_desk", "name": "書桌", "pos": [270, 380], "when": T},
+        {"id": "c4_t_window", "name": "窗外", "pos": [1080, 160], "when": T},
+        {"id": "c4_t_shelf", "name": "書架上的相框", "pos": [580, 250], "when": T},
+        {"id": "c4_t_door", "name": "房門外", "pos": [640, 690], "when": T},
+        {"id": "c4_t_phone", "name": "床上的手機", "pos": [1000, 470], "when": T, "label": "c4_tiaoma", "done_when": "c4_t_done"},
+    ])
+# ── 希露飛的房間 ──
+rooms["lulu_room"] = room("希露飛的房間", [1280, 720], "home",
+    spawns={"start": [640, 600]},
+    props=[{"kind": "bed", "rect": [140, 280, 260, 110]}, {"kind": "desk", "rect": [880, 280, 240, 70]},
+           {"kind": "window", "rect": [540, 20, 200, 80], "solid": False}, {"kind": "rug", "rect": [500, 380, 280, 160], "solid": False}],
+    spots=[
+        {"id": "c4_l_shard1", "name": "鏡子的碎片", "pos": [560, 430], "when": L, "once": True},
+        {"id": "c4_l_shard2", "name": "鏡子的碎片", "pos": [700, 470], "when": L, "once": True},
+        {"id": "c4_l_shard3", "name": "鏡子的碎片", "pos": [640, 520], "when": L, "once": True},
+        {"id": "c4_l_window", "name": "破掉的窗", "pos": [640, 160], "when": L},
+        {"id": "c4_l_drawer", "name": "書桌的抽屜", "pos": [1000, 400], "when": L + "&done_c4_l_shard1&done_c4_l_shard2&done_c4_l_shard3", "done_when": "c4_l_done"},
+    ])
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}
 json.dump(level, open("game/levels/chapter4.json", "w"), ensure_ascii=False, indent=1)

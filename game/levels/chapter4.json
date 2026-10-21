@@ -98,6 +98,36 @@
       520
      ],
      "when": "c4_pov_mochi&!c4_m_bag_done"
+    },
+    {
+     "id": "c4_x_mailbox",
+     "name": "郵筒",
+     "pos": [
+      1420,
+      420
+     ],
+     "when": "c4_pov_xinhe",
+     "label": "c4_xinhe",
+     "done_when": "c4_x_done"
+    },
+    {
+     "id": "c4_p_mailbox",
+     "name": "學校的信箱",
+     "pos": [
+      1420,
+      420
+     ],
+     "when": "c4_pov_popo&done_c4_p_crowd",
+     "done_when": "c4_p_done"
+    },
+    {
+     "id": "c4_l_gate",
+     "name": "校門口",
+     "pos": [
+      800,
+      520
+     ],
+     "when": "c4_pov_lulu"
     }
    ],
    "doors": [
@@ -114,6 +144,21 @@
      ],
      "to": "entrance",
      "spawn": "from_gate"
+    },
+    {
+     "id": "c4_door_gate_home",
+     "name": "回家",
+     "pos": [
+      800,
+      700
+     ],
+     "size": [
+      160,
+      30
+     ],
+     "to": "lulu_room",
+     "spawn": "start",
+     "when": "c4_pov_lulu"
     }
    ]
   },
@@ -184,6 +229,24 @@
       270
      ],
      "when": "c4_pov_mochi"
+    },
+    {
+     "id": "c4_l_shoebox",
+     "name": "自己的鞋櫃",
+     "pos": [
+      560,
+      270
+     ],
+     "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_p_shoes",
+     "name": "自己的鞋櫃",
+     "pos": [
+      900,
+      270
+     ],
+     "when": "c4_pov_popo"
     }
    ],
    "doors": [
@@ -297,6 +360,24 @@
       500
      ],
      "when": "c4_pov_mochi"
+    },
+    {
+     "id": "c4_p_trophy",
+     "name": "獎盃櫃",
+     "pos": [
+      600,
+      250
+     ],
+     "when": "c4_pov_popo"
+    },
+    {
+     "id": "c4_x_hall",
+     "name": "走廊角落的聲音",
+     "pos": [
+      1700,
+      500
+     ],
+     "when": "c4_pov_xinhe"
     }
    ],
    "npcs": [
@@ -309,6 +390,26 @@
       420
      ],
      "when": "c4_pov_haruka"
+    },
+    {
+     "id": "c4_l_whisper",
+     "name": "同學們",
+     "char": "human:#8a7f75",
+     "pos": [
+      1500,
+      420
+     ],
+     "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_p_crowd",
+     "name": "圍過來的人",
+     "char": "human:#8a7f75",
+     "pos": [
+      1000,
+      420
+     ],
+     "when": "c4_pov_popo"
     }
    ],
    "doors": [
@@ -603,6 +704,51 @@
       160
      ],
      "when": "c4_pov_mochi"
+    },
+    {
+     "id": "c4_l_desk",
+     "name": "自己的座位",
+     "pos": [
+      330,
+      480
+     ],
+     "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_l_popo",
+     "name": "銘越的背影",
+     "pos": [
+      560,
+      600
+     ],
+     "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_x_trash",
+     "name": "垃圾桶",
+     "pos": [
+      130,
+      300
+     ],
+     "when": "c4_pov_xinhe"
+    },
+    {
+     "id": "c4_x_desk",
+     "name": "銘越的座位",
+     "pos": [
+      560,
+      600
+     ],
+     "when": "c4_pov_xinhe"
+    },
+    {
+     "id": "c4_p_desk",
+     "name": "自己的座位",
+     "pos": [
+      560,
+      600
+     ],
+     "when": "c4_pov_popo"
     }
    ],
    "npcs": [
@@ -784,6 +930,215 @@
      ],
      "to": "hall1",
      "spawn": "from_office"
+    }
+   ]
+  },
+  "tiaoma_room": {
+   "name": "薙文的房間",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "home",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     640,
+     560
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      140,
+      260,
+      260,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      860,
+      300,
+      280,
+      110
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      480,
+      150,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      980,
+      20,
+      200,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_t_desk",
+     "name": "書桌",
+     "pos": [
+      270,
+      380
+     ],
+     "when": "c4_pov_tiaoma"
+    },
+    {
+     "id": "c4_t_window",
+     "name": "窗外",
+     "pos": [
+      1080,
+      160
+     ],
+     "when": "c4_pov_tiaoma"
+    },
+    {
+     "id": "c4_t_shelf",
+     "name": "書架上的相框",
+     "pos": [
+      580,
+      250
+     ],
+     "when": "c4_pov_tiaoma"
+    },
+    {
+     "id": "c4_t_door",
+     "name": "房門外",
+     "pos": [
+      640,
+      690
+     ],
+     "when": "c4_pov_tiaoma"
+    },
+    {
+     "id": "c4_t_phone",
+     "name": "床上的手機",
+     "pos": [
+      1000,
+      470
+     ],
+     "when": "c4_pov_tiaoma",
+     "label": "c4_tiaoma",
+     "done_when": "c4_t_done"
+    }
+   ]
+  },
+  "lulu_room": {
+   "name": "希露飛的房間",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "home",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     640,
+     600
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      140,
+      280,
+      260,
+      110
+     ]
+    },
+    {
+     "kind": "desk",
+     "rect": [
+      880,
+      280,
+      240,
+      70
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      540,
+      20,
+      200,
+      80
+     ],
+     "solid": false
+    },
+    {
+     "kind": "rug",
+     "rect": [
+      500,
+      380,
+      280,
+      160
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_l_shard1",
+     "name": "鏡子的碎片",
+     "pos": [
+      560,
+      430
+     ],
+     "when": "c4_pov_lulu",
+     "once": true
+    },
+    {
+     "id": "c4_l_shard2",
+     "name": "鏡子的碎片",
+     "pos": [
+      700,
+      470
+     ],
+     "when": "c4_pov_lulu",
+     "once": true
+    },
+    {
+     "id": "c4_l_shard3",
+     "name": "鏡子的碎片",
+     "pos": [
+      640,
+      520
+     ],
+     "when": "c4_pov_lulu",
+     "once": true
+    },
+    {
+     "id": "c4_l_window",
+     "name": "破掉的窗",
+     "pos": [
+      640,
+      160
+     ],
+     "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_l_drawer",
+     "name": "書桌的抽屜",
+     "pos": [
+      1000,
+      400
+     ],
+     "when": "c4_pov_lulu&done_c4_l_shard1&done_c4_l_shard2&done_c4_l_shard3",
+     "done_when": "c4_l_done"
     }
    ]
   }

@@ -41,7 +41,10 @@ var _blackout: ColorRect
 ## 地圖探索（levels/chapter4.json）：同一間學校，每個視角用旗標 c4_pov_<視角> 決定誰在、能調查什麼
 var explore: Explore
 const LEVEL := "res://levels/chapter4.json"
-const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b"}
+const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b", "tiaoma": "human:#d9d9d4", "lulu": "human:#e7a3b4",
+	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73"}
+const NIGHT := Color(0.55, 0.6, 0.82)
+const EVENING := Color(0.95, 0.78, 0.66)
 
 
 func _ready() -> void:
@@ -124,7 +127,7 @@ func _seg_mochi() -> void:
 	_bgm("evening")
 	if not GameState.has("explore_room"):
 		await Dialogue.run("c4_m_intro")
-	await _explore_pov("mochi", "classroom", "from_hall", "c4_m_done", Color(0.95, 0.78, 0.66))
+	await _explore_pov("mochi", "classroom", "from_hall", "c4_m_done", EVENING)
 
 
 ## 一個視角的地圖探索：設定視角旗標、主角的樣子，探索到條件成立
@@ -158,22 +161,36 @@ func _process(_d: float) -> void:
 		explore.paused = hud.menu_open
 
 
+## 薙文：晚上自己的房間 → 床上的手機（群組）
 func _seg_tiaoma() -> void:
 	_bgm("night")
-	await Dialogue.run("c4_tiaoma")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_t_intro")
+	await _explore_pov("tiaoma", "tiaoma_room", "start", "c4_t_done", NIGHT)
 
 
+## 希露飛：被畫上耳朵的名牌、走廊的笑聲 → 回家 → 鏡子的碎片 → 沒寄出的信
 func _seg_lulu() -> void:
 	_bgm("memory")
-	await Dialogue.run("c4_lulu")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_l_intro")
+	await _explore_pov("lulu", "entrance", "from_gate", "c4_l_done")
 
 
+## 辛禾：垃圾桶裡的草稿、走廊的「你知道嗎」→ 校門口的郵筒（拿不拿信）
 func _seg_xinhe() -> void:
-	await Dialogue.run("c4_xinhe")
+	_bgm("evening")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_x_intro")
+	await _explore_pov("xinhe", "classroom", "from_hall", "c4_x_done", EVENING)
 
 
+## 銘越：被圍著笑、屋頂上的鞋子、畫花的照片 → 空的信箱
 func _seg_popo() -> void:
-	await Dialogue.run("c4_popo")
+	_bgm("memory")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_p_intro")
+	await _explore_pov("popo", "entrance", "from_gate", "c4_p_done")
 
 
 func _seg_teacher() -> void:
