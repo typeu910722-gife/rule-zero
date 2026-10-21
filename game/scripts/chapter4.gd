@@ -38,6 +38,10 @@ var room: Ch3Room
 var _bgm_name := ""
 var _fx_layer: CanvasLayer
 var _blackout: ColorRect
+## 地圖探索（levels/chapter4.json）：同一間學校，每個視角用旗標 c4_pov_<視角> 決定誰在、能調查什麼
+var explore: Explore
+const LEVEL := "res://levels/chapter4.json"
+const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b"}
 
 
 func _ready() -> void:
@@ -108,14 +112,50 @@ func _seg_opening() -> void:
 	await Dialogue.run("c4_opening")
 
 
+## 遙的第一天：校門 → 玄關（自己的鞋櫃）→ 走廊 → 教室（認識全班、看班規）→ 自我介紹
 func _seg_haruka() -> void:
-	await _room("classroom", "c4_haruka_intro")
-	await Dialogue.run("c4_haruka_speech")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_h_gate_intro")
+	await _explore_pov("haruka", "gate", "start", "c4_h_spoke")
 
 
+## 小滿放學後：書包裡的粉筆灰、不見的鞋子、校門口等不會來的人 → 辛禾
 func _seg_mochi() -> void:
 	_bgm("evening")
-	await Dialogue.run("c4_mochi")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_m_intro")
+	await _explore_pov("mochi", "classroom", "from_hall", "c4_m_done", Color(0.95, 0.78, 0.66))
+
+
+## 一個視角的地圖探索：設定視角旗標、主角的樣子，探索到條件成立
+func _explore_pov(pov: String, room_id: String, spawn: Variant, cond: String, tint := Color.WHITE) -> void:
+	Dialogue.set_bg("none")
+	for k in LOOKS:
+		GameState.flags.erase("c4_pov_" + k)
+	GameState.flags["c4_pov_" + pov] = true
+	explore = Explore.new()
+	explore.load_level(LEVEL)
+	explore.party = []
+	explore.tint = tint
+	add_child(explore)
+	explore.player.look = LOOKS.get(pov, "human:#6d7f8a")
+	explore.room_entered.connect(func(_id):
+		hud.place = "%s　%s" % [POV[segment], explore.room.get("name", "")]
+		hud.refresh()
+		explore.save_state()
+		GameState.save_game("c4_" + segment))
+	await explore.restore_or(room_id, spawn)
+	await explore.until(cond)
+	GameState.flags.erase("explore_room")
+	GameState.flags.erase("explore_pos")
+	GameState.flags.erase("c4_pov_" + pov)
+	explore.queue_free()
+	explore = null
+
+
+func _process(_d: float) -> void:
+	if explore:
+		explore.paused = hud.menu_open
 
 
 func _seg_tiaoma() -> void:
@@ -225,6 +265,9 @@ func _room(id: String, intro: String) -> void:
 
 func _on_event(event_name: String) -> void:
 	await get_tree().process_frame
+	if explore and await explore.handle_event(event_name):
+		Dialogue.event_done.emit()
+		return
 	match event_name:
 		"c4_speech":
 			var s := Speech.new()

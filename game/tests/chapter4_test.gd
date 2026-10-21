@@ -72,6 +72,10 @@ func _run() -> void:
 	_check(gs.has("c4_dove_seen"), "三個視角都看過窗外 → c4_dove_seen")
 	_check(gs.has("c4_letter_not_taken") and gs.has("c4_lien_told"), "不拿信、說出口的旗標")
 	_check(gs.has("c3_hairpin"), "第三章的旗標帶過來了")
+	# 地圖探索：遙的第一天（看班規 → 自我介紹）、小滿放學後（書包、鞋子、校門口）
+	_check(gs.has("c4_saw_rules") and gs.has("c4_h_spoke"), "遙：看了班規、上台自我介紹")
+	_check(gs.has("c4_m_bag_done") and gs.has("c4_m_found_shoes") and gs.has("c4_m_done"), "小滿：書包、鞋子、等到辛禾")
+	_check(not gs.has("c4_pov_haruka") and not gs.has("c4_pov_mochi"), "視角旗標用完就清掉")
 	_check(int(gs.meta.get("chapters_done", 0)) >= 4, "記錄第四章完成")
 	_check(gs.meta.get("ch4_flags", {}).has("c4_dove_seen"), "第四章旗標存給第五章")
 	ch.queue_free()

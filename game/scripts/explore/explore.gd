@@ -36,6 +36,8 @@ var _followers: Array = []
 var _entry := Vector2.ZERO       # 被抓到時回到這裡（最後一次進門的位置）
 var _waiting := ""               # until() 等的條件
 var hidden_in := ""
+## 不暗的房間的整體色調（第四章「放學後」用暖暗的夕陽色）
+var tint := Color.WHITE
 
 
 func load_level(path: String) -> void:
@@ -165,7 +167,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	_cam.reset_smoothing()
 	# 暗的房間：只有身邊一圈亮
 	var dark: bool = room.get("dark", false)
-	_dark.color = Color(0.13, 0.14, 0.17) if dark else Color.WHITE
+	_dark.color = Color(0.13, 0.14, 0.17) if dark else tint
 	if dark and _light == null:
 		_light = PointLight2D.new()
 		var g := GradientTexture2D.new()
