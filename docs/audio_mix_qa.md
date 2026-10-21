@@ -60,6 +60,6 @@
 - [x] 共用合成工具 `tools/sfx_synth.py`（模態合成、顆粒、氣泡、合成房間衝擊響應、隔門濾波、BS.1770 響度正規化、前看限幅）
 - [x] 第三章 `tools/make_ch3_sfx.py` 重做、已重新產生 game/audio/ch3/*.ogg（48 kHz 立體聲）
 - [x] 第四、五章 `tools/make_ch45_sfx.py` 重做、已重新產生 game/audio/ch4/*.ogg
-- [ ] 程式音量常數（sfx.gd 修正表、sound.gd、audio.gd 配樂修正表、motif、voice）
-- [ ] ch2/se 頭尾爆音 3 個檔
+- [x] 程式音量常數（sfx.gd TRIM_DB、sound.gd、audio.gd MUSIC_TRIM、chapter2.gd 環境音）＋ tools/audio_normalize.py（voice、motif 檔案正規化）＋ tones.gd 音樂盒音色
+- [x] ch2/se 頭尾爆音 3 個檔＋第一章 sfx_impact、sfx_stab（audio_normalize.py FADES）；改後量測 docs/audio_mix_qa_after.csv
 - [ ] import＋測試

@@ -84,6 +84,18 @@ func _run() -> void:
 	for i in 120:
 		await process_frame
 	_check(audio.music_path() == bgm, "播放配樂")
+	# 混音 QA（docs/audio_mix_qa.md）：配樂的響度修正要真的套上去，修正表不能指到不存在的檔案
+	_check(absf(audio._music_db - audio.music_trim(bgm)) < 0.01 and audio.music_trim(bgm) < -1.0, "配樂套用響度修正（bleach_town 比較大聲 → 調小）")
+	var stale := []
+	for f in audio.MUSIC_TRIM:
+		if not ResourceLoader.exists("res://audio/ch2/bgm/" + f):
+			stale.append(f)
+	var sfx_script: GDScript = load("res://scripts/audio/sfx.gd")
+	for n in sfx_script.TRIM_DB:
+		if not sfx_script.FILES.has(n):
+			stale.append(n)
+	_check(stale.is_empty(), "響度修正表都對得到檔案 %s" % [stale])
+	_check(sfx_script.trim("negative_hum") <= -6.0 and sfx_script.trim("knock") == 0.0, "太大聲的外包音效（negative_hum）播放時會調小，其他不動")
 	audio.stop_music()
 	for i in 120:
 		await process_frame
