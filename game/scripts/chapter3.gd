@@ -10,8 +10,8 @@ const Sew := preload("res://scripts/ch3/sew.gd")
 const Cpr := preload("res://scripts/ch3/cpr.gd")
 const Runner := preload("res://scripts/ch3/runner.gd")
 
-const SEGMENTS := ["arrival", "floor1", "nirvana", "records", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
-const PLACES := {"arrival": "地下月台", "floor1": "一樓", "nirvana": "二樓　涅槃計畫區", "records": "二樓　病歷室",
+const SEGMENTS := ["arrival", "floor1", "floor2", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
+const PLACES := {"arrival": "地下月台", "floor1": "一樓", "floor2": "二樓",
 	"wild": "舊病棟　失控區", "chase1": "醫院長廊", "b2": "地下二樓", "monitor": "地下二樓　監控室",
 	"chase2": "醫院長廊", "cpr": "地下二樓", "ending": "實驗室"}
 
@@ -23,24 +23,6 @@ const BGM_ONCE := ["escape"]
 
 ## 各房間的調查點（座標是 1280×720 的畫面）
 const ROOMS := {
-	"nirvana": [
-		{"id": "c3_bed_lulu", "name": "希露飛的床", "rect": Rect2(70, 250, 170, 50)},
-		{"id": "c3_bed_popo", "name": "銘越的床", "rect": Rect2(270, 250, 170, 50)},
-		{"id": "c3_bed_mochi", "name": "小滿的床", "rect": Rect2(470, 250, 170, 50)},
-		{"id": "c3_bed_fen", "name": "芬的床", "rect": Rect2(670, 250, 170, 50)},
-		{"id": "c3_bed_tiaoma", "name": "薙文的床", "rect": Rect2(870, 250, 170, 50)},
-		{"id": "c3_bed_zhongzhong", "name": "郡主的床", "rect": Rect2(110, 420, 170, 50), "when": "with_zhongzhong"},
-		{"id": "c3_bed_baimian", "name": "找白面的床", "rect": Rect2(510, 420, 190, 50)},
-		{"id": "c3_bed_haruka", "name": "找「遙」的床", "rect": Rect2(910, 420, 190, 50)},
-		{"id": "exit", "name": "巡房的腳步聲……", "rect": Rect2(1000, 590, 240, 60), "when": "c3_haruka_slip", "exit": true},
-	],
-	"records": [
-		{"id": "c3_rec_referral", "name": "你的轉介單", "rect": Rect2(90, 300, 200, 56)},
-		{"id": "c3_rec_fen", "name": "芬的病歷", "rect": Rect2(430, 300, 200, 56)},
-		{"id": "c3_rec_youyou", "name": "最後一個櫃子", "rect": Rect2(760, 300, 200, 56), "when": "youyou_lost"},
-		{"id": "c3_rec_director", "name": "理事室", "rect": Rect2(1030, 260, 200, 56)},
-		{"id": "exit", "name": "去舊病棟　→", "rect": Rect2(1040, 590, 200, 60), "when": "c3_chart_pip&c3_director_done", "exit": true},
-	],
 	"b2": [
 		{"id": "c3_b2_locker", "name": "置物櫃", "rect": Rect2(50, 300, 160, 56)},
 		{"id": "c3_b2_bed", "name": "病床底下", "rect": Rect2(470, 380, 180, 56)},
@@ -86,8 +68,8 @@ func _ready() -> void:
 	_blackout.visible = false
 	_lights_layer.add_child(_blackout)
 	var cp := GameState.checkpoint
-	if cp == "c3_hall":
-		cp = "c3_floor1"   # 舊存檔：一樓改成地圖探索之前的檢查點
+	# 舊存檔：改成地圖探索之前的檢查點
+	cp = {"c3_hall": "c3_floor1", "c3_nirvana": "c3_floor2", "c3_records": "c3_floor2"}.get(cp, cp)
 	if cp.begins_with("c3_") and cp.trim_prefix("c3_") in SEGMENTS:
 		segment = cp.trim_prefix("c3_")
 	_run.call_deferred()
@@ -148,6 +130,12 @@ func _seg_floor1() -> void:
 
 ## 地圖探索：進到某個房間（讀檔時回到存檔的房間與位置），直到條件成立
 func _explore_until(room_id: String, spawn: Variant, cond: String) -> void:
+	await _explore_start(room_id, spawn)
+	await explore.until(cond)
+	_explore_end()
+
+
+func _explore_start(room_id: String, spawn: Variant) -> void:
 	Dialogue.set_bg("none")
 	if explore == null:
 		explore = Explore.new()
@@ -157,7 +145,9 @@ func _explore_until(room_id: String, spawn: Variant, cond: String) -> void:
 		explore.room_entered.connect(_on_room_entered)
 	explore.visible = true
 	await explore.restore_or(room_id, spawn)
-	await explore.until(cond)
+
+
+func _explore_end() -> void:
 	# 這一段結束：下一段從頭開始，不要回到這裡的位置
 	GameState.flags.erase("explore_room")
 	GameState.flags.erase("explore_pos")
@@ -177,17 +167,20 @@ func _process(_d: float) -> void:
 		explore.paused = hud.menu_open
 
 
-func _seg_nirvana() -> void:
+## 二樓：前半看病床、找到「遙」被轉床的紙 → 巡房量體溫；後半有護理師巡邏，找鑰匙進病歷室、理事室 → 連通道
+func _seg_floor2() -> void:
 	GameState.courage = GameState.MAX_COURAGE
 	GameState.changed.emit()
-	await _room("nirvana", "c3_nirvana_intro")
-	await Dialogue.run("c3_thermo_intro")
-
-
-func _seg_records() -> void:
-	GameState.courage = GameState.MAX_COURAGE
-	GameState.changed.emit()
-	await _room("records", "c3_records_intro")
+	await _explore_start("hall2", "from_elevator")
+	if not GameState.has("c3_thermo_done"):
+		await explore.until("c3_haruka_slip")
+		explore.busy = true
+		await Dialogue.run("c3_thermo_intro")
+		GameState.set_flag("c3_thermo_done")
+		explore.save_state()
+		GameState.save_game("c3_floor2")
+	await explore.until("c3_to_wild")
+	_explore_end()
 
 
 func _seg_wild() -> void:

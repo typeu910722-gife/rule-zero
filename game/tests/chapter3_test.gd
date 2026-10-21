@@ -70,6 +70,9 @@ func _run() -> void:
 		# 一樓地圖探索：鑷子 → 號碼牌 → 心臟病 → 鑰匙卡 → 電梯（自動玩家要能自己解開，不會卡在按電梯）
 		_check(gs.has("c3_tweezers") and gs.has("c3_ticket") and gs.has("c3_took_elevator"), "一樓的謎題串都解開了（鑷子、號碼牌、電梯）")
 		_check(gs.has("c3_pharmacy_open") and gs.has("c3_ph_ledger"), "藥局支線：密碼鎖、處方簿")
+		# 二樓：轉床的紙 → 量體溫 → 被服室的小鑰匙 → 鑰匙箱 → 病歷室 → 理事室密碼 → 連通道
+		_check(gs.has("c3_thermo_done") and gs.has("c3_small_key") and gs.has("c3_key_records"), "二樓：量體溫、小鑰匙、病歷室的鑰匙")
+		_check(gs.has("c3_director_open") and gs.has("c3_director_done") and gs.has("c3_to_wild"), "二樓：理事室密碼、理事室、往舊病棟")
 		_check(gs.has("with_zhongzhong") == (case.fates.zhongzhong == "aboard"), "重重在不在隊伍裡，照第二章的去向")
 		var cotton_ok := true
 		for p in ch.party:
@@ -87,11 +90,11 @@ func _run() -> void:
 	gs.save_game("c3_records")
 	gs.reset()
 	gs.load_game()
-	_check(gs.chapter == 3 and gs.checkpoint == "c3_records", "存檔記得第三章、病歷室")
+	_check(gs.chapter == 3 and gs.checkpoint == "c3_records", "存檔記得第三章、病歷室（舊檢查點）")
 	ch = load("res://scenes/chapter3.tscn").instantiate()
 	root.add_child(ch)
 	await process_frame
-	_check(ch.segment == "records", "從病歷室那一段開始")
+	_check(ch.segment == "floor2", "舊存檔的病歷室 → 從二樓那一段開始")
 	ch.queue_free()
 	gs.delete_save()
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])

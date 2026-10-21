@@ -55,9 +55,9 @@ func blocked(p: Vector2) -> bool:
 func place(p: Vector2) -> void:
 	position = p
 	trail.clear()
-	# 同伴一開始排在小布後面（往下排成一列）
+	# 同伴一開始排在小布後面（往左上斜斜一列；門多半在下面或兩側，這樣不會排到房間外）
 	for k in 60:
-		trail.append(p + Vector2(0, k * 8.0))
+		trail.append(p + Vector2(-k * 6.0, -k * 3.5))
 	queue_redraw()
 
 
