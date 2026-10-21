@@ -50,9 +50,10 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(gs.save_dir)
 	gs.delete_save()
 
-	# 選項順序：辛禾（拿／不拿）、芬（看窗外／擋）、郡主（看窗外／看著芬）、導師（看窗外／看手）、李恩（說／不說）
+	# 選項順序：辛禾（拿／不拿）、郡主（看窗外／看著芬）、導師（看窗外／看手）、李恩（不說／說）
+	# （芬的「看窗外」現在是地圖上的調查點，自動玩家會去看）
 	print("[第四章：三個視角都看窗外、不拿信、說出還有一個人]")
-	await _play(gs, [1, 0, 0, 0, 1], false)
+	await _play(gs, [1, 0, 0, 1], false)
 	_check(gs.has("c4_dove_seen"), "三個視角都看過窗外 → c4_dove_seen")
 	_check(gs.has("c4_letter_not_taken") and gs.has("c4_lien_told"), "不拿信、說出口的旗標")
 	_check(gs.has("c3_hairpin"), "第三章的旗標帶過來了")
@@ -60,6 +61,7 @@ func _run() -> void:
 	_check(gs.has("c4_saw_rules") and gs.has("c4_h_spoke"), "遙：看了班規、上台自我介紹")
 	_check(gs.has("c4_m_bag_done") and gs.has("c4_m_found_shoes") and gs.has("c4_m_done"), "小滿：書包、鞋子、等到辛禾")
 	_check(gs.has("c4_t_done") and gs.has("c4_l_done") and gs.has("c4_x_done") and gs.has("c4_p_done"), "薙文、希露飛、辛禾、銘越的地圖都走完了")
+	_check(gs.has("c4_d1_done") and gs.has("c4_d2_done") and gs.has("c4_d5_called") and gs.has("c4_d5_done") and gs.has("c4_d8_done"), "那一天：遙、值日生、芬（找老師、擋在門前）、李恩的地圖都走完")
 	_check(gs.has("c4_te_night") and gs.has("c4_te_done"), "導師：留到晚上、重寫班規")
 	_check(gs.has("done_c4_fen_desk") and gs.has("done_c4_fen_trash") and gs.has("c4_f_done"), "芬：桌子、垃圾桶、走廊盡頭")
 	_check(gs.has("done_c4_l_shard1") and gs.has("done_c4_l_shard2") and gs.has("done_c4_l_shard3"), "希露飛：三片鏡子碎片都翻過去了")
@@ -70,7 +72,7 @@ func _run() -> void:
 	await process_frame
 
 	print("[第四章：重重被處分（白面轉述）、都沒看窗外]")
-	await _play(gs, [0, 1, 1, 1, 0], true)
+	await _play(gs, [0, 1, 1, 0], true)
 	_check(gs.has("zz_dead"), "重重被處分的旗標")
 	_check(not gs.has("c4_dove_seen") and not gs.has("c4_lien_told"), "沒看窗外、沒說")
 	ch.queue_free()

@@ -128,6 +128,15 @@
       520
      ],
      "when": "c4_pov_lulu"
+    },
+    {
+     "id": "c4_d1_gate",
+     "name": "放假的校門",
+     "pos": [
+      800,
+      520
+     ],
+     "when": "c4_pov_d1"
     }
    ],
    "doors": [
@@ -309,6 +318,10 @@
     "from_office": [
      1900,
      220
+    ],
+    "from_toilet": [
+     2250,
+     450
     ]
    },
    "props": [
@@ -398,6 +411,15 @@
      "when": "c4_pov_fen"
     },
     {
+     "id": "c4_d1_practice",
+     "name": "沒有人的走廊",
+     "pos": [
+      1000,
+      500
+     ],
+     "when": "c4_pov_d1"
+    },
+    {
      "id": "c4_fen_why",
      "name": "走廊盡頭",
      "pos": [
@@ -438,6 +460,16 @@
       420
      ],
      "when": "c4_pov_popo"
+    },
+    {
+     "id": "c4_d5_teacher_stop",
+     "name": "導師",
+     "char": "human:#6f6a5e",
+     "pos": [
+      1700,
+      450
+     ],
+     "when": "c4_pov_d5&c4_d5_called"
     }
    ],
    "doors": [
@@ -468,6 +500,23 @@
      ],
      "to": "classroom",
      "spawn": "from_hall"
+    },
+    {
+     "id": "c4_door_hall_toilet",
+     "name": "往廁所的走廊",
+     "pos": [
+      2360,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "toilet_hall",
+     "spawn": "from_hall1",
+     "when": "c4_pov_d1|c4_pov_d5",
+     "open": "c4_pov_d1|c4_d5_called",
+     "locked_text": "（要先去找人。）"
     },
     {
      "id": "c4_door_hall_office",
@@ -823,6 +872,45 @@
       640
      ],
      "when": "c4_pov_fen"
+    },
+    {
+     "id": "c4_d2_bucket",
+     "name": "水桶",
+     "pos": [
+      1400,
+      400
+     ],
+     "when": "c4_pov_d2"
+    },
+    {
+     "id": "c4_d2_board",
+     "name": "值日表",
+     "pos": [
+      800,
+      160
+     ],
+     "when": "c4_pov_d2"
+    },
+    {
+     "id": "c4_d2_window",
+     "name": "窗戶",
+     "pos": [
+      1460,
+      160
+     ],
+     "when": "c4_pov_d2&done_c4_d2_bucket",
+     "label": "c4_day_2",
+     "done_when": "c4_d2_done"
+    },
+    {
+     "id": "c4_d5_desk",
+     "name": "自己的座位",
+     "pos": [
+      1250,
+      640
+     ],
+     "when": "c4_pov_d5",
+     "done_when": "c4_d5_heard"
     }
    ],
    "npcs": [
@@ -1016,6 +1104,16 @@
       380
      ],
      "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_d5_teacher",
+     "name": "導師",
+     "pos": [
+      330,
+      300
+     ],
+     "when": "c4_pov_d5&c4_d5_heard&!c4_d5_called",
+     "done_when": "c4_d5_called"
     },
     {
      "id": "c4_te_stay",
@@ -1250,6 +1348,172 @@
      ],
      "when": "c4_pov_lulu&done_c4_l_shard1&done_c4_l_shard2&done_c4_l_shard3",
      "done_when": "c4_l_done"
+    }
+   ]
+  },
+  "toilet_hall": {
+   "name": "廁所前　樓梯口",
+   "size": [
+    1600,
+    720
+   ],
+   "theme": "school",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall1": [
+     120,
+     450
+    ]
+   },
+   "walls": [
+    [
+     1180,
+     110,
+     40,
+     300
+    ]
+   ],
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      1240,
+      110,
+      300,
+      260
+     ],
+     "color": "#b8ad9b"
+    },
+    {
+     "kind": "text",
+     "pos": [
+      1240,
+      240
+     ],
+     "text": "往下的樓梯",
+     "w": 300,
+     "size": 18,
+     "color": "#7a6c58"
+    }
+   ],
+   "props": [
+    {
+     "kind": "window",
+     "rect": [
+      500,
+      20,
+      220,
+      80
+     ],
+     "solid": false
+    },
+    {
+     "kind": "sink",
+     "rect": [
+      140,
+      160,
+      120,
+      40
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_d1_door",
+     "name": "廁所前",
+     "pos": [
+      900,
+      260
+     ],
+     "when": "c4_pov_d1",
+     "done_when": "c4_d1_done"
+    },
+    {
+     "id": "c4_day_5_window",
+     "name": "看窗外",
+     "pos": [
+      610,
+      160
+     ],
+     "when": "c4_pov_d5"
+    },
+    {
+     "id": "c4_d5_hold",
+     "name": "擋在門前",
+     "pos": [
+      900,
+      260
+     ],
+     "when": "c4_pov_d5",
+     "label": "c4_day_5_hold",
+     "done_when": "c4_d5_done"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c4_door_toilet_hall1",
+     "name": "回走廊",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "hall1",
+     "spawn": "from_toilet",
+     "open": "!c4_pov_d1&!c4_pov_d5",
+     "locked_text": "（回不去了。）"
+    }
+   ]
+  },
+  "downstairs": {
+   "name": "樓下　樓梯底",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "school_dark",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     300,
+     560
+    ]
+   },
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      700,
+      110,
+      400,
+      220
+     ],
+     "color": "#9a8d78"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_d8_fen",
+     "name": "樓梯底下",
+     "pos": [
+      880,
+      420
+     ],
+     "when": "c4_pov_d8"
+    },
+    {
+     "id": "c4_d8_phone",
+     "name": "打電話",
+     "pos": [
+      300,
+      470
+     ],
+     "when": "c4_pov_d8&done_c4_d8_fen",
+     "label": "c4_day_8",
+     "done_when": "c4_d8_done"
     }
    ]
   }

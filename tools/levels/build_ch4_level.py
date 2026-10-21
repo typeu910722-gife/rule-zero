@@ -17,6 +17,11 @@ X = "c4_pov_xinhe"
 P = "c4_pov_popo"
 TE = "c4_pov_teacher"
 F = "c4_pov_fen"
+# 那一天（畫面永遠在門外；廁所的門不能進去）
+D1 = "c4_pov_d1"
+D2 = "c4_pov_d2"
+D5 = "c4_pov_d5"
+D8 = "c4_pov_d8"
 
 rooms = {}
 # ── 校門 ──
@@ -32,6 +37,7 @@ rooms["gate"] = room("校門", [1600, 720], "school",
         {"id": "c4_x_mailbox", "name": "郵筒", "pos": [1420, 420], "when": X, "label": "c4_xinhe", "done_when": "c4_x_done"},
         {"id": "c4_p_mailbox", "name": "學校的信箱", "pos": [1420, 420], "when": P + "&done_c4_p_crowd", "done_when": "c4_p_done"},
         {"id": "c4_l_gate", "name": "校門口", "pos": [800, 520], "when": L},
+        {"id": "c4_d1_gate", "name": "放假的校門", "pos": [800, 520], "when": D1},
     ],
     doors=[{"id": "c4_door_gate_in", "name": "玄關", "pos": [800, 125], "size": [140, 30], "to": "entrance", "spawn": "from_gate"},
            {"id": "c4_door_gate_home", "name": "回家", "pos": [800, 700], "size": [160, 30], "to": "lulu_room", "spawn": "start", "when": L}])
@@ -51,7 +57,7 @@ rooms["entrance"] = room("玄關", [1400, 720], "school",
            {"id": "c4_door_ent_hall", "name": "一樓走廊", "pos": [1360, 420], "size": [60, 120], "to": "hall1", "spawn": "from_entrance"}])
 # ── 一樓走廊 ──
 rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
-    spawns={"from_entrance": [140, 450], "from_class": [1200, 220], "from_office": [1900, 220]},
+    spawns={"from_entrance": [140, 450], "from_class": [1200, 220], "from_office": [1900, 220], "from_toilet": [2250, 450]},
     props=[{"kind": "cabinet", "rect": [500, 160, 200, 40], "label": "獎盃櫃"}, {"kind": "window", "rect": [900, 20, 200, 80], "solid": False},
            {"kind": "plant", "rect": [2200, 170, 60, 40]}],
     spots=[
@@ -61,13 +67,17 @@ rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
         {"id": "c4_p_trophy", "name": "獎盃櫃", "pos": [600, 250], "when": P},
         {"id": "c4_x_hall", "name": "走廊角落的聲音", "pos": [1700, 500], "when": X},
         {"id": "c4_fen_trash", "name": "垃圾桶", "pos": [300, 580], "when": F},
+        {"id": "c4_d1_practice", "name": "沒有人的走廊", "pos": [1000, 500], "when": D1},
         {"id": "c4_fen_why", "name": "走廊盡頭", "pos": [2300, 450], "when": F + "&done_c4_fen_desk&done_c4_fen_trash", "done_when": "c4_f_done"},
     ],
     npcs=[{"id": "c4_h_li_en", "name": "李恩", "char": "human:#5b6b78", "pos": [800, 420], "when": H},
           {"id": "c4_l_whisper", "name": "同學們", "char": "human:#8a7f75", "pos": [1500, 420], "when": L},
-          {"id": "c4_p_crowd", "name": "圍過來的人", "char": "human:#8a7f75", "pos": [1000, 420], "when": P}],
+          {"id": "c4_p_crowd", "name": "圍過來的人", "char": "human:#8a7f75", "pos": [1000, 420], "when": P},
+          {"id": "c4_d5_teacher_stop", "name": "導師", "char": "human:#6f6a5e", "pos": [1700, 450], "when": D5 + "&c4_d5_called"}],
     doors=[{"id": "c4_door_hall_ent", "name": "玄關", "pos": [40, 450], "size": [60, 120], "to": "entrance", "spawn": "from_hall"},
            {"id": "c4_door_hall_class", "name": "三年二班", "pos": [1200, 125], "size": [130, 30], "to": "classroom", "spawn": "from_hall"},
+           {"id": "c4_door_hall_toilet", "name": "往廁所的走廊", "pos": [2360, 450], "size": [60, 120], "to": "toilet_hall", "spawn": "from_hall1",
+            "when": D1 + "|" + D5, "open": D1 + "|c4_d5_called", "locked_text": "（要先去找人。）"},
            {"id": "c4_door_hall_office", "name": "教師辦公室", "pos": [1900, 125], "size": [130, 30], "to": "office", "spawn": "from_hall",
             "open": "!" + M, "locked_text": "辦公室的燈關了。門鎖著。"}])
 # ── 三年二班 ──
@@ -97,6 +107,10 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_teacher_rules", "name": "教室後面的班規", "pos": [130, 820], "when": TE + "&c4_te_night", "done_when": "c4_te_done"},
         {"id": "c4_fen_desk", "name": "遙的座位", "pos": [1250, 740], "when": F},
         {"id": "c4_f_book", "name": "自己的座位", "pos": [1250, 640], "when": F},
+        {"id": "c4_d2_bucket", "name": "水桶", "pos": [1400, 400], "when": D2},
+        {"id": "c4_d2_board", "name": "值日表", "pos": [800, 160], "when": D2},
+        {"id": "c4_d2_window", "name": "窗戶", "pos": [1460, 160], "when": D2 + "&done_c4_d2_bucket", "label": "c4_day_2", "done_when": "c4_d2_done"},
+        {"id": "c4_d5_desk", "name": "自己的座位", "pos": [1250, 640], "when": D5, "done_when": "c4_d5_heard"},
     ],
     npcs=[
         {"id": "c4_h_teacher", "name": "導師", "char": "human:#6f6a5e", "pos": [800, 210], "when": H, "done_when": "c4_h_spoke", "reach": 120},
@@ -118,6 +132,7 @@ rooms["office"] = room("教師辦公室", [1280, 720], "school",
     spots=[{"id": "c4_h_office", "name": "導師的桌子", "pos": [330, 380], "when": H},
            {"id": "c4_te_desk", "name": "自己的桌子", "pos": [330, 380], "when": TE},
            {"id": "c4_te_memo", "name": "校長轉來的公文", "pos": [950, 380], "when": TE},
+           {"id": "c4_d5_teacher", "name": "導師", "pos": [330, 300], "when": D5 + "&c4_d5_heard&!c4_d5_called", "done_when": "c4_d5_called"},
            {"id": "c4_te_stay", "name": "留到晚上", "pos": [640, 520], "when": TE + "&done_c4_te_desk&!c4_te_night"}],
     doors=[{"id": "c4_door_office_out", "name": "走廊", "pos": [640, 700], "size": [140, 30], "to": "hall1", "spawn": "from_office"}])
 
@@ -144,6 +159,29 @@ rooms["lulu_room"] = room("希露飛的房間", [1280, 720], "home",
         {"id": "c4_l_shard3", "name": "鏡子的碎片", "pos": [640, 520], "when": L, "once": True},
         {"id": "c4_l_window", "name": "破掉的窗", "pos": [640, 160], "when": L},
         {"id": "c4_l_drawer", "name": "書桌的抽屜", "pos": [1000, 400], "when": L + "&done_c4_l_shard1&done_c4_l_shard2&done_c4_l_shard3", "done_when": "c4_l_done"},
+    ])
+
+# ── 那一天：廁所前、樓梯口（廁所的門只是牆上的一扇門，不能進去）──
+rooms["toilet_hall"] = room("廁所前　樓梯口", [1600, 720], "school",
+    spawns={"from_hall1": [120, 450]},
+    walls=[[1180, 110, 40, 300]],
+    decals=[{"kind": "rect", "rect": [1240, 110, 300, 260], "color": "#b8ad9b"},
+            {"kind": "text", "pos": [1240, 240], "text": "往下的樓梯", "w": 300, "size": 18, "color": "#7a6c58"}],
+    props=[{"kind": "window", "rect": [500, 20, 220, 80], "solid": False}, {"kind": "sink", "rect": [140, 160, 120, 40]}],
+    spots=[
+        {"id": "c4_d1_door", "name": "廁所前", "pos": [900, 260], "when": D1, "done_when": "c4_d1_done"},
+        {"id": "c4_day_5_window", "name": "看窗外", "pos": [610, 160], "when": D5},
+        {"id": "c4_d5_hold", "name": "擋在門前", "pos": [900, 260], "when": D5, "label": "c4_day_5_hold", "done_when": "c4_d5_done"},
+    ],
+    doors=[{"id": "c4_door_toilet_hall1", "name": "回走廊", "pos": [40, 450], "size": [60, 120], "to": "hall1", "spawn": "from_toilet",
+            "open": "!" + D1 + "&!" + D5, "locked_text": "（回不去了。）"}])
+# ── 樓下（李恩）──
+rooms["downstairs"] = room("樓下　樓梯底", [1280, 720], "school_dark",
+    spawns={"start": [300, 560]},
+    decals=[{"kind": "rect", "rect": [700, 110, 400, 220], "color": "#9a8d78"}],
+    spots=[
+        {"id": "c4_d8_fen", "name": "樓梯底下", "pos": [880, 420], "when": D8},
+        {"id": "c4_d8_phone", "name": "打電話", "pos": [300, 470], "when": D8 + "&done_c4_d8_fen", "label": "c4_day_8", "done_when": "c4_d8_done"},
     ])
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}

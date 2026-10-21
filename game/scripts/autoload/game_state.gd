@@ -619,6 +619,12 @@ func check(cond: String) -> bool:
 	cond = cond.strip_edges()
 	if cond == "":
 		return true
+	# 「或」：a|b（「且」比「或」優先：a&b|c ＝ (a&b) 或 c）
+	if "|" in cond:
+		for part in cond.split("|"):
+			if check(part):
+				return true
+		return false
 	if "&" in cond:
 		for part in cond.split("&"):
 			if not check(part):

@@ -26,7 +26,8 @@ var _blackout: ColorRect
 var explore: Explore
 const LEVEL := "res://levels/chapter4.json"
 const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b", "tiaoma": "human:#d9d9d4", "lulu": "human:#e7a3b4",
-	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73", "teacher": "human:#6f6a5e", "fen": "human:#c8642b"}
+	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73", "teacher": "human:#6f6a5e", "fen": "human:#c8642b",
+	"d1": "human:#e9b8c8", "d2": "human:#7a8a6e", "d5": "human:#c8642b", "d8": "human:#5b6b78"}
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
 
@@ -197,16 +198,36 @@ func _seg_theday() -> void:
 	_bgm("")
 	Audio.stop_music()
 	Dialogue.auto_voice = false
-	for label in ["c4_day_warning", "c4_day_1", "c4_day_2", "c4_day_3", "c4_day_4", "c4_day_5", "c4_day_6", "c4_day_7"]:
-		hud.place = _day_pov(label)
-		hud.refresh()
-		await Dialogue.run(label)
+	# 地圖：① 遙、② 值日生、⑤ 芬、⑧ 李恩；其他視角是過場（畫面永遠在門外）
+	var steps := [["c4_day_warning", ""], ["d1", "c4_d1_intro", "gate", "start", "c4_d1_done"],
+		["d2", "c4_d2_intro", "classroom", "from_hall", "c4_d2_done"], ["c4_day_3", ""], ["c4_day_4", ""],
+		["d5", "c4_d5_intro", "classroom", "from_hall", "c4_d5_done"], ["c4_day_6", ""], ["c4_day_7", ""]]
+	for st in steps:
+		var done_flag: String = st[4] if st.size() > 4 else ""
+		if done_flag != "" and GameState.has(done_flag):
+			continue
+		if st.size() > 2:
+			hud.place = _day_pov("c4_day_" + st[0].substr(1))
+			hud.refresh()
+			if not GameState.has("explore_room"):
+				await Dialogue.run(st[1])
+			await _explore_pov(st[0], st[2], st[3], st[4], Color(0.88, 0.9, 0.95))
+		else:
+			hud.place = _day_pov(st[0])
+			hud.refresh()
+			await Dialogue.run(st[0])
 		if not is_inside_tree():
 			return
 	# 三個視角都看過窗外 → 知道推下芬的不是郡主
 	if GameState.has("c4_win_5") and GameState.has("c4_win_6") and GameState.has("c4_win_7"):
 		GameState.set_flag("c4_dove_seen")
-	for label in ["c4_day_8", "c4_day_9", "c4_day_after"]:
+	if not GameState.has("c4_d8_done"):
+		hud.place = _day_pov("c4_day_8")
+		hud.refresh()
+		if not GameState.has("explore_room"):
+			await Dialogue.run("c4_d8_intro")
+		await _explore_pov("d8", "downstairs", "start", "c4_d8_done", Color(0.82, 0.84, 0.9))
+	for label in ["c4_day_9", "c4_day_after"]:
 		hud.place = _day_pov(label)
 		hud.refresh()
 		await Dialogue.run(label)

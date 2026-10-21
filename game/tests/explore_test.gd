@@ -81,6 +81,11 @@ func _run() -> void:
 	# 密碼鎖（快速模式直接成功）
 	_check(await ex.handle_event("t_pad") and gs.has("t_pad_open"), "密碼鎖事件")
 	_check(not await ex.handle_event("not_a_pad"), "不是密碼鎖的事件交回給導演")
+	# 條件語法：「或」以前不支援（會被當成一個旗標名稱，永遠是 false）
+	gs.flags["t_a"] = true
+	_check(gs.check("t_a|t_b") and gs.check("t_b|t_a") and not gs.check("t_b|t_c"), "條件：a|b（或）")
+	_check(gs.check("t_a&!t_b|t_c") and not gs.check("t_b&t_a|t_c"), "條件：「且」比「或」優先")
+	gs.flags.erase("t_a")
 	# 快速模式：自己走到終點
 	await ex.until("t_goal")
 	_check(gs.has("t_goal"), "快速模式自己調查到終點")
