@@ -1,0 +1,22 @@
+{
+  "items": {"t_key": "測試鑰匙"},
+  "keypads": {"t_pad": {"title": "測試密碼", "code": "1234", "flag": "t_pad_open"}},
+  "rooms": {
+    "a": {
+      "name": "房間 A", "size": [1280, 720], "theme": "hospital",
+      "spawns": {"start": [200, 400], "from_b": [1100, 400]},
+      "walls": [[600, 90, 40, 300]],
+      "props": [{"kind": "bed", "rect": [300, 500, 160, 60]}],
+      "spots": [{"id": "t_spot_key", "name": "抽屜", "pos": [400, 300], "set": "t_key"}],
+      "doors": [{"id": "t_door_b", "name": "往 B", "pos": [1200, 400], "to": "b", "spawn": "from_a", "open": "t_key"}]
+    },
+    "b": {
+      "name": "房間 B", "size": [1600, 900], "theme": "basement", "dark": true,
+      "spawns": {"from_a": [100, 450]},
+      "hides": [{"id": "t_locker", "name": "置物櫃", "pos": [300, 300], "kind": "locker", "size": [60, 30]}],
+      "spots": [{"id": "t_spot_goal", "name": "終點", "pos": [1400, 700], "set": "t_goal"}],
+      "patrols": [{"id": "t_nurse", "char": "staff", "path": [[800, 450], [1300, 450]], "speed": 60, "when": "t_patrol_on"}],
+      "doors": [{"id": "t_door_a", "name": "回 A", "pos": [40, 450], "to": "a", "spawn": "from_b"}]
+    }
+  }
+}
