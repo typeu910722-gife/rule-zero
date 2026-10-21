@@ -8,6 +8,18 @@ extends Node
 signal volume_changed
 
 const DEFAULT_VOLUME := {"Music": 0.9, "SFX": 1.0}
+## 配樂的響度修正（dB，混音 QA 2026-10-21，docs/audio_mix_qa.md）：外包配樂各首差到 7 LU，
+## 這裡把每一首拉到同一個參考響度（檔案 -17 LUFS；劇本再給 -3 dB → 播放約 -20 LUFS）。
+## 值＝ -17 −（tools/audio_measure.py 量到的整合響度）。換了檔案要重量。
+const MUSIC_REF_LUFS := -17.0
+const MUSIC_TRIM := {
+	"ch2_bgm01_bleach_town.ogg": -4.2, "ch2_bgm02_evening.ogg": -1.9, "ch2_bgm03_far_shore.ogg": -3.2,
+	"ch2_bgm04_dove.ogg": -3.6, "ch2_bgm05_correction_time.ogg": -4.8, "ch2_bgm06_apology.ogg": -5.1,
+	"ch2_bgm07_chairs.ogg": -2.2, "ch2_bgm07_chairs_stop.ogg": -3.4, "ch2_bgm08_night.ogg": 0.9,
+	"ch2_bgm09_humming.ogg": -6.5, "ch2_bgm10_nirvana.ogg": -1.5, "ch2_bgm11_memory.ogg": -2.9,
+	"ch2_bgm12_graduation.ogg": -1.4, "ch2_bgm13_escape.ogg": -2.9, "ch2_bgm14_next_stop.ogg": -3.1,
+	"ch2_bgm15_special_love.ogg": -1.6, "ch2_bgm16_dream.ogg": -4.1,
+}
 const FADE := 0.8
 const SILENT := -60.0
 
@@ -42,6 +54,7 @@ func play_music(path: String, loop := true, volume_db := 0.0) -> void:
 	if path == _music_path and _music.playing:
 		return
 	_music_path = path
+	volume_db += music_trim(path)
 	_music_db = volume_db
 	var stream: AudioStream = null
 	if path != "" and ResourceLoader.exists(path):
@@ -61,6 +74,11 @@ func play_music(path: String, loop := true, volume_db := 0.0) -> void:
 			_music.play())
 	if stream:
 		_fade.tween_property(_music, "volume_db", volume_db + music_db(), FADE)
+
+
+## 這首配樂的響度修正（dB）；沒有列的是 0
+func music_trim(path: String) -> float:
+	return float(MUSIC_TRIM.get(path.get_file(), 0.0))
 
 
 func stop_music() -> void:

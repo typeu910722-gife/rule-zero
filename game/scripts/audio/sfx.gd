@@ -67,7 +67,24 @@ const FILES := {
 	"stitch_tick": "ch2_se51_stitch_tick_%02d.ogg",
 	"memory_snip": "ch2_se52_memory_snip_%02d.ogg",
 }
+## 響度修正（dB，混音 QA 2026-10-21，docs/audio_mix_qa.md）：外包檔案裡明顯比其他大聲的持續音／口哨，
+## 播放時一律先扣掉這些，讓它們和其他音效（預設 -3 dB 播放時，最大瞬時響度約 -14～-20）站在一起。
+## 第四、五章的合成音效已經在檔案裡正規化，不需要修正。
+const TRIM_DB := {
+	"negative_hum": -9.0,   # 檔案 -3.8 LUFS，當夜晚環境音時比白天的環境音大 9 LU
+	"whistle_long": -8.0,   # -4.8
+	"whistle_short": -8.0,  # -6.0
+	"monitor_flat": -8.0,   # -8.0（3 秒的平線長音）
+	"train_whistle": -5.0,  # -8.4
+	"fence_hum": -7.0,      # -12.1（6 秒的嗡聲）
+	"hold_buzz": -6.0,      # -12.1
+}
 static var _cache := {}
+
+
+## 這個音效的響度修正（dB）
+static func trim(name: String) -> float:
+	return float(TRIM_DB.get(name, 0.0))
 
 
 static func stream(name: String) -> AudioStream:
@@ -89,7 +106,7 @@ static func play(parent: Node, name: String, volume_db := -3.0) -> bool:
 		return false
 	var p := AudioStreamPlayer.new()
 	p.stream = s
-	p.volume_db = volume_db + Audio.sfx_db()
+	p.volume_db = volume_db + trim(name) + Audio.sfx_db()
 	parent.add_child(p)
 	p.play()
 	p.finished.connect(p.queue_free)

@@ -885,9 +885,10 @@ var _ambience: AudioStreamPlayer
 func _set_ambience(name: String) -> void:
 	if _ambience == null:
 		_ambience = AudioStreamPlayer.new()
-		_ambience.volume_db = -15.0 + Audio.music_db()
 		add_child(_ambience)
 	_ambience.stop()
+	# 環境音約 -28 LUFS：白天的 ambience 檔 -12.9 → -15 dB；夜晚的 negative_hum 檔很大聲，再扣 Sfx.trim()
+	_ambience.volume_db = -15.0 + Sfx.trim(name) + Audio.music_db()
 	var st := Sfx.stream(name) if name != "" else null
 	if st is AudioStreamOggVorbis:
 		st = st.duplicate()

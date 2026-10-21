@@ -35,10 +35,16 @@ const AMB := {
 	"forest": "res://audio/amb_forest.ogg",
 	"night": "res://audio/amb_night.ogg",
 }
-const AMB_DB := -8.0
-## 各音效的音量（沒列的用 -4）
-const SFX_DB := {"step": -10.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0, "heartbeat": -2.0, "stab": 0.0, "tear": 0.0, "boom": 0.0, "growl": -1.0, "impact": 0.0, "whoosh": -3.0}
-const BGM_DB := -3.0
+## 混音（2026-10-21 混音 QA，docs/audio_mix_qa.md）：播放響度＝檔案響度＋這裡的 dB。
+## 目標：配樂約 -20 LUFS、環境音約 -28、一般音效（最大瞬時響度）約 -17～-21、很頻繁的小聲音（腳步、打字）約 -28～-32。
+## 環境音檔約 -21.4 LUFS → -7 → 約 -28
+const AMB_DB := -7.0
+## 各音效的音量（沒列的用 -4）。改過的：talk -4→-5、menu -4→0、door -4→+1、step -10→-4、tear 0→-2、boom 0→-1、growl -1→-8
+## （growl 檔案本身很大聲：瞬時 -7.9，原本播放約 -9，比其他音效大 7 LU）
+const SFX_DB := {"talk": -5.0, "menu": 0.0, "door": 1.0, "step": -4.0, "bell_far": -9.0, "creepy": -3.0, "glitch": -8.0,
+	"heartbeat": -2.0, "stab": 0.0, "tear": -2.0, "boom": -1.0, "growl": -8.0, "impact": 0.0, "whoosh": -3.0}
+## 第一章配樂檔約 -13.3 LUFS → -6.5 → 約 -20（和第二章以後的配樂一樣大）
+const BGM_DB := -6.5
 ## 追逐戰的音樂大聲一點
 const BGM_EXTRA := {"chase": 3.0}
 const DUCK_DB := -17.0
