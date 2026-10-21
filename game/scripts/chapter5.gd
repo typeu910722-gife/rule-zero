@@ -74,7 +74,7 @@ func _bgm(name: String) -> void:
 		return
 	_bgm_name = name
 	var path: String = BGM_DIR % BGM[name] if BGM.has(name) else ""
-	Audio.play_music(path, true, -5.0)
+	Audio.play_music(path, true, -3.0)
 
 
 ## 兩個分數：全部是前面幾章已經有的旗標（docs/script/chapter5.md 第 3 節）
