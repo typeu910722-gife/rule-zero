@@ -73,6 +73,8 @@ func _run() -> void:
 		# 二樓：轉床的紙 → 量體溫 → 被服室的小鑰匙 → 鑰匙箱 → 病歷室 → 理事室密碼 → 連通道
 		_check(gs.has("c3_thermo_done") and gs.has("c3_small_key") and gs.has("c3_key_records"), "二樓：量體溫、小鑰匙、病歷室的鑰匙")
 		_check(gs.has("c3_director_open") and gs.has("c3_director_done") and gs.has("c3_to_wild"), "二樓：理事室密碼、理事室、往舊病棟")
+		# 舊病棟：點滴 → 倉庫的保險絲 → 配電箱 → 電動門 → 烏鴉的窗
+		_check(gs.has("c3_drip_done") and gs.has("c3_fuse") and gs.has("c3_power_on") and gs.has("c3_crow"), "舊病棟：點滴、保險絲、配電箱、烏鴉")
 		_check(gs.has("with_zhongzhong") == (case.fates.zhongzhong == "aboard"), "重重在不在隊伍裡，照第二章的去向")
 		var cotton_ok := true
 		for p in ch.party:

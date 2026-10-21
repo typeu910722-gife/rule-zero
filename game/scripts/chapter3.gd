@@ -9,6 +9,7 @@ const Drip := preload("res://scripts/ch3/drip.gd")
 const Sew := preload("res://scripts/ch3/sew.gd")
 const Cpr := preload("res://scripts/ch3/cpr.gd")
 const Runner := preload("res://scripts/ch3/runner.gd")
+const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
 const SEGMENTS := ["arrival", "floor1", "floor2", "wild", "chase1", "b2", "monitor", "chase2", "cpr", "ending"]
 const PLACES := {"arrival": "地下月台", "floor1": "一樓", "floor2": "二樓",
@@ -143,6 +144,7 @@ func _explore_start(room_id: String, spawn: Variant) -> void:
 		explore.party = party.map(func(p): return p[0]).filter(func(id): return id != "pip")
 		add_child(explore)
 		explore.room_entered.connect(_on_room_entered)
+		explore.caught.connect(func(_by): _lose_cotton(1, 1))
 	explore.visible = true
 	await explore.restore_or(room_id, spawn)
 
@@ -183,20 +185,9 @@ func _seg_floor2() -> void:
 	_explore_end()
 
 
+## 舊病棟：暗的走廊、點滴、找保險絲接上配電箱、畢業生巡邏（被抓會掉棉花）→ 盡頭的窗（烏鴉）
 func _seg_wild() -> void:
-	Dialogue.set_bg("c3_wild")
-	await Dialogue.run("c3_wild_intro")
-	var d := Drip.new()
-	add_child(d)
-	var ok = await d.play()
-	if ok == false:
-		Dialogue.set_bg("c3_wild")
-		await Dialogue.run("c3_wild_woke")
-		var r := Runner.new()
-		r.duration = 15.0
-		add_child(r)
-		_lose_cotton(await r.play(), 3)
-	await Dialogue.run("c3_wild_after")
+	await _explore_until("wild_hall", "start", "c3_crow")
 
 
 func _seg_chase1() -> void:
@@ -276,10 +267,22 @@ func _on_event(event_name: String) -> void:
 			for id in await th.play():
 				GameState.set_flag("c3_fever_%s" % id)
 		"c3_chase1":
-			var r := Runner.new()
-			add_child(r)
-			_lose_cotton(await r.play(), 3)
+			# 捉迷藏：3D 第一人稱追逐（之後換 Blender 的和平鴿模型）
+			var c3d := Chase3DScript.new()
+			add_child(c3d)
+			_lose_cotton(await c3d.play(), 3)
 			_lose_all(2)
+		"c3_drip":
+			var d := Drip.new()
+			add_child(d)
+			if await d.play() == false:
+				GameState.set_flag("c3_drip_woke")
+		"c3_drip_chase":
+			if GameState.has("c3_drip_woke"):
+				var r := Runner.new()
+				r.duration = 15.0
+				add_child(r)
+				_lose_cotton(await r.play(), 3)
 		"c3_sew":
 			var low := party.duplicate()
 			low.sort_custom(func(a, b): return _cotton(a[0]) < _cotton(b[0]))

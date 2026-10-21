@@ -5,7 +5,8 @@
   "c3_heart_done": "鑰匙卡",
   "c3_ph_ledger": "處方簿的一頁",
   "c3_small_key": "小鑰匙",
-  "c3_key_records": "病歷室的鑰匙"
+  "c3_key_records": "病歷室的鑰匙",
+  "c3_fuse": "保險絲"
  },
  "keypads": {
   "c3_pad_pharmacy": {
@@ -1878,6 +1879,636 @@
      ],
      "to": "records",
      "spawn": "from_director"
+    }
+   ]
+  },
+  "wild_hall": {
+   "name": "舊病棟　走廊",
+   "size": [
+    2800,
+    720
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "dark": true,
+   "on_enter": "c3_wild_intro",
+   "spawns": {
+    "start": [
+     140,
+     420
+    ],
+    "from_ward_a": [
+     700,
+     220
+    ],
+    "from_ward_b": [
+     1500,
+     220
+    ],
+    "from_storage": [
+     2100,
+     620
+    ],
+    "from_end": [
+     2650,
+     420
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      1180,
+      420,
+      200,
+      70
+     ],
+     "label": "點滴"
+    },
+    {
+     "kind": "cabinet",
+     "rect": [
+      2380,
+      150,
+      100,
+      40
+     ],
+     "label": "配電箱"
+    },
+    {
+     "kind": "crate",
+     "rect": [
+      400,
+      560,
+      90,
+      50
+     ]
+    },
+    {
+     "kind": "crate",
+     "rect": [
+      1900,
+      180,
+      90,
+      50
+     ]
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c3_wild_grad1",
+     "name": "畢業生",
+     "char": "human:#e6e6df",
+     "pos": [
+      520,
+      200
+     ],
+     "label": "c3_wild_graduate"
+    },
+    {
+     "id": "c3_wild_grad2",
+     "name": "畢業生",
+     "char": "human:#e6e6df",
+     "pos": [
+      1720,
+      200
+     ],
+     "label": "c3_wild_graduate2"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_wild_sleeper",
+     "name": "睡著的人",
+     "pos": [
+      1280,
+      540
+     ],
+     "done_when": "c3_drip_done"
+    },
+    {
+     "id": "c3_wild_board",
+     "name": "公告",
+     "pos": [
+      960,
+      160
+     ]
+    },
+    {
+     "id": "c3_wild_powerbox",
+     "name": "配電箱",
+     "pos": [
+      2430,
+      250
+     ],
+     "done_when": "c3_power_on"
+    }
+   ],
+   "patrols": [
+    {
+     "id": "c3_patrol_grad_hall",
+     "char": "human:#e6e6df",
+     "path": [
+      [
+       1500,
+       430
+      ],
+      [
+       2300,
+       430
+      ]
+     ],
+     "speed": 50,
+     "view": 170,
+     "fov": 0.6,
+     "pause": 2.0,
+     "when": "c3_drip_done",
+     "catch": "c3_wild_caught"
+    }
+   ],
+   "hides": [
+    {
+     "id": "c3_hide_wild_crate",
+     "name": "箱子後面",
+     "pos": [
+      2000,
+      260
+     ],
+     "kind": "crate",
+     "size": [
+      70,
+      40
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_ward_a",
+     "name": "交誼廳",
+     "pos": [
+      700,
+      125
+     ],
+     "size": [
+      110,
+      30
+     ],
+     "to": "wild_ward_a",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c3_door_ward_b",
+     "name": "兒童病房",
+     "pos": [
+      1500,
+      125
+     ],
+     "size": [
+      110,
+      30
+     ],
+     "to": "wild_ward_b",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c3_door_storage",
+     "name": "倉庫",
+     "pos": [
+      2100,
+      700
+     ],
+     "size": [
+      110,
+      30
+     ],
+     "to": "wild_storage",
+     "spawn": "from_hall",
+     "open": "c3_drip_done",
+     "locked_text": "倉庫的門被一張病床擋住了。床上的人還在睡。"
+    },
+    {
+     "id": "c3_door_wild_end",
+     "name": "電動門",
+     "pos": [
+      2760,
+      420
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "wild_end",
+     "spawn": "from_hall",
+     "open": "c3_power_on",
+     "locked_label": "c3_wild_door_locked"
+    }
+   ]
+  },
+  "wild_ward_a": {
+   "name": "舊病棟　交誼廳",
+   "size": [
+    1400,
+    720
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "dark": true,
+   "spawns": {
+    "from_hall": [
+     700,
+     620
+    ]
+   },
+   "props": [
+    {
+     "kind": "table",
+     "rect": [
+      420,
+      330,
+      520,
+      80
+     ]
+    },
+    {
+     "kind": "machine",
+     "rect": [
+      1100,
+      160,
+      140,
+      60
+     ],
+     "label": "電視"
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      150,
+      160,
+      200,
+      40
+     ]
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c3_wa_grads",
+     "name": "畢業生們",
+     "char": "human:#e6e6df",
+     "pos": [
+      680,
+      320
+     ],
+     "label": "c3_wa_grads"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_wa_tv",
+     "name": "電視",
+     "pos": [
+      1170,
+      260
+     ]
+    },
+    {
+     "id": "c3_wa_album",
+     "name": "畢業紀念冊",
+     "pos": [
+      250,
+      260
+     ]
+    },
+    {
+     "id": "c3_wa_calendar",
+     "name": "牆上的日曆",
+     "pos": [
+      700,
+      160
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_wa_out",
+     "name": "回走廊",
+     "pos": [
+      700,
+      700
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "wild_hall",
+     "spawn": "from_ward_a"
+    }
+   ]
+  },
+  "wild_ward_b": {
+   "name": "舊病棟　兒童病房",
+   "size": [
+    1400,
+    720
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "dark": true,
+   "spawns": {
+    "from_hall": [
+     700,
+     620
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      180,
+      300,
+      160,
+      60
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      480,
+      300,
+      160,
+      60
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      780,
+      300,
+      160,
+      60
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1080,
+      300,
+      160,
+      60
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_wb_drawings",
+     "name": "牆上的畫",
+     "pos": [
+      700,
+      160
+     ]
+    },
+    {
+     "id": "c3_wb_bed",
+     "name": "最裡面的床",
+     "pos": [
+      1160,
+      420
+     ]
+    },
+    {
+     "id": "c3_wb_box",
+     "name": "床底下的鐵盒",
+     "pos": [
+      260,
+      420
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_wb_out",
+     "name": "回走廊",
+     "pos": [
+      700,
+      700
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "wild_hall",
+     "spawn": "from_ward_b"
+    }
+   ]
+  },
+  "wild_storage": {
+   "name": "舊病棟　倉庫",
+   "size": [
+    1800,
+    900
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "dark": true,
+   "on_enter": "c3_ws_enter",
+   "spawns": {
+    "from_hall": [
+     200,
+     780
+    ]
+   },
+   "props": [
+    {
+     "kind": "shelf",
+     "rect": [
+      300,
+      250,
+      500,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      300,
+      520,
+      500,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      1000,
+      250,
+      500,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      1000,
+      520,
+      500,
+      40
+     ]
+    },
+    {
+     "kind": "crate",
+     "rect": [
+      1550,
+      700,
+      120,
+      60
+     ]
+    }
+   ],
+   "patrols": [
+    {
+     "id": "c3_patrol_grad_store",
+     "char": "human:#e6e6df",
+     "path": [
+      [
+       200,
+       420
+      ],
+      [
+       1600,
+       420
+      ],
+      [
+       1600,
+       700
+      ],
+      [
+       900,
+       700
+      ]
+     ],
+     "speed": 55,
+     "view": 180,
+     "fov": 0.6,
+     "pause": 1.5,
+     "catch": "c3_wild_caught"
+    }
+   ],
+   "hides": [
+    {
+     "id": "c3_hide_store_shelf",
+     "name": "架子的縫",
+     "pos": [
+      880,
+      330
+     ],
+     "kind": "locker",
+     "size": [
+      60,
+      40
+     ]
+    },
+    {
+     "id": "c3_hide_store_crate",
+     "name": "大箱子裡",
+     "pos": [
+      1440,
+      780
+     ],
+     "kind": "crate",
+     "size": [
+      80,
+      40
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_ws_fuse",
+     "name": "最裡面的架子",
+     "pos": [
+      1610,
+      820
+     ],
+     "done_when": "c3_fuse"
+    },
+    {
+     "id": "c3_ws_boxes",
+     "name": "紙箱",
+     "pos": [
+      550,
+      640
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_ws_out",
+     "name": "回走廊",
+     "pos": [
+      200,
+      880
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "wild_hall",
+     "spawn": "from_storage"
+    }
+   ]
+  },
+  "wild_end": {
+   "name": "舊病棟　盡頭",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "dark": true,
+   "spawns": {
+    "from_hall": [
+     160,
+     450
+    ]
+   },
+   "props": [
+    {
+     "kind": "window",
+     "rect": [
+      540,
+      20,
+      200,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c3_wild_end_window",
+     "name": "小小的窗",
+     "pos": [
+      640,
+      160
+     ],
+     "label": "c3_wild_after",
+     "done_when": "c3_crow"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c3_door_end_out",
+     "name": "回走廊",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "wild_hall",
+     "spawn": "from_end"
     }
    ]
   }
