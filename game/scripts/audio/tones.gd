@@ -1,26 +1,45 @@
 class_name Tones
 extends RefCounted
-## 用程式產生的音樂盒音色（原型用，正式版替換為錄製音效）。
+## 用程式產生的音樂盒音色（原型用，正式版替換為錄製音效）。小遊戲的提示音、Motif.note() 用這個。
 
 const RATE := 22050
 static var _cache := {}
 
 
 static func music_box(freq: float, length := 0.6) -> AudioStreamWAV:
+	# 混音 QA（2026-10-21）：原本是 1、2、3 倍頻的純正弦，聽起來像電子嗶聲。
+	# 改成比較像真的音樂盒簧片：基頻＋稍微走音的第二根簧片（慢慢的拍頻）、
+	# 簧片本身的第二振動模態（約 5.9 倍，很快消失）、撥動那一下的小「喀」、木盒的一點點共鳴。
 	var key := "%d_%d" % [int(freq), int(length * 100)]
 	if _cache.has(key):
 		return _cache[key]
-	var n := int(RATE * length)
+	var rate := 32000
+	var n := int(rate * length)
 	var data := PackedByteArray()
 	data.resize(n * 2)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(freq * 10.0)
+	var detune := 1.0 + rng.randf_range(0.0008, 0.0018)
+	var ph2 := rng.randf() * TAU
+	var mode2 := freq * 5.93
+	var nyq := rate * 0.45
+	var lp := 0.0
 	for i in n:
-		var t := float(i) / RATE
-		var env := exp(-t * 6.0) * minf(1.0, t * 400.0)
-		var v := sin(TAU * freq * t) * 0.7 + sin(TAU * freq * 2.0 * t) * 0.2 + sin(TAU * freq * 3.0 * t) * 0.1
-		data.encode_s16(i * 2, int(clampf(v * env * 0.5, -1.0, 1.0) * 32767))
+		var t := float(i) / rate
+		var att := minf(1.0, t * 1500.0)
+		var v := sin(TAU * freq * t) * exp(-t * 4.0)
+		v += sin(TAU * freq * detune * t + ph2) * 0.35 * exp(-t * 3.2)
+		if mode2 < nyq:
+			v += sin(TAU * mode2 * t) * 0.18 * exp(-t * 28.0)
+		v += sin(TAU * freq * 2.0 * t) * 0.05 * exp(-t * 9.0)
+		# 撥動的「喀」：很短的噪音，先過一個簡單的低通
+		lp += (rng.randf_range(-1.0, 1.0) - lp) * 0.35
+		v += lp * 0.25 * exp(-t * 900.0)
+		var tail := minf(1.0, (length - t) * 40.0)
+		data.encode_s16(i * 2, int(clampf(v * att * tail * 0.36, -1.0, 1.0) * 32767))
 	var wav := AudioStreamWAV.new()
 	wav.format = AudioStreamWAV.FORMAT_16_BITS
-	wav.mix_rate = RATE
+	wav.mix_rate = rate
 	wav.data = data
 	_cache[key] = wav
 	return wav

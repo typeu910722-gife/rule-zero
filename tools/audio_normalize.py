@@ -26,6 +26,8 @@ FADES = {
     "game/audio/ch2/se/ch2_se01_text_01.ogg": (0.0008, 0.0),
     "game/audio/ch2/se/ch2_se01_text_03.ogg": (0.0008, 0.0),
     "game/audio/ch2/se/ch2_se02_cursor_02.ogg": (0.0, 0.006),
+    "game/audio/sfx_impact.wav": (0.0008, 0.0),   # 第一章：第一個樣本就很大
+    "game/audio/sfx_stab.wav": (0.0008, 0.0),
 }
 
 
@@ -52,7 +54,7 @@ def write(path, x, sr):
 
 def measure(path):
     r = am.measure(path)
-    return r["lufs"], r["mom_max"], r["tp_db"]
+    return r["lufs"], r["mom_max"], r["tp_db"], r["pop_head"] or r["pop_tail"]
 
 
 def main(dry):
@@ -63,7 +65,7 @@ def main(dry):
     for p in FADES:
         jobs.setdefault(p, None)
     for p, rule in jobs.items():
-        li, lm, tp = measure(p)
+        li, lm, tp, pop = measure(p)
         gain = 0.0
         if rule:
             mode, target = rule
@@ -71,7 +73,7 @@ def main(dry):
             gain = min(gain, -1.0 - tp)          # 不要把真峰值推過 -1 dBTP
             if abs(gain) < 0.5:
                 gain = 0.0
-        fade = FADES.get(p)
+        fade = FADES.get(p) if pop else None   # 已經修好的不再重做
         if gain == 0.0 and not fade:
             print(f"不用改   {p}  ({li:.1f} / {lm:.1f})")
             continue
