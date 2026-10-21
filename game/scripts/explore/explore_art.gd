@@ -39,6 +39,9 @@ static func draw_char(ci: CanvasItem, id: String, foot: Vector2, flip := false) 
 		if t:
 			ci.draw_texture_rect_region(t, Rect2(foot + Vector2(-40, -76), Vector2(80, 80)), Rect2(0, 0, 160, 160))
 			return
+	if id.begins_with("human:"):
+		draw_human(ci, foot, id.trim_prefix("human:"))
+		return
 	if CHARS.has(id):
 		var c: Array = CHARS[id]
 		var t := tex(c[0])

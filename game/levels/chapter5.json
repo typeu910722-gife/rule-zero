@@ -1,0 +1,2420 @@
+{
+ "items": {
+  "c5_read_file": "遙的檔案（看過了）",
+  "c5_a_clip": "粉紅色的髮夾",
+  "c5_l_drawer_open": "抽屜裡的東西"
+ },
+ "keypads": {
+  "c5_pad_drawer": {
+   "title": "抽屜的密碼鎖",
+   "code": "1020",
+   "flag": "c5_l_drawer_open",
+   "hint": "四個數字。照片背面，好像寫著日期。"
+  }
+ },
+ "rooms": {
+  "lab5": {
+   "name": "實驗室",
+   "size": [
+    1400,
+    820
+   ],
+   "theme": "lab",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     700,
+     480
+    ],
+    "from_hall": [
+     1300,
+     420
+    ]
+   },
+   "props": [
+    {
+     "kind": "machine",
+     "rect": [
+      600,
+      250,
+      200,
+      90
+     ],
+     "label": "機器"
+    },
+    {
+     "kind": "window",
+     "rect": [
+      1080,
+      20,
+      220,
+      80
+     ],
+     "solid": false
+    },
+    {
+     "kind": "rug",
+     "rect": [
+      120,
+      130,
+      260,
+      120
+     ],
+     "solid": false
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      140,
+      560,
+      150,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      340,
+      560,
+      150,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      540,
+      560,
+      150,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      740,
+      560,
+      150,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      940,
+      560,
+      150,
+      70
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1140,
+      560,
+      150,
+      70
+     ]
+    }
+   ],
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      120,
+      120,
+      260,
+      6
+     ],
+     "color": "#7d8b90"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_x_wall",
+     "name": "那面牆",
+     "pos": [
+      250,
+      200
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_mask",
+     "name": "地上的面具",
+     "pos": [
+      460,
+      420
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_gun",
+     "name": "地上的槍",
+     "pos": [
+      880,
+      440
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_feather",
+     "name": "窗台",
+     "pos": [
+      1190,
+      160
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_machine",
+     "name": "中央的機器",
+     "pos": [
+      700,
+      380
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_beds",
+     "name": "一排病床",
+     "pos": [
+      440,
+      680
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_l_machine",
+     "name": "機器上的螢幕",
+     "pos": [
+      700,
+      380
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_bed",
+     "name": "回到病床",
+     "pos": [
+      940,
+      680
+     ],
+     "when": "c5_st_lesson&done_c5_l_file&done_c5_l_monitor",
+     "done_when": "c5_l_done"
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c5_x_conductor",
+     "name": "車掌",
+     "char": "conductor",
+     "pos": [
+      330,
+      420
+     ],
+     "when": "c5_st_lab",
+     "done_when": "c5_x_done"
+    },
+    {
+     "id": "c5_x_lulu",
+     "name": "露露",
+     "char": "lulu",
+     "pos": [
+      560,
+      520
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_mochi",
+     "name": "麻糬",
+     "char": "mochi",
+     "pos": [
+      780,
+      520
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_popo",
+     "name": "波波",
+     "char": "popo",
+     "pos": [
+      1000,
+      520
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_fen",
+     "name": "Fen",
+     "char": "fen",
+     "pos": [
+      1120,
+      380
+     ],
+     "when": "c5_st_lab"
+    },
+    {
+     "id": "c5_x_baimian",
+     "name": "白面",
+     "char": "baimian",
+     "pos": [
+      160,
+      360
+     ],
+     "when": "c5_st_lab",
+     "flip": true
+    },
+    {
+     "id": "c5_l_director",
+     "name": "理事",
+     "char": "human:#eceae4",
+     "pos": [
+      860,
+      300
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_conductor",
+     "name": "車掌",
+     "char": "conductor",
+     "pos": [
+      330,
+      420
+     ],
+     "when": "c5_st_lesson"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_lab_hall",
+     "name": "走廊",
+     "pos": [
+      1360,
+      420
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "hall5",
+     "spawn": "from_lab",
+     "when": "c5_st_lesson"
+    }
+   ]
+  },
+  "hall5": {
+   "name": "實驗室外的走廊",
+   "size": [
+    2600,
+    720
+   ],
+   "theme": "hospital",
+   "wall_h": 110,
+   "spawns": {
+    "from_lab": [
+     140,
+     450
+    ],
+    "from_records": [
+     600,
+     230
+    ],
+    "from_monitor": [
+     1200,
+     230
+    ],
+    "from_dove": [
+     1800,
+     230
+    ],
+    "from_office": [
+     2400,
+     230
+    ]
+   },
+   "props": [
+    {
+     "kind": "cabinet",
+     "rect": [
+      900,
+      160,
+      140,
+      40
+     ],
+     "label": "鳥籠"
+    },
+    {
+     "kind": "plant",
+     "rect": [
+      2450,
+      560,
+      60,
+      40
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      1450,
+      20,
+      200,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      0,
+      600,
+      2600,
+      8
+     ],
+     "color": "#ffffff"
+    },
+    {
+     "kind": "text",
+     "pos": [
+      1500,
+      130
+     ],
+     "text": "和平，從乖孩子開始。",
+     "w": 300,
+     "size": 18,
+     "color": "#6b7a80"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_l_cages",
+     "name": "空的鳥籠",
+     "pos": [
+      970,
+      250
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_poster",
+     "name": "牆上的標語",
+     "pos": [
+      1600,
+      200
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_whiteline",
+     "name": "地上的白線",
+     "pos": [
+      700,
+      600
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_window",
+     "name": "窗外",
+     "pos": [
+      1550,
+      160
+     ],
+     "when": "c5_st_lesson"
+    }
+   ],
+   "patrols": [
+    {
+     "id": "c5_patrol_staff",
+     "char": "staff",
+     "path": [
+      [
+       400,
+       420
+      ],
+      [
+       2300,
+       420
+      ]
+     ],
+     "speed": 80,
+     "view": 210,
+     "fov": 0.7,
+     "pause": 1.6,
+     "when": "c5_st_lesson",
+     "catch": "c5_l_caught"
+    }
+   ],
+   "hides": [
+    {
+     "id": "c5_hide_cart",
+     "name": "推車後面",
+     "pos": [
+      1300,
+      560
+     ],
+     "kind": "crate",
+     "size": [
+      100,
+      60
+     ]
+    },
+    {
+     "id": "c5_hide_plant",
+     "name": "盆栽後面",
+     "pos": [
+      2100,
+      560
+     ],
+     "kind": "plant",
+     "size": [
+      80,
+      60
+     ]
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_hall_lab",
+     "name": "實驗室",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "lab5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_hall_records",
+     "name": "檔案室",
+     "pos": [
+      600,
+      125
+     ],
+     "size": [
+      130,
+      30
+     ],
+     "to": "records5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_hall_monitor",
+     "name": "監視室",
+     "pos": [
+      1200,
+      125
+     ],
+     "size": [
+      130,
+      30
+     ],
+     "to": "monitor5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_hall_dove",
+     "name": "教官室",
+     "pos": [
+      1800,
+      125
+     ],
+     "size": [
+      130,
+      30
+     ],
+     "to": "dove5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_hall_office",
+     "name": "理事室",
+     "pos": [
+      2400,
+      125
+     ],
+     "size": [
+      130,
+      30
+     ],
+     "to": "office5",
+     "spawn": "from_hall"
+    }
+   ]
+  },
+  "records5": {
+   "name": "檔案室",
+   "size": [
+    1400,
+    760
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     700,
+     680
+    ]
+   },
+   "dark": true,
+   "props": [
+    {
+     "kind": "shelf",
+     "rect": [
+      120,
+      300,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      380,
+      460,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      640,
+      300,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      900,
+      460,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      1160,
+      300,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "desk",
+     "rect": [
+      560,
+      160,
+      280,
+      60
+     ],
+     "label": "閱覽桌"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_l_file",
+     "name": "桌上攤開的檔案",
+     "pos": [
+      700,
+      270
+     ],
+     "when": "c5_st_lesson",
+     "set": "c5_read_file"
+    },
+    {
+     "id": "c5_l_files",
+     "name": "一整排的檔案",
+     "pos": [
+      220,
+      390
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_fen_file",
+     "name": "最下面一層",
+     "pos": [
+      740,
+      560
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_newfiles",
+     "name": "新的檔案夾",
+     "pos": [
+      1230,
+      390
+     ],
+     "when": "c5_st_lesson"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_records_out",
+     "name": "走廊",
+     "pos": [
+      700,
+      740
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "hall5",
+     "spawn": "from_records"
+    }
+   ]
+  },
+  "monitor5": {
+   "name": "監視室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "basement",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     640,
+     640
+    ]
+   },
+   "props": [
+    {
+     "kind": "machine",
+     "rect": [
+      140,
+      140,
+      1000,
+      70
+     ],
+     "label": "螢幕"
+    },
+    {
+     "kind": "chair",
+     "rect": [
+      600,
+      300,
+      80,
+      60
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_l_monitor",
+     "name": "最亮的螢幕",
+     "pos": [
+      400,
+      280
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_monitor2",
+     "name": "旁邊的螢幕",
+     "pos": [
+      880,
+      280
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_chair",
+     "name": "椅子",
+     "pos": [
+      640,
+      420
+     ],
+     "when": "c5_st_lesson"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_monitor_out",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "hall5",
+     "spawn": "from_monitor"
+    }
+   ]
+  },
+  "dove5": {
+   "name": "教官室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "hospital_old",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     640,
+     640
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      460,
+      200,
+      360,
+      60
+     ]
+    },
+    {
+     "kind": "cabinet",
+     "rect": [
+      120,
+      160,
+      160,
+      40
+     ],
+     "label": "鳥籠"
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      980,
+      160,
+      200,
+      40
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      980,
+      400,
+      180,
+      80
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_l_dove_desk",
+     "name": "書桌",
+     "pos": [
+      640,
+      320
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_dove_cage",
+     "name": "鳥籠",
+     "pos": [
+      200,
+      260
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_dove_shelf",
+     "name": "架子上的盒子",
+     "pos": [
+      1080,
+      260
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_dove_photo",
+     "name": "床頭的照片",
+     "pos": [
+      1070,
+      540
+     ],
+     "when": "c5_st_lesson"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_dove_out",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "hall5",
+     "spawn": "from_dove"
+    }
+   ]
+  },
+  "office5": {
+   "name": "理事室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "lab",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     640,
+     640
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      440,
+      220,
+      400,
+      70
+     ]
+    },
+    {
+     "kind": "plant",
+     "rect": [
+      140,
+      180,
+      60,
+      40
+     ]
+    },
+    {
+     "kind": "cabinet",
+     "rect": [
+      1000,
+      170,
+      160,
+      40
+     ],
+     "label": "架子"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_l_perch",
+     "name": "老鷹的架子",
+     "pos": [
+      1080,
+      270
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_ledger",
+     "name": "桌上的本子",
+     "pos": [
+      560,
+      350
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_letter",
+     "name": "沒寄出的信",
+     "pos": [
+      740,
+      350
+     ],
+     "when": "c5_st_lesson"
+    },
+    {
+     "id": "c5_l_drawer",
+     "name": "上鎖的抽屜",
+     "pos": [
+      640,
+      420
+     ],
+     "when": "c5_st_lesson&!c5_l_drawer_open"
+    },
+    {
+     "id": "c5_l_drawer_in",
+     "name": "抽屜",
+     "pos": [
+      640,
+      420
+     ],
+     "when": "c5_st_lesson&c5_l_drawer_open"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_office_out",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "hall5",
+     "spawn": "from_office"
+    }
+   ]
+  },
+  "a_ward5": {
+   "name": "真的病房",
+   "size": [
+    1600,
+    820
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     800,
+     420
+    ],
+    "from_hall": [
+     1500,
+     420
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      120,
+      560,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      480,
+      560,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      840,
+      560,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1200,
+      560,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      700,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "sink",
+     "rect": [
+      140,
+      170,
+      100,
+      50
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      1200,
+      20,
+      260,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_a_ceiling",
+     "name": "自己的床",
+     "pos": [
+      800,
+      330
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_bag",
+     "name": "櫃子上的塑膠袋",
+     "pos": [
+      960,
+      260
+     ],
+     "when": "c5_st_a",
+     "set": "c5_a_clip"
+    },
+    {
+     "id": "c5_a_mirror",
+     "name": "洗手台的鏡子",
+     "pos": [
+      190,
+      280
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_window",
+     "name": "窗外",
+     "pos": [
+      1330,
+      160
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_lulu",
+     "name": "希露飛的床",
+     "pos": [
+      220,
+      520
+     ],
+     "when": "c5_st_a",
+     "done_when": "c5_woke_lulu"
+    },
+    {
+     "id": "c5_a_popo",
+     "name": "銘越的床",
+     "pos": [
+      580,
+      520
+     ],
+     "when": "c5_st_a",
+     "done_when": "c5_woke_popo"
+    },
+    {
+     "id": "c5_a_mochi",
+     "name": "小滿的床",
+     "pos": [
+      940,
+      520
+     ],
+     "when": "c5_st_a",
+     "done_when": "c5_woke_mochi"
+    },
+    {
+     "id": "c5_a_fen",
+     "name": "芬的床",
+     "pos": [
+      1300,
+      520
+     ],
+     "when": "c5_st_a",
+     "done_when": "c5_woke_fen"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_award_hall",
+     "name": "走廊",
+     "pos": [
+      1560,
+      420
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "a_hall5",
+     "spawn": "from_ward",
+     "open": "c5_woke_lulu&c5_woke_popo&c5_woke_mochi&c5_woke_fen",
+     "locked_text": "（大家還在睡。要先把他們叫醒。）"
+    }
+   ]
+  },
+  "a_hall5": {
+   "name": "走廊",
+   "size": [
+    2400,
+    720
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "from_ward": [
+     140,
+     450
+    ],
+    "from_other": [
+     1200,
+     230
+    ],
+    "from_lobby": [
+     2250,
+     450
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      600,
+      170,
+      300,
+      50
+     ],
+     "label": "護理站"
+    },
+    {
+     "kind": "window",
+     "rect": [
+      1600,
+      20,
+      240,
+      80
+     ],
+     "solid": false
+    },
+    {
+     "kind": "chair",
+     "rect": [
+      1950,
+      180,
+      80,
+      50
+     ]
+    }
+   ],
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      1100,
+      110,
+      8,
+      610
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_a_station",
+     "name": "護理站",
+     "pos": [
+      750,
+      290
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_line",
+     "name": "地上的白線",
+     "pos": [
+      1104,
+      560
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_hallwin",
+     "name": "窗外",
+     "pos": [
+      1720,
+      160
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_chair",
+     "name": "走廊的椅子",
+     "pos": [
+      1990,
+      300
+     ],
+     "when": "c5_st_a"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_ahall_ward",
+     "name": "病房",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "a_ward5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_ahall_other",
+     "name": "白線的另一邊",
+     "pos": [
+      1200,
+      125
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "a_other5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_ahall_lobby",
+     "name": "大廳",
+     "pos": [
+      2360,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "a_lobby5",
+     "spawn": "from_hall",
+     "open": "c5_baimian_returned",
+     "locked_text": "（還有一張床，沒有去看。）"
+    }
+   ]
+  },
+  "a_other5": {
+   "name": "白線的另一邊",
+   "size": [
+    1800,
+    820
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     900,
+     740
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      120,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      540,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      960,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1380,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      120,
+      460,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      540,
+      460,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      960,
+      460,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1380,
+      460,
+      200,
+      80
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_a_others",
+     "name": "一整排的床",
+     "pos": [
+      900,
+      640
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_baimian",
+     "name": "最後一張床",
+     "pos": [
+      1480,
+      600
+     ],
+     "when": "c5_st_a&done_c5_a_others",
+     "done_when": "c5_baimian_returned"
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c5_a_xinhe",
+     "name": "辛禾",
+     "char": "human:#6f8f6a",
+     "pos": [
+      220,
+      380
+     ],
+     "when": "c5_st_a&with_xiaoji"
+    },
+    {
+     "id": "c5_a_junzhu",
+     "name": "郡主",
+     "char": "human:#7d7d7d",
+     "pos": [
+      640,
+      380
+     ],
+     "when": "c5_st_a&with_zhongzhong"
+    },
+    {
+     "id": "c5_a_qiuge",
+     "name": "秋歌",
+     "char": "human:#3c3f46",
+     "pos": [
+      1060,
+      380
+     ],
+     "when": "c5_st_a&with_gaga"
+    },
+    {
+     "id": "c5_a_lien",
+     "name": "李恩",
+     "char": "human:#5b6b78",
+     "pos": [
+      1480,
+      380
+     ],
+     "when": "c5_st_a&with_youyou"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_aother_out",
+     "name": "走廊",
+     "pos": [
+      900,
+      800
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "a_hall5",
+     "spawn": "from_other"
+    }
+   ]
+  },
+  "a_lobby5": {
+   "name": "醫院的大廳",
+   "size": [
+    1600,
+    760
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     140,
+     450
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      600,
+      180,
+      400,
+      60
+     ],
+     "label": "掛號櫃台"
+    },
+    {
+     "kind": "chair",
+     "rect": [
+      200,
+      560,
+      300,
+      50
+     ]
+    },
+    {
+     "kind": "plant",
+     "rect": [
+      1400,
+      170,
+      60,
+      40
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_a_counter",
+     "name": "掛號櫃台",
+     "pos": [
+      800,
+      300
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_board",
+     "name": "公告欄",
+     "pos": [
+      1300,
+      200
+     ],
+     "when": "c5_st_a"
+    },
+    {
+     "id": "c5_a_door",
+     "name": "大門",
+     "pos": [
+      1500,
+      600
+     ],
+     "when": "c5_st_a",
+     "label": "c5_a_outside",
+     "done_when": "c5_a_done"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_alobby_hall",
+     "name": "走廊",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "a_hall5",
+     "spawn": "from_lobby"
+    }
+   ]
+  },
+  "b1_square5": {
+   "name": "棉花糖鎮　廣場",
+   "size": [
+    2000,
+    820
+   ],
+   "theme": "town",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     1000,
+     700
+    ],
+    "from_office": [
+     1000,
+     230
+    ],
+    "from_repair": [
+     160,
+     450
+    ],
+    "from_platform": [
+     1850,
+     450
+    ]
+   },
+   "props": [
+    {
+     "kind": "pillar",
+     "rect": [
+      960,
+      300,
+      80,
+      80
+     ],
+     "label": "鐘樓"
+    },
+    {
+     "kind": "plant",
+     "rect": [
+      400,
+      200,
+      60,
+      40
+     ]
+    },
+    {
+     "kind": "plant",
+     "rect": [
+      1540,
+      200,
+      60,
+      40
+     ]
+    },
+    {
+     "kind": "table",
+     "rect": [
+      1400,
+      540,
+      160,
+      60
+     ],
+     "label": "長椅"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b1_clock",
+     "name": "鐘樓",
+     "pos": [
+      1000,
+      420
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_lights",
+     "name": "路燈",
+     "pos": [
+      430,
+      300
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_crow",
+     "name": "屋頂上的烏鴉",
+     "pos": [
+      1570,
+      260
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_bench",
+     "name": "長椅",
+     "pos": [
+      1480,
+      640
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_xiaoyu",
+     "name": "小玉的家",
+     "pos": [
+      600,
+      600
+     ],
+     "when": "c5_st_b1"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_sq_office",
+     "name": "鎮長公館",
+     "pos": [
+      1000,
+      125
+     ],
+     "size": [
+      160,
+      30
+     ],
+     "to": "b1_office5",
+     "spawn": "from_square"
+    },
+    {
+     "id": "c5_door_sq_repair",
+     "name": "修理室",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b1_repair5",
+     "spawn": "from_square",
+     "open": "c5_b1_ruled",
+     "locked_text": "（先去公館。桌上有事情要做。）"
+    },
+    {
+     "id": "c5_door_sq_platform",
+     "name": "月台",
+     "pos": [
+      1960,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b1_platform5",
+     "spawn": "from_square",
+     "open": "c5_b1_repaired",
+     "locked_text": "（還不是夜車來的時間。）"
+    }
+   ]
+  },
+  "b1_office5": {
+   "name": "鎮長公館",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "home",
+   "wall_h": 110,
+   "spawns": {
+    "from_square": [
+     640,
+     640
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      440,
+      220,
+      400,
+      70
+     ]
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      120,
+      160,
+      220,
+      40
+     ],
+     "label": "書架"
+    },
+    {
+     "kind": "cabinet",
+     "rect": [
+      960,
+      160,
+      180,
+      40
+     ],
+     "label": "衣帽架"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b1_hat",
+     "name": "衣帽架",
+     "pos": [
+      1050,
+      260
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_shelf",
+     "name": "書架",
+     "pos": [
+      230,
+      260
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_desk",
+     "name": "桌上的紙",
+     "pos": [
+      640,
+      360
+     ],
+     "when": "c5_st_b1",
+     "label": "c5_b1_rules",
+     "done_when": "c5_b1_ruled"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_office_sq",
+     "name": "廣場",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "b1_square5",
+     "spawn": "from_office"
+    }
+   ]
+  },
+  "b1_repair5": {
+   "name": "修理室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "town",
+   "wall_h": 110,
+   "spawns": {
+    "from_square": [
+     1140,
+     450
+    ]
+   },
+   "dark": true,
+   "props": [
+    {
+     "kind": "table",
+     "rect": [
+      480,
+      300,
+      320,
+      90
+     ],
+     "label": "修理台"
+    },
+    {
+     "kind": "shelf",
+     "rect": [
+      140,
+      160,
+      260,
+      40
+     ],
+     "label": "線和針"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b1_tools",
+     "name": "線和針",
+     "pos": [
+      270,
+      260
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_table",
+     "name": "修理台",
+     "pos": [
+      640,
+      440
+     ],
+     "when": "c5_st_b1",
+     "label": "c5_b1_repair",
+     "done_when": "c5_b1_repaired"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_repair_sq",
+     "name": "廣場",
+     "pos": [
+      1240,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b1_square5",
+     "spawn": "from_repair"
+    }
+   ]
+  },
+  "b1_platform5": {
+   "name": "棉花糖鎮　月台",
+   "size": [
+    1600,
+    720
+   ],
+   "theme": "platform",
+   "wall_h": 110,
+   "spawns": {
+    "from_square": [
+     160,
+     500
+    ]
+   },
+   "walls": [
+    [
+     0,
+     110,
+     1600,
+     100
+    ]
+   ],
+   "spots": [
+    {
+     "id": "c5_b1_sign",
+     "name": "站名牌",
+     "pos": [
+      500,
+      330
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_train",
+     "name": "夜車的燈",
+     "pos": [
+      1200,
+      330
+     ],
+     "when": "c5_st_b1",
+     "label": "c5_b1_end",
+     "done_when": "c5_b1_done"
+    }
+   ]
+  },
+  "b2_hall5": {
+   "name": "醫院的走廊　晚上",
+   "size": [
+    2600,
+    760
+   ],
+   "theme": "hospital",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     140,
+     450
+    ]
+   },
+   "dark": true,
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      2380,
+      300,
+      180,
+      80
+     ],
+     "label": ""
+    },
+    {
+     "kind": "chair",
+     "rect": [
+      1300,
+      600,
+      80,
+      50
+     ]
+    }
+   ],
+   "decals": [
+    {
+     "kind": "text",
+     "pos": [
+      2350,
+      230
+     ],
+     "text": "遙",
+     "w": 80,
+     "size": 22,
+     "color": "#9aa4a8"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b2_w_lulu",
+     "name": "希露飛的病房",
+     "pos": [
+      400,
+      200
+     ],
+     "when": "c5_st_b2"
+    },
+    {
+     "id": "c5_b2_w_popo",
+     "name": "銘越的病房",
+     "pos": [
+      900,
+      200
+     ],
+     "when": "c5_st_b2"
+    },
+    {
+     "id": "c5_b2_w_mochi",
+     "name": "最裡面的病房",
+     "pos": [
+      1400,
+      200
+     ],
+     "when": "c5_st_b2"
+    },
+    {
+     "id": "c5_b2_w_fen",
+     "name": "芬的病房",
+     "pos": [
+      1900,
+      200
+     ],
+     "when": "c5_st_b2"
+    },
+    {
+     "id": "c5_b2_guard",
+     "name": "走廊的正中間",
+     "pos": [
+      1300,
+      480
+     ],
+     "when": "c5_st_b2&done_c5_b2_w_lulu&done_c5_b2_w_popo&done_c5_b2_w_mochi&done_c5_b2_w_fen",
+     "done_when": "c5_b2_guarded"
+    },
+    {
+     "id": "c5_b2_endbed",
+     "name": "走廊盡頭的床",
+     "pos": [
+      2470,
+      440
+     ],
+     "when": "c5_st_b2&c5_b2_guarded",
+     "label": "c5_b2_after",
+     "done_when": "c5_b2_done"
+    }
+   ]
+  },
+  "b3_ward5": {
+   "name": "真的病房",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     640,
+     420
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      540,
+      200,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      140,
+      460,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      940,
+      460,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      980,
+      20,
+      220,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b3_bed",
+     "name": "自己的床",
+     "pos": [
+      640,
+      330
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_empty",
+     "name": "旁邊的床",
+     "pos": [
+      240,
+      600
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_window",
+     "name": "窗外",
+     "pos": [
+      1090,
+      160
+     ],
+     "when": "c5_st_b3"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_b3ward_hall",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "b3_hall5",
+     "spawn": "from_ward"
+    }
+   ]
+  },
+  "b3_hall5": {
+   "name": "很長的走廊",
+   "size": [
+    2600,
+    720
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "from_ward": [
+     140,
+     450
+    ],
+    "from_fen": [
+     2000,
+     230
+    ]
+   },
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      0,
+      600,
+      2600,
+      8
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b3_lulu",
+     "name": "希露飛的病房",
+     "pos": [
+      500,
+      200
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_popo",
+     "name": "銘越的病房",
+     "pos": [
+      1000,
+      200
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_mochi",
+     "name": "沒有名字的病房",
+     "pos": [
+      1500,
+      200
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_nurse",
+     "name": "護理站",
+     "pos": [
+      2300,
+      480
+     ],
+     "when": "c5_st_b3"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_b3hall_ward",
+     "name": "病房",
+     "pos": [
+      40,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b3_ward5",
+     "spawn": "start"
+    },
+    {
+     "id": "c5_door_b3hall_fen",
+     "name": "芬的病房",
+     "pos": [
+      2000,
+      125
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "b3_fen5",
+     "spawn": "from_hall"
+    },
+    {
+     "id": "c5_door_b3hall_out",
+     "name": "出院",
+     "pos": [
+      2560,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "b3_gate5",
+     "spawn": "start",
+     "open": "c5_b3_seen_fen",
+     "locked_text": "（還有一間，沒有去看。）"
+    }
+   ]
+  },
+  "b3_fen5": {
+   "name": "芬的病房",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "real",
+   "wall_h": 110,
+   "spawns": {
+    "from_hall": [
+     640,
+     640
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      540,
+      220,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "window",
+     "rect": [
+      980,
+      20,
+      220,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b3_fen",
+     "name": "床上",
+     "pos": [
+      640,
+      360
+     ],
+     "when": "c5_st_b3",
+     "set": "c5_b3_seen_fen"
+    },
+    {
+     "id": "c5_b3_fen_window",
+     "name": "窗台",
+     "pos": [
+      1090,
+      160
+     ],
+     "when": "c5_st_b3"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c5_door_b3fen_out",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "b3_hall5",
+     "spawn": "from_fen"
+    }
+   ]
+  },
+  "b3_gate5": {
+   "name": "校門口",
+   "size": [
+    1600,
+    720
+   ],
+   "theme": "school",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     160,
+     600
+    ]
+   },
+   "props": [
+    {
+     "kind": "pillar",
+     "rect": [
+      300,
+      160,
+      60,
+      50
+     ]
+    },
+    {
+     "kind": "pillar",
+     "rect": [
+      1240,
+      160,
+      60,
+      50
+     ]
+    },
+    {
+     "kind": "box",
+     "rect": [
+      1380,
+      320,
+      80,
+      60
+     ],
+     "label": "郵筒"
+    }
+   ],
+   "spots": [
+    {
+     "id": "c5_b3_mailbox",
+     "name": "郵筒",
+     "pos": [
+      1420,
+      420
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_tree",
+     "name": "校門口的樹",
+     "pos": [
+      160,
+      420
+     ],
+     "when": "c5_st_b3"
+    },
+    {
+     "id": "c5_b3_line",
+     "name": "排隊的新同學",
+     "pos": [
+      800,
+      300
+     ],
+     "when": "c5_st_b3",
+     "label": "c5_b3_end",
+     "done_when": "c5_b3_done"
+    }
+   ]
+  }
+ }
+}

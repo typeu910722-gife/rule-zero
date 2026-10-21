@@ -15,28 +15,17 @@ const ROUTES := {"a": "終章 A「醒來」", "b1": "終章 B-1「新鎮長」",
 const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
 const BGM := {"memory": "11_memory", "dream": "16_dream", "nirvana": "10_nirvana", "next_stop": "14_next_stop", "night": "08_night"}
 
-const ART := "res://art/ch5/bg/ch5_bg_%s.jpg"
-const ROOMS := {
-	"real_ward": [
-		{"id": "c5_a_lulu", "name": "希露飛的床", "rect": Rect2(80, 440, 220, 56)},
-		{"id": "c5_a_popo", "name": "銘越的床", "rect": Rect2(380, 440, 220, 56)},
-		{"id": "c5_a_mochi", "name": "小滿的床", "rect": Rect2(680, 440, 220, 56)},
-		{"id": "c5_a_fen", "name": "芬的床", "rect": Rect2(980, 440, 220, 56)},
-		{"id": "exit", "name": "走廊的另一邊　→", "rect": Rect2(1000, 620, 260, 60), "when": "c5_woke_lulu&c5_woke_popo&c5_woke_mochi&c5_woke_fen", "exit": true},
-	],
-	"real_hall": [
-		{"id": "c5_b3_lulu", "name": "希露飛的病房", "rect": Rect2(80, 440, 220, 56)},
-		{"id": "c5_b3_popo", "name": "銘越的病房", "rect": Rect2(380, 440, 220, 56)},
-		{"id": "c5_b3_mochi", "name": "沒有名字的病房", "rect": Rect2(680, 440, 220, 56)},
-		{"id": "c5_b3_fen", "name": "芬的病房", "rect": Rect2(980, 440, 220, 56)},
-		{"id": "exit", "name": "出院　→", "rect": Rect2(1000, 620, 260, 60), "when": "c5_b3_seen_fen", "exit": true},
-	],
-}
+const LEVEL := "res://levels/chapter5.json"
+const STAGES := ["lab", "lesson", "a", "b1", "b2", "b3"]
+const PARTY := ["lulu", "mochi", "popo", "fen", "baimian"]
+const HARUKA := "human:#33415c"     # 醒來之後的遙（和第四章同一個樣子）
+const REAL_SLOW := 0.7              # 人類的身體很重、走很慢
+const NIGHT := Color(0.62, 0.66, 0.8)
 
 var segment := "opening"
 var route := ""
 var hud: Ch3Hud
-var room: Ch3Room
+var explore: Explore
 var _bgm_name := ""
 
 
@@ -89,6 +78,7 @@ static func scores(f: Dictionary) -> Dictionary:
 	if has.call("special_love_cut"): remember -= 2
 	if has.call("c3_chart_pip"): remember += 1
 	if has.call("c4_dove_seen"): remember += 2
+	if has.call("c5_read_file"): remember += 1  # 檔案室：遙的檔案
 	if has.call("c5_threw_candy"): remember += 2
 	if has.call("c5_ate_candy"): remember -= 3
 	var hold := 0
@@ -106,6 +96,7 @@ static func scores(f: Dictionary) -> Dictionary:
 	if n > 0 and float(cotton) / n >= 5.0: hold += 1
 	if has.call("c4_letter_not_taken"): hold += 1
 	if has.call("c4_lien_told"): hold += 1
+	if has.call("c5_talked_all"): hold += 1     # 實驗室裡，一個一個去看過大家
 	if has.call("c5_held_fen"): hold += 2
 	if has.call("c5_let_go"): hold -= 2
 	return {"remember": remember, "hold": hold}
@@ -144,14 +135,24 @@ func _run() -> void:
 func _seg_opening() -> void:
 	await _content_warning()
 	_bgm("")
-	Dialogue.auto_voice = false
-	await Dialogue.run("c5_opening")
-	Dialogue.auto_voice = true
+	if not GameState.has("explore_room"):
+		Dialogue.auto_voice = false
+		await Dialogue.run("c5_opening")
+		Dialogue.auto_voice = true
+	await _explore("lab", "lab5", "start", "c5_x_done")
+	var all := true
+	for id in ["lulu", "mochi", "popo", "fen", "baimian"]:
+		if not GameState.has("done_c5_x_" + id):
+			all = false
+	if all:
+		GameState.set_flag("c5_talked_all")
 
 
 func _seg_director() -> void:
 	_bgm("nirvana")
-	await Dialogue.run("c5_director")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c5_director")
+	await _explore("lesson", "lab5", "start", "c5_l_done", Color.WHITE, PARTY)
 	# 第三章重重說過「我沒有推他」：第一次有人相信他
 	if GameState.has("with_zhongzhong") and GameState.has("c3_zhongzhong_innocent"):
 		await Dialogue.run("c5_zz_believed")
@@ -174,64 +175,76 @@ func _seg_ending() -> void:
 	match route:
 		"a":
 			_bgm("dream")
-			await Dialogue.run("c5_a_intro")
-			var w := BreathWalk.new()
-			add_child(w)
-			GameState.set_flag("c5_breath_falls", await w.play())
-			await _room("real_ward", "")
-			await Dialogue.run("c5_a_others")
-			await Dialogue.run("c5_a_baimian")
-			_bgm("next_stop")
-			await Dialogue.run("c5_a_outside")
+			if not GameState.has("explore_room"):
+				await Dialogue.run("c5_a_intro")
+				var w := BreathWalk.new()
+				add_child(w)
+				GameState.set_flag("c5_breath_falls", await w.play())
+			await _explore("a", "a_ward5", "start", "c5_a_done")
 		"b1":
 			_bgm("dream")
-			await Dialogue.run("c5_b1_intro")
-			await Dialogue.run("c5_b1_rules")
-			await Dialogue.run("c5_b1_end")
+			if not GameState.has("explore_room"):
+				await Dialogue.run("c5_b1_intro")
+			await _explore("b1", "b1_square5", "start", "c5_b1_done")
 		"b2":
 			_bgm("night")
-			await Dialogue.run("c5_b2_intro")
-			var g := Guard.new()
-			add_child(g)
-			await g.play()
-			await Dialogue.run("c5_b2_after")
+			if not GameState.has("explore_room"):
+				await Dialogue.run("c5_b2_intro")
+			await _explore("b2", "b2_hall5", "start", "c5_b2_done", NIGHT)
 			_bgm("next_stop")
 			await Dialogue.run("c5_b2_end")
 		"b3":
 			_bgm("night")
-			await Dialogue.run("c5_b3_intro")
-			await _room("real_hall", "")
-			await Dialogue.run("c5_b3_end")
+			if not GameState.has("explore_room"):
+				await Dialogue.run("c5_b3_intro")
+			await _explore("b3", "b3_ward5", "start", "c5_b3_done")
 
 
-func _room(id: String, intro: String) -> void:
+## 地圖探索：設定階段旗標 c5_st_<stage>，走到條件成立為止（讀檔時從記住的房間繼續）
+func _explore(stage: String, room_id: String, spawn: Variant, cond: String, tint := Color.WHITE, party: Array = []) -> void:
 	Dialogue.set_bg("none")
-	room = Ch3Room.new()
-	room.room_id = id
-	room.art_path = ART % id
-	room.spots = ROOMS[id]
-	room.busy = true
-	add_child(room)
-	if intro != "":
-		await Dialogue.run(intro)
-		Dialogue.set_bg("none")
-	room.set_busy(false)
-	while true:
-		var picked: String = await room.picked
-		room.set_busy(true)
-		if picked == "exit":
-			break
-		await Dialogue.run(picked)
-		if picked == "c5_b3_fen":
-			GameState.set_flag("c5_b3_seen_fen")
-		Dialogue.set_bg("none")
-		room.set_busy(false)
-	room.queue_free()
-	room = null
+	for k in STAGES:
+		GameState.flags.erase("c5_st_" + k)
+	GameState.flags["c5_st_" + stage] = true
+	explore = Explore.new()
+	explore.load_level(LEVEL)
+	explore.party = party
+	explore.tint = tint
+	add_child(explore)
+	if stage in ["a", "b3"]:
+		explore.player.look = HARUKA
+		explore.player.speed_mul = REAL_SLOW
+	explore.room_entered.connect(func(_id):
+		hud.place = "%s　%s" % [ROUTES[route] if segment == "ending" else PLACES[segment], explore.room.get("name", "")]
+		hud.refresh()
+		explore.save_state()
+		GameState.save_game("c5_" + segment))
+	await explore.restore_or(room_id, spawn)
+	await explore.until(cond)
+	GameState.flags.erase("explore_room")
+	GameState.flags.erase("explore_pos")
+	GameState.flags.erase("c5_st_" + stage)
+	explore.queue_free()
+	explore = null
 
 
-func _on_event(_event_name: String) -> void:
+func _process(_d: float) -> void:
+	if explore:
+		explore.paused = hud.menu_open
+
+
+func _on_event(event_name: String) -> void:
 	await get_tree().process_frame
+	if explore and await explore.handle_event(event_name):
+		Dialogue.event_done.emit()
+		return
+	match event_name:
+		"c5_guard":
+			var g := Guard.new()
+			add_child(g)
+			await g.play()
+		_:
+			await get_tree().process_frame
 	Dialogue.event_done.emit()
 
 

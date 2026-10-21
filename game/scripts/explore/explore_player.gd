@@ -12,6 +12,7 @@ var blockers: Array = []          # Array[Rect2]（房間座標）
 var bounds := Rect2(0, 0, 1280, 720)
 ## 外觀："pip"（玩偶小布，用地圖小人圖）或 "human:<顏色>"（第四章人類時期：簡單的人影）
 var look := "pip"
+var speed_mul := 1.0              # 終章的真實世界：人類的身體很重，走得比較慢
 var facing := Vector2.DOWN
 var moving := false
 var _walk_t := 0.0
@@ -26,7 +27,7 @@ func _process(delta: float) -> void:
 	if moving:
 		facing = dir
 		_walk_t += delta
-		_move(dir * SPEED * delta)
+		_move(dir * SPEED * speed_mul * delta)
 		if trail.is_empty() or (trail[0] as Vector2).distance_to(position) > 6.0:
 			trail.push_front(position)
 			if trail.size() > 400:

@@ -330,9 +330,10 @@ func _process(delta: float) -> void:
 		var idx := mini(player.trail.size() - 1, 7 + k * 7)
 		if idx >= 0:
 			fo.position = fo.position.lerp(player.trail[idx], minf(1.0, delta * 10.0))
-	for n in _ysort.get_children():
-		if n.has_meta("thing"):
-			n.queue_redraw()
+	if _ysort:   # 還沒進任何房間（加進場景後、enter() 之前）時是 null
+		for n in _ysort.get_children():
+			if n.has_meta("thing"):
+				n.queue_redraw()
 	if _toast_t > 0.0:
 		_toast_t -= delta
 		if _toast_t <= 0.0:

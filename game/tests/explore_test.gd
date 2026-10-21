@@ -90,5 +90,21 @@ func _run() -> void:
 	await ex.until("t_goal")
 	_check(gs.has("t_goal"), "快速模式自己調查到終點")
 	ex.queue_free()
+	# 終章的真實世界：speed_mul 讓人類的身體走得比較慢
+	var p0: Vector2 = ex.player.position
+	ex.player._move(Vector2(100, 0))
+	var d1: float = ex.player.position.x - p0.x
+	ex.player.position = p0
+	ex.player.speed_mul = 0.5
+	_check(is_equal_approx(ex.player.SPEED * ex.player.speed_mul, 110.0) and d1 > 0, "speed_mul：走路速度可以調慢")
+	ex.player.speed_mul = 1.0
+	# 加進場景、還沒進房間就跑了一個畫格：不能出錯（以前 _ysort 是 null 會報 SCRIPT ERROR）
+	var ex2 = load("res://scripts/explore/explore.gd").new()
+	ex2.load_level("res://tests/fixtures/explore_test.json")
+	root.add_child(ex2)
+	await process_frame
+	await process_frame
+	_check(ex2._ysort == null and ex2.room_id == "", "還沒進房間時，畫格照跑不出錯")
+	ex2.queue_free()
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

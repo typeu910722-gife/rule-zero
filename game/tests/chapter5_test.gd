@@ -1,5 +1,5 @@
 extends SceneTree
-## 第五章（終章，基礎版）自動測試：四種終章（A、B-1、B-2、B-3）都走得到、走得完；判定照兩個分數；讀檔從那一段繼續。
+## 第五章（終章）自動測試：地圖探索（實驗室、最後一堂課之前、四種終章的地圖）都走得完；判定照兩個分數；讀檔從那一段繼續。
 ## godot --headless --path . -s tests/chapter5_test.gd
 
 var failures := 0
@@ -18,29 +18,6 @@ func _check(cond: bool, msg: String) -> void:
 		printerr("  FAIL ", msg)
 
 
-func _auto_rooms() -> void:
-	while is_instance_valid(ch) and not ch._finished:
-		var r = ch.room
-		if r != null and is_instance_valid(r) and not r.busy:
-			var ids: Array = []
-			for s in r.spots:
-				if s.id != "exit" and (s.get("when", "") == "" or root.get_node("GameState").check(s.when)):
-					ids.append(s.id)
-			var seen: Dictionary = r.get_meta("seen", {})
-			var next := ""
-			for id in ids:
-				if not seen.has(id):
-					next = id
-					break
-			if next == "":
-				next = "exit"
-			seen[next] = true
-			r.set_meta("seen", seen)
-			r.set_busy(true)
-			r.picked.emit(next)
-		await process_frame
-
-
 func _play(gs: Node, carry: Dictionary, choices: Array, want: String) -> void:
 	gs.reset()
 	gs.meta.ch4_flags = carry
@@ -49,8 +26,7 @@ func _play(gs: Node, carry: Dictionary, choices: Array, want: String) -> void:
 	gs.auto_choices = choices.duplicate()
 	ch = load("res://scenes/chapter5.tscn").instantiate()
 	root.add_child(ch)
-	_auto_rooms()
-	for i in 8000:
+	for i in 40000:
 		if ch._finished:
 			break
 		await process_frame
@@ -75,13 +51,25 @@ func _run() -> void:
 	print("[終章 A：都想起來、都沒有放手]")
 	await _play(gs, both, [1, 0], "a")
 	_check(gs.has("c5_baimian_returned"), "白面把自己還給芬（悲劇收場）")
+	_check(gs.has("done_c5_x_wall") and gs.has("done_c5_x_mask") and gs.has("c5_x_done"), "實驗室：牆、面具、車掌")
+	var all := true
+	for id in ["lulu", "mochi", "popo", "fen", "baimian"]:
+		all = all and gs.has("done_c5_x_" + id)
+	_check(gs.has("c5_talked_all") == all, "實驗室：看過大家才有「沒有放手 +1」（可選，不強迫）")
+	_check(gs.has("c5_read_file") and gs.has("done_c5_l_monitor") and gs.has("c5_l_done"), "最後一堂課之前：檔案室、監視室、回到病床")
+	_check(gs.has("c5_l_drawer_open") and gs.has("done_c5_l_drawer_in"), "理事室：照片背面的密碼打開抽屜")
+	_check(gs.has("c5_woke_lulu") and gs.has("c5_woke_fen") and gs.has("done_c5_a_xinhe"), "終章 A：叫醒大家、白線的另一邊")
+	_check(gs.has("c5_a_done") and not gs.has("c5_st_a"), "終章 A：走出大門，階段旗標清掉")
 	_check(int(gs.meta.get("chapters_done", 0)) >= 5, "記錄第五章完成")
 	print("[終章 B-1：吃下糖果、不握手、前面什麼都沒有]")
 	await _play(gs, {}, [0, 1], "b1")
+	_check(gs.has("c5_b1_ruled") and gs.has("c5_b1_repaired") and gs.has("c5_b1_done"), "B-1：公館寫守則 → 修理室 → 月台")
 	print("[終章 B-2：沒有想起來、可是沒有放手]")
 	await _play(gs, held, [0, 0], "b2")
+	_check(gs.has("c5_b2_guarded") and gs.has("c5_b2_done"), "B-2：看過四間病房 → 守住走廊 → 走廊盡頭的床")
 	print("[終章 B-3：想起來了、可是放開了手]")
 	await _play(gs, remembered, [1, 1], "b3")
+	_check(gs.has("c5_b3_seen_fen") and gs.has("c5_b3_done"), "B-3：芬的病房 → 出院 → 校門口")
 	print("[翻盤：差一點點想起來，丟掉糖果推過門檻]")
 	var almost := {"true_name": true, "with_xiaoji": true, "with_gaga": true, "c3_ecg_saved": true}
 	await _play(gs, almost, [1, 0], "a")
