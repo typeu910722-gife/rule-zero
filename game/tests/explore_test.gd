@@ -106,5 +106,29 @@ func _run() -> void:
 	await process_frame
 	_check(ex2._ysort == null and ex2.room_id == "", "還沒進房間時，畫格照跑不出錯")
 	ex2.queue_free()
+	# 手機：點一下＝觸控＋模擬的滑鼠點擊，密碼鎖只能算一個數字（2026-10-21 回報：一次輸入兩個）
+	var kp = load("res://scripts/explore/keypad.gd").new()
+	kp.code = "1234"
+	root.add_child(kp)
+	await process_frame
+	var at: Vector2 = kp._key_rect(0).get_center()
+	var touch := InputEventScreenTouch.new()
+	touch.pressed = true
+	touch.position = at
+	var echo := InputEventMouseButton.new()
+	echo.device = InputEvent.DEVICE_ID_EMULATION
+	echo.button_index = MOUSE_BUTTON_LEFT
+	echo.pressed = true
+	echo.position = at
+	kp._input(touch)
+	kp._input(echo)
+	_check(kp.entered == "1", "觸控點一下只輸入一個數字（實際「%s」）" % kp.entered)
+	var mouse := InputEventMouseButton.new()
+	mouse.button_index = MOUSE_BUTTON_LEFT
+	mouse.pressed = true
+	mouse.position = kp._key_rect(1).get_center()
+	kp._input(mouse)
+	_check(kp.entered == "12", "電腦的滑鼠一樣可以點（實際「%s」）" % kp.entered)
+	kp.queue_free()
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

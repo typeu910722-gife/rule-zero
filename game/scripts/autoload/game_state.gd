@@ -817,6 +817,12 @@ func _setup_input() -> void:
 			InputMap.action_add_event(action, jm)
 
 
+## 手機上點一下會同時送出「觸控」和系統模擬的「滑鼠點擊」兩個事件。
+## 同時處理兩種的地方，要用這個把模擬的那一個丟掉，不然點一下會算兩下（2026-10-21 密碼鎖一次輸入兩個數字）。
+static func is_touch_echo(e: InputEvent) -> bool:
+	return e is InputEventMouseButton and e.device == InputEvent.DEVICE_ID_EMULATION
+
+
 ## 記住玩家最後用的是鍵盤、手把還是觸控，畫面上的按鍵提示跟著換
 func _input(event: InputEvent) -> void:
 	var dev := last_device

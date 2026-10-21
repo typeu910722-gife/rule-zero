@@ -92,7 +92,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if _finished:
+	if _finished or GameState.is_touch_echo(event):
 		return
 	var p := -1
 	if event.is_action_pressed("interact") or event.is_action_pressed("ui_accept"):

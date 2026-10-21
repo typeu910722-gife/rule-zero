@@ -53,6 +53,8 @@ func _start() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if GameState.is_touch_echo(event):
+		return
 	var pressed: bool = event.is_action_pressed("interact") or event.is_action_pressed("menu") or \
 		(event is InputEventMouseButton and event.pressed) or (event is InputEventScreenTouch and event.pressed)
 	if not pressed:

@@ -53,7 +53,7 @@ func play() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _state != "play":
+	if _state != "play" or GameState.is_touch_echo(event):
 		return
 	var pos := Vector2(-1, -1)
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
