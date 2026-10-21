@@ -28,6 +28,17 @@
 - IP-Adapter：h94/IP-Adapter `ip-adapter-plus_sdxl_vit-h` ＋ ViT-H 影像編碼器（Apache-2.0）
 - 在雲端 CPU 上執行（沒有 GPU），每張約 4 分鐘；SDXL＋ControlNet＋IP-Adapter 一起跑超過 15GB 記憶體，要把主模型存成 fp8 才跑得動
 
+## 第三～五章劇情背景（2026-10-21，畫風 LoRA 2400 步）
+腳本：`gen.py`，`--final 1280x720`，負面提示加上人物、文字（第三章另加玩偶，避免背景裡多出不存在的角色）。
+| 檔案 | 用途 | 做法 |
+|---|---|---|
+| `game/art/ch3/bg/ch3_bg_platform.jpg` | 醫院地下的月台 | free＋plush，畫風強度 0.45（強度高時會變成車廂內、多出布偶） |
+| `game/art/ch3/bg/ch3_bg_b2.jpg` | B2 走廊 | free＋plush，強度 0.45 |
+| `game/art/ch3/bg/ch3_bg_monitor.jpg`、`ch3_bg_lab.jpg`、`ch3_bg_wild.jpg` | 監視室、實驗室、失控區 | free＋plush |
+| `game/art/ch4/bg/ch4_bg_{hallway,gate,stairs,toilet_door,mailbox,phone,ward_dark}.jpg` | 第四章（人類時期） | bg_memory；廁所只畫走廊盡頭一扇關著的門 |
+| `game/art/ch5/bg/ch5_bg_{lab,real_ward,real_hall,outside,school_gate}.jpg` | 第五章實驗室、真實世界 | free＋plush（實驗室）／bg_memory |
+| `game/art/ch5/bg/ch5_bg_{town,town_office}.jpg` | 終章 B-1 棉花糖鎮 | bg_town／interior |
+
 ## 試過但不能用的
 | 項目 | 結果 | 缺少的工具 |
 |---|---|---|
