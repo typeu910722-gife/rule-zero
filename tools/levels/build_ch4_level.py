@@ -15,6 +15,8 @@ T = "c4_pov_tiaoma"
 L = "c4_pov_lulu"
 X = "c4_pov_xinhe"
 P = "c4_pov_popo"
+TE = "c4_pov_teacher"
+F = "c4_pov_fen"
 
 rooms = {}
 # ── 校門 ──
@@ -43,6 +45,7 @@ rooms["entrance"] = room("玄關", [1400, 720], "school",
         {"id": "c4_m_shoes", "name": "小滿的鞋櫃", "pos": [400, 270], "when": M},
         {"id": "c4_l_shoebox", "name": "自己的鞋櫃", "pos": [560, 270], "when": L},
         {"id": "c4_p_shoes", "name": "自己的鞋櫃", "pos": [900, 270], "when": P},
+        {"id": "c4_f_shoebox", "name": "遙的鞋櫃", "pos": [400, 270], "when": F},
     ],
     doors=[{"id": "c4_door_ent_gate", "name": "回校門", "pos": [700, 700], "size": [140, 30], "to": "gate", "spawn": "from_entrance"},
            {"id": "c4_door_ent_hall", "name": "一樓走廊", "pos": [1360, 420], "size": [60, 120], "to": "hall1", "spawn": "from_entrance"}])
@@ -57,6 +60,8 @@ rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
         {"id": "c4_m_hall", "name": "走廊", "pos": [900, 500], "when": M},
         {"id": "c4_p_trophy", "name": "獎盃櫃", "pos": [600, 250], "when": P},
         {"id": "c4_x_hall", "name": "走廊角落的聲音", "pos": [1700, 500], "when": X},
+        {"id": "c4_fen_trash", "name": "垃圾桶", "pos": [300, 580], "when": F},
+        {"id": "c4_fen_why", "name": "走廊盡頭", "pos": [2300, 450], "when": F + "&done_c4_fen_desk&done_c4_fen_trash", "done_when": "c4_f_done"},
     ],
     npcs=[{"id": "c4_h_li_en", "name": "李恩", "char": "human:#5b6b78", "pos": [800, 420], "when": H},
           {"id": "c4_l_whisper", "name": "同學們", "char": "human:#8a7f75", "pos": [1500, 420], "when": L},
@@ -87,6 +92,11 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_x_trash", "name": "垃圾桶", "pos": [130, 300], "when": X},
         {"id": "c4_x_desk", "name": "銘越的座位", "pos": [560, 600], "when": X},
         {"id": "c4_p_desk", "name": "自己的座位", "pos": [560, 600], "when": P},
+        {"id": "c4_te_chalk", "name": "黑板", "pos": [800, 160], "when": TE},
+        {"id": "c4_te_roll", "name": "講台上的點名簿", "pos": [800, 330], "when": TE},
+        {"id": "c4_teacher_rules", "name": "教室後面的班規", "pos": [130, 820], "when": TE + "&c4_te_night", "done_when": "c4_te_done"},
+        {"id": "c4_fen_desk", "name": "遙的座位", "pos": [1250, 740], "when": F},
+        {"id": "c4_f_book", "name": "自己的座位", "pos": [1250, 640], "when": F},
     ],
     npcs=[
         {"id": "c4_h_teacher", "name": "導師", "char": "human:#6f6a5e", "pos": [800, 210], "when": H, "done_when": "c4_h_spoke", "reach": 120},
@@ -98,13 +108,17 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_h_tiaoma", "name": "薙文", "char": "human:#d9d9d4", "pos": [330, 660], "when": H},
         {"id": "c4_h_junzhu", "name": "郡主", "char": "human:#7d7d7d", "pos": [790, 660], "when": H},
         {"id": "c4_h_qiuge", "name": "秋歌", "char": "human:#4a4a4a", "pos": [1020, 790], "when": H},
+        {"id": "c4_te_students", "name": "學生們", "char": "human:#8a7f75", "pos": [800, 560], "when": TE + "&!c4_te_night"},
     ],
     doors=[{"id": "c4_door_class_out", "name": "走廊", "pos": [800, 880], "size": [140, 30], "to": "hall1", "spawn": "from_class"}])
 # ── 教師辦公室 ──
 rooms["office"] = room("教師辦公室", [1280, 720], "school",
     spawns={"from_hall": [640, 620]},
     props=[{"kind": "desk", "rect": [200, 260, 260, 70]}, {"kind": "desk", "rect": [820, 260, 260, 70]}, {"kind": "cabinet", "rect": [520, 150, 240, 40]}],
-    spots=[{"id": "c4_h_office", "name": "導師的桌子", "pos": [330, 380], "when": H}],
+    spots=[{"id": "c4_h_office", "name": "導師的桌子", "pos": [330, 380], "when": H},
+           {"id": "c4_te_desk", "name": "自己的桌子", "pos": [330, 380], "when": TE},
+           {"id": "c4_te_memo", "name": "校長轉來的公文", "pos": [950, 380], "when": TE},
+           {"id": "c4_te_stay", "name": "留到晚上", "pos": [640, 520], "when": TE + "&done_c4_te_desk&!c4_te_night"}],
     doors=[{"id": "c4_door_office_out", "name": "走廊", "pos": [640, 700], "size": [140, 30], "to": "hall1", "spawn": "from_office"}])
 
 # ── 薙文的房間（夜晚）──

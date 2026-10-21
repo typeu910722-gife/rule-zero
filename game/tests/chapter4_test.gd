@@ -18,28 +18,6 @@ func _check(cond: bool, msg: String) -> void:
 		printerr("  FAIL ", msg)
 
 
-## 房間：一個一個按調查點，最後按出口
-func _auto_rooms() -> void:
-	while is_instance_valid(ch) and not ch._finished:
-		var r = ch.room
-		if r != null and is_instance_valid(r) and not r.busy:
-			var ids: Array = []
-			for s in r.spots:
-				if s.id != "exit" and (s.get("when", "") == "" or root.get_node("GameState").check(s.when)):
-					ids.append(s.id)
-			var seen: Dictionary = r.get_meta("seen", {})
-			var next := ""
-			for id in ids:
-				if not seen.has(id):
-					next = id
-					break
-			if next == "":
-				next = "exit"
-			seen[next] = true
-			r.set_meta("seen", seen)
-			r.set_busy(true)
-			r.picked.emit(next)
-		await process_frame
 
 
 func _play(gs: Node, choices: Array, zz_dead: bool) -> void:
@@ -50,7 +28,6 @@ func _play(gs: Node, choices: Array, zz_dead: bool) -> void:
 	gs.auto_choices = choices.duplicate()
 	ch = load("res://scenes/chapter4.tscn").instantiate()
 	root.add_child(ch)
-	_auto_rooms()
 	for i in 8000:
 		if ch._finished:
 			break
@@ -83,6 +60,8 @@ func _run() -> void:
 	_check(gs.has("c4_saw_rules") and gs.has("c4_h_spoke"), "遙：看了班規、上台自我介紹")
 	_check(gs.has("c4_m_bag_done") and gs.has("c4_m_found_shoes") and gs.has("c4_m_done"), "小滿：書包、鞋子、等到辛禾")
 	_check(gs.has("c4_t_done") and gs.has("c4_l_done") and gs.has("c4_x_done") and gs.has("c4_p_done"), "薙文、希露飛、辛禾、銘越的地圖都走完了")
+	_check(gs.has("c4_te_night") and gs.has("c4_te_done"), "導師：留到晚上、重寫班規")
+	_check(gs.has("done_c4_fen_desk") and gs.has("done_c4_fen_trash") and gs.has("c4_f_done"), "芬：桌子、垃圾桶、走廊盡頭")
 	_check(gs.has("done_c4_l_shard1") and gs.has("done_c4_l_shard2") and gs.has("done_c4_l_shard3"), "希露飛：三片鏡子碎片都翻過去了")
 	_check(GameState_pov_clear(gs), "視角旗標用完就清掉")
 	_check(int(gs.meta.get("chapters_done", 0)) >= 4, "記錄第四章完成")

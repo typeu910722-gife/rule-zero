@@ -247,6 +247,15 @@
       270
      ],
      "when": "c4_pov_popo"
+    },
+    {
+     "id": "c4_f_shoebox",
+     "name": "遙的鞋櫃",
+     "pos": [
+      400,
+      270
+     ],
+     "when": "c4_pov_fen"
     }
    ],
    "doors": [
@@ -378,6 +387,25 @@
       500
      ],
      "when": "c4_pov_xinhe"
+    },
+    {
+     "id": "c4_fen_trash",
+     "name": "垃圾桶",
+     "pos": [
+      300,
+      580
+     ],
+     "when": "c4_pov_fen"
+    },
+    {
+     "id": "c4_fen_why",
+     "name": "走廊盡頭",
+     "pos": [
+      2300,
+      450
+     ],
+     "when": "c4_pov_fen&done_c4_fen_desk&done_c4_fen_trash",
+     "done_when": "c4_f_done"
     }
    ],
    "npcs": [
@@ -749,6 +777,52 @@
       600
      ],
      "when": "c4_pov_popo"
+    },
+    {
+     "id": "c4_te_chalk",
+     "name": "黑板",
+     "pos": [
+      800,
+      160
+     ],
+     "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_te_roll",
+     "name": "講台上的點名簿",
+     "pos": [
+      800,
+      330
+     ],
+     "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_teacher_rules",
+     "name": "教室後面的班規",
+     "pos": [
+      130,
+      820
+     ],
+     "when": "c4_pov_teacher&c4_te_night",
+     "done_when": "c4_te_done"
+    },
+    {
+     "id": "c4_fen_desk",
+     "name": "遙的座位",
+     "pos": [
+      1250,
+      740
+     ],
+     "when": "c4_pov_fen"
+    },
+    {
+     "id": "c4_f_book",
+     "name": "自己的座位",
+     "pos": [
+      1250,
+      640
+     ],
+     "when": "c4_pov_fen"
     }
    ],
    "npcs": [
@@ -843,6 +917,16 @@
       790
      ],
      "when": "c4_pov_haruka"
+    },
+    {
+     "id": "c4_te_students",
+     "name": "學生們",
+     "char": "human:#8a7f75",
+     "pos": [
+      800,
+      560
+     ],
+     "when": "c4_pov_teacher&!c4_te_night"
     }
    ],
    "doors": [
@@ -914,6 +998,33 @@
       380
      ],
      "when": "c4_pov_haruka"
+    },
+    {
+     "id": "c4_te_desk",
+     "name": "自己的桌子",
+     "pos": [
+      330,
+      380
+     ],
+     "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_te_memo",
+     "name": "校長轉來的公文",
+     "pos": [
+      950,
+      380
+     ],
+     "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_te_stay",
+     "name": "留到晚上",
+     "pos": [
+      640,
+      520
+     ],
+     "when": "c4_pov_teacher&done_c4_te_desk&!c4_te_night"
     }
    ],
    "doors": [

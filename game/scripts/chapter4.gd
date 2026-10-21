@@ -16,25 +16,9 @@ const POV := {"opening": "", "haruka": "視角：遙", "mochi": "視角：小滿
 const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
 const BGM := {"memory": "11_memory", "dream": "16_dream", "night": "08_night", "evening": "02_evening", "nirvana": "10_nirvana"}
 
-const ART := "res://art/ch4/bg/ch4_bg_%s.jpg"
-const ROOMS := {
-	"classroom": [
-		{"id": "c4_haruka_rules", "name": "教室後面的紙", "rect": Rect2(60, 400, 220, 56)},
-		{"id": "c4_haruka_board", "name": "黑板", "rect": Rect2(540, 320, 200, 56)},
-		{"id": "c4_haruka_window", "name": "窗外", "rect": Rect2(1060, 370, 200, 56)},
-		{"id": "c4_haruka_desk", "name": "你的座位", "rect": Rect2(820, 560, 200, 56)},
-		{"id": "exit", "name": "上台自我介紹　→", "rect": Rect2(1000, 640, 260, 60), "when": "c4_saw_rules", "exit": true},
-	],
-	"hallway": [
-		{"id": "c4_fen_desk", "name": "寫滿字的桌子", "rect": Rect2(120, 520, 220, 56)},
-		{"id": "c4_fen_trash", "name": "垃圾桶", "rect": Rect2(920, 520, 200, 56)},
-		{"id": "exit", "name": "走廊盡頭　→", "rect": Rect2(540, 400, 200, 56), "when": "c4_fen_saw_desk&c4_fen_saw_trash", "exit": true},
-	],
-}
 
 var segment := "opening"
 var hud: Ch3Hud
-var room: Ch3Room
 var _bgm_name := ""
 var _fx_layer: CanvasLayer
 var _blackout: ColorRect
@@ -42,7 +26,7 @@ var _blackout: ColorRect
 var explore: Explore
 const LEVEL := "res://levels/chapter4.json"
 const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b", "tiaoma": "human:#d9d9d4", "lulu": "human:#e7a3b4",
-	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73"}
+	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73", "teacher": "human:#6f6a5e", "fen": "human:#c8642b"}
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
 
@@ -131,14 +115,14 @@ func _seg_mochi() -> void:
 
 
 ## 一個視角的地圖探索：設定視角旗標、主角的樣子，探索到條件成立
-func _explore_pov(pov: String, room_id: String, spawn: Variant, cond: String, tint := Color.WHITE) -> void:
+func _explore_pov(pov: String, room_id: String, spawn: Variant, cond: String, tint := Color.WHITE, party: Array = []) -> void:
 	Dialogue.set_bg("none")
 	for k in LOOKS:
 		GameState.flags.erase("c4_pov_" + k)
 	GameState.flags["c4_pov_" + pov] = true
 	explore = Explore.new()
 	explore.load_level(LEVEL)
-	explore.party = []
+	explore.party = party
 	explore.tint = tint
 	add_child(explore)
 	explore.player.look = LOOKS.get(pov, "human:#6d7f8a")
@@ -193,15 +177,19 @@ func _seg_popo() -> void:
 	await _explore_pov("popo", "entrance", "from_gate", "c4_p_done")
 
 
+## 導師：斷掉的粉筆、被學聲音的點名、台下想說話的轉學生 → 辦公室（胃藥、公文）→ 晚上重寫班規
 func _seg_teacher() -> void:
-	await Dialogue.run("c4_teacher")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_te_intro")
+	await _explore_pov("teacher", "classroom", "from_hall", "c4_te_done")
 
 
+## 芬（白面帶路，白面是玩偶的樣子跟在後面）：遙的桌子、垃圾桶的書包、劃掉的名牌、課本裡的紙條 → 走廊盡頭
 func _seg_fen() -> void:
 	_bgm("dream")
-	await _room("hallway", "c4_fen_intro")
-	Dialogue.set_bg("c4_hallway")
-	await Dialogue.run("c4_fen_why")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_fen_intro")
+	await _explore_pov("fen", "classroom", "from_hall", "c4_f_done", Color(0.9, 0.88, 0.95), ["baimian"])
 
 
 ## 那一天：九個視角輪流。這一段的聲音全部由劇本指定（關掉自動語音），沒有配樂
@@ -249,33 +237,6 @@ func _seg_night() -> void:
 	Dialogue.auto_voice = true
 
 
-## 一個房間：先跑開場對話，之後玩家調查，按「出口」才離開
-func _room(id: String, intro: String) -> void:
-	Dialogue.set_bg("none")
-	room = Ch3Room.new()
-	room.room_id = id
-	room.art_path = ART % id
-	room.spots = ROOMS[id]
-	room.busy = true
-	add_child(room)
-	if intro != "":
-		await Dialogue.run(intro)
-		Dialogue.set_bg("none")
-	room.set_busy(false)
-	while true:
-		var picked: String = await room.picked
-		room.set_busy(true)
-		if picked == "exit":
-			break
-		await Dialogue.run(picked)
-		if picked == "c4_fen_desk":
-			GameState.set_flag("c4_fen_saw_desk")
-		elif picked == "c4_fen_trash":
-			GameState.set_flag("c4_fen_saw_trash")
-		Dialogue.set_bg("none")
-		room.set_busy(false)
-	room.queue_free()
-	room = null
 
 
 # ───────── @event ─────────
