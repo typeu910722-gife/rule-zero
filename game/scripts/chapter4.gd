@@ -27,6 +27,7 @@ var explore: Explore
 const LEVEL := "res://levels/chapter4.json"
 const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b", "tiaoma": "human:#d9d9d4", "lulu": "human:#e7a3b4",
 	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73", "teacher": "human:#6f6a5e", "fen": "human:#c8642b",
+	"org": "human:#dfe6ea", "night": "human:#dfe6ea",
 	"d1": "human:#e9b8c8", "d2": "human:#7a8a6e", "d5": "human:#c8642b", "d8": "human:#5b6b78"}
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
@@ -242,22 +243,23 @@ func _day_pov(label: String) -> String:
 	return "那一天　" + (("視角：" + who[label]) if who.has(label) else "")
 
 
+## 那一天之後：像影子一樣走過校長室（信封、老鷹）→ 教室（兩個圓圈）、辦公室（導師自願）→ 校門 → 醫院（遙的遺留物、芬的父親）→ 月台的白鴿
 func _seg_org() -> void:
 	_bgm("nirvana")
-	for label in ["c4_org_principal", "c4_org_hospital", "c4_org_board", "c4_org_teacher", "c4_org_father", "c4_org_platform"]:
-		await Dialogue.run(label)
-		if not is_inside_tree():
-			return
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_o_intro")
+	await _explore_pov("org", "principal", "start", "c4_o_done", Color(0.9, 0.92, 0.96))
 
 
+## 慈愛組織的第一個晚上：走在白線上，看兩邊的床 → 和平鴿、電閘（只演出到「同時一震、聲音停住」）
 func _seg_night() -> void:
 	_bgm("")
 	Audio.stop_music()
 	Dialogue.auto_voice = false
-	await Dialogue.run("c4_night")
+	if not GameState.has("explore_room"):
+		await Dialogue.run("c4_n_intro")
+	await _explore_pov("night", "ward4", "start", "c4_n_done", Color(0.62, 0.66, 0.8))
 	Dialogue.auto_voice = true
-
-
 
 
 # ───────── @event ─────────

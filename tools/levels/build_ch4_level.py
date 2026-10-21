@@ -22,6 +22,8 @@ D1 = "c4_pov_d1"
 D2 = "c4_pov_d2"
 D5 = "c4_pov_d5"
 D8 = "c4_pov_d8"
+O = "c4_pov_org"     # 那一天之後：像回憶裡的影子一樣走過
+N = "c4_pov_night"   # 慈愛組織的第一個晚上
 
 rooms = {}
 # ── 校門 ──
@@ -38,8 +40,10 @@ rooms["gate"] = room("校門", [1600, 720], "school",
         {"id": "c4_p_mailbox", "name": "學校的信箱", "pos": [1420, 420], "when": P + "&done_c4_p_crowd", "done_when": "c4_p_done"},
         {"id": "c4_l_gate", "name": "校門口", "pos": [800, 520], "when": L},
         {"id": "c4_d1_gate", "name": "放假的校門", "pos": [800, 520], "when": D1},
+        {"id": "c4_o_gate", "name": "校門口的警車", "pos": [800, 520], "when": O},
     ],
     doors=[{"id": "c4_door_gate_in", "name": "玄關", "pos": [800, 125], "size": [140, 30], "to": "entrance", "spawn": "from_gate"},
+           {"id": "c4_door_gate_hosp", "name": "醫院", "pos": [160, 700], "size": [160, 30], "to": "hospital4", "spawn": "start", "when": O + "&done_c4_org_board&done_c4_org_teacher"},
            {"id": "c4_door_gate_home", "name": "回家", "pos": [800, 700], "size": [160, 30], "to": "lulu_room", "spawn": "start", "when": L}])
 # ── 玄關（鞋櫃）──
 rooms["entrance"] = room("玄關", [1400, 720], "school",
@@ -57,7 +61,7 @@ rooms["entrance"] = room("玄關", [1400, 720], "school",
            {"id": "c4_door_ent_hall", "name": "一樓走廊", "pos": [1360, 420], "size": [60, 120], "to": "hall1", "spawn": "from_entrance"}])
 # ── 一樓走廊 ──
 rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
-    spawns={"from_entrance": [140, 450], "from_class": [1200, 220], "from_office": [1900, 220], "from_toilet": [2250, 450]},
+    spawns={"from_entrance": [140, 450], "from_class": [1200, 220], "from_office": [1900, 220], "from_toilet": [2250, 450], "from_principal": [500, 220]},
     props=[{"kind": "cabinet", "rect": [500, 160, 200, 40], "label": "獎盃櫃"}, {"kind": "window", "rect": [900, 20, 200, 80], "solid": False},
            {"kind": "plant", "rect": [2200, 170, 60, 40]}],
     spots=[
@@ -78,6 +82,7 @@ rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
            {"id": "c4_door_hall_class", "name": "三年二班", "pos": [1200, 125], "size": [130, 30], "to": "classroom", "spawn": "from_hall"},
            {"id": "c4_door_hall_toilet", "name": "往廁所的走廊", "pos": [2360, 450], "size": [60, 120], "to": "toilet_hall", "spawn": "from_hall1",
             "when": D1 + "|" + D5, "open": D1 + "|c4_d5_called", "locked_text": "（要先去找人。）"},
+           {"id": "c4_door_hall_principal", "name": "校長室", "pos": [500, 125], "size": [120, 30], "to": "principal", "spawn": "from_hall", "when": O},
            {"id": "c4_door_hall_office", "name": "教師辦公室", "pos": [1900, 125], "size": [130, 30], "to": "office", "spawn": "from_hall",
             "open": "!" + M, "locked_text": "辦公室的燈關了。門鎖著。"}])
 # ── 三年二班 ──
@@ -108,6 +113,7 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_fen_desk", "name": "遙的座位", "pos": [1250, 740], "when": F},
         {"id": "c4_f_book", "name": "自己的座位", "pos": [1250, 640], "when": F},
         {"id": "c4_d2_bucket", "name": "水桶", "pos": [1400, 400], "when": D2},
+        {"id": "c4_org_board", "name": "黑板", "pos": [800, 160], "when": O},
         {"id": "c4_d2_board", "name": "值日表", "pos": [800, 160], "when": D2},
         {"id": "c4_d2_window", "name": "窗戶", "pos": [1460, 160], "when": D2 + "&done_c4_d2_bucket", "label": "c4_day_2", "done_when": "c4_d2_done"},
         {"id": "c4_d5_desk", "name": "自己的座位", "pos": [1250, 640], "when": D5, "done_when": "c4_d5_heard"},
@@ -132,6 +138,7 @@ rooms["office"] = room("教師辦公室", [1280, 720], "school",
     spots=[{"id": "c4_h_office", "name": "導師的桌子", "pos": [330, 380], "when": H},
            {"id": "c4_te_desk", "name": "自己的桌子", "pos": [330, 380], "when": TE},
            {"id": "c4_te_memo", "name": "校長轉來的公文", "pos": [950, 380], "when": TE},
+           {"id": "c4_org_teacher", "name": "導師", "pos": [330, 380], "when": O},
            {"id": "c4_d5_teacher", "name": "導師", "pos": [330, 300], "when": D5 + "&c4_d5_heard&!c4_d5_called", "done_when": "c4_d5_called"},
            {"id": "c4_te_stay", "name": "留到晚上", "pos": [640, 520], "when": TE + "&done_c4_te_desk&!c4_te_night"}],
     doors=[{"id": "c4_door_office_out", "name": "走廊", "pos": [640, 700], "size": [140, 30], "to": "hall1", "spawn": "from_office"}])
@@ -183,6 +190,42 @@ rooms["downstairs"] = room("樓下　樓梯底", [1280, 720], "school_dark",
         {"id": "c4_d8_fen", "name": "樓梯底下", "pos": [880, 420], "when": D8},
         {"id": "c4_d8_phone", "name": "打電話", "pos": [300, 470], "when": D8 + "&done_c4_d8_fen", "label": "c4_day_8", "done_when": "c4_d8_done"},
     ])
+
+# ── 那一天之後 ──
+rooms["principal"] = room("校長室", [1280, 720], "school",
+    spawns={"start": [640, 600], "from_hall": [640, 600]},
+    props=[{"kind": "desk", "rect": [420, 300, 440, 80]}, {"kind": "table", "rect": [160, 420, 200, 60], "label": "沙發"},
+           {"kind": "window", "rect": [980, 20, 220, 80], "solid": False}],
+    spots=[{"id": "c4_org_principal", "name": "桌上的信封", "pos": [640, 440], "when": O},
+           {"id": "c4_o_window", "name": "窗外", "pos": [1090, 160], "when": O}],
+    doors=[{"id": "c4_door_principal_out", "name": "走廊", "pos": [640, 700], "size": [140, 30], "to": "hall1", "spawn": "from_principal"}])
+rooms["hospital4"] = room("醫院（很多年以前）", [1600, 720], "hospital",
+    spawns={"start": [160, 600]},
+    props=[{"kind": "bed", "rect": [420, 280, 200, 80]}, {"kind": "bed", "rect": [820, 280, 200, 80]}, {"kind": "machine", "rect": [640, 200, 80, 50]}],
+    spots=[{"id": "c4_org_hospital", "name": "遙的床", "pos": [520, 420], "when": O},
+           {"id": "c4_o_fenbed", "name": "芬的床", "pos": [920, 420], "when": O}],
+    npcs=[{"id": "c4_org_father", "name": "大人們", "char": "human:#4a4f5a", "pos": [1200, 450], "when": O}],
+    doors=[{"id": "c4_door_hosp_platform", "name": "很遠的月台", "pos": [1560, 450], "size": [60, 120], "to": "platform4", "spawn": "start",
+            "when": O, "open": "done_c4_org_hospital&done_c4_org_father", "locked_text": "（還沒看完。）"}])
+rooms["platform4"] = room("白色的月台", [1600, 720], "platform",
+    spawns={"start": [160, 500]},
+    walls=[[0, 110, 1600, 100]],
+    spots=[{"id": "c4_org_platform", "name": "月台上的人", "pos": [1100, 330], "when": O, "done_when": "c4_o_done"}])
+# ── 第一個晚上：白線分開的病房 ──
+rooms["ward4"] = room("慈愛組織的醫院　很多年以前", [1800, 900], "hospital",
+    spawns={"start": [900, 840]},
+    decals=[{"kind": "rect", "rect": [895, 110, 10, 790], "color": "#ffffff"}],
+    props=[{"kind": "bed", "rect": [120 + (k % 3) * 240, 220 + (k // 3) * 220, 180, 80]} for k in range(6)] +
+          [{"kind": "bed", "rect": [1000 + (k % 3) * 240, 220 + (k // 3) * 220, 180, 80]} for k in range(6)] +
+          [{"kind": "machine", "rect": [1660, 130, 100, 60], "label": "電閘", "solid": True}],
+    spots=[
+        {"id": "c4_n_left", "name": "白線的左邊", "pos": [450, 560], "when": N},
+        {"id": "c4_n_fen", "name": "最邊邊的床", "pos": [210, 340], "when": N},
+        {"id": "c4_n_right", "name": "白線的右邊", "pos": [1330, 560], "when": N},
+        {"id": "c4_n_haruka", "name": "最裡面的床", "pos": [1570, 340], "when": N},
+        {"id": "c4_n_end", "name": "門的聲音", "pos": [900, 760], "when": N + "&done_c4_n_left&done_c4_n_right&done_c4_n_haruka", "done_when": "c4_n_done"},
+    ],
+    npcs=[{"id": "c4_n_zz", "name": "郡主", "char": "human:#7d7d7d", "pos": [690, 560], "when": N}])
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}
 json.dump(level, open("game/levels/chapter4.json", "w"), ensure_ascii=False, indent=1)

@@ -137,6 +137,15 @@
       520
      ],
      "when": "c4_pov_d1"
+    },
+    {
+     "id": "c4_o_gate",
+     "name": "校門口的警車",
+     "pos": [
+      800,
+      520
+     ],
+     "when": "c4_pov_org"
     }
    ],
    "doors": [
@@ -153,6 +162,21 @@
      ],
      "to": "entrance",
      "spawn": "from_gate"
+    },
+    {
+     "id": "c4_door_gate_hosp",
+     "name": "醫院",
+     "pos": [
+      160,
+      700
+     ],
+     "size": [
+      160,
+      30
+     ],
+     "to": "hospital4",
+     "spawn": "start",
+     "when": "c4_pov_org&done_c4_org_board&done_c4_org_teacher"
     },
     {
      "id": "c4_door_gate_home",
@@ -322,6 +346,10 @@
     "from_toilet": [
      2250,
      450
+    ],
+    "from_principal": [
+     500,
+     220
     ]
    },
    "props": [
@@ -517,6 +545,21 @@
      "when": "c4_pov_d1|c4_pov_d5",
      "open": "c4_pov_d1|c4_d5_called",
      "locked_text": "（要先去找人。）"
+    },
+    {
+     "id": "c4_door_hall_principal",
+     "name": "校長室",
+     "pos": [
+      500,
+      125
+     ],
+     "size": [
+      120,
+      30
+     ],
+     "to": "principal",
+     "spawn": "from_hall",
+     "when": "c4_pov_org"
     },
     {
      "id": "c4_door_hall_office",
@@ -883,6 +926,15 @@
      "when": "c4_pov_d2"
     },
     {
+     "id": "c4_org_board",
+     "name": "黑板",
+     "pos": [
+      800,
+      160
+     ],
+     "when": "c4_pov_org"
+    },
+    {
      "id": "c4_d2_board",
      "name": "值日表",
      "pos": [
@@ -1104,6 +1156,15 @@
       380
      ],
      "when": "c4_pov_teacher"
+    },
+    {
+     "id": "c4_org_teacher",
+     "name": "導師",
+     "pos": [
+      330,
+      380
+     ],
+     "when": "c4_pov_org"
     },
     {
      "id": "c4_d5_teacher",
@@ -1514,6 +1575,430 @@
      "when": "c4_pov_d8&done_c4_d8_fen",
      "label": "c4_day_8",
      "done_when": "c4_d8_done"
+    }
+   ]
+  },
+  "principal": {
+   "name": "校長室",
+   "size": [
+    1280,
+    720
+   ],
+   "theme": "school",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     640,
+     600
+    ],
+    "from_hall": [
+     640,
+     600
+    ]
+   },
+   "props": [
+    {
+     "kind": "desk",
+     "rect": [
+      420,
+      300,
+      440,
+      80
+     ]
+    },
+    {
+     "kind": "table",
+     "rect": [
+      160,
+      420,
+      200,
+      60
+     ],
+     "label": "沙發"
+    },
+    {
+     "kind": "window",
+     "rect": [
+      980,
+      20,
+      220,
+      80
+     ],
+     "solid": false
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_org_principal",
+     "name": "桌上的信封",
+     "pos": [
+      640,
+      440
+     ],
+     "when": "c4_pov_org"
+    },
+    {
+     "id": "c4_o_window",
+     "name": "窗外",
+     "pos": [
+      1090,
+      160
+     ],
+     "when": "c4_pov_org"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c4_door_principal_out",
+     "name": "走廊",
+     "pos": [
+      640,
+      700
+     ],
+     "size": [
+      140,
+      30
+     ],
+     "to": "hall1",
+     "spawn": "from_principal"
+    }
+   ]
+  },
+  "hospital4": {
+   "name": "醫院（很多年以前）",
+   "size": [
+    1600,
+    720
+   ],
+   "theme": "hospital",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     160,
+     600
+    ]
+   },
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      420,
+      280,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      820,
+      280,
+      200,
+      80
+     ]
+    },
+    {
+     "kind": "machine",
+     "rect": [
+      640,
+      200,
+      80,
+      50
+     ]
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_org_hospital",
+     "name": "遙的床",
+     "pos": [
+      520,
+      420
+     ],
+     "when": "c4_pov_org"
+    },
+    {
+     "id": "c4_o_fenbed",
+     "name": "芬的床",
+     "pos": [
+      920,
+      420
+     ],
+     "when": "c4_pov_org"
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c4_org_father",
+     "name": "大人們",
+     "char": "human:#4a4f5a",
+     "pos": [
+      1200,
+      450
+     ],
+     "when": "c4_pov_org"
+    }
+   ],
+   "doors": [
+    {
+     "id": "c4_door_hosp_platform",
+     "name": "很遠的月台",
+     "pos": [
+      1560,
+      450
+     ],
+     "size": [
+      60,
+      120
+     ],
+     "to": "platform4",
+     "spawn": "start",
+     "when": "c4_pov_org",
+     "open": "done_c4_org_hospital&done_c4_org_father",
+     "locked_text": "（還沒看完。）"
+    }
+   ]
+  },
+  "platform4": {
+   "name": "白色的月台",
+   "size": [
+    1600,
+    720
+   ],
+   "theme": "platform",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     160,
+     500
+    ]
+   },
+   "walls": [
+    [
+     0,
+     110,
+     1600,
+     100
+    ]
+   ],
+   "spots": [
+    {
+     "id": "c4_org_platform",
+     "name": "月台上的人",
+     "pos": [
+      1100,
+      330
+     ],
+     "when": "c4_pov_org",
+     "done_when": "c4_o_done"
+    }
+   ]
+  },
+  "ward4": {
+   "name": "慈愛組織的醫院　很多年以前",
+   "size": [
+    1800,
+    900
+   ],
+   "theme": "hospital",
+   "wall_h": 110,
+   "spawns": {
+    "start": [
+     900,
+     840
+    ]
+   },
+   "decals": [
+    {
+     "kind": "rect",
+     "rect": [
+      895,
+      110,
+      10,
+      790
+     ],
+     "color": "#ffffff"
+    }
+   ],
+   "props": [
+    {
+     "kind": "bed",
+     "rect": [
+      120,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      360,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      600,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      120,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      360,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      600,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1000,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1240,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1480,
+      220,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1000,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1240,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "bed",
+     "rect": [
+      1480,
+      440,
+      180,
+      80
+     ]
+    },
+    {
+     "kind": "machine",
+     "rect": [
+      1660,
+      130,
+      100,
+      60
+     ],
+     "label": "電閘",
+     "solid": true
+    }
+   ],
+   "spots": [
+    {
+     "id": "c4_n_left",
+     "name": "白線的左邊",
+     "pos": [
+      450,
+      560
+     ],
+     "when": "c4_pov_night"
+    },
+    {
+     "id": "c4_n_fen",
+     "name": "最邊邊的床",
+     "pos": [
+      210,
+      340
+     ],
+     "when": "c4_pov_night"
+    },
+    {
+     "id": "c4_n_right",
+     "name": "白線的右邊",
+     "pos": [
+      1330,
+      560
+     ],
+     "when": "c4_pov_night"
+    },
+    {
+     "id": "c4_n_haruka",
+     "name": "最裡面的床",
+     "pos": [
+      1570,
+      340
+     ],
+     "when": "c4_pov_night"
+    },
+    {
+     "id": "c4_n_end",
+     "name": "門的聲音",
+     "pos": [
+      900,
+      760
+     ],
+     "when": "c4_pov_night&done_c4_n_left&done_c4_n_right&done_c4_n_haruka",
+     "done_when": "c4_n_done"
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c4_n_zz",
+     "name": "郡主",
+     "char": "human:#7d7d7d",
+     "pos": [
+      690,
+      560
+     ],
+     "when": "c4_pov_night"
     }
    ]
   }
