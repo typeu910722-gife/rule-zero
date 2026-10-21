@@ -88,6 +88,10 @@ CPU 上每張約 3–6 分鐘（加了 ControlNet／IP-Adapter 會久一點）�
 | `tools/art/models/rzfen.safetensors` | Fen 角色 | Fen 的委託圖 21 張（`tools/art/train/make_fen_dataset.py`） |
 | `tools/art/models/rzstyle.safetensors` | 全作畫風＋各角色 | 委託原圖 207 張（`tools/art/train/make_style_dataset.py`） |
 
+`rzstyle.safetensors` 的訓練紀錄（2026-10-21 完成）：SDXL base、LoRA dim 16／alpha 8、只練 UNet、768 解析度、學習率 1e-4、共 2400 步（CPU，每步約 15 秒，存檔每 50 步、可以接著練）。
+比較 0（不用）／1000／1500／2000／2400 步（同種子；`docs/lora_compare.png`）：不用 LoRA 時露露會變成綠頭髮的娃娃；1000 步起就是本作的布偶兔子；2400 步最穩定（布料、縫線、服裝最一致），背景沒有過度擬合，所以採用 2400 步。
+用法：不用設定，`gen.py` 預設就會載入（強度 `--style-strength`，預設 0.8；要比較別的存檔可設環境變數 `RZ_STYLE_LORA`）。
+
 自己生成的替代圖（`docs/art_generated.md` 列的那些）**不放進訓練資料**，以免越練越偏。
 
 重新訓練或加新角色：
