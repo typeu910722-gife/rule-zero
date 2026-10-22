@@ -80,4 +80,8 @@ func _draw() -> void:
 		if tex:
 			draw_texture_rect_region(tex, Rect2(Vector2(-40, -76), Vector2(80, 80)), Rect2(col * 160, _row() * 160, 160, 160))
 			return
-	ExploreArt.draw_human(self, Vector2.ZERO, look.trim_prefix("human:") if look.begins_with("human:") else "#6d7f8a", _row(), moving, _walk_t)
+	# 有四方向走路圖的角色（人類時期 h_<id> 等）
+	if not look.begins_with("human:") and ExploreArt.draw_walk(self, look, Vector2.ZERO, _row(), int(_walk_t * 8.0) % 4 if moving else 0):
+		return
+	var col: String = look.trim_prefix("human:") if look.begins_with("human:") else ExploreArt.HUMAN_FALLBACK.get(look, "#6d7f8a")
+	ExploreArt.draw_human(self, Vector2.ZERO, col, _row(), moving, _walk_t)

@@ -26,10 +26,11 @@ var _blackout: ColorRect
 ## 地圖探索（levels/chapter4.json）：同一間學校，每個視角用旗標 c4_pov_<視角> 決定誰在、能調查什麼
 var explore: Explore
 const LEVEL := "res://levels/chapter4.json"
-const LOOKS := {"haruka": "human:#33415c", "mochi": "human:#8b9a7b", "tiaoma": "human:#d9d9d4", "lulu": "human:#e7a3b4",
-	"xinhe": "human:#3a3a3a", "popo": "human:#3b4a73", "teacher": "human:#6f6a5e", "fen": "human:#c8642b",
+## 視角 → 主角的樣子（h_<id>：art/walk4 的四方向走路圖；還沒有圖時 ExploreArt.HUMAN_FALLBACK 的人影）
+const LOOKS := {"haruka": "h_haruka", "mochi": "h_xiaoman", "tiaoma": "h_tiwen", "lulu": "h_hilufei",
+	"xinhe": "h_xinhe", "popo": "h_mingyue", "teacher": "h_teacher", "fen": "h_fen",
 	"org": "human:#dfe6ea", "night": "human:#dfe6ea",
-	"d1": "human:#e9b8c8", "d2": "human:#7a8a6e", "d5": "human:#c8642b", "d8": "human:#5b6b78"}
+	"d1": "h_haruka", "d2": "human:#7a8a6e", "d5": "h_fen", "d8": "h_lien"}
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
 

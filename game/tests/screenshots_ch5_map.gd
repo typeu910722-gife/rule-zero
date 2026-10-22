@@ -20,7 +20,7 @@ func _run() -> void:
 	gs.chapter = 5
 	var shots := [["c5_st_lab", "lab5", "start", "pip", []], ["c5_st_lesson", "records5", "from_hall", "pip", ["lulu", "fen", "baimian"]],
 		["c5_st_lesson", "hall5", "from_lab", "pip", ["lulu", "mochi", "popo", "fen", "baimian"]],
-		["c5_st_a", "a_ward5", "start", "human:#33415c", []], ["c5_st_a", "a_other5", "from_hall", "human:#33415c", ["human:#e7a3b4"]],
+		["c5_st_a", "a_ward5", "start", "h_haruka", []], ["c5_st_a", "a_other5", "from_hall", "h_haruka", ["h_hilufei"]],
 		["c5_st_b1", "b1_square5", "start", "pip", []]]
 	for s in shots:
 		gs.flags = {s[0]: true, "with_xiaoji": true, "with_gaga": true}

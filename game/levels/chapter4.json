@@ -462,7 +462,7 @@
     {
      "id": "c4_h_li_en",
      "name": "李恩",
-     "char": "human:#5b6b78",
+     "char": "h_lien",
      "pos": [
       800,
       420
@@ -492,7 +492,7 @@
     {
      "id": "c4_d5_teacher_stop",
      "name": "導師",
-     "char": "human:#6f6a5e",
+     "char": "h_teacher",
      "pos": [
       1700,
       450
@@ -969,7 +969,7 @@
     {
      "id": "c4_h_teacher",
      "name": "導師",
-     "char": "human:#6f6a5e",
+     "char": "h_teacher",
      "pos": [
       800,
       210
@@ -981,7 +981,7 @@
     {
      "id": "c4_h_fen",
      "name": "芬",
-     "char": "human:#c8642b",
+     "char": "h_fen",
      "pos": [
       1250,
       640
@@ -991,7 +991,7 @@
     {
      "id": "c4_h_lulu",
      "name": "希露飛",
-     "char": "human:#e7a3b4",
+     "char": "h_hilufei",
      "pos": [
       330,
       400
@@ -1001,7 +1001,7 @@
     {
      "id": "c4_h_popo",
      "name": "銘越",
-     "char": "human:#3b4a73",
+     "char": "h_mingyue",
      "pos": [
       560,
       530
@@ -1011,7 +1011,7 @@
     {
      "id": "c4_h_mochi",
      "name": "小滿",
-     "char": "human:#8b9a7b",
+     "char": "h_xiaoman",
      "pos": [
       1480,
       820
@@ -1021,7 +1021,7 @@
     {
      "id": "c4_h_xinhe",
      "name": "辛禾",
-     "char": "human:#3a3a3a",
+     "char": "h_xinhe",
      "pos": [
       1020,
       530
@@ -1031,7 +1031,7 @@
     {
      "id": "c4_h_tiaoma",
      "name": "薙文",
-     "char": "human:#d9d9d4",
+     "char": "h_tiwen",
      "pos": [
       330,
       660
@@ -1041,7 +1041,7 @@
     {
      "id": "c4_h_junzhu",
      "name": "郡主",
-     "char": "human:#7d7d7d",
+     "char": "h_junzhu",
      "pos": [
       790,
       660
@@ -1051,7 +1051,7 @@
     {
      "id": "c4_h_qiuge",
      "name": "秋歌",
-     "char": "human:#4a4a4a",
+     "char": "h_qiuge",
      "pos": [
       1020,
       790
@@ -1993,7 +1993,7 @@
     {
      "id": "c4_n_zz",
      "name": "郡主",
-     "char": "human:#7d7d7d",
+     "char": "h_junzhu",
      "pos": [
       690,
       560

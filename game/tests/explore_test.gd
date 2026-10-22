@@ -134,5 +134,13 @@ func _run() -> void:
 	var EA = load("res://scripts/explore/explore_art.gd")
 	_check(EA.walk_row(Vector2.DOWN) == 0 and EA.walk_row(Vector2.LEFT) == 1 and EA.walk_row(Vector2.RIGHT) == 2 and EA.walk_row(Vector2.UP) == 3, "走路圖：下左右上 → 第 0～3 列")
 	_check(EA.tex(EA.WALK_DIR % "no_such_char") == null, "沒有走路圖的角色退回原本的站姿圖")
+	# 人類時期：第四章每個視角的主角（h_<id>）都要有走路圖或備用的人影顏色
+	var ch4 = load("res://scripts/chapter4.gd")
+	var miss := []
+	for k in ch4.LOOKS:
+		var v: String = ch4.LOOKS[k]
+		if v.begins_with("h_") and EA.tex(EA.WALK_DIR % v) == null and not EA.HUMAN_FALLBACK.has(v):
+			miss.append(v)
+	_check(miss.is_empty(), "第四章視角的主角都有走路圖或人影顏色（缺：%s）" % [miss])
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

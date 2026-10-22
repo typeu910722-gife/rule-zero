@@ -22,7 +22,7 @@ func _run() -> void:
 	var ex = load("res://scripts/explore/explore.gd").new()
 	ex.load_level("res://levels/chapter4.json")
 	root.add_child(ex)
-	ex.player.look = "human:#33415c"
+	ex.player.look = "h_haruka"
 	await process_frame
 	for rid in ["gate", "entrance", "hall1", "classroom"]:
 		await ex.enter(rid, "from_hall" if rid == "classroom" else "x")

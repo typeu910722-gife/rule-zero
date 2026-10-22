@@ -1421,7 +1421,7 @@
     {
      "id": "c5_a_xinhe",
      "name": "辛禾",
-     "char": "human:#6f8f6a",
+     "char": "h_xinhe",
      "pos": [
       220,
       380
@@ -1431,7 +1431,7 @@
     {
      "id": "c5_a_junzhu",
      "name": "郡主",
-     "char": "human:#7d7d7d",
+     "char": "h_junzhu",
      "pos": [
       640,
       380
@@ -1441,7 +1441,7 @@
     {
      "id": "c5_a_qiuge",
      "name": "秋歌",
-     "char": "human:#3c3f46",
+     "char": "h_qiuge",
      "pos": [
       1060,
       380
@@ -1451,7 +1451,7 @@
     {
      "id": "c5_a_lien",
      "name": "李恩",
-     "char": "human:#5b6b78",
+     "char": "h_lien",
      "pos": [
       1480,
       380

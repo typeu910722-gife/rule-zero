@@ -19,7 +19,7 @@ const BGM := {"memory": "11_memory", "dream": "16_dream", "nirvana": "10_nirvana
 const LEVEL := "res://levels/chapter5.json"
 const STAGES := ["lab", "lesson", "a", "b1", "b2", "b3"]
 const PARTY := ["lulu", "mochi", "popo", "fen", "baimian"]
-const HARUKA := "human:#33415c"     # 醒來之後的遙（和第四章同一個樣子）
+const HARUKA := "h_haruka"     # 醒來之後的遙（和第四章同一個樣子：art/walk4/h_haruka.png）
 const REAL_SLOW := 0.7              # 人類的身體很重、走很慢
 const NIGHT := Color(0.62, 0.66, 0.8)
 
