@@ -88,4 +88,4 @@ func _draw() -> void:
 	if who.begins_with("human:"):
 		ExploreArt.draw_human(self, Vector2.ZERO, who.trim_prefix("human:"), 0 if facing.y > 0 else 3, true, Time.get_ticks_msec() / 1000.0)
 	else:
-		ExploreArt.draw_char(self, who, Vector2.ZERO, facing.x < 0)
+		ExploreArt.draw_char(self, who, Vector2.ZERO, facing.x < 0, ExploreArt.walk_row(facing), int(Time.get_ticks_msec() / 140.0) % 4)

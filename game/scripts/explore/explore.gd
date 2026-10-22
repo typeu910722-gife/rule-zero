@@ -156,7 +156,9 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		fo.set_meta("id", fid)
 		fo.set_meta("k", i)
 		fo.position = player.trail[mini(player.trail.size() - 1, 7 + i * 7)]
-		fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO))
+		fo.set_meta("row", 3)
+		fo.set_meta("frame", 0)
+		fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO, false, fo.get_meta("row"), fo.get_meta("frame")))
 		_ysort.add_child(fo)
 		_followers.append(fo)
 	# 鏡頭：房間比畫面小時置中
@@ -329,7 +331,16 @@ func _process(delta: float) -> void:
 		var k: int = fo.get_meta("k")
 		var idx := mini(player.trail.size() - 1, 7 + k * 7)
 		if idx >= 0:
+			var before: Vector2 = fo.position
 			fo.position = fo.position.lerp(player.trail[idx], minf(1.0, delta * 10.0))
+			# 走路圖：往哪邊走就換哪一列，有在動才換格
+			var mv: Vector2 = fo.position - before
+			if mv.length() > 0.3:
+				fo.set_meta("row", ExploreArt.walk_row(mv))
+				fo.set_meta("frame", int(Time.get_ticks_msec() / 140.0) % 4)
+			else:
+				fo.set_meta("frame", 0)
+			fo.queue_redraw()
 	if _ysort:   # 還沒進任何房間（加進場景後、enter() 之前）時是 null
 		for n in _ysort.get_children():
 			if n.has_meta("thing"):

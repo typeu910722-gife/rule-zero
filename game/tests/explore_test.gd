@@ -130,5 +130,9 @@ func _run() -> void:
 	kp._input(mouse)
 	_check(kp.entered == "12", "電腦的滑鼠一樣可以點（實際「%s」）" % kp.entered)
 	kp.queue_free()
+	# 四方向走路圖：方向 → 列；有圖的角色用走路圖（動態載入：測試腳本編譯時 GameState 還不在）
+	var EA = load("res://scripts/explore/explore_art.gd")
+	_check(EA.walk_row(Vector2.DOWN) == 0 and EA.walk_row(Vector2.LEFT) == 1 and EA.walk_row(Vector2.RIGHT) == 2 and EA.walk_row(Vector2.UP) == 3, "走路圖：下左右上 → 第 0～3 列")
+	_check(EA.tex(EA.WALK_DIR % "fen") != null, "Fen 有四方向走路圖")
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

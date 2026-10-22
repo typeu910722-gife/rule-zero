@@ -23,7 +23,29 @@ const CHARS := {
 	"staff": [SP + "staff_sprite_walk_sheet.png", 160, Vector2(80, 152), 0.6],
 }
 
+## 四方向走路圖（tools/art/make_walk_sheet.py）：res://art/walk4/<id>.png，4 列（下、左、右、上）× 4 格，每格 160px
+const WALK_DIR := "res://art/walk4/%s.png"
+## 走路圖的縮放（預設 0.5＝80px 高；大隻的角色大一點）
+const WALK_SCALE := {"zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7}
+
 static var _cache := {}
+
+
+## 有四方向走路圖就畫（回傳 true）。row：0 下、1 左、2 右、3 上；frame：0～3
+static func draw_walk(ci: CanvasItem, id: String, foot: Vector2, row := 0, frame := 0) -> bool:
+	var t := tex(WALK_DIR % id)
+	if t == null:
+		return false
+	var sc: float = WALK_SCALE.get(id, 0.5)
+	ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2((frame % 4) * 160, row * 160, 160, 160))
+	return true
+
+
+## 方向（移動的向量）→ 走路圖的列
+static func walk_row(dir: Vector2) -> int:
+	if absf(dir.x) > absf(dir.y):
+		return 1 if dir.x < 0 else 2
+	return 3 if dir.y < 0 else 0
 
 
 static func tex(path: String) -> Texture2D:
@@ -33,7 +55,9 @@ static func tex(path: String) -> Texture2D:
 
 
 ## 畫一個角色的第一格（站著）；沒有圖時畫一個圓圓的玩偶
-static func draw_char(ci: CanvasItem, id: String, foot: Vector2, flip := false) -> void:
+static func draw_char(ci: CanvasItem, id: String, foot: Vector2, flip := false, row := -1, frame := 0) -> void:
+	if id != "pip" and draw_walk(ci, id, foot, (1 if flip else 0) if row < 0 else row, frame):
+		return
 	if id == "pip":
 		var t := tex(PIP_SHEET_MARKS if GameState.day >= 3 else PIP_SHEET)
 		if t:
