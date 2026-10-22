@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bh1mdvsdlbhak"
-path="res://.godot/imported/gaga.png-2fa08f015b2a501b5622afe2571e0f43.ctex"
+uid="uid://cdd3ksa4wtfg8"
+path="res://.godot/imported/fen.png-6229420cabb0f19f00e9122c9c7f34d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/walk4/gaga.png"
-dest_files=["res://.godot/imported/gaga.png-2fa08f015b2a501b5622afe2571e0f43.ctex"]
+source_file="res://art/walk4/fen.png"
+dest_files=["res://.godot/imported/fen.png-6229420cabb0f19f00e9122c9c7f34d2.ctex"]
 
 [params]
 
