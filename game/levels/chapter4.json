@@ -1730,13 +1730,24 @@
    "npcs": [
     {
      "id": "c4_org_father",
-     "name": "大人們",
-     "char": "human:#4a4f5a",
+     "name": "芬的父親",
+     "char": "h_fen_father",
      "pos": [
       1200,
       450
      ],
      "when": "c4_pov_org"
+    },
+    {
+     "id": "c4_org_whitecoat",
+     "name": "穿白大衣的人",
+     "char": "h_whitecoat",
+     "pos": [
+      1320,
+      450
+     ],
+     "when": "c4_pov_org",
+     "flip": true
     }
    ],
    "doors": [

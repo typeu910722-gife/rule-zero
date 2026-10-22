@@ -100,6 +100,16 @@ CPU 上每張約 3–6 分鐘（加了 ControlNet／IP-Adapter 會久一點）�
 3. `tools/art/train/train_lora.sh /tmp/rz-art/datasets/style /tmp/rz-art/out rzstyle 2400`
 4. 用 `gen.py` 比較各步數的存檔，挑最好的複製到 `tools/art/models/`。
 
+## 7. 四方向走路圖（2026-10-22）
+只靠文字出圖做不出同一個角色的側面、背面（會把背面畫成正臉、配件跑掉），所以改用「從正面推算」：
+1. 正面：有第二章原始立繪就直接用；沒有的先用 `gen.py free --no-style`（人類時期，寫實）出正面設計，人工確認合設定。
+2. `tools/art/zero123_views.py 正面.png 輸出前綴`（Zero123++ v1.2，CPU 約 9 分鐘）：輸出 6 個角度，用 90°（側面、朝左）和 210°（背面）。
+3. rembg（`isnet-general-use`）去背。
+4. `python3 tools/art/make_walk_sheet.py 正面 側面 背面 輸出.png --match-color`（側面、背面的色調對齊正面）。
+5. **逐格放大檢查**：往左那列朝左、往右那列朝右、背面沒有臉、配件和原設計一樣。不合格就重算（Zero123++ 每次結果不同）或換正面圖。
+6. 放到 `game/art/walk4/<id>.png`。人類時期用 `h_<id>`。
+模型：`sudo-ai/zero123plus-v1.2`（約 5.6GB，放 /tmp/claude-0/z123，不進 Git）。
+
 ## 6. 注意
 
 - 設定（`CLAUDE.md`）優先：人類時期的場景用人類本名；遙的隱藏設定只能用細節暗示；遊戲文字不出現歧視用語。

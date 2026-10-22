@@ -204,7 +204,8 @@ rooms["hospital4"] = room("醫院（很多年以前）", [1600, 720], "hospital"
     props=[{"kind": "bed", "rect": [420, 280, 200, 80]}, {"kind": "bed", "rect": [820, 280, 200, 80]}, {"kind": "machine", "rect": [640, 200, 80, 50]}],
     spots=[{"id": "c4_org_hospital", "name": "遙的床", "pos": [520, 420], "when": O},
            {"id": "c4_o_fenbed", "name": "芬的床", "pos": [920, 420], "when": O}],
-    npcs=[{"id": "c4_org_father", "name": "大人們", "char": "human:#4a4f5a", "pos": [1200, 450], "when": O}],
+    npcs=[{"id": "c4_org_father", "name": "芬的父親", "char": "h_fen_father", "pos": [1200, 450], "when": O},
+          {"id": "c4_org_whitecoat", "name": "穿白大衣的人", "char": "h_whitecoat", "pos": [1320, 450], "when": O, "flip": True}],
     doors=[{"id": "c4_door_hosp_platform", "name": "很遠的月台", "pos": [1560, 450], "size": [60, 120], "to": "platform4", "spawn": "start",
             "when": O, "open": "done_c4_org_hospital&done_c4_org_father", "locked_text": "（還沒看完。）"}])
 rooms["platform4"] = room("白色的月台", [1600, 720], "platform",
