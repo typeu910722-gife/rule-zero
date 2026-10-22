@@ -12,6 +12,7 @@ ap.add_argument("front"); ap.add_argument("side"); ap.add_argument("back"); ap.a
 ap.add_argument("--cell", type=int, default=160)
 ap.add_argument("--side-faces", choices=["left", "right"], default="left", help="側面圖的角色朝哪邊")
 ap.add_argument("--height", type=float, default=0.9, help="角色佔一格高度的比例")
+ap.add_argument("--match-color", action="store_true", help="把側面、背面的色調對齊正面（推算出來的角度常常偏色）")
 a = ap.parse_args()
 C = a.cell
 
@@ -37,6 +38,19 @@ views = [trim(Image.open(p)) for p in (a.front, a.side, a.back)]
 H = C * a.height
 views = [v.resize((max(1, round(v.width * H / v.height)), round(H)), Image.LANCZOS) for v in views]
 views = [v.resize((min(v.width, C - 4), v.height), Image.LANCZOS) if v.width > C - 4 else v for v in views]
+if a.match_color:
+    import numpy as np
+    def stats(v):
+        arr = np.asarray(v).astype(float); m = arr[..., 3] > 128
+        return arr, m, arr[m][:, :3].mean(0), arr[m][:, :3].std(0) + 1e-3
+    _, _, fm, fs = stats(views[0])
+    out = [views[0]]
+    for v in views[1:]:
+        arr, m, mm, ss = stats(v)
+        rgb = (arr[..., :3] - mm) / ss * fs + fm
+        arr[..., :3] = np.where(m[..., None], np.clip(rgb, 0, 255), arr[..., :3])
+        out.append(Image.fromarray(arr.astype("uint8")))
+    views = out
 front, side, back = views
 left = side if a.side_faces == "left" else side.transpose(Image.FLIP_LEFT_RIGHT)
 right = left.transpose(Image.FLIP_LEFT_RIGHT)
