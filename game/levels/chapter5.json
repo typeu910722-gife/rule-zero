@@ -1670,13 +1670,26 @@
       640
      ],
      "when": "c5_st_b1"
-    },
+    }
+   ],
+   "npcs": [
     {
      "id": "c5_b1_xiaoyu",
-     "name": "小玉的家",
+     "name": "小玉",
+     "char": "tama",
      "pos": [
       600,
       600
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_puppies",
+     "name": "小狗們",
+     "char": "puppy",
+     "pos": [
+      760,
+      640
      ],
      "when": "c5_st_b1"
     }

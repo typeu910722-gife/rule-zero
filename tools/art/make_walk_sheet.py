@@ -17,15 +17,26 @@ C = a.cell
 
 
 def trim(im):
+    """只看清楚不透明的部分（去背常留下一圈幾乎透明的雜點），也丟掉離主體很遠的小碎片。"""
+    import numpy as np
+    from scipy import ndimage
     im = im.convert("RGBA")
-    box = im.getchannel("A").point(lambda v: 255 if v > 24 else 0).getbbox()
-    return im.crop(box) if box else im
+    al = np.asarray(im.getchannel("A")) > 128
+    lab, n = ndimage.label(al)
+    if n > 1:
+        sizes = ndimage.sum(al, lab, range(1, n + 1))
+        keep = np.isin(lab, [i + 1 for i, v in enumerate(sizes) if v >= sizes.max() * 0.05])
+        arr = np.asarray(im).copy(); arr[..., 3] = np.where(ndimage.binary_dilation(keep, iterations=2), arr[..., 3], 0)
+        im = Image.fromarray(arr); al = keep
+    ys, xs = np.where(al)
+    return im.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)) if len(xs) else im
 
 
 views = [trim(Image.open(p)) for p in (a.front, a.side, a.back)]
-# 三個視角用同一個縮放（以最高的那張為準），大小才一致
-scale = C * a.height / max(v.height for v in views)
-views = [v.resize((max(1, round(v.width * scale)), max(1, round(v.height * scale))), Image.LANCZOS) for v in views]
+# 每個視角各自縮放到一樣的高度（不同來源的圖，角色在畫面裡的大小不一樣）
+H = C * a.height
+views = [v.resize((max(1, round(v.width * H / v.height)), round(H)), Image.LANCZOS) for v in views]
+views = [v.resize((min(v.width, C - 4), v.height), Image.LANCZOS) if v.width > C - 4 else v for v in views]
 front, side, back = views
 left = side if a.side_faces == "left" else side.transpose(Image.FLIP_LEFT_RIGHT)
 right = left.transpose(Image.FLIP_LEFT_RIGHT)
