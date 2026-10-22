@@ -36,6 +36,7 @@ if [ ! -x comfyenv/bin/python ]; then
   "$UV" pip install -q --python comfyenv/bin/python -r ComfyUI/requirements.txt
   "$UV" pip install -q --python comfyenv/bin/python -r ComfyUI/custom_nodes/comfyui_controlnet_aux/requirements.txt || true
   "$UV" pip install -q --python comfyenv/bin/python pillow scipy opencv-python-headless
+  python3 -m pip install -q scipy numpy pillow 2>/dev/null || true   # gen.py --cutout 用系統的 python3
 fi
 
 echo "== 模型（Hugging Face，全部可商用：見 docs/art_pipeline.md）"
