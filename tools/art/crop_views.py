@@ -59,8 +59,18 @@ for k, (x1, x2) in enumerate(segs):
     ys = np.where(col.any(axis=1))[0]
     if len(ys) == 0 or ys[-1] - ys[0] < h * 0.4:
         continue
-    piece = im.convert("RGBA").crop((x1, ys[0], x2, ys[-1] + 1))
-    piece.putalpha(Image.fromarray(alpha_np[ys[0]:ys[-1] + 1, x1:x2]))
+    # 這一段裡只留最大的那一塊（丟掉隔壁角色的碎片、沒去乾淨的背景）
+    seg_lab, nseg = ndimage.label(col)
+    if nseg > 1:
+        sizes = ndimage.sum(col, seg_lab, range(1, nseg + 1))
+        col = seg_lab == (int(np.argmax(sizes)) + 1)
+    ys = np.where(col.any(axis=1))[0]
+    xs_ = np.where(col.any(axis=0))[0]
+    a_seg = alpha_np[:, x1:x2].copy()
+    a_seg[~ndimage.binary_dilation(col, iterations=2)] = 0
+    piece = im.convert("RGBA").crop((x1, 0, x2, h))
+    piece.putalpha(Image.fromarray(a_seg))
+    piece = piece.crop((xs_[0], ys[0], xs_[-1] + 1, ys[-1] + 1))
     outs.append(piece)
     print(f"{len(outs) - 1}: x={x1}-{x2} y={ys[0]}-{ys[-1]}")
 if a.pick:
