@@ -52,6 +52,9 @@
 > 「事由：」後面是空白的。
 > 「壞孩子」三個字的筆跡，跟單子上其他的字不一樣。墨水比較新。
 > 角落蓋著一個小小的紅色印章：「校外參訪」。
+[!c2_paper_scare] > 空白的「事由」上，字浮起來，又沉回去。你只來得及看見：「沒有阻止」。
+[!c2_paper_scare] @scare
+@set c2_paper_scare
 @bg grey_train
 @set ch2_referral
 @goto c2_pro_hub
@@ -185,6 +188,20 @@ Fen：小布。不要吃他們給的東西。
 白面：名字想起來了啊。其他的呢？……果然還是不記得。真好啊，你們這種人。
 白面：去問那隻有顏色的狐狸吧。如果他還記得的話。
 @set met_baimian
+* 「你是 Fen 嗎？」 -> c2_bm_fen
+* 「……你認識遙。」 -> c2_bm_haru
+* 什麼都不問。 -> c2_bm_quiet
+# c2_bm_fen
+白面：Fen 在河對岸。我在這裡。
+白面：同一個身體，剪成兩半。你要哪一半？
+@set c2_asked_baimian
+@end
+# c2_bm_haru
+白面：認識。門口那一天，跟書包無關。
+白面：你想起來的話，自己會痛。我不幫你。
+@set c2_heard_door
+@end
+# c2_bm_quiet
 > 你轉身離開。走了幾步，回頭。
 > 他還在看你。嘴型在說一個字，但是沒有聲音。
 @end
@@ -234,6 +251,17 @@ Fen：小布。不要吃他們給的東西。
 @face 條碼
 條碼：……今天的天氣，很好。
 @set met_tiaoma
+* 「你還記得自己的名字嗎？」 -> c2_tm_name
+* 不要再問了。 -> c2_tm_stop
+# c2_tm_name
+@face 條碼 blurt
+條碼：薙……
+> 她自己捂住嘴。
+條碼：……今天的天氣，很好。
+@set c2_tiaoma_named
+@end
+# c2_tm_stop
+條碼：今天的天氣，很好。
 @end
 # c2_tiaoma_again
 條碼：今天的天氣，很好。
@@ -250,6 +278,15 @@ Fen：小布。不要吃他們給的東西。
 > 「很多次」
 > 水字很快就乾了。
 @set met_gaga
+* 「不要拍我。」 -> c2_gg_stop
+* 什麼都不說。 -> c2_gg_quiet
+# c2_gg_stop
+> 嘎嘎把鏡頭眼轉開。在桌上寫：「已經拍了。」
+> 然後把那兩個字擦掉。
+@set c2_asked_gaga_stop
+@end
+# c2_gg_quiet
+> 喀嚓。又一次。她沒有把這張擦掉。
 @end
 # c2_gaga_again
 > 嘎嘎在桌上畫了一台相機，又用翅膀擦掉。
@@ -266,6 +303,15 @@ Fen：小布。不要吃他們給的東西。
 > 他把摺好的紙鶴放到你手上。
 > 是灰色的。
 @set met_zhongzhong
+* 「紙鶴要給誰？」 -> c2_zz_who
+* 把紙鶴收好。 -> c2_zz_keep
+# c2_zz_who
+重重：……給一個不會來接我的人。
+重重：我還是會摺。
+@set c2_asked_crane
+@end
+# c2_zz_keep
+> 你把灰色的紙鶴收進斗篷裡。
 @end
 # c2_zz_again
 > 重重還在摺紙鶴。桌上已經有很多隻了。全部都是灰色的。
@@ -286,6 +332,16 @@ Fen：小布。不要吃他們給的東西。
 鼬鼬：是啊。所以我每天都在違反。
 鼬鼬：很划算喔。一條毛線，換一個「我還是我」。
 @set met_youyou
+* 「十五分鐘，夠做什麼？」 -> c2_yy_ask
+* 「我不會看你。」 -> c2_yy_lookaway
+# c2_yy_ask
+鼬鼬：夠把一個人從網子這邊，換到你想去的那邊。
+鼬鼬：或者夠讓一個人消失。看你想換哪一種。
+@set c2_asked_fence_time
+@end
+# c2_yy_lookaway
+鼬鼬：太遲了。你已經看了。
+鼬鼬：沒關係。我習慣被看見，然後被忘掉。
 @end
 # c2_youyou_again
 鼬鼬：還沒想好要拿什麼來換？慢慢想。這裡最多的就是時間。
@@ -296,9 +352,16 @@ Fen：小布。不要吃他們給的東西。
 > 面具的眼洞裡，什麼都看不到。
 
 === c2_treatment_door
+@if c2_poster_scare c2_treatment_again
 > 白色的門。門把是冰的。鎖著。
 > 門上貼著一張兒童畫風的海報：「乖孩子不痛！」
 > 門縫底下，飄出一點點燒焦棉花的味道。
+> 海報上的笑臉，眨了一下。
+@scare
+@set c2_poster_scare
+@end
+# c2_treatment_again
+> 白色的門。還是鎖著。海報上的笑臉沒有再動。
 
 === c2_laundry
 @bg laundry
@@ -626,6 +689,9 @@ Fen：小布。不要吃他們給的東西。
 @event photo_1
 > 學校的走廊。一隻白臉的狐狸，正把別人的書包倒進垃圾桶。
 > 旁邊站著一個人。看不清楚臉。胸口的名牌寫著「遙」。
+[!photo_paper_scare] > 照片裡的人，忽然轉過頭。
+[!photo_paper_scare] @scare
+@set photo_paper_scare
 @set photo_1
 @event photo_2
 > 學校的信箱前。一隻黑色刺蝟，手上拿著一疊信。
@@ -790,6 +856,7 @@ Fen：小布。不要吃他們給的東西。
 > 他抖了一下。
 鼬鼬：他每次來，那隻鴿子都會變得很奇怪。
 鼬鼬：十五分鐘。治療室、辦公室、月台。快一點。
+[c2_asked_fence_time] 鼬鼬：你問過這十五分鐘夠做什麼。現在你看到了。
 
 === c2_treatment_window
 @if saw_silhouette c2_tw_again
@@ -842,6 +909,7 @@ Fen：小布。不要吃他們給的東西。
 * 看夾板 -> c2_office_clip
 * 離開 -> c2_office_leave
 # c2_office_diary
+@if c2_diary_scare c2_office_diary_again
 @bg cg08_diary
 > 「No.31 條碼：今天哭了十一分鐘。我數了。哭到第九分鐘的時候，聲音最好聽。」
 > 「No.40 重重：他爸爸打他的時候，他也是這樣縮成一團嗎？我想知道。所以我試了。是的。」
@@ -855,7 +923,14 @@ Fen：小布。不要吃他們給的東西。
 > 「今天，我看到了教官的電腦。原來我們不是在學校。」
 > 「今天，教官沒有醒來。」
 > 「我替他戴上了面具。很合。」
+> 那一行的最後，多出一個你沒寫過的字。它在看你。
+@scare
+@set c2_diary_scare
 @set dove_first_page
+@bg office
+@goto c2_office_hub
+# c2_office_diary_again
+> 日記還攤在桌上。字沒有再動。
 @bg office
 @goto c2_office_hub
 # c2_office_clip
@@ -969,6 +1044,7 @@ Fen：小布。不要吃他們給的東西。
 條碼：我還記得，我開的那個群組叫什麼名字。
 條碼：叫「我們」。很好笑吧。
 條碼：明明大家都不想跟我是「我們」。
+[c2_tiaoma_named] 條碼：早上卡在嘴巴裡的那個字……薙文。好遠的名字。
 @end
 # c2_d3_tm_plain
 條碼：……你是誰？
@@ -1177,6 +1253,7 @@ Fen：小布。不要吃他們給的東西。
 === c2_zhongzhong_day3_explore
 > 重重把一整排灰色紙鶴，排在窗台上。
 重重：……一隻都沒有飛走。
+[c2_asked_crane] 重重：給那個不會來的人。他還是沒來。
 === c2_gaga_day3_explore
 > 嘎嘎在桌上寫：「今天不要拍照」
 > 她把相機眼閉上了。

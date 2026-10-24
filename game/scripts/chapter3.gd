@@ -242,6 +242,15 @@ func _on_event(event_name: String) -> void:
 		Dialogue.event_done.emit()
 		return
 	match event_name:
+		"jumpscare_dove_up":
+			var j := JumpScare.new()
+			j.who = "dove"
+			j.upside_down = true
+			add_child(j)
+			Sound.duck(true)
+			await j.play()
+			Sound.duck(false)
+			j.queue_free()
 		"c3_whistle":
 			Motif.play(self, "whistle", -6.0)
 		"c3_rules":

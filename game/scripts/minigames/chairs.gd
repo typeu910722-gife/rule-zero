@@ -1,6 +1,7 @@
 extends CanvasLayer
 ## 搶椅子（第二章小遊戲 6）：音樂盒一停就搶椅子（按 E／點畫面），最後一個沒椅子的人「去治療」。
-## 每一輪少一張椅子，也少一個人。誰被淘汰由劇本決定；小布太慢的話會「差一點」，但還是坐得到。
+## 玩家有在停下後 1.6 秒內按下，淘汰的是劇本指定的人。沒按：小布沒有椅子，這一輪重來。
+## 累計輸兩次，和平鴿的臉會貼上來一次（「減少驚嚇」時改成慢慢浮現）。
 ## players：這一輪還在場的人（id 陣列）；out：這一輪被淘汰的 id；pip_sits：小布有沒有坐下。
 
 signal done
@@ -16,6 +17,9 @@ const CENTER := Vector2(640, 400)
 var players: Array = []
 var out := ""
 var pip_sits := true
+var _scripted_out := ""
+var _losses := 0
+var _finishing := false
 var _phase := "music"     # music / stopped / result
 var _t := 0.0
 var _stop_at := 3.0
@@ -104,12 +108,59 @@ func _ready() -> void:
 
 func play() -> void:
 	if GameState.fast:
+		pip_sits = true
 		queue_free()
 		return
+	_scripted_out = out
+	_losses = int(GameState.flags.get("chairs_losses", 0))
 	_stop_at = randf_range(2.4, 4.2)
 	_running = true
 	await done
 	queue_free()
+
+
+func _missed() -> bool:
+	return _reacted < 0
+
+
+## 結算時沒有椅子的人。音樂還沒停完，誰都不算坐下。
+func _stands(id: String) -> bool:
+	if _phase != "result":
+		return false
+	if _missed():
+		return id == "pip"
+	return id == out
+
+
+func _resolve_result() -> void:
+	if _missed():
+		_losses += 1
+		GameState.set_flag("chairs_losses", _losses)
+		pip_sits = false
+		if _losses >= 2 and not GameState.has("chairs_dove_jumped"):
+			GameState.set_flag("chairs_dove_jumped")
+			var j := JumpScare.new()
+			j.who = "dove"
+			add_child(j)
+			await j.play()
+			j.queue_free()
+		_restart_round()
+	else:
+		pip_sits = true
+		out = _scripted_out
+		_running = false
+		done.emit()
+
+
+func _restart_round() -> void:
+	out = _scripted_out
+	_phase = "music"
+	_t = 0.0
+	_reacted = -1.0
+	_note_i = 0
+	_note_t = 0.0
+	_stop_at = randf_range(2.4, 4.2)
+	_finishing = false
 
 
 func _process(delta: float) -> void:
@@ -132,9 +183,9 @@ func _process(delta: float) -> void:
 				_phase = "result"
 				_t = 0.0
 		"result":
-			if _t > 1.8:
-				_running = false
-				done.emit()
+			if _t > 1.8 and not _finishing:
+				_finishing = true
+				_resolve_result()
 	_area.queue_redraw()
 
 
@@ -169,7 +220,7 @@ func _draw_art() -> void:
 	else:
 		a.draw_rect(Rect2(0, 0, 1280, 720), Color("#dededb"))
 	a.draw_rect(Rect2(0, 18, 1280, 46), Color(1, 1, 1, 0.7))
-	a.draw_string(f, Vector2(0, 50), GameState.hint("搶椅子！音樂停下來的時候，按 E／點畫面坐下"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("音樂停了再按。沒按，就沒有椅子。"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	var chairs := players.size() - 1
 	var chair_sz := _chair_tex.get_size() * CHAIR_SCALE
 	for k in chairs:
@@ -188,7 +239,7 @@ func _draw_art() -> void:
 			dir = (1 if vel.x > 0 else 3) if absf(vel.x) > absf(vel.y) else (0 if vel.y > 0 else 2)
 			p.y -= absf(sin(_t * 9.0 + k)) * 5.0
 		var seated := false
-		if _phase != "music" and id != out:
+		if _phase == "result" and not _stands(id):
 			if seat < chairs:
 				p = _chair_pos(seat, chairs) + Vector2(0, 14)
 			else:
@@ -196,7 +247,7 @@ func _draw_art() -> void:
 				p = _chair_pos(maxi(chairs - 1, 0), chairs) + Vector2(80 * (seat - chairs + 1), 40)
 			seat += 1
 			seated = true
-		if _phase == "result" and id == out:
+		if _phase == "result" and _stands(id):
 			p = OUT_POS
 		kids.append([p, id, dir, seated])
 	kids.sort_custom(func(x, y): return x[0].y < y[0].y)
@@ -220,10 +271,13 @@ func _draw_art() -> void:
 	elif _phase == "stopped":
 		_sticker(a, _sticker_top, Vector2(640, 108), "音樂停了！", 34, Color("#e05780"))
 	else:
-		if _reacted < 0 or _reacted > 0.8:
+		if _missed():
+			_sticker(a, _sticker_top, Vector2(640, 108), "沒有坐下", 30, Color("#888888"))
+		elif _reacted > 0.8:
 			_sticker(a, _sticker_top, Vector2(640, 108), "差一點！", 30, Color("#888888"))
-		if out != "":
-			_sticker(a, _sticker_bottom, Vector2(640, 672), "%s，去治療室。" % NAMES[out], 26, Color("#444444"))
+		var loser := "pip" if _missed() else out
+		if loser != "":
+			_sticker(a, _sticker_bottom, Vector2(640, 672), "%s，去治療室。" % NAMES[loser], 26, Color("#444444"))
 
 
 ## 一個人：有走路圖用走路圖（四個方向），沒有就用站姿，再沒有就程序繪圖
@@ -261,7 +315,7 @@ func _draw_fallback() -> void:
 	var f: Font = GameState.font
 	var a := _area
 	a.draw_rect(Rect2(0, 0, 1280, 720), Color("#dededb"))
-	a.draw_string(f, Vector2(0, 50), GameState.hint("搶椅子！音樂停下來的時候，按 E／點畫面坐下"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
+	a.draw_string(f, Vector2(0, 50), GameState.hint("音樂停了再按。沒按，就沒有椅子。"), HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#c2558a"))
 	var chairs := players.size() - 1
 	var radius := 190.0
 	for k in chairs:
@@ -273,9 +327,9 @@ func _draw_fallback() -> void:
 		var id: String = players[k]
 		var ang := TAU * k / players.size() + spin
 		var p := CENTER + Vector2.from_angle(ang) * radius
-		if _phase != "music" and id != out:
+		if _phase == "result" and not _stands(id):
 			p = CENTER + Vector2.from_angle(TAU * mini(k, chairs - 1) / maxi(chairs, 1)) * 90
-		if _phase == "result" and id == out:
+		if _phase == "result" and _stands(id):
 			p = Vector2(1120, 600)
 		a.draw_set_transform(p, 0.0, Vector2(1.6, 1.6))
 		Ch2Critter.draw(a, SPECIES[id], COLORS[id], 1.0, Vector2.ZERO, id != "tiaoma", false, id == "pip",
@@ -292,7 +346,10 @@ func _draw_fallback() -> void:
 	elif _phase == "stopped":
 		a.draw_string(f, Vector2(0, 110), "音樂停了！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 34, Color("#e05780"))
 	else:
-		if _reacted < 0 or _reacted > 0.8:
+		if _missed():
+			a.draw_string(f, Vector2(0, 110), "沒有坐下", HORIZONTAL_ALIGNMENT_CENTER, 1280, 30, Color("#888888"))
+		elif _reacted > 0.8:
 			a.draw_string(f, Vector2(0, 110), "差一點！", HORIZONTAL_ALIGNMENT_CENTER, 1280, 30, Color("#888888"))
-		if out != "":
-			a.draw_string(f, Vector2(0, 680), "%s，去治療室。" % NAMES[out], HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#444444"))
+		var loser := "pip" if _missed() else out
+		if loser != "":
+			a.draw_string(f, Vector2(0, 680), "%s，去治療室。" % NAMES[loser], HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#444444"))
