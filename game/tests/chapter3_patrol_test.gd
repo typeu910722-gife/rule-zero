@@ -2,6 +2,8 @@ extends SceneTree
 ## 第三章巡邏護士：有走路圖、隨機巡邏、近距離追逐，碰到才算抓住。
 
 var failures := 0
+var chased := false
+var caught := false
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -14,6 +16,15 @@ func _check(cond: bool, msg: String) -> void:
 
 func _init() -> void:
 	_run.call_deferred()
+
+
+func _on_chase(active: bool, _by: String) -> void:
+	if active:
+		chased = true
+
+
+func _on_caught(_by: String) -> void:
+	caught = true
 
 
 func _run() -> void:
@@ -35,12 +46,8 @@ func _run() -> void:
 	_check(nurse.data.get("char", "") == "h_nurse" and nurse._random_patrol, "護士使用走路圖並隨機巡邏")
 	_check(nurse._target != nurse.position, "隨機巡邏會選下一個位置")
 
-	var chased := false
-	var caught := false
-	ex.chase_changed.connect(func(active: bool, _by: String):
-		if active:
-			chased = true)
-	ex.caught.connect(func(_by: String): caught = true)
+	ex.chase_changed.connect(_on_chase)
+	ex.caught.connect(_on_caught)
 	# 放在護士正後方也要因為距離過近被察覺；先進追逐，不是立刻抓住。
 	ex.player.position = nurse.position - nurse.facing * 150.0
 	for k in 8:
