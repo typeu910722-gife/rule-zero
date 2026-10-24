@@ -257,11 +257,7 @@ func _ledger() -> void:
 
 
 func _finale_label() -> String:
-	if GameState.has("rewrote_zero") and GameState.has("sent_self_letter") and GameState.has("fen_why") and GameState.dream_count() >= 3:
-		return "c6_remember"
-	if GameState.has("rewrote_zero"):
-		return "c6_short"
-	return "c6_good"
+	return GameState.finale_label()
 
 
 func _play_finale(label: String) -> void:
@@ -272,13 +268,29 @@ func _play_finale(label: String) -> void:
 		places.queue_redraw()
 		tint.color = Color.WHITE
 		_bgm("remember")
-	elif label == "c6_good" or label == "c6_short":
-		actors.baimian.modulate = Color(0.78, 0.78, 0.78)
-		_bgm("cotton" if label == "c6_good" else "repair")
 	elif label == "c6_repair":
 		_bgm("repair")
+	elif label == "c6_stay":
+		_bgm("mayor")
+	else:
+		actors.baimian.modulate = Color(0.78, 0.78, 0.78)
+		_bgm("repair")
+		_note_who_is_missing()
+		if GameState.dream_count() < 3:
+			GameState.set_flag("dreams_short")
 	await Dialogue.run(label)
 	_close_book(label)
+
+
+func _note_who_is_missing() -> void:
+	var raw: Variant = GameState.meta.get("ch2_fates", {})
+	if not (raw is Dictionary):
+		return
+	var fates: Dictionary = raw
+	if str(fates.get("xiaoji", "")) == "dead":
+		GameState.set_flag("left_xiaoji")
+	if str(fates.get("zhongzhong", "")) == "dead":
+		GameState.set_flag("left_zhongzhong")
 
 
 func _close_book(label: String) -> void:
@@ -294,11 +306,29 @@ func _close_book(label: String) -> void:
 			key = "repair"
 		"c6_stay":
 			key = "stay"
+		"c6_hid":
+			key = "hid"
+		"c6_comforted":
+			key = "comforted"
+		"c6_left":
+			key = "left_behind"
+		"c6_never":
+			key = "never_ran"
+		"c6_no_letter":
+			key = "no_letter"
+		"c6_no_why":
+			key = "no_why"
+	var kind := "壞"
+	if key == "remember":
+		kind = "好"
+	elif key == "stay":
+		kind = "不好不壞"
 	phase = "ended"
 	if not GameState.has("replay_mayor"):
 		GameState.meta.threads = int(GameState.meta.get("threads", 0)) + GameState.threads_earned()
 	GameState.meta.chapters_done = maxi(int(GameState.meta.get("chapters_done", 0)), 6)
 	GameState.meta.ending = key
+	GameState.meta.ending_kind = kind
 	if key == "remember":
 		GameState.meta.true_seen = true
 	if key == "repair" or GameState.has("stitch_title"):

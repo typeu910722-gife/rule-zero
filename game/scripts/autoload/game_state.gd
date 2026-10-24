@@ -199,6 +199,63 @@ func dream_count() -> int:
 	return n
 
 
+## 第六章只會走進一種結局。修理與「好孩子」先決定；其餘回頭看第一章、第二章留下的選擇。
+## 好結局只有 remember。stay 由重問鎮長另行進入，不從這裡返回。
+func finale_id() -> String:
+	if suspicion >= 80 and not has("rewrote_zero") and not has("kept_zero"):
+		return "repair"
+	if has("kept_zero") or not has("rewrote_zero"):
+		return "good"
+	if has("lulu_betrayal"):
+		return "hid"
+	if has("lulu_comforted"):
+		return "comforted"
+	if _left_someone():
+		return "left_behind"
+	if not has("brave_end"):
+		return "never_ran"
+	if not has("sent_self_letter"):
+		return "no_letter"
+	if not has("fen_why") or dream_count() < 3:
+		return "no_why"
+	return "remember"
+
+
+func finale_label() -> String:
+	match finale_id():
+		"remember":
+			return "c6_remember"
+		"good":
+			return "c6_good"
+		"repair":
+			return "c6_repair"
+		"hid":
+			return "c6_hid"
+		"comforted":
+			return "c6_comforted"
+		"left_behind":
+			return "c6_left"
+		"never_ran":
+			return "c6_never"
+		"no_letter":
+			return "c6_no_letter"
+		"no_why":
+			return "c6_no_why"
+		_:
+			return "c6_good"
+
+
+## 漂白鎮裡小棘或重重沒有上車。條碼固定不在，鼬鼬留在月台，都不算。
+func _left_someone() -> bool:
+	var raw: Variant = meta.get("ch2_fates", {})
+	if not (raw is Dictionary):
+		return false
+	var fates: Dictionary = raw
+	if fates.is_empty():
+		return false
+	return str(fates.get("xiaoji", "")) == "dead" or str(fates.get("zhongzhong", "")) == "dead"
+
+
 ## 進入後續章節。不清除已經帶過來的旗標。
 func start_chapter(n: int) -> void:
 	chapter = n

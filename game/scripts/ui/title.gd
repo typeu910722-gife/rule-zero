@@ -141,6 +141,18 @@ func _draw_area() -> void:
 			ending_line = "修理。"
 		"stay":
 			ending_line = "留下來的人。"
+		"hid":
+			ending_line = "樹後面。"
+		"comforted":
+			ending_line = "一直是綠色。"
+		"left_behind":
+			ending_line = "少了一個人。"
+		"never_ran":
+			ending_line = "沒有衝出去。"
+		"no_letter":
+			ending_line = "紙還在地上。"
+		"no_why":
+			ending_line = "他沒有走過來。"
 	if ending_line != "":
 		_area.draw_string(f, Vector2(116, 690), ending_line, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#b56576"))
 
