@@ -10,6 +10,7 @@ extends Node2D
 signal interacted(id: String)
 signal caught(by: String)
 signal room_entered(id: String)
+signal chase_changed(active: bool, by: String)
 
 const REACH := 72.0
 const Keypad := preload("res://scripts/explore/keypad.gd")
@@ -32,6 +33,7 @@ var _fade: ColorRect
 var _dark: CanvasModulate
 var _light: PointLight2D
 var _patrols: Array = []
+var _chasing_patrols := {}
 var _followers: Array = []
 var _entry := Vector2.ZERO       # 被抓到時回到這裡（最後一次進門的位置）
 var _waiting := ""               # until() 等的條件
@@ -107,6 +109,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	for c in _world.get_children():
 		c.queue_free()
 	_patrols.clear()
+	_chasing_patrols.clear()
 	_followers.clear()
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
@@ -504,9 +507,19 @@ func on_spotted(by: Dictionary) -> void:
 	busy = true
 	var lab: String = by.get("catch", "")
 	if not GameState.fast:
-		Sfx.play(self, "wrong", -4.0)
-		toast("！", 0.8)
-		await get_tree().create_timer(0.6).timeout
+		var scare: String = by.get("scare", "")
+		if scare != "":
+			var j := JumpScare.new()
+			j.who = scare
+			add_child(j)
+			Sound.duck(true)
+			await j.play()
+			Sound.duck(false)
+			j.queue_free()
+		else:
+			Sfx.play(self, "wrong", -4.0)
+			toast("！", 0.8)
+			await get_tree().create_timer(0.6).timeout
 	if lab != "" and Dialogue.has_label(lab):
 		await Dialogue.run(lab)
 	caught.emit(str(by.get("id", by.get("char", ""))))
@@ -518,6 +531,15 @@ func on_spotted(by: Dictionary) -> void:
 		p.reset()
 	await _fade_to(0.0)
 	busy = false
+
+
+## 巡邏者開始／停止追逐。多個追兵同時存在時，最後一個停下才關掉追逐音樂。
+func patrol_chase_changed(active: bool, by: String) -> void:
+	if active:
+		_chasing_patrols[by] = true
+	else:
+		_chasing_patrols.erase(by)
+	chase_changed.emit(not _chasing_patrols.is_empty(), by)
 
 
 ## 劇本的 @event：密碼鎖等由這裡處理；回傳 true 表示處理掉了

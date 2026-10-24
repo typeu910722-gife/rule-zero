@@ -16,11 +16,12 @@ const PLACES := {"arrival": "地下月台", "floor1": "一樓", "floor2": "二�
 	"wild": "舊病棟　失控區", "chase1": "醫院長廊", "b2": "地下二樓",
 	"chase2": "醫院長廊", "cpr": "地下二樓", "ending": "實驗室"}
 
-## 第二章的配樂沿用（第三章自製配樂之後補上）
-const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
-const BGM := {"nirvana": "10_nirvana", "night": "08_night", "escape": "13_escape", "dove": "04_dove",
-	"dream": "16_dream", "memory": "11_memory", "next_stop": "14_next_stop"}
-const BGM_ONCE := ["escape"]
+## 第三章原聲：同一段音樂盒動機改成心電圖、玻璃琴與醫院機械聲。
+const BGM_DIR := "res://audio/ch3/bgm/ch3_bgm%s.ogg"
+const BGM := {"arrival": "01_arrival", "sterile": "02_sterile", "nirvana": "03_nirvana",
+	"night": "04_old_ward", "escape": "05_chase", "dream": "06_basement",
+	"dove": "07_welcome_home", "memory": "03_nirvana", "next_stop": "01_arrival"}
+const BGM_ONCE := []
 
 ## 各房間的調查點（座標是 1280×720 的畫面）
 const ROOMS := {
@@ -31,6 +32,7 @@ var party: Array = []
 var hud: Ch3Hud
 var room: Ch3Room
 var _bgm_name := ""
+var _before_chase_bgm := ""
 var _blackout: ColorRect
 var _lights_layer: CanvasLayer
 ## 地圖探索（levels/chapter3.json）：一樓已經改成自由走動；其他段落陸續改
@@ -105,6 +107,7 @@ func _run() -> void:
 		segment = SEGMENTS[i]
 		hud.place = PLACES[segment]
 		hud.refresh()
+		_bgm(_segment_bgm())
 		if segment != "arrival":
 			GameState.save_game("c3_" + segment)
 		await call("_seg_" + segment)
@@ -139,6 +142,7 @@ func _explore_start(room_id: String, spawn: Variant) -> void:
 		add_child(explore)
 		explore.room_entered.connect(_on_room_entered)
 		explore.caught.connect(func(_by): _lose_cotton(1, 1))
+		explore.chase_changed.connect(_on_patrol_chase)
 	explore.visible = true
 	await explore.restore_or(room_id, spawn)
 
@@ -161,6 +165,32 @@ func _on_room_entered(id: String) -> void:
 func _process(_d: float) -> void:
 	if explore:
 		explore.paused = hud.menu_open
+
+
+func _segment_bgm() -> String:
+	match segment:
+		"arrival":
+			return "arrival"
+		"floor1":
+			return "sterile"
+		"floor2":
+			return "nirvana"
+		"wild", "chase1":
+			return "night"
+		"b2", "chase2", "cpr":
+			return "dream"
+		"ending":
+			return "dove"
+	return "sterile"
+
+
+func _on_patrol_chase(active: bool, _by: String) -> void:
+	if active:
+		if _bgm_name != "escape":
+			_before_chase_bgm = _bgm_name
+			_bgm("escape")
+	elif _bgm_name == "escape":
+		_bgm(_before_chase_bgm if _before_chase_bgm != "" else _segment_bgm())
 
 
 ## 二樓：前半看病床、找到「遙」被轉床的紙 → 巡房量體溫；後半有護理師巡邏，找鑰匙進病歷室、理事室 → 連通道
