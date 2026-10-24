@@ -114,6 +114,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
 	var th := ExploreArt.theme(room.get("theme", "hospital"))
+	var illustrated := _room_art_path() != ""
 	var back := Node2D.new()
 	back.z_index = -10
 	back.draw.connect(func(): _draw_back(back, size, th))
@@ -122,15 +123,16 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	_ysort.y_sort_enabled = true
 	_world.add_child(_ysort)
 	# 家具
-	for p in room.get("props", []):
-		var n := Node2D.new()
-		var r := _r(p.rect)
-		n.position = Vector2(r.position.x, r.end.y)
-		var local := Rect2(Vector2(0, -r.size.y), r.size)
-		var kind: String = p.get("kind", "box")
-		var lab: String = p.get("label", "")
-		n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
-		_ysort.add_child(n)
+	if not illustrated:
+		for p in room.get("props", []):
+			var n := Node2D.new()
+			var r := _r(p.rect)
+			n.position = Vector2(r.position.x, r.end.y)
+			var local := Rect2(Vector2(0, -r.size.y), r.size)
+			var kind: String = p.get("kind", "box")
+			var lab: String = p.get("label", "")
+			n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
+			_ysort.add_child(n)
 	# 調查點、NPC、門、躲藏點
 	for s in _things():
 		var n := Node2D.new()
@@ -246,7 +248,7 @@ func _things() -> Array:
 
 
 func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
-	var art: String = room.get("art", "")
+	var art := _room_art_path()
 	var tex := ExploreArt.tex(art) if art != "" else null
 	if tex:
 		c.draw_texture_rect(tex, Rect2(Vector2.ZERO, size), false)
@@ -287,6 +289,14 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 				c.draw_rect(_r(d.rect), Color(d.get("color", "#ffffff")))
 
 
+func _room_art_path() -> String:
+	var explicit: String = room.get("art", "")
+	if explicit != "" and ResourceLoader.exists(explicit):
+		return explicit
+	var ch3 := "res://art/ch3/maps/ch3_map_%s.jpg" % room_id
+	return ch3 if ResourceLoader.exists(ch3) else ""
+
+
 func _draw_thing(n: Node2D, s: Dictionary) -> void:
 	var t := Time.get_ticks_msec() / 1000.0
 	match s._kind:
@@ -301,12 +311,17 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 		"doors":
 			var sz := _v(s.get("size", [90, 26]))
 			var open := _door_open(s)
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#f6d0da") if open else Color("#c8b5ba"))
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#d4788f") if open else Color("#8c7a80"), false, 2.0)
-			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 6), s.get("name", "門") + ("" if open else "（鎖著）"), HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color("#6a4c56"))
+			if _room_art_path() == "":
+				n.draw_rect(Rect2(-sz / 2.0, sz), Color("#f6d0da") if open else Color("#c8b5ba"))
+				n.draw_rect(Rect2(-sz / 2.0, sz), Color("#d4788f") if open else Color("#8c7a80"), false, 2.0)
+			else:
+				n.draw_circle(Vector2.ZERO, 8, Color(0.95, 0.76, 0.38, 0.7 if open else 0.28))
+				n.draw_arc(Vector2.ZERO, 13, 0, TAU, 24, Color(1, 0.9, 0.65, 0.65), 2.0)
+			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 10), s.get("name", "門") + ("" if open else "（鎖著）"), HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color("#e8f0ef") if _room_art_path() != "" else Color("#6a4c56"))
 		"hides":
 			var sz2 := _v(s.get("size", [60, 30]))
-			ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
+			if _room_art_path() == "":
+				ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
 			if hidden_in == str(s.get("id", "")):
 				n.draw_string(GameState.font, Vector2(-60, -100), "（躲著）", HORIZONTAL_ALIGNMENT_CENTER, 120, 15, Color("#d65a5a"))
 		_:
