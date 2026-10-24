@@ -69,8 +69,10 @@ func _run() -> void:
 
 	ex.chase_changed.connect(_on_chase)
 	ex.caught.connect(_on_caught)
-	# 放在護士正後方也要因為距離過近被察覺；先進追逐，不是立刻抓住。
-	ex.player.position = nurse.position - nurse.facing * 225.0
+	# 固定在無障礙的近距離；先進追逐，不是立刻抓住。
+	nurse.position = Vector2(700, 330)
+	nurse.facing = Vector2.RIGHT
+	ex.player.position = Vector2(925, 330)
 	for k in 8:
 		nurse._process(0.08)
 		await process_frame
