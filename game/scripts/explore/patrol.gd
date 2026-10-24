@@ -69,8 +69,8 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	var pl: ExplorePlayer = explore.player
-	var hidden := pl.tucked or explore.hidden_in != ""
-	var v := pl.position - position
+	var hidden: bool = pl.tucked or explore.hidden_in != ""
+	var v: Vector2 = pl.position - position
 	if _chasing:
 		if hidden or v.length() > _lose_distance:
 			_set_chasing(false)
@@ -142,7 +142,7 @@ func _move_toward(target: Vector2, move_speed: float, delta: float) -> void:
 	var step := facing * minf(move_speed * delta, to.length())
 	# 跟玩家一樣分軸滑牆，追逐時不會穿過病床與櫃子。
 	for axis in [Vector2(step.x, 0), Vector2(0, step.y)]:
-		var next := position + axis
+		var next: Vector2 = position + axis
 		if not explore.player.blocked(next):
 			position = next
 
