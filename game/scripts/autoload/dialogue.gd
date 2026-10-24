@@ -20,7 +20,11 @@ const BG_COLORS := {
 	"white": Color("#f4f4f2"),
 }
 ## 對話腳本：每章一個檔案，標籤不能重複（第二章的標籤一律以 c2_ 開頭）
-const SCRIPTS := ["res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt"]
+const SCRIPTS := [
+	"res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt",
+	"res://dialogue/chapter3.txt", "res://dialogue/chapter4.txt",
+	"res://dialogue/chapter5.txt", "res://dialogue/chapter6.txt",
+]
 
 ## 第二章立繪：說話的人有立繪時顯示在右邊。
 ## 檔名 ch2_<id>_portrait_<狀態>_<表情>.png；狀態由章節導演給（portrait_state），表情由腳本的 @face 指定
@@ -223,7 +227,7 @@ func _say(who: String, text: String) -> void:
 	_name.visible = who != ""
 	_name.text = who
 	if who == "":
-		_text.text = "[color=%s]%s[/color]" % ["#777777" if GameState.chapter == 2 else "#7a6a78", text]
+		_text.text = "[color=%s]%s[/color]" % [_narration_color(), text]
 	else:
 		_text.text = text
 	if GameState.fast:
@@ -414,14 +418,59 @@ func portrait_path(id: String, face := "default") -> String:
 	return found
 
 
-## 漂白鎮的對話框：同樣是縫在布上的標籤，只是被洗白了
+func _narration_color() -> String:
+	match GameState.chapter:
+		2:
+			return "#777777"
+		3:
+			return "#5c6e66"
+		4:
+			return "#6d6458"
+		5:
+			return "#6a5a4e"
+		6:
+			return "#7a6a78"
+		_:
+			return "#7a6a78"
+
+
+## 每一章的對話框還是縫在布上的標籤，只是布的顏色跟著地方走。
 func _apply_style() -> void:
-	var cold := GameState.chapter == 2
+	var bg := "#fff8f0"
+	var border := "#e8a0bf"
+	var name := "#c2558a"
+	var ink := "#4a3b47"
+	match GameState.chapter:
+		2:
+			bg = "#f4f4f2"
+			border = "#9a9a9a"
+			name = "#555555"
+			ink = "#2e2e2e"
+		3:
+			bg = "#f3f7f4"
+			border = "#8aa399"
+			name = "#3d6b5e"
+			ink = "#24312c"
+		4:
+			bg = "#f7f4ee"
+			border = "#8d8374"
+			name = "#4c5670"
+			ink = "#2c3140"
+		5:
+			bg = "#f6f1e6"
+			border = "#8d6e63"
+			name = "#6d4c41"
+			ink = "#3a2e28"
+		6:
+			bg = "#fff8f0"
+			border = "#e8a0bf"
+			name = "#c2558a"
+			ink = "#4a3b47"
 	var sb: StyleBoxFlat = _box.get_theme_stylebox("panel")
-	sb.bg_color = Color("#f4f4f2") if cold else Color("#fff8f0")
-	sb.border_color = Color("#9a9a9a") if cold else Color("#e8a0bf")
-	_name.add_theme_color_override("font_color", Color("#555555") if cold else Color("#c2558a"))
-	_text.add_theme_color_override("default_color", Color("#2e2e2e") if cold else Color("#4a3b47"))
+	sb.bg_color = Color(bg)
+	sb.border_color = Color(border)
+	_name.add_theme_color_override("font_color", Color(name))
+	_text.add_theme_color_override("default_color", Color(ink))
 
 
 func _style_button(b: Button) -> void:

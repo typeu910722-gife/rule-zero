@@ -81,6 +81,8 @@ var tint: CanvasModulate
 var fade: ColorRect
 var forest: Node2D
 var repair_scene: CanvasLayer
+var music: AudioStreamPlayer
+var _bgm_name := ""
 
 
 func _ready() -> void:
@@ -131,6 +133,10 @@ func _ready() -> void:
 	touch.mode_provider = _touch_mode
 	add_child(touch)
 	Dialogue.event_requested.connect(_on_event)
+	music = AudioStreamPlayer.new()
+	music.volume_db = -14.0
+	add_child(music)
+	Dialogue.bgm_requested.connect(_on_bgm)
 	hud.set_status_visible(false)
 	if GameState.fast:
 		# 自動測試：跳過標題畫面
@@ -160,6 +166,22 @@ func _show_title() -> void:
 		GameState.start_chapter2()
 		GameState.checkpoint = ""
 		get_tree().change_scene_to_file("res://scenes/chapter2.tscn"))
+	title.chapter3.connect(func():
+		var carry: Dictionary = GameState.meta.get("carry_ch2", {})
+		GameState.reset()
+		for k in carry:
+			GameState.flags[k] = carry[k]
+		GameState.set_flag("tag_on", true)
+		GameState.start_chapter(3)
+		GameState.checkpoint = ""
+		get_tree().change_scene_to_file("res://scenes/later.tscn"))
+	title.replay_mayor.connect(func():
+		GameState.reset()
+		GameState.start_chapter(5)
+		GameState.set_flag("ending_remember_done")
+		GameState.set_flag("replay_mayor")
+		GameState.checkpoint = "c5_replay"
+		get_tree().change_scene_to_file("res://scenes/later.tscn"))
 
 
 ## 從存檔繼續：每個檢查點都是某一天的早上
@@ -170,6 +192,9 @@ func _continue() -> void:
 		return
 	if GameState.chapter == 2:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
+		return
+	if GameState.chapter >= 3:
+		get_tree().change_scene_to_file.call_deferred("res://scenes/later.tscn")
 		return
 	var cp := GameState.checkpoint
 	Dialogue.set_bg("none")
@@ -523,6 +548,34 @@ func _layout(mode: String) -> void:
 func _set_phase(p: String) -> void:
 	phase = p
 	_refresh_objective()
+	var track := ""
+	if p in ["day1_night", "night_out", "day2_evening"]:
+		track = "dream"
+	elif p == "forest":
+		track = "forest"
+	elif p in ["prologue", "day1_explore", "day2_explore", "day3_explore"]:
+		track = "cotton"
+	if track != "" or p == "ended":
+		_on_bgm(track)
+
+
+func _on_bgm(name: String) -> void:
+	if name == _bgm_name:
+		return
+	_bgm_name = name
+	if music == null:
+		return
+	music.stop()
+	var stream: AudioStreamWAV = Score.loop(name)
+	if stream == null:
+		return
+	music.stream = stream
+	music.play()
+
+
+func _exit_tree() -> void:
+	if Dialogue.bgm_requested.is_connected(_on_bgm):
+		Dialogue.bgm_requested.disconnect(_on_bgm)
 
 
 func _refresh_objective() -> void:

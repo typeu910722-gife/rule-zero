@@ -1,6 +1,6 @@
 # Rule Zero — Godot 原型
 
-第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場；第二章「漂白鎮」**完整可玩**：序章、三天、畢業典禮、結尾與壞結局（標題畫面可以直接進入試玩）。
+第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場；第二章「漂白鎮」**完整可玩**。第三章到第六章也已經可以從頭玩到結局：慈愛綜合醫院、人類時期的學校、熊熊的夜晚、第零條。這一串用的是同一套對話、旗標、小遊戲和程式繪圖，音樂是音樂盒。它把故事走完，不是每一章 90 分鐘、整本都有外包圖的正式版。
 用來驗證：守則與膽量系統、對話節奏、「可愛 → 一點點怪」的氛圍。
 
 ![廣場](../docs/images/proto_plaza.png)
@@ -106,11 +106,20 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 - 配樂：漂白鎮（自由時間）、和平鴿（點名、治療室、畢業典禮）、矯正時間（洗白白、找出壞孩子、反省會、修剪、重新塞棉花）。
 - 音效：對話打字聲、哨音（腳本裡的 `@sfx`）、電擊（所有小遊戲的電擊都換成外包音效）。
 
+## 第三章到第六章
+劇本說明：`docs/script/chapter3.md`。程式：`scripts/later.gd`、`scenes/later.tscn`、`dialogue/chapter3.txt` … `chapter6.txt`。
+
+- 第三章是慈愛綜合醫院。第四章走回人類時期的學校。第五、六章才是收尾：先當鎮長，再上鐘塔。
+
+- 第二章結算可以「繼續　第三章」（帶著當下的旗標）。標題在完成第二章後也可以從醫院重進，只帶回漂白鎮結束時的旗標。
+- 醫院、學校、鎮長的夜、廣場都是程式畫的。第三章以後的角色也回到程式繪製，不沿用漂白鎮的小人圖。
+- 配樂是 `scripts/audio/score.gd` 的音樂盒。第一章依時段播放；第二章仍用外包的曲子。
+- 結局十種，沿用第一章「選擇會改路線」。好結局只有「想起來」。不好不壞是真結局之後的「留下來的人」。其餘八種是壞結局，包含看起來很安心的「好孩子」。第一章有沒有衝出去、有沒有躲著、蝴蝶結怎麼回答，第二章小棘和重重有沒有上車，都會改最後看見的那一種。一趟玩不完十種。
+
 ## 尚未實作（下一步）
-- 第三章「慈愛綜合醫院」
-- 第二章的正式美術、音樂、音效（需求清單：`docs/chapter2_asset_requests.txt`）
-- 音樂、環境音（目前只有揉麵團的程式合成音樂盒音色）
-- 正式美術（目前角色與地圖都是程式繪製的佔位圖）
+- 第三～七章的外包美術與正式配樂（現在是程式繪圖和音樂盒，風格對齊第一章）
+- 第二章尚缺的狀態圖（需求清單：`docs/chapter2_asset_requests.txt`）
+- 環境音
 - 牆壁碰撞（目前只限制地圖邊界）
 
 ## 專案結構
@@ -118,22 +127,26 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 game/
 ├── project.godot
 ├── scenes/main.tscn            # 進入點
+├── scenes/later.tscn           # 第三章到第六章
 ├── dialogue/chapter1.txt       # 第一章對話（語法：docs/dialogue-format.md）
 ├── dialogue/chapter2.txt       # 第二章對話（標籤以 c2_ 開頭）
+├── dialogue/chapter3.txt … chapter6.txt
 ├── scripts/
-│   ├── main.gd                 # 章節流程、場景配置、互動分派
+│   ├── main.gd                 # 第一章流程、標題、存檔繼續
+│   ├── later.gd                # 第三章到第六章的流程
 │   ├── autoload/
 │   │   ├── game_state.gd       # 天數、膽量、懷疑值、旗標、秘密
 │   │   ├── dialogue.gd         # 對話 UI 與執行
 │   │   └── dialogue_parser.gd  # 對話腳本解析與檢查
 │   ├── world/                  # 小鎮、森林、玩家、角色繪製
 │   ├── ui/                     # 公告欄、HUD／日記、修理室、結算、結尾選單
-│   ├── minigames/              # 接糖果、鏡子凝視、揉麵團
-│   └── audio/tones.gd          # 程式合成的音樂盒音色
+│   ├── minigames/              # 接糖果、鏡子凝視、揉麵團、探視、送信、保險箱、縫補、改寫第零條
+│   └── audio/                  # tones.gd 音色、score.gd 循環旋律
 └── tests/
     ├── lint_dialogue.gd        # 檢查對話腳本
     ├── smoke_test.gd           # 自動跑完兩條主要路線（第一～三天＋第二章開場）、存檔讀檔
     ├── chapter2_test.gd        # 第二章四條路線（含刺向面具、壞結局）跑到結尾、存檔讀檔
+    ├── later_test.gd           # 第三章到結局：想起來、好孩子、修理、隱藏結局，以及十種結局的旗標
     ├── screenshots_ch2.gd      # 第二章截圖
     ├── screenshots_ch2_day2.gd # 第二章第二天截圖
     ├── screenshots_ch2_day3.gd # 第二章第三天、結算、標題畫面截圖
@@ -149,6 +162,7 @@ godot --headless --path . -s tests/lint_dialogue.gd
 godot --headless --path . -s tests/smoke_test.gd
 godot --headless --path . -s tests/rhythm_test.gd
 godot --headless --path . -s tests/chapter2_test.gd
+godot --headless --path . -s tests/later_test.gd
 ```
 
 ## 字型

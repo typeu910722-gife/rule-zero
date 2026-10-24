@@ -1,6 +1,6 @@
 # 對話腳本語法
 
-檔案：`game/dialogue/chapter1.txt`、`game/dialogue/chapter2.txt`（UTF-8）。兩個檔案共用同一個標籤空間，第二章的標籤一律以 `c2_` 開頭。設計目標是讓**寫劇本的人不用碰程式**。
+檔案：`game/dialogue/chapter1.txt` … `chapter6.txt`（UTF-8）。所有檔案共用同一個標籤空間。第二章標籤以 `c2_` 開頭，其後各章以 `c3_` … `c6_` 開頭。設計目標是讓**寫劇本的人不用碰程式**。
 
 | 語法 | 意思 |
 |---|---|

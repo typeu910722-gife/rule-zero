@@ -56,6 +56,14 @@ func _sheet() -> Texture2D:
 
 
 func _draw() -> void:
+	if GameState.has("play_as_mayor"):
+		Critter.draw(self, "bear", Color("#c99a6b"), 1.35, _facing * 0.4, true, false, false)
+		return
+	# 第三～七章沿用第一章的程式繪製。第二章的外包小人只留在漂白鎮。
+	if GameState.chapter >= 3:
+		Critter.draw(self, "sheep", Color("#fffdf8"), 1.0, _facing * 0.6, true, false, GameState.has("tag_on"),
+			{"grey_patch": GameState.has("c2_grey_patch")})
+		return
 	var tex := _sheet()
 	if tex:
 		var row := 0

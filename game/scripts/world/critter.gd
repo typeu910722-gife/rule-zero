@@ -269,3 +269,55 @@ static func draw_conductor(ci: CanvasItem, s: float) -> void:
 	ci.draw_rect(Rect2(head + Vector2(-16, -10) * s, Vector2(32, 5) * s), Color("#1f1f24"))
 	ci.draw_rect(Rect2(head + Vector2(-12, -22) * s, Vector2(24, 13) * s), Color("#26262c"))
 	ci.draw_rect(Rect2(head + Vector2(-12, -14) * s, Vector2(24, 3) * s), Color("#8a7a4a"))
+
+
+## 醫院職員：人類，比玩偶高。淺色外套，臉有，可是笑得很空。
+static func draw_staff(ci: CanvasItem, s: float) -> void:
+	var coat := Color("#e7f2ec")
+	ellipse(ci, Vector2(0, 2) * s, Vector2(28, 8) * s, Color(0, 0, 0, 0.12))
+	ci.draw_rect(Rect2(Vector2(-12, -36) * s, Vector2(9, 36) * s), Color("#3d4a46"))
+	ci.draw_rect(Rect2(Vector2(3, -36) * s, Vector2(9, 36) * s), Color("#3d4a46"))
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(-18, -130) * s, Vector2(18, -130) * s,
+		Vector2(26, -30) * s, Vector2(-26, -30) * s]), coat)
+	ci.draw_line(Vector2(0, -130) * s, Vector2(0, -30) * s, Color("#c5d5ce"), 1.2 * s)
+	ci.draw_circle(Vector2(-10, -112) * s, 3 * s, Color("#d9d9d9"))
+	ci.draw_line(Vector2(-14, -116) * s, Vector2(-6, -108) * s, Color("#7a7a7a"), 1.0 * s)
+	var head := Vector2(0, -148) * s
+	ellipse(ci, head, Vector2(13, 15) * s, Color("#f0d8c8"))
+	ci.draw_circle(head + Vector2(-4, -1) * s, 1.4 * s, Color("#2b2024"))
+	ci.draw_circle(head + Vector2(4, -1) * s, 1.4 * s, Color("#2b2024"))
+	ci.draw_arc(head + Vector2(0, 5) * s, 3.5 * s, 0.4, PI - 0.4, 8, Color("#c9a090"), 1.1 * s)
+	ellipse(ci, head + Vector2(0, -12) * s, Vector2(14, 6) * s, Color("#efe8e2"))
+
+
+## 鏡中的孩子：男生制服，臉是糊的，手心裡有一點粉紅。不畫眼睛。
+static func draw_child(ci: CanvasItem, s: float) -> void:
+	ellipse(ci, Vector2(0, 2) * s, Vector2(16, 5) * s, Color(0, 0, 0, 0.12))
+	ci.draw_rect(Rect2(Vector2(-8, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(2, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-14, -62) * s, Vector2(28, 36) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-8, -62) * s, Vector2(16, 8) * s), Color("#f4f1ea"))
+	ci.draw_line(Vector2(-16, -48) * s, Vector2(-24, -30) * s, Color("#2c3348"), 4 * s)
+	ci.draw_line(Vector2(16, -48) * s, Vector2(22, -34) * s, Color("#2c3348"), 4 * s)
+	ci.draw_circle(Vector2(24, -32) * s, 3.2 * s, Color("#f0d8c8"))
+	ci.draw_circle(Vector2(25, -33) * s, 1.6 * s, Color("#f4a3c1"))
+	var head := Vector2(0, -78) * s
+	ellipse(ci, head, Vector2(12, 14) * s, Color("#f3e4d8"))
+	ellipse(ci, head + Vector2(0, -8) * s, Vector2(13, 8) * s, Color("#4a372c"))
+
+
+## 人類時期的同學。有眼睛。粉紅色的東西不在他們手上。
+static func draw_student(ci: CanvasItem, s: float, hair: Color, bow: Color = Color(0, 0, 0, 0)) -> void:
+	ellipse(ci, Vector2(0, 2) * s, Vector2(16, 5) * s, Color(0, 0, 0, 0.12))
+	ci.draw_rect(Rect2(Vector2(-8, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(2, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-14, -62) * s, Vector2(28, 36) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-8, -62) * s, Vector2(16, 8) * s), Color("#f4f1ea"))
+	var head := Vector2(0, -78) * s
+	ellipse(ci, head, Vector2(12, 14) * s, Color("#f3e4d8"))
+	ellipse(ci, head + Vector2(0, -8) * s, Vector2(13, 8) * s, hair)
+	ci.draw_circle(head + Vector2(-4, 0) * s, 1.3 * s, Color("#2b2024"))
+	ci.draw_circle(head + Vector2(4, 0) * s, 1.3 * s, Color("#2b2024"))
+	if bow.a > 0.0:
+		ci.draw_circle(head + Vector2(10, -6) * s, 3.2 * s, bow)
+		ci.draw_circle(head + Vector2(14, -4) * s, 3.2 * s, bow)

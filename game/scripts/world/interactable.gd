@@ -103,10 +103,27 @@ func _draw() -> void:
 		elif species == "conductor":
 			Critter.draw_conductor(self, size)
 			label_col = Color("#555555")
+		elif species == "staff":
+			Critter.draw_staff(self, size)
+			label_col = Color("#3e5c52")
+		elif species == "child":
+			Critter.draw_child(self, size)
+			label_col = Color("#4c5670")
+		elif species == "student":
+			var hair := Color("#4a372c")
+			var bow := Color(0, 0, 0, 0)
+			if opts.get("hair") is Color:
+				hair = opts.hair
+			if opts.get("bow") is Color:
+				bow = opts.bow
+			Critter.draw_student(self, size, hair, bow)
+			label_col = Color("#4c5670")
 		else:
 			Critter.draw(self, species, body_color, size, look, smile, stitched, false, opts)
 			if GameState.chapter == 2:
 				label_col = Color("#555555")
+			elif GameState.chapter >= 3:
+				label_col = Color("#3e4c48")
 		var f: Font = GameState.font
 		draw_string(f, Vector2(-60, 22 * size), display_name, HORIZONTAL_ALIGNMENT_CENTER, 120, 16, label_col)
 	else:

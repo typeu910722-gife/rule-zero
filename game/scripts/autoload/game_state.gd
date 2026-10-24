@@ -28,6 +28,50 @@ const SECRETS_2 := {
 	"mochi_name": "麻糬的本名",
 }
 
+const SECRETS_3 := {
+	"saw_own_body": "靠窗的床",
+	"chart_haruka": "病歷上的名字",
+	"fen_bed": "沒有名字的床尾",
+	"conductor_kin": "決議者的弟弟",
+	"nw_door": "比斯泰德的門",
+	"mayor_paw": "熊掌印",
+	"chart_46": "編號 46",
+	"maintained": "還在跳的監視器",
+}
+
+const SECRETS_4 := {
+	"desk_illegible": "看不清楚的字",
+	"bag_dumped": "倒掉的書包",
+	"blank_name": "空的名牌",
+	"mirror_said": "你忘記的，是我",
+	"guilt_door": "門口",
+	"sent_self_letter": "口袋裡的紙",
+	"safe_47": "第 47 個",
+	"camera_roll": "相機裡的走廊",
+}
+
+const SECRETS_5 := {
+	"no_seam": "沒有縫線的那一個",
+	"stamps_47": "四十七個戳章",
+	"mayor_hesitate": "空著的下一格",
+	"first_resident": "第一頁的熊掌印",
+	"candy_jar": "白的糖",
+	"left_a_thread": "留下的線頭",
+	"dream_mayor": "鎮長的夜",
+	"fen_why": "為什麼要保護你",
+}
+
+const SECRETS_6 := {
+	"rule_zero_seen": "第零條",
+	"rewrote_zero": "劃掉的那一行",
+	"kept_zero": "留著的那一行",
+	"baimian_end": "沒有名字的那一半",
+	"full_color": "顏色回來了",
+	"cotton_wind": "風裡的棉花",
+	"own_choice": "自己選",
+	"stitch_title": "標題上的線",
+}
+
 ## 日記裡「記下的事」：謎題線索會自動記錄，玩家不用靠記憶力
 const CLUES := {
 	"lulu_slip": "露露叫我「小遙」，然後自己忘記了。",
@@ -53,6 +97,18 @@ const CLUES := {
 	"dove_first_page": "愛的日記最前面一頁：「今天，教官沒有醒來。我替他戴上了面具。很合。」",
 	"nirvana_clipboard": "夾板：涅槃計畫區第七期。「意識：已處分　身體：維持中」。",
 	"overheard_conductor": "月台上，和平鴿和車掌在說話。車掌的哥哥選了和平鴿。",
+	"chart_46": "病歷寫著：收治次數 46。本次 47。",
+	"chart_haruka": "靠窗的床名牌寫著「遙」。椅子上是男生的制服。碟子裡有一個粉紅色髮夾。",
+	"conductor_kin": "決議書：反對的人是車掌，他是決議者的弟弟。姓名被塗掉了。",
+	"handwriting": "給遙的信，筆跡和名牌背面的「辶」一樣。",
+	"sent_self_letter": "信上寫著：我站在門口。我看見了。我沒有阻止。",
+	"guilt_door": "夢裡站在門口。比較小的那個人背對著你。桌上的名字被蹭掉了。",
+	"desk_illegible": "第三排靠窗的桌面寫滿了字，一個也看不清楚。椅子上是男生的制服。",
+	"bag_dumped": "走廊的垃圾桶。遙的書包倒著。倒書包的人，胸口沒有名字。",
+	"mirror_said": "洗手台的鏡子裡，那個孩子說：你忘記的，是我。",
+	"fen_why": "白面說：書包那一次你看著他。剪開之後，留下來的一半只記得要保護你。",
+	"stamps_47": "鎮長的名冊：火車票貼了四十七張。",
+	"rule_zero_seen": "鐘塔頂端寫著：第零條　不要想起來。",
 }
 
 ## 第二章：操行成績單（第一章隱藏的懷疑值，這章攤開給你看）
@@ -120,7 +176,98 @@ func add_conduct(amount: int) -> void:
 
 
 func secret_defs() -> Dictionary:
-	return SECRETS if chapter == 1 else SECRETS_2
+	match chapter:
+		1:
+			return SECRETS
+		2:
+			return SECRETS_2
+		3:
+			return SECRETS_3
+		4:
+			return SECRETS_4
+		5:
+			return SECRETS_5
+		_:
+			return SECRETS_6
+
+
+func dream_count() -> int:
+	var n := 0
+	for k in ["dream_hospital", "dream_door", "dream_school", "dream_mayor"]:
+		if has(k):
+			n += 1
+	return n
+
+
+## 第六章只會走進一種結局。修理與「好孩子」先決定；其餘回頭看第一章、第二章留下的選擇。
+## 好結局只有 remember。stay 由重問鎮長另行進入，不從這裡返回。
+func finale_id() -> String:
+	if suspicion >= 80 and not has("rewrote_zero") and not has("kept_zero"):
+		return "repair"
+	if has("kept_zero") or not has("rewrote_zero"):
+		return "good"
+	if has("lulu_betrayal"):
+		return "hid"
+	if has("lulu_comforted"):
+		return "comforted"
+	if _left_someone():
+		return "left_behind"
+	if not has("brave_end"):
+		return "never_ran"
+	if not has("sent_self_letter"):
+		return "no_letter"
+	if not has("fen_why") or dream_count() < 3:
+		return "no_why"
+	return "remember"
+
+
+func finale_label() -> String:
+	match finale_id():
+		"remember":
+			return "c6_remember"
+		"good":
+			return "c6_good"
+		"repair":
+			return "c6_repair"
+		"hid":
+			return "c6_hid"
+		"comforted":
+			return "c6_comforted"
+		"left_behind":
+			return "c6_left"
+		"never_ran":
+			return "c6_never"
+		"no_letter":
+			return "c6_no_letter"
+		"no_why":
+			return "c6_no_why"
+		_:
+			return "c6_good"
+
+
+## 漂白鎮裡小棘或重重沒有上車。條碼固定不在，鼬鼬留在月台，都不算。
+func _left_someone() -> bool:
+	var raw: Variant = meta.get("ch2_fates", {})
+	if not (raw is Dictionary):
+		return false
+	var fates: Dictionary = raw
+	if fates.is_empty():
+		return false
+	return str(fates.get("xiaoji", "")) == "dead" or str(fates.get("zhongzhong", "")) == "dead"
+
+
+## 進入後續章節。不清除已經帶過來的旗標。
+func start_chapter(n: int) -> void:
+	chapter = n
+	day = 1
+	courage = MAX_COURAGE
+	if n == 3:
+		suspicion = 0
+		conduct = CONDUCT_START
+	objective = ""
+	if not flags.has("tag_on"):
+		flags["tag_on"] = true
+	changed.emit()
 
 
 func has(flag: String) -> bool:

@@ -66,9 +66,25 @@ func refresh() -> void:
 	_status.text = "%s　｜　膽量 %s" % [day_names[mini(GameState.day, 3)], stars]
 	if GameState.chapter == 2:
 		_status.text += "　｜　操行 %d" % GameState.conduct
-	var cold := GameState.chapter == 2
-	_status.add_theme_color_override("font_color", Color("#444444") if cold else Color("#6d597a"))
-	_objective.add_theme_color_override("font_color", Color("#6a6a6a") if cold else Color("#8e7d8a"))
+	elif GameState.chapter == 3:
+		_status.text += "　｜　警戒 %d" % GameState.suspicion
+	var ink := Color("#6d597a")
+	var sub := Color("#8e7d8a")
+	match GameState.chapter:
+		2:
+			ink = Color("#444444")
+			sub = Color("#6a6a6a")
+		3:
+			ink = Color("#3e5c52")
+			sub = Color("#6a8a80")
+		4:
+			ink = Color("#8a5a2a")
+			sub = Color("#a67c52")
+		6:
+			ink = Color("#6d4c41")
+			sub = Color("#8d6e63")
+	_status.add_theme_color_override("font_color", ink)
+	_objective.add_theme_color_override("font_color", sub)
 	if show_debug:
 		_status.text += "　｜　[debug] 懷疑值 %d" % GameState.suspicion
 	_objective.text = GameState.objective
@@ -134,6 +150,8 @@ func _fill_menu() -> void:
 	t += "名字：%s\n膽量：%d / %d\n" % [GameState.player_name(), GameState.courage, GameState.MAX_COURAGE]
 	if GameState.chapter == 2:
 		t += "操行：%d 分\n" % GameState.conduct
+	elif GameState.chapter == 3:
+		t += "警戒：%d\n" % GameState.suspicion
 	t += "\n[font_size=22]發現的事情[/font_size]\n"
 	var defs := GameState.secret_defs()
 	for k in defs:
