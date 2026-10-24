@@ -177,10 +177,10 @@ func _show_title() -> void:
 		get_tree().change_scene_to_file("res://scenes/later.tscn"))
 	title.replay_mayor.connect(func():
 		GameState.reset()
-		GameState.start_chapter(6)
+		GameState.start_chapter(5)
 		GameState.set_flag("ending_remember_done")
 		GameState.set_flag("replay_mayor")
-		GameState.checkpoint = "c6_replay"
+		GameState.checkpoint = "c5_replay"
 		get_tree().change_scene_to_file("res://scenes/later.tscn"))
 
 

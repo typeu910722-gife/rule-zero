@@ -123,28 +123,18 @@ func later_rules_bbcode() -> String:
 			])
 		4:
 			lines = PackedStringArray([
-				"[center][font_size=30]郵務室　暫訂守則[/font_size][/center]",
+				"[center][font_size=30]班級生活公約[/font_size][/center]",
 				"",
-				"1. 信，交給信封上的那個人。",
-				"2. 不要拆開還沒交給你的信。",
-				"3. 本名只寫在信封上，不要念出來。",
-				"4. 寄不出去的，放回郵袋。",
-				"5. 不要問信是誰寫的。",
-				"6. 空的收件人，不要自己填。",
+				"1. 制服要穿整齊。",
+				"2. 名字寫在名牌上。",
+				"3. 不要在桌上留字。",
+				"4. 信件交給本人。",
+				"5. 走廊上不要跑。",
+				"",
+				"點名：遙　小滿　希露飛　銘越　辛禾　薙文　郡主　李恩　芬　秋歌",
+				"[color=#8a8074]有一個位置沒有名字。[/color]",
 			])
 		5:
-			lines = PackedStringArray([
-				"[center][font_size=30]鏡之屋　守則[/font_size][/center]",
-				"",
-				"1. 鏡子是用來整理儀容的。",
-				"2. 不要盯著看太久。",
-				"3. 鏡子壞了也不准修。",
-				"4. 鏡子裡的人，不要跟他說話。",
-				"5. 看到人的樣子，把眼睛移開。",
-				"10. 守則永遠只有十條。",
-				"11. [color=#8e3b46]不要相信第十條。[/color]",
-			])
-		6:
 			lines = PackedStringArray([
 				"[center][font_size=30]守則的草稿[/font_size][/center]",
 				"",

@@ -109,6 +109,15 @@ func _draw() -> void:
 		elif species == "child":
 			Critter.draw_child(self, size)
 			label_col = Color("#4c5670")
+		elif species == "student":
+			var hair := Color("#4a372c")
+			var bow := Color(0, 0, 0, 0)
+			if opts.get("hair") is Color:
+				hair = opts.hair
+			if opts.get("bow") is Color:
+				bow = opts.bow
+			Critter.draw_student(self, size, hair, bow)
+			label_col = Color("#4c5670")
 		else:
 			Critter.draw(self, species, body_color, size, look, smile, stitched, false, opts)
 			if GameState.chapter == 2:

@@ -304,3 +304,20 @@ static func draw_child(ci: CanvasItem, s: float) -> void:
 	var head := Vector2(0, -78) * s
 	ellipse(ci, head, Vector2(12, 14) * s, Color("#f3e4d8"))
 	ellipse(ci, head + Vector2(0, -8) * s, Vector2(13, 8) * s, Color("#4a372c"))
+
+
+## 人類時期的同學。有眼睛。粉紅色的東西不在他們手上。
+static func draw_student(ci: CanvasItem, s: float, hair: Color, bow: Color = Color(0, 0, 0, 0)) -> void:
+	ellipse(ci, Vector2(0, 2) * s, Vector2(16, 5) * s, Color(0, 0, 0, 0.12))
+	ci.draw_rect(Rect2(Vector2(-8, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(2, -28) * s, Vector2(6, 28) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-14, -62) * s, Vector2(28, 36) * s), Color("#2c3348"))
+	ci.draw_rect(Rect2(Vector2(-8, -62) * s, Vector2(16, 8) * s), Color("#f4f1ea"))
+	var head := Vector2(0, -78) * s
+	ellipse(ci, head, Vector2(12, 14) * s, Color("#f3e4d8"))
+	ellipse(ci, head + Vector2(0, -8) * s, Vector2(13, 8) * s, hair)
+	ci.draw_circle(head + Vector2(-4, 0) * s, 1.3 * s, Color("#2b2024"))
+	ci.draw_circle(head + Vector2(4, 0) * s, 1.3 * s, Color("#2b2024"))
+	if bow.a > 0.0:
+		ci.draw_circle(head + Vector2(10, -6) * s, 3.2 * s, bow)
+		ci.draw_circle(head + Vector2(14, -4) * s, 3.2 * s, bow)

@@ -2,7 +2,7 @@ extends CanvasLayer
 ## 原型的章節結尾選單。
 ## mode "to_ch2"：第一章結束、第二章預告播完後才出現（繼續第二章／回到標題）。
 ## mode "c2_done"：第二章結算（秘密、操行、每個居民的去向）。
-## mode "finale"：第七章收束（想起來／好孩子／線頭不夠／修理／留下來的人）。
+## mode "finale"：第六章收束（想起來／好孩子／線頭不夠／修理／留下來的人）。
 
 const CHAPTER2 := "res://scenes/chapter2.tscn"
 const LATER := "res://scenes/later.tscn"

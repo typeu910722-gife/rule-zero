@@ -71,24 +71,24 @@ func _to_plaza(gs: Node) -> void:
 	await _wait_phase("c3_day2")
 	await ch.interact("cot")
 	await _wait_phase("c4_day1")
-	await ch.interact("letter_lulu")
-	await ch.interact("letter_mochi")
-	await ch.interact("letter_fen")
-	await ch.interact("letter_self")
-	_check(gs.has("sent_self_letter") and gs.has("handwriting"), "給遙的信留在身上")
+	_check(ch.actors.baimian.display_name == "", "學校裡，跟著的那一個沒有名字")
+	await ch.interact("desk")
+	await ch.interact("bag")
+	await ch.interact("mirror")
+	_check(gs.has("bag_dumped") and gs.has("mirror_said") and gs.has("desk_illegible"), "書包、鏡子、看不清的桌面")
 	await ch.interact("cot")
 	await _wait_phase("c4_day2")
-	await ch.interact("cot")
-	await _wait_phase("c5_day1")
+	await ch.interact("gate")
 	await ch.interact("safe")
-	await ch.interact("baimian")
-	_check(gs.has("safe_47") and gs.has("fen_why"), "第 47 個，以及為什麼要保護")
+	_check(gs.has("sent_self_letter") and gs.has("guilt_door") and gs.has("safe_47"), "門口的紙留在身上，鎖是 47")
 	await ch.interact("cot")
-	await _wait_phase("c6_night")
+	await _wait_phase("c5_night")
 	_check(gs.has("no_seam") and gs.has("play_as_mayor"), "鎮長縫過，白面沒有縫線")
+	await ch.interact("baimian")
+	_check(gs.has("fen_why"), "為什麼要保護，以及門口跟書包無關")
 	await ch.interact("candy")
 	await ch.interact("ledger")
-	await _wait_phase("c7_plaza")
+	await _wait_phase("c6_plaza")
 	_check(ch.actors.baimian.visible and not gs.has("baimian_unraveled"), "終章之前白面還在")
 
 
@@ -108,7 +108,7 @@ func _run() -> void:
 	_check(str(gs.meta.get("ending", "")) == "remember", "結局：想起來")
 	_check(gs.has("baimian_unraveled") and not ch.actors.baimian.visible, "白面自己鬆開，不在場上")
 	_check(gs.has("rewrote_zero") and gs.meta.get("true_seen", false), "劃掉第零條，標題記得你看過")
-	_check(int(gs.meta.get("chapters_done", 0)) >= 7 and not gs.has_save(), "七章完成，當章存檔清掉")
+	_check(int(gs.meta.get("chapters_done", 0)) >= 6 and not gs.has_save(), "六章完成，當章存檔清掉")
 	var seen: bool = gs.meta.get("true_seen", false)
 
 	print("[留下來的人]")
@@ -117,12 +117,12 @@ func _run() -> void:
 	gs.auto_choices = []
 	gs.set_flag("ending_remember_done")
 	gs.set_flag("replay_mayor")
-	gs.checkpoint = "c6_replay"
-	gs.chapter = 6
+	gs.checkpoint = "c5_replay"
+	gs.chapter = 5
 	gs.meta.true_seen = seen
 	ch = load("res://scenes/later.tscn").instantiate()
 	root.add_child(ch)
-	await _wait_phase("c6_night")
+	await _wait_phase("c5_night")
 	gs.auto_choices = [2]
 	await ch.interact("ledger")
 	await _wait_phase("ended")

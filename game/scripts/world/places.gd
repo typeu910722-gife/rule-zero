@@ -11,6 +11,8 @@ var full_color := false
 
 func _draw() -> void:
 	match place:
+		"school":
+			_school()
 		"mail":
 			_mail()
 		"mirror":
@@ -21,6 +23,27 @@ func _draw() -> void:
 			_plaza()
 		_:
 			_ward()
+
+
+func _school() -> void:
+	draw_rect(Rect2(0, 0, W, H), Color("#f4efe6"))
+	draw_rect(Rect2(0, 0, W, 70), Color("#e7e0d4"))
+	draw_rect(Rect2(80, 120, 520, 280), Color("#f7f1e4"))
+	draw_rect(Rect2(80, 120, 520, 280), Color("#c4b8a4"), false, 4)
+	draw_rect(Rect2(120, 160, 180, 90), Color("#3d4a46"))
+	for k in 4:
+		draw_rect(Rect2(140, 250 + k * 28, 360, 8), Color("#d9d0c2"))
+	# 第三排靠窗：男生制服、掌心一點粉紅。字不畫出來。
+	draw_rect(Rect2(430, 250, 70, 40), Color("#2c3348"))
+	draw_circle(Vector2(500, 300), 4, Color("#f4a3c1"))
+	draw_rect(Rect2(980, 160, 80, 110), Color("#d7e3ea"))
+	draw_rect(Rect2(1000, 250, 40, 8), Color("#c5d0d6"))
+	draw_circle(Vector2(1280, 420), 36, Color("#cfc6b8"))
+	draw_rect(Rect2(1248, 400, 28, 36), Color("#6d5a48"))
+	draw_rect(Rect2(80, 780, 90, 160), Color("#efe6d8"))
+	draw_rect(Rect2(80, 780, 90, 160), Color("#b7aa98"), false, 3)
+	_label("教室", Vector2(240, 430), Color("#6d6458"))
+	_label("遙", Vector2(400, 250), Color("#4c5670"))
 
 
 func _label(text: String, at: Vector2, col: Color) -> void:

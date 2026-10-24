@@ -23,7 +23,7 @@ const BG_COLORS := {
 const SCRIPTS := [
 	"res://dialogue/chapter1.txt", "res://dialogue/chapter2.txt",
 	"res://dialogue/chapter3.txt", "res://dialogue/chapter4.txt",
-	"res://dialogue/chapter5.txt", "res://dialogue/chapter6.txt", "res://dialogue/chapter7.txt",
+	"res://dialogue/chapter5.txt", "res://dialogue/chapter6.txt",
 ]
 
 ## 第二章立繪：說話的人有立繪時顯示在右邊。
@@ -425,11 +425,11 @@ func _narration_color() -> String:
 		3:
 			return "#5c6e66"
 		4:
-			return "#8a735c"
+			return "#6d6458"
 		5:
-			return "#5c6478"
-		6:
 			return "#6a5a4e"
+		6:
+			return "#7a6a78"
 		_:
 			return "#7a6a78"
 
@@ -452,20 +452,20 @@ func _apply_style() -> void:
 			name = "#3d6b5e"
 			ink = "#24312c"
 		4:
-			bg = "#fff8ec"
-			border = "#c4a574"
-			name = "#8a5a2a"
-			ink = "#3f3428"
-		5:
-			bg = "#f4f5f8"
-			border = "#9aa3b5"
+			bg = "#f7f4ee"
+			border = "#8d8374"
 			name = "#4c5670"
 			ink = "#2c3140"
-		6:
+		5:
 			bg = "#f6f1e6"
 			border = "#8d6e63"
 			name = "#6d4c41"
 			ink = "#3a2e28"
+		6:
+			bg = "#fff8f0"
+			border = "#e8a0bf"
+			name = "#c2558a"
+			ink = "#4a3b47"
 	var sb: StyleBoxFlat = _box.get_theme_stylebox("panel")
 	sb.bg_color = Color(bg)
 	sb.border_color = Color(border)

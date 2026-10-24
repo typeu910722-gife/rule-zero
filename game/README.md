@@ -1,6 +1,6 @@
 # Rule Zero — Godot 原型
 
-第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場；第二章「漂白鎮」**完整可玩**。第三章到第七章也已經可以從頭玩到結局：慈愛綜合醫院、寄不出去的信、鏡子的另一邊、熊熊的夜晚、第零條。這一串用的是同一套對話、旗標、小遊戲和程式繪圖，音樂是音樂盒。它把故事走完，不是每一章 90 分鐘、整本都有外包圖的正式版。
+第一章「歡迎回來」**完整三天**的可玩原型（約 40–60 分鐘，正式版目標 90 分鐘），結尾自動接第二章開場；第二章「漂白鎮」**完整可玩**。第三章到第六章也已經可以從頭玩到結局：慈愛綜合醫院、人類時期的學校、熊熊的夜晚、第零條。這一串用的是同一套對話、旗標、小遊戲和程式繪圖，音樂是音樂盒。它把故事走完，不是每一章 90 分鐘、整本都有外包圖的正式版。
 用來驗證：守則與膽量系統、對話節奏、「可愛 → 一點點怪」的氛圍。
 
 ![廣場](../docs/images/proto_plaza.png)
@@ -106,8 +106,10 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 - 配樂：漂白鎮（自由時間）、和平鴿（點名、治療室、畢業典禮）、矯正時間（洗白白、找出壞孩子、反省會、修剪、重新塞棉花）。
 - 音效：對話打字聲、哨音（腳本裡的 `@sfx`）、電擊（所有小遊戲的電擊都換成外包音效）。
 
-## 第三章到第七章
-劇本說明：`docs/script/chapter3.md`。程式：`scripts/later.gd`、`scenes/later.tscn`、`dialogue/chapter3.txt` … `chapter7.txt`。
+## 第三章到第六章
+劇本說明：`docs/script/chapter3.md`。程式：`scripts/later.gd`、`scenes/later.tscn`、`dialogue/chapter3.txt` … `chapter6.txt`。
+
+- 第三章是慈愛綜合醫院。第四章走回人類時期的學校。第五、六章才是收尾：先當鎮長，再上鐘塔。
 
 - 第二章結算可以「繼續　第三章」（帶著當下的旗標）。標題在完成第二章後也可以從醫院重進，只帶回漂白鎮結束時的旗標。
 - 醫院、郵務室、鏡之屋、鎮長的夜、廣場都是程式畫的。第三～七章的角色也回到程式繪製，不沿用漂白鎮的小人圖。
@@ -125,13 +127,13 @@ Cloudflare Pages 連結此 repo，設定「建置指令：留空」「建置輸�
 game/
 ├── project.godot
 ├── scenes/main.tscn            # 進入點
-├── scenes/later.tscn           # 第三章到第七章
+├── scenes/later.tscn           # 第三章到第六章
 ├── dialogue/chapter1.txt       # 第一章對話（語法：docs/dialogue-format.md）
 ├── dialogue/chapter2.txt       # 第二章對話（標籤以 c2_ 開頭）
-├── dialogue/chapter3.txt … chapter7.txt
+├── dialogue/chapter3.txt … chapter6.txt
 ├── scripts/
 │   ├── main.gd                 # 第一章流程、標題、存檔繼續
-│   ├── later.gd                # 第三章到第七章的流程
+│   ├── later.gd                # 第三章到第六章的流程
 │   ├── autoload/
 │   │   ├── game_state.gd       # 天數、膽量、懷疑值、旗標、秘密
 │   │   ├── dialogue.gd         # 對話 UI 與執行

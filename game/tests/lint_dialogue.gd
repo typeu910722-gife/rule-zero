@@ -24,7 +24,6 @@ func _init() -> void:
 	p.parse_file("res://dialogue/chapter4.txt")
 	p.parse_file("res://dialogue/chapter5.txt")
 	p.parse_file("res://dialogue/chapter6.txt")
-	p.parse_file("res://dialogue/chapter7.txt")
 	var errs := p.validate(EVENTS)
 	for e in errs:
 		printerr(e)

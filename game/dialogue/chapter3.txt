@@ -194,10 +194,10 @@
 
 === c3_end
 @bg grey_train
-@bgm mail
-車掌：下一站還沒有寫。
-> 月台上，一輛信紙的推車倒了。
-> 最上面那封，收件人的字你認得。跟名牌背面剩下的那半個字，是同一隻手。
-@set letter_waiting
+@bgm school
+車掌：下一站沒有站名。
+> 窗外變成走廊。課桌一張一張過去。
+> 有一張桌子的名牌是新的。字很小。
+@set school_waiting
 @sfx train_arrive
 @bg none

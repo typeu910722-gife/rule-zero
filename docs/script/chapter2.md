@@ -1284,7 +1284,7 @@
   *波波也在看她。*
   *兩個人都沒有笑。但露露把信貼在胸口。*
   {letter_to_lulu}
-- 留著 → 「給希露飛　銘越」的信放進日記的道具欄。（第三章之後的「寄不出去的信」線）{kept_letter}
+- 留著 → 「給希露飛　銘越」的信放進日記的道具欄。（第四章學校裡會看見這封信沒有送到）{kept_letter}
 
 ---
 
@@ -1605,14 +1605,14 @@
 | dove_diary / dove_first_page | 讀了愛的日記／最前面一頁 |
 | nirvana_clipboard | 看到涅槃計畫的夾板 |
 | got_xiaoji_letter | 拿到「給希露飛　銘越」的信 |
-| letter_to_lulu / kept_letter | 信射給露露 → 第三章露露與波波關係改變／信留著 → 「寄不出去的信」線 |
+| letter_to_lulu / kept_letter | 信射給露露 → 之後露露與波波的關係／信留著 → 第四章學校裡，銘越寫給希露飛的信 |
 | lost_chair_for_zhongzhong | 搶椅子最後一輪讓給重重 |
 | xiaoji_graduated / xiaoji_aboard | 小棘畢業（被抹除）／上車 |
 | youyou_aboard | 鼬鼬上車 |
 | special_love_cut | 壞結局被剪掉的記憶（第三章永久消失）：lulu_slip／fen_remember／mirror_child／grey_crane／mochi_tag |
 | special_love_left | 壞結局的代價：被留在月台的居民（重重 → 嘎嘎 → 小棘，第一個本來能上車的人） |
 | fate_<居民>_<去向> | 畢業典禮後的去向：aboard（上車）／graduated（畢業）／dead（處分）／unknown（留在月台）。也記錄在跨周目資料 meta.ch2_fates |
-| kept_letter | 那封信留著（第三章「寄不出去的信」線） |
+| kept_letter | 那封信留著（第四章學校裡，銘越寫給希露飛的那一封） |
 | c2_grey_patch | 小布頭上被和平鴿摸過、褪成灰色的羊毛（整章保留） |
 
 ## 附錄 B：本章秘密（8 個）

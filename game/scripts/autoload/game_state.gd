@@ -40,28 +40,17 @@ const SECRETS_3 := {
 }
 
 const SECRETS_4 := {
-	"letter_lulu": "給希露飛",
-	"letter_mochi": "給小滿",
-	"letter_fen": "給芬",
-	"sent_self_letter": "給遙的信",
-	"handwriting": "同一隻手",
-	"popo_bag": "沒有寄出的郵袋",
+	"desk_illegible": "看不清楚的字",
+	"bag_dumped": "倒掉的書包",
+	"blank_name": "空的名牌",
+	"mirror_said": "你忘記的，是我",
 	"guilt_door": "門口",
-	"saw_glass": "圓門裡的小孩",
+	"sent_self_letter": "口袋裡的紙",
+	"safe_47": "第 47 個",
+	"camera_roll": "相機裡的走廊",
 }
 
 const SECRETS_5 := {
-	"mirror_child": "鏡中的孩子",
-	"mirror_said": "你忘記的，是我",
-	"safe_47": "第 47 個",
-	"fen_why": "為什麼要保護你",
-	"two_foxes": "一橘一白",
-	"lulu_in_mirror": "裂縫裡的蝴蝶結",
-	"dream_mirror": "玻璃兩邊",
-	"desk_illegible": "看不清楚的字",
-}
-
-const SECRETS_6 := {
 	"no_seam": "沒有縫線的那一個",
 	"stamps_47": "四十七個戳章",
 	"mayor_hesitate": "空著的下一格",
@@ -69,10 +58,10 @@ const SECRETS_6 := {
 	"candy_jar": "白的糖",
 	"left_a_thread": "留下的線頭",
 	"dream_mayor": "鎮長的夜",
-	"send_back": "再來一次",
+	"fen_why": "為什麼要保護你",
 }
 
-const SECRETS_7 := {
+const SECRETS_6 := {
 	"rule_zero_seen": "第零條",
 	"rewrote_zero": "劃掉的那一行",
 	"kept_zero": "留著的那一行",
@@ -114,7 +103,9 @@ const CLUES := {
 	"handwriting": "給遙的信，筆跡和名牌背面的「辶」一樣。",
 	"sent_self_letter": "信上寫著：我站在門口。我看見了。我沒有阻止。",
 	"guilt_door": "夢裡站在門口。比較小的那個人背對著你。桌上的名字被蹭掉了。",
-	"desk_illegible": "夢裡的桌面寫滿了字，一個也看不清楚。",
+	"desk_illegible": "第三排靠窗的桌面寫滿了字，一個也看不清楚。椅子上是男生的制服。",
+	"bag_dumped": "走廊的垃圾桶。遙的書包倒著。倒書包的人，胸口沒有名字。",
+	"mirror_said": "洗手台的鏡子裡，那個孩子說：你忘記的，是我。",
 	"fen_why": "白面說：書包那一次你看著他。剪開之後，留下來的一半只記得要保護你。",
 	"stamps_47": "鎮長的名冊：火車票貼了四十七張。",
 	"rule_zero_seen": "鐘塔頂端寫著：第零條　不要想起來。",
@@ -196,15 +187,13 @@ func secret_defs() -> Dictionary:
 			return SECRETS_4
 		5:
 			return SECRETS_5
-		6:
-			return SECRETS_6
 		_:
-			return SECRETS_7
+			return SECRETS_6
 
 
 func dream_count() -> int:
 	var n := 0
-	for k in ["dream_hospital", "dream_door", "dream_mirror", "dream_mayor"]:
+	for k in ["dream_hospital", "dream_door", "dream_school", "dream_mayor"]:
 		if has(k):
 			n += 1
 	return n
