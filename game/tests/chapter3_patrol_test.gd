@@ -25,12 +25,13 @@ func _run() -> void:
 	_check(ResourceLoader.exists("res://art/walk4/h_graduate.png"), "失控區畢業生有四方向走路圖")
 	_check(ResourceLoader.exists("res://art/scare_nurse.png"), "護士抓住玩家有突臉圖")
 
-	var ex := Explore.new()
+	# 執行期才載入：SceneTree 測試腳本編譯時，autoload 名稱尚未註冊給 Explore。
+	var ex = load("res://scripts/explore/explore.gd").new()
 	ex.load_level("res://levels/chapter3.json")
 	root.add_child(ex)
 	await ex.enter("corridor", [500, 330])
 	ex.busy = false
-	var nurse: ExplorePatrol = ex._patrols[0]
+	var nurse = ex._patrols[0]
 	_check(nurse.data.get("char", "") == "h_nurse" and nurse._random_patrol, "護士使用走路圖並隨機巡邏")
 	_check(nurse._target != nurse.position, "隨機巡邏會選下一個位置")
 
