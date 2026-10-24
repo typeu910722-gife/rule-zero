@@ -35,6 +35,27 @@ func _run() -> void:
 	_check(ResourceLoader.exists("res://art/walk4/h_nurse.png"), "巡邏護士有四方向走路圖")
 	_check(ResourceLoader.exists("res://art/walk4/h_graduate.png"), "失控區畢業生有四方向走路圖")
 	_check(ResourceLoader.exists("res://art/scare_nurse.png"), "護士抓住玩家有突臉圖")
+	var level = JSON.parse_string(FileAccess.get_file_as_string("res://levels/chapter3.json"))
+	var maps_ok := true
+	for room_id in level.rooms:
+		var tex: Texture2D = load("res://art/ch3/maps/ch3_map_%s.jpg" % room_id)
+		var expected: Array = level.rooms[room_id].get("size", [1280, 720])
+		if tex == null or tex.get_width() != int(expected[0]) or tex.get_height() != int(expected[1]):
+			maps_ok = false
+	_check(maps_ok, "22 個探索房間都有與碰撞座標同尺寸的地圖美術")
+	var walk_ok := true
+	for char_id in ["lulu", "mochi", "popo", "fen", "baimian", "xiaoji", "zhongzhong", "gaga", "youyou", "staff", "h_nurse", "h_graduate", "conductor", "dove"]:
+		var walk: Texture2D = load("res://art/walk4/%s.png" % char_id)
+		if walk == null:
+			walk_ok = false
+			continue
+		var image := walk.get_image()
+		var neutral := image.get_region(Rect2i(0, 0, 160, 160)).get_data()
+		var step_left := image.get_region(Rect2i(160, 0, 160, 160)).get_data()
+		var step_right := image.get_region(Rect2i(480, 0, 160, 160)).get_data()
+		if neutral == step_left or neutral == step_right or step_left == step_right:
+			walk_ok = false
+	_check(walk_ok, "配角、護士與畢業生都有左右手腳交替的跨步幀")
 
 	# 執行期才載入：SceneTree 測試腳本編譯時，autoload 名稱尚未註冊給 Explore。
 	var ex = load("res://scripts/explore/explore.gd").new()
