@@ -275,6 +275,9 @@ func _show_title() -> void:
 		# 從「選擇篇章」進第二章：從第二章的序章重新開始
 		GameState.reset()
 		enter_chapter2(get_tree()))
+	title.chapter2_mid.connect(func():
+		GameState.reset()
+		enter_chapter2_mid(get_tree()))
 
 
 ## 從存檔繼續：每個檢查點都是某一天的早上
@@ -315,6 +318,19 @@ static func enter_chapter2(tree: SceneTree) -> void:
 	GameState.set_flag("chapter2")
 	GameState.start_chapter2()
 	GameState.checkpoint = ""
+	tree.change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
+
+
+## 試玩用：跳過序章和第一天，從第二天早上的公告欄開始。
+static func enter_chapter2_mid(tree: SceneTree) -> void:
+	Sound.bgm("")
+	Sound.ambience("")
+	Dialogue.set_bg("none")
+	GameState.set_flag("chapter2")
+	GameState.start_chapter2()
+	GameState.new_day()
+	GameState.set_flag("tiaoma_2")
+	GameState.save_game("c2_day2_morning")
 	tree.change_scene_to_file.call_deferred("res://scenes/chapter2.tscn")
 
 

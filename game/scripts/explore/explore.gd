@@ -10,6 +10,7 @@ extends Node2D
 signal interacted(id: String)
 signal caught(by: String)
 signal room_entered(id: String)
+signal chase_changed(active: bool, by: String)
 
 const REACH := 72.0
 const Keypad := preload("res://scripts/explore/keypad.gd")
@@ -32,6 +33,7 @@ var _fade: ColorRect
 var _dark: CanvasModulate
 var _light: PointLight2D
 var _patrols: Array = []
+var _chasing_patrols := {}
 var _followers: Array = []
 var _entry := Vector2.ZERO       # 被抓到時回到這裡（最後一次進門的位置）
 var _waiting := ""               # until() 等的條件
@@ -107,10 +109,12 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	for c in _world.get_children():
 		c.queue_free()
 	_patrols.clear()
+	_chasing_patrols.clear()
 	_followers.clear()
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
 	var th := ExploreArt.theme(room.get("theme", "hospital"))
+	var illustrated := _room_art_path() != ""
 	var back := Node2D.new()
 	back.z_index = -10
 	back.draw.connect(func(): _draw_back(back, size, th))
@@ -119,15 +123,16 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	_ysort.y_sort_enabled = true
 	_world.add_child(_ysort)
 	# 家具
-	for p in room.get("props", []):
-		var n := Node2D.new()
-		var r := _r(p.rect)
-		n.position = Vector2(r.position.x, r.end.y)
-		var local := Rect2(Vector2(0, -r.size.y), r.size)
-		var kind: String = p.get("kind", "box")
-		var lab: String = p.get("label", "")
-		n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
-		_ysort.add_child(n)
+	if not illustrated:
+		for p in room.get("props", []):
+			var n := Node2D.new()
+			var r := _r(p.rect)
+			n.position = Vector2(r.position.x, r.end.y)
+			var local := Rect2(Vector2(0, -r.size.y), r.size)
+			var kind: String = p.get("kind", "box")
+			var lab: String = p.get("label", "")
+			n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
+			_ysort.add_child(n)
 	# 調查點、NPC、門、躲藏點
 	for s in _things():
 		var n := Node2D.new()
@@ -243,9 +248,11 @@ func _things() -> Array:
 
 
 func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
-	var art: String = room.get("art", "")
+	var art := _room_art_path()
 	var tex := ExploreArt.tex(art) if art != "" else null
 	if tex:
+		# 房間比 1280×720 短時，鏡頭會看到邊界外；先鋪同色延伸，避免露出粉紅／黑色清除色。
+		c.draw_rect(Rect2(-400, -400, size.x + 800, size.y + 800), Color(th.wall).darkened(0.18))
 		c.draw_texture_rect(tex, Rect2(Vector2.ZERO, size), false)
 		return
 	var wall := float(room.get("wall_h", 90))
@@ -284,6 +291,14 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 				c.draw_rect(_r(d.rect), Color(d.get("color", "#ffffff")))
 
 
+func _room_art_path() -> String:
+	var explicit: String = room.get("art", "")
+	if explicit != "" and ResourceLoader.exists(explicit):
+		return explicit
+	var ch3 := "res://art/ch3/maps/ch3_map_%s.jpg" % room_id
+	return ch3 if ResourceLoader.exists(ch3) else ""
+
+
 func _draw_thing(n: Node2D, s: Dictionary) -> void:
 	var t := Time.get_ticks_msec() / 1000.0
 	match s._kind:
@@ -298,12 +313,17 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 		"doors":
 			var sz := _v(s.get("size", [90, 26]))
 			var open := _door_open(s)
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#f6d0da") if open else Color("#c8b5ba"))
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#d4788f") if open else Color("#8c7a80"), false, 2.0)
-			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 6), s.get("name", "門") + ("" if open else "（鎖著）"), HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color("#6a4c56"))
+			if _room_art_path() == "":
+				n.draw_rect(Rect2(-sz / 2.0, sz), Color("#f6d0da") if open else Color("#c8b5ba"))
+				n.draw_rect(Rect2(-sz / 2.0, sz), Color("#d4788f") if open else Color("#8c7a80"), false, 2.0)
+			else:
+				n.draw_circle(Vector2.ZERO, 8, Color(0.95, 0.76, 0.38, 0.7 if open else 0.28))
+				n.draw_arc(Vector2.ZERO, 13, 0, TAU, 24, Color(1, 0.9, 0.65, 0.65), 2.0)
+			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 10), s.get("name", "門") + ("" if open else "（鎖著）"), HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color("#e8f0ef") if _room_art_path() != "" else Color("#6a4c56"))
 		"hides":
 			var sz2 := _v(s.get("size", [60, 30]))
-			ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
+			if _room_art_path() == "":
+				ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
 			if hidden_in == str(s.get("id", "")):
 				n.draw_string(GameState.font, Vector2(-60, -100), "（躲著）", HORIZONTAL_ALIGNMENT_CENTER, 120, 15, Color("#d65a5a"))
 		_:
@@ -504,9 +524,19 @@ func on_spotted(by: Dictionary) -> void:
 	busy = true
 	var lab: String = by.get("catch", "")
 	if not GameState.fast:
-		Sfx.play(self, "wrong", -4.0)
-		toast("！", 0.8)
-		await get_tree().create_timer(0.6).timeout
+		var scare: String = by.get("scare", "")
+		if scare != "":
+			var j := JumpScare.new()
+			j.who = scare
+			add_child(j)
+			Sound.duck(true)
+			await j.play()
+			Sound.duck(false)
+			j.queue_free()
+		else:
+			Sfx.play(self, "wrong", -4.0)
+			toast("！", 0.8)
+			await get_tree().create_timer(0.6).timeout
 	if lab != "" and Dialogue.has_label(lab):
 		await Dialogue.run(lab)
 	caught.emit(str(by.get("id", by.get("char", ""))))
@@ -518,6 +548,15 @@ func on_spotted(by: Dictionary) -> void:
 		p.reset()
 	await _fade_to(0.0)
 	busy = false
+
+
+## 巡邏者開始／停止追逐。多個追兵同時存在時，最後一個停下才關掉追逐音樂。
+func patrol_chase_changed(active: bool, by: String) -> void:
+	if active:
+		_chasing_patrols[by] = true
+	else:
+		_chasing_patrols.erase(by)
+	chase_changed.emit(not _chasing_patrols.is_empty(), by)
 
 
 ## 劇本的 @event：密碼鎖等由這裡處理；回傳 true 表示處理掉了

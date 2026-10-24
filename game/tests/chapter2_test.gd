@@ -98,7 +98,7 @@ func _run() -> void:
 	_check(gs.has("xiaoji_mask_crack") and gs.courage == 0, "問小棘為什麼一直笑（膽量 -1）")
 	_check(ch.phase == "day1_explore", "認識 1 個居民後仍在自由時間")
 	await _do("treatment_door")
-	await _do("baimian", [1])
+	await _do("baimian", [2, 1])
 	_check(gs.has("met_baimian"), "白面：「遙。你還活著啊。」")
 	await _wait_phase("day1_night")
 	_check(not gs.has("saw_eighth_name"), "點名：看著前面")

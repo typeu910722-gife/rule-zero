@@ -6,8 +6,11 @@ extends CanvasLayer
 signal done
 
 var who := "mayor"
+## 倒掛：臉從畫面上方、上下顛倒地貼過來（第三章開頭的和平鴿）
+var upside_down := false
 var _rect: TextureRect
 var _shade: ColorRect
+var _flip := 1.0
 
 
 func _ready() -> void:
@@ -34,8 +37,10 @@ func _ready() -> void:
 		_rect.modulate = Color(1.1, 0.85, 0.85)
 	_rect.size = Vector2(1280, 1280)
 	_rect.pivot_offset = _rect.size / 2
-	_rect.position = Vector2(0, -280)
-	_rect.scale = Vector2(0.25, 0.25)
+	_flip = -1.0 if upside_down else 1.0
+	# 倒掛時臉先掛在畫面頂端
+	_rect.position = Vector2(0, -40 if upside_down else -280)
+	_rect.scale = Vector2(0.25, 0.25 * _flip)
 	_rect.modulate.a = 0.0
 	add_child(_rect)
 
@@ -46,7 +51,7 @@ func play() -> void:
 		return
 	if GameState.gentle():
 		# 減少驚嚇：臉慢慢浮現、慢慢消失，沒有聲音、不抖動
-		_rect.scale = Vector2(0.9, 0.9)
+		_rect.scale = Vector2(0.9, 0.9 * _flip)
 		var tg := create_tween().set_parallel()
 		tg.tween_property(_rect, "modulate:a", 0.55, 0.6)
 		tg.tween_property(_shade, "color:a", 0.5, 0.6)
@@ -61,7 +66,7 @@ func play() -> void:
 	Sound.sfx("glitch")
 	Dialogue.fx.scare()
 	var tw := create_tween().set_parallel()
-	tw.tween_property(_rect, "scale", Vector2(1.25, 1.25), 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_rect, "scale", Vector2(1.25, 1.25 * _flip), 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw.tween_property(_rect, "modulate:a", 1.0, 0.05)
 	tw.tween_property(_shade, "color:a", 0.85, 0.08)
 	await tw.finished

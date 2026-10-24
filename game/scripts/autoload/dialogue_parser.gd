@@ -19,6 +19,7 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all",
 	# 第三章（dialogue.gd 的 BG_ART_3／BG_COLORS_3）
 	"c3_platform", "c3_hall", "c3_nurse", "c3_nirvana", "c3_records", "c3_director", "c3_wild", "c3_b2", "c3_monitor", "c3_lab",
+	"c3_cg_arrival", "c3_cg_nirvana", "c3_cg_records", "c3_cg_crow", "c3_cg_monitor", "c3_cg_ending",
 	# 第四、五章（dialogue.gd 的 BG_COLORS_45）
 	"c4_classroom", "c4_hallway", "c4_toilet_door", "c4_stairs", "c4_gate", "c4_window", "c4_phone", "c4_home",
 	"c4_mailbox", "c4_orphanage", "c4_office", "c4_downstairs", "c4_principal", "c4_hospital", "c4_ward", "c4_ward_dark",

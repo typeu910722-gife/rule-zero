@@ -7,7 +7,7 @@ name: 網頁預覽版（含 iPhone 安裝頁）
 
 on:
   push:
-    branches: [claude/confident-bohr-fchdn2]
+    branches: [claude/confident-bohr-fchdn2, cursor/ch2-mid-no-hold-skip-6513]
     paths: [".github/workflows/web-preview.yml", "game/**", "site/**", "tools/build_site.sh", "tools/make_ios_profile.py", "tools/android/**"]
   workflow_dispatch:
 
