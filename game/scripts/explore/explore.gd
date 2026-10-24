@@ -251,6 +251,8 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 	var art := _room_art_path()
 	var tex := ExploreArt.tex(art) if art != "" else null
 	if tex:
+		# 房間比 1280×720 短時，鏡頭會看到邊界外；先鋪同色延伸，避免露出粉紅／黑色清除色。
+		c.draw_rect(Rect2(-400, -400, size.x + 800, size.y + 800), Color(th.wall).darkened(0.18))
 		c.draw_texture_rect(tex, Rect2(Vector2.ZERO, size), false)
 		return
 	var wall := float(room.get("wall_h", 90))

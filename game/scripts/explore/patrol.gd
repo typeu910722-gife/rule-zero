@@ -158,11 +158,12 @@ func _set_chasing(on: bool) -> void:
 func _draw() -> void:
 	if not visible:
 		return
-	# 視野扇形
-	var pts := PackedVector2Array([Vector2.ZERO])
-	for k in 13:
-		pts.append(Vector2.from_angle(facing.angle() - fov + fov * 2.0 * k / 12.0) * (view if not _chasing else minf(view, 120.0)))
-	draw_colored_polygon(pts, Color(1, 0.22, 0.28, 0.34 if _chasing else 0.10 + _alert * 0.5))
+	# 平常不顯示偵錯感很重的視野扇形；被察覺／追逐時才用短暫紅光提示危險。
+	if _chasing or _alert > 0.05:
+		var pts := PackedVector2Array([Vector2.ZERO])
+		for k in 13:
+			pts.append(Vector2.from_angle(facing.angle() - fov + fov * 2.0 * k / 12.0) * (minf(view, 120.0) if _chasing else view))
+		draw_colored_polygon(pts, Color(1, 0.22, 0.28, 0.30 if _chasing else _alert * 0.45))
 	var who: String = data.get("char", "staff")
 	if who.begins_with("human:"):
 		ExploreArt.draw_human(self, Vector2.ZERO, who.trim_prefix("human:"), 0 if facing.y > 0 else 3, true, Time.get_ticks_msec() / 1000.0)
