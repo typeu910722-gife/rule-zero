@@ -2,8 +2,10 @@ extends CanvasLayer
 ## 原型的章節結尾選單。
 ## mode "to_ch2"：第一章結束、第二章預告播完後才出現（繼續第二章／回到標題）。
 ## mode "c2_done"：第二章結算（秘密、操行、每個居民的去向）。
+## mode "finale"：第七章收束（想起來／好孩子／線頭不夠／修理／留下來的人）。
 
 const CHAPTER2 := "res://scenes/chapter2.tscn"
+const LATER := "res://scenes/later.tscn"
 const TITLE := "res://scenes/main.tscn"
 
 var mode := "to_ch2"
@@ -50,11 +52,26 @@ func _ready() -> void:
 			(GameState.SECRETS.size() - GameState.SECRETS.keys().filter(func(k): return GameState.has(k)).size())
 		first = _button(box, "繼續", func(): get_tree().change_scene_to_file(CHAPTER2))
 		_button(box, "存檔並回到標題", _to_title)
+	elif mode == "finale":
+		var book := {
+			"remember": ["想起來", "棉花散開的時候，顏色是齊的。"],
+			"good": ["好孩子", "下一班火車正在進站。"],
+			"short": ["線頭不夠", "你劃掉了。字又浮回來。"],
+			"repair": ["修理", "畫面被縫上了。標題也是。"],
+			"stay": ["留下來的人", "選擇權還給了還在的人。有一個名牌是空的。"],
+		}
+		var pair: Array = book.get(str(GameState.meta.get("ending", "good")), book.good)
+		t.text = pair[0]
+		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		hint.custom_minimum_size = Vector2(480, 48)
+		hint.text = pair[1]
+		first = _button(box, "回到標題", _to_title)
 	elif ResourceLoader.exists(RESULTS_TEX):
 		_build_results(t, hint)
-		box.position = Vector2(440, 556)
+		box.position = Vector2(440, 520)
 		box.custom_minimum_size = Vector2(400, 0)
-		first = _button(box, "回到標題", _to_title)
+		first = _button(box, "繼續　第三章", _to_chapter3)
+		_button(box, "回到標題", _to_title)
 	else:
 		box.position = Vector2(340, 70)
 		box.custom_minimum_size = Vector2(600, 300)
@@ -77,12 +94,13 @@ func _ready() -> void:
 		fates.text = "[center]%s[/center]" % "　　".join(lines.slice(0, 3)) + "\n[center]%s[/center]" % "　　".join(lines.slice(3))
 		box.add_child(fates)
 		var next := Label.new()
-		next.text = "第三章「慈愛綜合醫院」（製作中）"
+		next.text = "下一站——慈愛綜合醫院。"
 		next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		next.add_theme_font_size_override("font_size", 20)
 		next.add_theme_color_override("font_color", Color("#a39ba8"))
 		box.add_child(next)
-		first = _button(box, "回到標題", _to_title)
+		first = _button(box, "繼續　第三章", _to_chapter3)
+		_button(box, "回到標題", _to_title)
 	if not OS.has_feature("web"):
 		_button(box, "離開遊戲", func(): get_tree().quit())
 	first.grab_focus.call_deferred()
@@ -128,7 +146,7 @@ func _build_results(t: Label, hint: Label) -> void:
 	move_child(area, 1)
 	# 第三章預告：空白的章節框
 	var next := Label.new()
-	next.text = "第三章「慈愛綜合醫院」（製作中）"
+	next.text = "下一站——慈愛綜合醫院。"
 	next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	next.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	next.add_theme_font_size_override("font_size", 20)
@@ -181,6 +199,15 @@ func _button(box: Control, text: String, cb: Callable) -> Button:
 	b.pressed.connect(cb)
 	box.add_child(b)
 	return b
+
+
+func _to_chapter3() -> void:
+	GameState.meta.carry_ch2 = GameState.flags.duplicate()
+	GameState.save_meta()
+	Dialogue.set_bg("none")
+	GameState.start_chapter(3)
+	GameState.checkpoint = ""
+	get_tree().change_scene_to_file(LATER)
 
 
 func _to_title() -> void:

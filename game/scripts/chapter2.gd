@@ -475,6 +475,8 @@ func _chapter_end() -> void:
 				fates[id] = fate
 	GameState.meta.chapters_done = maxi(int(GameState.meta.get("chapters_done", 0)), 2)
 	GameState.meta.ch2_fates = fates
+	# 標題畫面重進第三章時，只帶回漂白鎮結束當下的旗標
+	GameState.meta.carry_ch2 = GameState.flags.duplicate()
 	GameState.save_meta()
 	GameState.delete_save()
 	var card := EndCard.new()

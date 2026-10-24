@@ -28,6 +28,61 @@ const SECRETS_2 := {
 	"mochi_name": "麻糬的本名",
 }
 
+const SECRETS_3 := {
+	"saw_own_body": "靠窗的床",
+	"chart_haruka": "病歷上的名字",
+	"fen_bed": "沒有名字的床尾",
+	"conductor_kin": "決議者的弟弟",
+	"nw_door": "比斯泰德的門",
+	"mayor_paw": "熊掌印",
+	"chart_46": "編號 46",
+	"maintained": "還在跳的監視器",
+}
+
+const SECRETS_4 := {
+	"letter_lulu": "給希露飛",
+	"letter_mochi": "給小滿",
+	"letter_fen": "給芬",
+	"sent_self_letter": "給遙的信",
+	"handwriting": "同一隻手",
+	"popo_bag": "沒有寄出的郵袋",
+	"guilt_door": "門口",
+	"saw_glass": "圓門裡的小孩",
+}
+
+const SECRETS_5 := {
+	"mirror_child": "鏡中的孩子",
+	"mirror_said": "你忘記的，是我",
+	"safe_47": "第 47 個",
+	"fen_why": "為什麼要保護你",
+	"two_foxes": "一橘一白",
+	"lulu_in_mirror": "裂縫裡的蝴蝶結",
+	"dream_mirror": "玻璃兩邊",
+	"desk_illegible": "看不清楚的字",
+}
+
+const SECRETS_6 := {
+	"no_seam": "沒有縫線的那一個",
+	"stamps_47": "四十七個戳章",
+	"mayor_hesitate": "空著的下一格",
+	"first_resident": "第一頁的熊掌印",
+	"candy_jar": "白的糖",
+	"left_a_thread": "留下的線頭",
+	"dream_mayor": "鎮長的夜",
+	"send_back": "再來一次",
+}
+
+const SECRETS_7 := {
+	"rule_zero_seen": "第零條",
+	"rewrote_zero": "劃掉的那一行",
+	"kept_zero": "留著的那一行",
+	"baimian_end": "沒有名字的那一半",
+	"full_color": "顏色回來了",
+	"cotton_wind": "風裡的棉花",
+	"own_choice": "自己選",
+	"stitch_title": "標題上的線",
+}
+
 ## 日記裡「記下的事」：謎題線索會自動記錄，玩家不用靠記憶力
 const CLUES := {
 	"lulu_slip": "露露叫我「小遙」，然後自己忘記了。",
@@ -53,6 +108,16 @@ const CLUES := {
 	"dove_first_page": "愛的日記最前面一頁：「今天，教官沒有醒來。我替他戴上了面具。很合。」",
 	"nirvana_clipboard": "夾板：涅槃計畫區第七期。「意識：已處分　身體：維持中」。",
 	"overheard_conductor": "月台上，和平鴿和車掌在說話。車掌的哥哥選了和平鴿。",
+	"chart_46": "病歷寫著：收治次數 46。本次 47。",
+	"chart_haruka": "靠窗的床名牌寫著「遙」。椅子上是男生的制服。碟子裡有一個粉紅色髮夾。",
+	"conductor_kin": "決議書：反對的人是車掌，他是決議者的弟弟。姓名被塗掉了。",
+	"handwriting": "給遙的信，筆跡和名牌背面的「辶」一樣。",
+	"sent_self_letter": "信上寫著：我站在門口。我看見了。我沒有阻止。",
+	"guilt_door": "夢裡站在門口。比較小的那個人背對著你。桌上的名字被蹭掉了。",
+	"desk_illegible": "夢裡的桌面寫滿了字，一個也看不清楚。",
+	"fen_why": "白面說：書包那一次你看著他。剪開之後，留下來的一半只記得要保護你。",
+	"stamps_47": "鎮長的名冊：火車票貼了四十七張。",
+	"rule_zero_seen": "鐘塔頂端寫著：第零條　不要想起來。",
 }
 
 ## 第二章：操行成績單（第一章隱藏的懷疑值，這章攤開給你看）
@@ -120,7 +185,43 @@ func add_conduct(amount: int) -> void:
 
 
 func secret_defs() -> Dictionary:
-	return SECRETS if chapter == 1 else SECRETS_2
+	match chapter:
+		1:
+			return SECRETS
+		2:
+			return SECRETS_2
+		3:
+			return SECRETS_3
+		4:
+			return SECRETS_4
+		5:
+			return SECRETS_5
+		6:
+			return SECRETS_6
+		_:
+			return SECRETS_7
+
+
+func dream_count() -> int:
+	var n := 0
+	for k in ["dream_hospital", "dream_door", "dream_mirror", "dream_mayor"]:
+		if has(k):
+			n += 1
+	return n
+
+
+## 進入後續章節。不清除已經帶過來的旗標。
+func start_chapter(n: int) -> void:
+	chapter = n
+	day = 1
+	courage = MAX_COURAGE
+	if n == 3:
+		suspicion = 0
+		conduct = CONDUCT_START
+	objective = ""
+	if not flags.has("tag_on"):
+		flags["tag_on"] = true
+	changed.emit()
 
 
 func has(flag: String) -> bool:

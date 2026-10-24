@@ -1,0 +1,93 @@
+// 第四章「寄不出去的信」。信封上只用人類本名。
+
+=== c4_opening
+@bgm mail
+@bg none
+> 郵務室的牆上一格一格，全是沒有寄出的信。
+> 角落還放著那只郵袋。袋子沒有破，只是從來沒有被提起來。
+波波：收件人寫的，都是以前的名字。
+波波：現在的名字，他們不收。
+@event board
+> 最裡面有一封，信封的角上露出一點粉。你先不要拆。
+
+=== c4_popo
+波波：這些信都在我的袋子裡過。
+波波：我沒有寄。因為我不知道該喊哪一個名字。
+@set popo_bag
+
+=== c4_lulu
+露露：如果有我的信……
+露露：我想看。可是我想自己決定要不要看。
+> 她把雙手背在後面。蝴蝶結是薄荷綠的。這裡沒有人叫她另一個名字。
+
+=== c4_mochi
+麻糬：我的名牌還是空白的。
+麻糬：如果信封上有字，而那個字是我……你可以念嗎。
+麻糬：不。不要念。放在我手裡就好。
+
+=== c4_baimian
+白面：沒有寫給我的。
+白面：我沒有可以寫在信封上的字。
+白面：寫給芬的，不是寫給我。你可以拿給我。我會放在那張床上。
+
+=== c4_letter_lulu
+@sfx paper
+> 信封：給希露飛。
+> 署名是銘越。字寫得很用力，像怕被拿走。
+@event deliver_lulu
+[sent_letter_lulu] 露露：……這是我的名字。以前的。
+[sent_letter_lulu] 露露：我先收著。我還沒有決定要不要拆。
+[sent_letter_lulu] @set letter_lulu
+
+=== c4_letter_mochi
+@sfx paper
+> 信封：給小滿。
+> 沒有署名。只寫：我還記得你叫這個。
+@event deliver_mochi
+[sent_letter_mochi] 麻糬：你沒有念出來。
+[sent_letter_mochi] 麻糬：謝謝。我知道那是我。我只是不想聽見。
+[sent_letter_mochi] @set letter_mochi
+
+=== c4_letter_fen
+@sfx paper
+> 信封：給芬。
+> 裡面只有一行：讓你變得更好。
+> 沒有寫更好是什麼樣子。
+@event deliver_fen
+[sent_letter_fen] 白面：這不是給我的。
+[sent_letter_fen] 白面：我會放在床上。床上的人看不看，我不知道。
+[sent_letter_fen] @set letter_fen
+
+=== c4_letter_self
+@sfx paper
+> 信封：給遙。
+> 筆跡跟名牌背面剩下的「辶」，是同一隻手。
+@set handwriting
+@event deliver_self
+[sent_self_letter] @sus 5
+[sent_self_letter] > 你把它放進口袋。沒有念出聲。
+[sent_self_letter] > 信上寫著：我站在門口。我看見了。我沒有阻止。
+[!sent_self_letter] > 信到了別人手上。他看了收件人，又把信還回來。他不認識那個字。
+
+=== c4_board
+@event board
+
+=== c4_sleep1
+@bg dream
+@bgm dream
+> 夢裡全是信封。你認得那些字，可是叫不出那是誰的聲音。
+@bg none
+@bgm mail
+
+=== c4_morning2
+> 第二天。格子還是滿的。
+[!sent_self_letter] > 最裡面那封還在。角上的那一點粉沒有被人收走。
+[sent_self_letter] > 你的口袋有一點重。沒有人來搜。
+
+=== c4_end
+@bgm mirror
+> 郵務室的盡頭有一扇圓門。玻璃是涼的。
+> 門上沒有牌子。只有一道很舊的裂。
+> 你從玻璃裡看見一個小孩。看不清臉。
+@set saw_glass
+@bg none

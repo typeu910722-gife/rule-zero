@@ -5,6 +5,8 @@ extends CanvasLayer
 signal new_game
 signal continue_game
 signal chapter2
+signal chapter3
+signal replay_mayor
 
 var _area: Control
 var _hover_tag := -1
@@ -26,9 +28,14 @@ func _ready() -> void:
 	_area.draw.connect(_draw_area)
 	add_child(_area)
 
+	var extra := 0
+	if int(GameState.meta.get("chapters_done", 0)) >= 2:
+		extra += 1
+	if GameState.meta.get("true_seen", false):
+		extra += 1
 	var box := VBoxContainer.new()
-	box.position = Vector2(120, 380)
-	box.custom_minimum_size = Vector2(320, 0)
+	box.position = Vector2(120, 360 - extra * 28)
+	box.custom_minimum_size = Vector2(360, 0)
 	box.add_theme_constant_override("separation", 12)
 	add_child(box)
 	var cont := _button("繼續", func(): continue_game.emit())
@@ -37,6 +44,10 @@ func _ready() -> void:
 	box.add_child(_button("新遊戲", func(): new_game.emit()))
 	# 原型：第二章可以直接從標題進去試玩
 	box.add_child(_button("第二章　漂白鎮（試玩）", func(): chapter2.emit()))
+	if int(GameState.meta.get("chapters_done", 0)) >= 2:
+		box.add_child(_button("第三章　慈愛綜合醫院", func(): chapter3.emit()))
+	if GameState.meta.get("true_seen", false):
+		box.add_child(_button("再去問一次鎮長", func(): replay_mayor.emit()))
 	if not OS.has_feature("web"):
 		box.add_child(_button("離開", func(): get_tree().quit()))
 	(cont if not cont.disabled else box.get_child(1)).grab_focus.call_deferred()
@@ -115,6 +126,23 @@ func _draw_area() -> void:
 	_area.draw_string(f, Vector2(110, 210), "第零條規則", HORIZONTAL_ALIGNMENT_LEFT, -1, 84, Color("#6d4c5c"))
 	_area.draw_string(f, Vector2(116, 270), "Rule Zero", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#b56576"))
 	_area.draw_string(f, Vector2(116, 320), "一個溫柔的世界，藏著被遺忘的規則。", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#a38b98"))
+	if GameState.meta.get("stitched", false):
+		_area.draw_line(Vector2(108, 168), Vector2(560, 198), Color("#f4f1ee"), 4.0)
+		_area.draw_line(Vector2(108, 186), Vector2(548, 214), Color("#d9cfc8"), 2.0)
+	var ending_line := ""
+	match str(GameState.meta.get("ending", "")):
+		"remember":
+			ending_line = "想起來。"
+		"good":
+			ending_line = "好孩子。"
+		"short":
+			ending_line = "線頭不夠。"
+		"repair":
+			ending_line = "修理。"
+		"stay":
+			ending_line = "留下來的人。"
+	if ending_line != "":
+		_area.draw_string(f, Vector2(116, 690), ending_line, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#b56576"))
 
 	# 小布
 	_area.draw_set_transform(Vector2(820, 560), 0.0, Vector2(6, 6))
@@ -126,9 +154,9 @@ func _draw_area() -> void:
 	_area.draw_rect(ticket, Color("#fff8ec"))
 	_area.draw_rect(ticket, Color("#d4a373"), false, 3)
 	_area.draw_string(f, ticket.position + Vector2(18, 38), "棉花糖鎮　單程票", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#7f5539"))
-	var stamps := clampi(int(GameState.meta.get("chapters_done", 0)) + 1, 1, 6)
+	var stamps := clampi(int(GameState.meta.get("chapters_done", 0)) + 1, 1, 8)
 	for k in stamps:
-		var c := ticket.position + Vector2(40 + (k % 3) * 70, 75 + (k / 3) * 40)
+		var c := ticket.position + Vector2(32 + (k % 4) * 56, 72 + (k / 4) * 42)
 		# 第三個戳章（漂白鎮之後）的墨水是白色的
 		var ink := Color(0.75, 0.2, 0.25, 0.75) if k != 2 else Color(0.85, 0.85, 0.82, 0.95)
 		if k == 2 and ResourceLoader.exists(WHITE_STAMP_TEX):

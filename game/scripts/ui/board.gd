@@ -62,6 +62,8 @@ func _ready() -> void:
 func rules_bbcode() -> String:
 	if GameState.chapter == 2:
 		return bleach_rules_bbcode()
+	if GameState.chapter >= 3:
+		return later_rules_bbcode()
 	# 第二天起：第 9 條的「回來」字型變粗，像是後來補寫的
 	var back := "回來" if GameState.day < 2 else "[b]回來[/b]"
 	var lines := [
@@ -99,6 +101,76 @@ func bleach_rules_bbcode() -> String:
 		"",
 		"[center][color=#9a9a9a][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]",
 	]
+	return "\n".join(lines)
+
+
+## 第三～七章的公告。每一章的「正常」都不一樣，不另外做提示。
+func later_rules_bbcode() -> String:
+	var lines: PackedStringArray = []
+	match GameState.chapter:
+		3:
+			lines = PackedStringArray([
+				"[center][font_size=30]慈愛綜合醫院　探視守則[/font_size][/center]",
+				"",
+				"1. 探視時間十五分鐘。",
+				"2. 不要叫醒身體。" if GameState.day < 2 else "2. 不要叫醒身體。\n[color=#7d8f88]　尤其是捲頭髮的那個。[/color]",
+				"3. 不要拉頭上的線。",
+				"4. 比斯泰德棟，不准進入。",
+				"5. 病歷上的字，不要念出聲。",
+				"6. 空的床，不要躺上去。",
+				"7. 沒有名字的人，不要問他叫什麼。",
+				"8. 守則是為了你好。",
+			])
+		4:
+			lines = PackedStringArray([
+				"[center][font_size=30]郵務室　暫訂守則[/font_size][/center]",
+				"",
+				"1. 信，交給信封上的那個人。",
+				"2. 不要拆開還沒交給你的信。",
+				"3. 本名只寫在信封上，不要念出來。",
+				"4. 寄不出去的，放回郵袋。",
+				"5. 不要問信是誰寫的。",
+				"6. 空的收件人，不要自己填。",
+			])
+		5:
+			lines = PackedStringArray([
+				"[center][font_size=30]鏡之屋　守則[/font_size][/center]",
+				"",
+				"1. 鏡子是用來整理儀容的。",
+				"2. 不要盯著看太久。",
+				"3. 鏡子壞了也不准修。",
+				"4. 鏡子裡的人，不要跟他說話。",
+				"5. 看到人的樣子，把眼睛移開。",
+				"10. 守則永遠只有十條。",
+				"11. [color=#8e3b46]不要相信第十條。[/color]",
+			])
+		6:
+			lines = PackedStringArray([
+				"[center][font_size=30]守則的草稿[/font_size][/center]",
+				"",
+				"[color=#8d6e63]0. 不要想起來。[/color]",
+				"[color=#a89880]（這一行被箭頭指到很後面。後面沒有寫出來。）[/color]",
+				"",
+				"1. 每天都要笑嘻嘻！",
+				"2. 晚上八點以前回家。",
+				"7. 不要問「以前」的事。",
+				"",
+				"[color=#a89880]頁邊：送回總部，會更乾淨。[/color]",
+			])
+		_:
+			var zero := ""
+			if GameState.has("rule_zero_seen"):
+				zero = "[color=#8e3b46]0. 不要想起來。[/color]\n" if not GameState.has("rewrote_zero") else "[color=#8e3b46]0. [s]不要想起來。[/s][/color]\n"
+			lines = PackedStringArray([
+				"[center][font_size=30]棉花糖鎮　好孩子守則[/font_size][/center]",
+				"",
+				zero + "1. 每天都要笑嘻嘻！",
+				"9. 新朋友來的時候，大家要一起說「歡迎[b]回來[/b]」。",
+				"10. 守則永遠只有十條。",
+				"11. [color=#8e3b46]笑的時候，牙齒要算清楚。[/color]",
+			])
+	lines.append("")
+	lines.append("[center][color=#a1887f][font_size=18]（按 E／空白鍵，或點一下畫面 關閉）[/font_size][/color][/center]")
 	return "\n".join(lines)
 
 
