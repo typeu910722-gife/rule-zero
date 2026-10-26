@@ -138,6 +138,9 @@ def build(a):
 def start_server(heavy):
     if not Path(PY).exists() or not COMFY.exists():
         sys.exit(f"找不到 ComfyUI（{COMFY}）。先跑 tools/art/setup.sh")
+    try:   # 已經有開著的 ComfyUI（例如 tools\art\windows\comfy_server.ps1）就直接用，不用每張圖重載模型
+        urllib.request.urlopen(HOST + "/system_stats", timeout=2); return None
+    except Exception: pass
     unet = "--fp8_e4m3fn-unet" if heavy else "--bf16-unet"   # 加了 ControlNet／IP-Adapter 時主模型改 fp8 才不會爆記憶體
     log = open(ART_HOME / "comfy.log", "w") if ART_HOME.exists() else open(Path(tempfile.gettempdir()) / "rz-comfy.log", "w")
     if DEVICE == "gpu":   # 顯示卡（RTX 3070 8GB 這種）：讓 ComfyUI 自己管顯示記憶體
@@ -234,20 +237,24 @@ def main():
     ap.add_argument("--cutout", action="store_true", help="白底去背（立繪、道具）")
     ap.add_argument("--dry", action="store_true", help="只印出提示詞，不出圖")
     a = ap.parse_args()
-    for i in range(a.count):
-        out = a.out if a.count == 1 else "%s_%d%s" % (os.path.splitext(a.out)[0], i + 1, os.path.splitext(a.out)[1])
-        g, prompt, heavy = build(a)
-        if i == 0: print("提示詞：", prompt)
-        if a.dry: return
-        t0 = time.time()
-        p = start_server(heavy)
-        try:
+    p, started = None, False
+    try:
+        for i in range(a.count):
+            out = a.out if a.count == 1 else "%s_%d%s" % (os.path.splitext(a.out)[0], i + 1, os.path.splitext(a.out)[1])
+            g, prompt, heavy = build(a)
+            if i == 0: print("提示詞：", prompt)
+            if a.dry: return
+            t0 = time.time()
+            if not started:
+                p, started = start_server(heavy), True
             run(g, out)
-        finally:
-            p.kill(); p.wait()
-        post(out, a)
-        print("完成", out, "%.0f 秒" % (time.time() - t0))
-        a.seed += 1
+            if DEVICE != "gpu" and p:   # 只有 CPU：每張圖之後關掉，釋放記憶體
+                p.kill(); p.wait(); p, started = None, False
+            post(out, a)
+            print("完成", out, "%.0f 秒" % (time.time() - t0))
+            a.seed += 1
+    finally:
+        if p: p.kill(); p.wait()
 
 
 if __name__ == "__main__":

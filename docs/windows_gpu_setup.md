@@ -15,7 +15,7 @@
 ## 1. 更新顯示卡驅動程式（一定要先做）
 目前的驅動版本是 27.21.14.6262（＝ NVIDIA 462.62，2021 年），太舊，PyTorch 的 CUDA 12 用不了。
 1. 裝「NVIDIA App」（nvidia.com/zh-tw/software/nvidia-app/）→ 驅動程式 → 下載最新的 **Studio** 或 Game Ready 驅動。
-2. 裝完重開機。在 PowerShell 打 `nvidia-smi`，右上角的 Driver Version 要 **551 以上**。
+2. 裝完重開機。在 PowerShell 打 `nvidia-smi`，右上角的 Driver Version 要 **570 以上**。
 
 ## 2. 裝 Claude Code（讓 Claude 在這台電腦上工作）
 在「開始」搜尋 PowerShell → 開啟，貼上：
@@ -52,7 +52,7 @@ claude
 
 ## 6. 之後可以叫 Claude 做的事
 - **重練畫風 LoRA**：`tools\art\windows\train_style_gpu.ps1`（1024 解析度、3000 步）。練完 Claude 會比較各步數、挑最好的放回 `tools\art\models\rzstyle.safetensors`。
-- **出圖**：`py -3.11 tools\art\gen.py …`（偵測到 NVIDIA 顯示卡會自動用顯示卡）。
+- **出圖**：`py -3.11 tools\art\gen.py …`（偵測到 NVIDIA 顯示卡會自動用顯示卡）。每次執行第一張約 70 秒（載入模型），同一次的後續每張約 4 秒；要一直快，先在另一個視窗開著 `tools\art\windows\comfy_server.ps1`，gen.py 會直接用它。
 - **四方向走路圖**：`docs/art_pipeline.md` 第 7 節（Zero123++ 在顯示卡上快很多）。
 - **3D**：Claude 直接在 Blender 裡建角色、場景，匯出 `.glb` 放進遊戲（第三章的 3D 追逐、第四、五章的 3D 段落可以換成正式模型）；四方向走路圖也可以從 3D 模型直接轉四個角度渲染，比推算更準（理事這種難做的角色先從這裡解決）。
 

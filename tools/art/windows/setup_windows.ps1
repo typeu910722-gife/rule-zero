@@ -28,8 +28,8 @@ Step "檢查顯示卡與驅動程式"
 if (-not (Have "nvidia-smi")) { Fail "找不到 nvidia-smi。請先安裝 NVIDIA 最新驅動程式（NVIDIA App 或 nvidia.com/drivers）。" }
 $drv = (& nvidia-smi --query-gpu=driver_version,name,memory.total --format=csv,noheader) -split ","
 Write-Host ("顯示卡：{0}　顯示記憶體：{1}　驅動：{2}" -f $drv[1].Trim(), $drv[2].Trim(), $drv[0].Trim())
-if ([double]($drv[0].Trim().Split(".")[0]) -lt 551) {
-  Fail ("驅動程式版本 {0} 太舊（需要 551 以上才能用 CUDA 12.4）。請先用 NVIDIA App 更新驅動，重開機後再跑一次。" -f $drv[0].Trim())
+if ([double]($drv[0].Trim().Split(".")[0]) -lt 570) {
+  Fail ("驅動程式版本 {0} 太舊（需要 570 以上才能用 CUDA 12.8）。請先用 NVIDIA App 更新驅動，重開機後再跑一次。" -f $drv[0].Trim())
 }
 
 Step "安裝基本工具（Git、Python 3.11、uv）"
@@ -44,7 +44,8 @@ function Clone($url, $dir, $rev) {
   git -C $dir fetch -q --depth 1 origin $rev 2>$null
   git -C $dir checkout -q $rev; if ($LASTEXITCODE) { Fail "切換 $dir 到 $rev" }
 }
-$Torch = "--index-url", "https://download.pytorch.org/whl/cu124"
+$Torch = "--index-url", "https://download.pytorch.org/whl/cu124"   # 訓練環境（sd-scripts）用
+$TorchComfy = "--index-url", "https://download.pytorch.org/whl/cu128"   # 這版 ComfyUI 的 comfy-kitchen 需要 PyTorch 2.7 以上
 
 Step "ComfyUI（出圖引擎）"
 Clone "https://github.com/Comfy-Org/ComfyUI" "ComfyUI" $COMFY_REV
@@ -52,7 +53,7 @@ Clone "https://github.com/Fannovel16/comfyui_controlnet_aux" "ComfyUI\custom_nod
 $Py = "$Art\comfyenv\Scripts\python.exe"
 if (-not (Test-Path $Py)) {
   uv venv -q --python 3.11 comfyenv
-  uv pip install -q --python $Py torch torchvision torchaudio @Torch
+  uv pip install -q --python $Py torch torchvision torchaudio @TorchComfy
   uv pip install -q --python $Py -r ComfyUI\requirements.txt
   uv pip install -q --python $Py -r ComfyUI\custom_nodes\comfyui_controlnet_aux\requirements.txt
   uv pip install -q --python $Py pillow scipy opencv-python-headless
