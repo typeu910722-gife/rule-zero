@@ -39,6 +39,11 @@
 | `game/art/ch5/bg/ch5_bg_{lab,real_ward,real_hall,outside,school_gate}.jpg` | 第五章實驗室、真實世界 | free＋plush（實驗室）／bg_memory |
 | `game/art/ch5/bg/ch5_bg_{town,town_office}.jpg` | 終章 B-1 棉花糖鎮 | bg_town／interior |
 
+## 3D 模型做的走路圖（2026-10-27，Windows＋Blender 5.2）
+| 檔案 | 用途 | 做法 |
+|---|---|---|
+| `game/art/walk4/director.png` | 理事（第五章地圖） | `tools/art/blender/director.py` 在 Blender 建模（白色大衣、白手套、左肩老鷹、臉在白色大簷帽的黑影裡，照車掌的做法），轉 4 個角度用 Cycles 去背渲染 → `make_walk_sheet.py --right`（老鷹只在一邊肩上，右側要另外渲染、不能翻轉）。16 格逐格檢查：方向對、背面沒有臉、老鷹在左肩。 |
+
 ## 試過但不能用的
 | 項目 | 結果 | 缺少的工具 |
 |---|---|---|

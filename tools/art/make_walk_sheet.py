@@ -13,6 +13,7 @@ ap.add_argument("--cell", type=int, default=160)
 ap.add_argument("--side-faces", choices=["left", "right"], default="left", help="側面圖的角色朝哪邊")
 ap.add_argument("--height", type=float, default=0.9, help="角色佔一格高度的比例")
 ap.add_argument("--match-color", action="store_true", help="把側面、背面的色調對齊正面（推算出來的角度常常偏色）")
+ap.add_argument("--right", help="另外給朝右的側面圖（左右不對稱的角色，例如肩上有老鷹的理事；不給就把左側翻過來）")
 a = ap.parse_args()
 C = a.cell
 
@@ -33,7 +34,7 @@ def trim(im):
     return im.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)) if len(xs) else im
 
 
-views = [trim(Image.open(p)) for p in (a.front, a.side, a.back)]
+views = [trim(Image.open(p)) for p in (a.front, a.side, a.back) + ((a.right,) if a.right else ())]
 # 每個視角各自縮放到一樣的高度（不同來源的圖，角色在畫面裡的大小不一樣）
 H = C * a.height
 views = [v.resize((max(1, round(v.width * H / v.height)), round(H)), Image.LANCZOS) for v in views]
@@ -51,9 +52,9 @@ if a.match_color:
         arr[..., :3] = np.where(m[..., None], np.clip(rgb, 0, 255), arr[..., :3])
         out.append(Image.fromarray(arr.astype("uint8")))
     views = out
-front, side, back = views
+front, side, back = views[:3]
 left = side if a.side_faces == "left" else side.transpose(Image.FLIP_LEFT_RIGHT)
-right = left.transpose(Image.FLIP_LEFT_RIGHT)
+right = views[3] if a.right else left.transpose(Image.FLIP_LEFT_RIGHT)
 
 # 每格：（傾斜角度、往上抬幾 px、高度壓扁比例）
 STEPS = [(0, 0, 1.0), (-4, 3, 0.97), (0, 0, 1.0), (4, 3, 0.97)]

@@ -270,7 +270,7 @@
     {
      "id": "c5_l_director",
      "name": "理事",
-     "char": "human:#eceae4",
+     "char": "director",
      "pos": [
       860,
       300

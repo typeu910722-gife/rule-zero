@@ -112,6 +112,12 @@ CPU 上每張約 3–6 分鐘（加了 ControlNet／IP-Adapter 會久一點）�
 6. 放到 `game/art/walk4/<id>.png`。人類時期用 `h_<id>`。
 模型：`sudo-ai/zero123plus-v1.2`（約 5.6GB，放 /tmp/claude-0/z123，不進 Git）。
 
+**另一條路：Blender 3D 模型（2026-10-27，Windows 電腦）**——推算不出來、或左右不對稱的角色（例：理事肩上的老鷹）用這個，四個角度保證是同一個角色：
+1. 寫建模腳本 `tools/art/blender/<id>.py`（範例：`director.py`，用基本形狀＋布料材質，照車掌、和平鴿的公仔質感）。
+2. `blender --background --factory-startup --python tools/art/blender/<id>.py -- <輸出資料夾>`：輸出去背的 front／left／right／back.png 和 .blend（Cycles CPU，約 1 分鐘，不搶訓練中的顯示卡）。
+3. `make_walk_sheet.py 正面 左 背面 輸出.png --right 右`：左右不對稱就一定要給 `--right`，不要用翻轉。
+4. 一樣逐格檢查。
+
 ## 6. 注意
 
 - 設定（`CLAUDE.md`）優先：人類時期的場景用人類本名；遙的隱藏設定只能用細節暗示；遊戲文字不出現歧視用語。
