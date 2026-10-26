@@ -1,5 +1,5 @@
 ﻿# 用顯示卡重練畫風 LoRA（rzstyle）：比雲端 CPU 版解析度高（1024）、步數多。
-# RTX 3070 Laptop 8GB：實測每步約 4 秒 → 3000 步約 3 小時 20 分（2026-10-27；用約 6.6GB 顯示記憶體）。
+# RTX 3070 Laptop 8GB：實測每步約 1.7 秒 → 3000 步約 1 小時 25 分（2026-10-27；用約 6.6GB 顯示記憶體）。
 # 先跑：tools\art\windows\setup_windows.ps1 -Train
 # 用法：powershell -ExecutionPolicy Bypass -File tools\art\windows\train_style_gpu.ps1 [-Steps 3000] [-Res 1024] [-Dim 16]
 # 成品：%USERPROFILE%\rz-art\out\rzstyle_gpu\（每 250 步存一次）。挑好的那一步複製成 tools\art\models\rzstyle.safetensors。

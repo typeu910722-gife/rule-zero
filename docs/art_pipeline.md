@@ -92,6 +92,7 @@ CPU 上每張約 3–6 分鐘（加了 ControlNet／IP-Adapter 會久一點）�
 
 `rzstyle.safetensors` 的訓練紀錄（2026-10-21 完成）：SDXL base、LoRA dim 16／alpha 8、只練 UNet、768 解析度、學習率 1e-4、共 2400 步（CPU，每步約 15 秒，存檔每 50 步、可以接著練）。
 比較 0（不用）／1000／1500／2000／2400 步（同種子；`docs/lora_compare.png`）：不用 LoRA 時露露會變成綠頭髮的娃娃；1000 步起就是本作的布偶兔子；2400 步最穩定（布料、縫線、服裝最一致），背景沒有過度擬合，所以採用 2400 步。
+2026-10-27 用 Windows 顯示卡重練（1024 解析度、3000 步，約 1 小時 25 分；`tools/art/windows/train_style_gpu.ps1`），跟 2400 步版比較 1000～3000 步（同種子，露露、小布、波波、小鎮、漂白鎮；`docs/lora_compare_gpu.jpg`，三欄依序是 現用版／新 2000 步／新 3000 步）：背景差不多，但新版會把角色配色帶偏——露露的薄荷綠格子裙變成粉紅、波波從深藍企鵝變成白色；扁平畫風背景多出假文字海報。**不換，繼續用 768／2400 步版。** 新版存檔留在 `%USERPROFILE%\rz-art\out\rzstyle_gpu\`（沒進 Git）。之後要再練，建議把角色說明文字寫清楚配色（例：pink rabbit、navy penguin），或降低學習率。
 用法：不用設定，`gen.py` 預設就會載入（強度 `--style-strength`，預設 0.8；要比較別的存檔可設環境變數 `RZ_STYLE_LORA`）。
 
 自己生成的替代圖（`docs/art_generated.md` 列的那些）**不放進訓練資料**，以免越練越偏。

@@ -6,7 +6,7 @@
 | 工作 | 雲端（CPU） | 這台電腦（RTX 3070） |
 |---|---|---|
 | 出一張圖（SDXL＋畫風 LoRA） | 3～4 分鐘 | **約 4 秒**（實測；每次執行的第一張要多約 70 秒載入模型） |
-| 重練畫風 LoRA | 2400 步、768 解析度、約 8 小時 | 3000 步、1024 解析度、**約 3 小時 20 分**（實測每步約 4 秒，顯示卡 100%、沒有溢出到一般記憶體） |
+| 重練畫風 LoRA | 2400 步、768 解析度、約 8 小時 | 3000 步、1024 解析度、**約 1 小時 25 分**（實測每步約 1.7 秒；開頭幾十步在快取資料，看起來比較慢） |
 | Zero123++ 推算側面、背面 | 約 9 分鐘 | 約 20～40 秒（估計，還沒實測） |
 | 3D（Blender） | 不能 | 可以：背景模式跑建模腳本（`tools/art/blender/`），或開 Blender 用 Blender MCP |
 
@@ -51,7 +51,7 @@ claude
 或執行 `claude remote-control`，這個工作階段就會出現在手機／桌面的 Claude Code App 裡，從哪裡都能指揮。
 
 ## 6. 之後可以叫 Claude 做的事
-- **重練畫風 LoRA**：`tools\art\windows\train_style_gpu.ps1`（1024 解析度、3000 步）。練完 Claude 會比較各步數、挑最好的放回 `tools\art\models\rzstyle.safetensors`。
+- **重練畫風 LoRA**：`tools\art\windows\train_style_gpu.ps1`（1024 解析度、3000 步）。練完 Claude 會比較各步數、挑最好的放回 `tools\art\models\rzstyle.safetensors`（2026-10-27 第一次重練的結果比不上舊版，沒換；見 `docs/art_pipeline.md` 第 5 節）。
 - **出圖**：`py -3.11 tools\art\gen.py …`（偵測到 NVIDIA 顯示卡會自動用顯示卡）。每次執行第一張約 70 秒（載入模型），同一次的後續每張約 4 秒；要一直快，先在另一個視窗開著 `tools\art\windows\comfy_server.ps1`，gen.py 會直接用它。
 - **四方向走路圖**：`docs/art_pipeline.md` 第 7 節（Zero123++ 在顯示卡上快很多）。
 - **3D**：Claude 直接在 Blender 裡建角色、場景，匯出 `.glb` 放進遊戲（第三章的 3D 追逐、第四、五章的 3D 段落可以換成正式模型）；四方向走路圖也可以從 3D 模型直接轉四個角度渲染，比推算更準（理事這種難做的角色先從這裡解決）。
