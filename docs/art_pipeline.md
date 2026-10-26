@@ -3,6 +3,8 @@
 2026-10-20 起，新角色、背景、CG、道具一律用本專案的出圖工具自己做（使用者決定）。
 工具在 `tools/art/`，畫風 LoRA 用委託的原圖訓練，能叫出跟現有美術一致的畫風。
 
+> **有 NVIDIA 顯示卡的 Windows 電腦**（快幾十倍、可以做 3D）：見 `docs/windows_gpu_setup.md`，一鍵安裝 `tools/art/windows/setup_windows.ps1`。`gen.py` 偵測到顯示卡會自動用。
+
 ## 1. 第一次使用（新的雲端工作階段）
 
 ```bash

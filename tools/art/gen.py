@@ -10,13 +10,17 @@
 
 需要先跑 tools/art/setup.sh。每張圖都會啟動一個新的 ComfyUI（CPU、記憶體 15GB 時連續出圖會被系統終止）。
 """
-import argparse, json, os, shutil, subprocess, sys, time, urllib.request, uuid
+import argparse, json, os, shutil, subprocess, sys, tempfile, time, urllib.request, uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-ART_HOME = Path(os.environ.get("ART_HOME", "/tmp/rz-art"))
+WIN = os.name == "nt"
+# Windows（有 NVIDIA 顯示卡的電腦）：預設裝在 %USERPROFILE%\rz-art；Linux 雲端：/tmp/rz-art
+ART_HOME = Path(os.environ.get("ART_HOME", str(Path.home() / "rz-art") if WIN else "/tmp/rz-art"))
 COMFY = Path(os.environ.get("COMFY_DIR", ART_HOME / "ComfyUI"))
-PY = os.environ.get("COMFY_PY", str(ART_HOME / "comfyenv/bin/python"))
+PY = os.environ.get("COMFY_PY", str(ART_HOME / ("comfyenv/Scripts/python.exe" if WIN else "comfyenv/bin/python")))
+# 有 NVIDIA 顯示卡就用顯示卡（RZ_DEVICE=cpu／gpu 可以強制指定）
+DEVICE = os.environ.get("RZ_DEVICE") or ("gpu" if shutil.which("nvidia-smi") else "cpu")
 PORT = int(os.environ.get("COMFY_PORT", "8188"))
 HOST = f"http://127.0.0.1:{PORT}"
 STYLE_LORA = os.environ.get("RZ_STYLE_LORA", "rzstyle.safetensors")
@@ -135,9 +139,12 @@ def start_server(heavy):
     if not Path(PY).exists() or not COMFY.exists():
         sys.exit(f"找不到 ComfyUI（{COMFY}）。先跑 tools/art/setup.sh")
     unet = "--fp8_e4m3fn-unet" if heavy else "--bf16-unet"   # 加了 ControlNet／IP-Adapter 時主模型改 fp8 才不會爆記憶體
-    log = open(ART_HOME / "comfy.log", "w") if ART_HOME.exists() else open("/tmp/rz-comfy.log", "w")
-    p = subprocess.Popen([PY, "main.py", "--cpu", "--listen", "127.0.0.1", "--port", str(PORT), unet, "--bf16-vae",
-                          "--fp16-text-enc", "--disable-auto-launch", "--cache-none"], cwd=COMFY, stdout=log, stderr=subprocess.STDOUT)
+    log = open(ART_HOME / "comfy.log", "w") if ART_HOME.exists() else open(Path(tempfile.gettempdir()) / "rz-comfy.log", "w")
+    if DEVICE == "gpu":   # 顯示卡（RTX 3070 8GB 這種）：讓 ComfyUI 自己管顯示記憶體
+        args = ["--listen", "127.0.0.1", "--port", str(PORT), "--disable-auto-launch"]
+    else:                 # 只有 CPU：省記憶體的設定
+        args = ["--cpu", "--listen", "127.0.0.1", "--port", str(PORT), unet, "--bf16-vae", "--fp16-text-enc", "--disable-auto-launch", "--cache-none"]
+    p = subprocess.Popen([PY, "main.py"] + args, cwd=COMFY, stdout=log, stderr=subprocess.STDOUT)
     for _ in range(200):
         if p.poll() is not None: sys.exit("ComfyUI 啟動失敗，看 " + log.name)
         try:

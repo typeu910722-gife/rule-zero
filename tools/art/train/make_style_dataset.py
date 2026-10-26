@@ -4,7 +4,7 @@ from PIL import Image, ImageFilter
 R = os.path.dirname(os.path.abspath(__file__)) + '/../../../'
 A = R + 'game/art/'
 import sys
-OUT = (sys.argv[1] if len(sys.argv) > 1 else '/tmp/rz-art/datasets/style') + '/8_rzstyle/'
+OUT = (sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.environ.get('ART_HOME', os.path.expanduser('~/rz-art') if os.name == 'nt' else '/tmp/rz-art'), 'datasets', 'style')) + '/8_rzstyle/'
 os.makedirs(OUT, exist_ok=True)
 for f in glob.glob(OUT + '*'): os.remove(f)
 

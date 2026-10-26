@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFilter
 import os
 import sys
 R=os.path.dirname(os.path.abspath(__file__))+'/../../../'
-A=R+'game/art/'; D=(sys.argv[1] if len(sys.argv)>1 else '/tmp/rz-art/datasets/fen')+'/10_rzfen/'; os.makedirs(D, exist_ok=True)
+A=R+'game/art/'; D=(sys.argv[1] if len(sys.argv)>1 else os.path.join(os.environ.get('ART_HOME', os.path.expanduser('~/rz-art') if os.name == 'nt' else '/tmp/rz-art'), 'datasets', 'fen'))+'/10_rzfen/'; os.makedirs(D, exist_ok=True)
 sheet=Image.open(R+'docs/art/04_fen.jpg').convert('RGB')
 P='rzfen, red fox plush doll, orange fur, cream chest, dark grey patched hooded vest, brown leather satchel strap'
 PL=P+', realistic plush toy, felt and fur texture, stitched seams'
