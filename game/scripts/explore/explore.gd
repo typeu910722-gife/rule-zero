@@ -185,11 +185,16 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO, false, fo.get_meta("row"), fo.get_meta("frame")))
 		_ysort.add_child(fo)
 		_followers.append(fo)
-	# 鏡頭：房間比畫面小時置中
-	_cam.limit_left = int(minf(0.0, (size.x - 1280.0) / 2.0))
-	_cam.limit_right = int(maxf(size.x, _cam.limit_left + 1280.0))
-	_cam.limit_top = int(minf(-60.0, (size.y - 720.0) / 2.0 - 60.0))
-	_cam.limit_bottom = int(maxf(size.y + 40.0, _cam.limit_top + 720.0))
+	# 鏡頭：人類時期（主角是 h_ 開頭的人）拉近，看得到臉；房間比畫面小時置中
+	var z := cam_zoom()
+	_cam.zoom = Vector2(z, z)
+	ExploreArt.human_mul = HUMAN_SIZE if z > 1.0 else 1.0
+	var view := Vector2(1280.0, 720.0) / z
+	var top_pad := 60.0 / z
+	_cam.limit_left = int(minf(0.0, (size.x - view.x) / 2.0))
+	_cam.limit_right = int(maxf(size.x, _cam.limit_left + view.x))
+	_cam.limit_top = int(minf(-top_pad, (size.y - view.y) / 2.0 - top_pad))
+	_cam.limit_bottom = int(maxf(size.y + 40.0 / z, _cam.limit_top + view.y))
 	_cam.reset_smoothing()
 	# 暗的房間：只有身邊一圈亮
 	var dark: bool = room.get("dark", false)
@@ -222,6 +227,15 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		await Dialogue.run(on_enter)
 		Dialogue.set_bg("none")
 		busy = was
+
+
+## 人類時期：鏡頭拉近、人放大（房間是照玩偶的大小做的，人照原比例會比桌子還矮、看不到臉）
+const HUMAN_ZOOM := 1.5
+const HUMAN_SIZE := 1.5
+
+
+func cam_zoom() -> float:
+	return HUMAN_ZOOM if player and player.look.begins_with("h_") else 1.0
 
 
 func _spawn(spawn: Variant) -> Vector2:
@@ -471,6 +485,7 @@ func _dread_step(delta: float) -> void:
 
 
 func _exit_tree() -> void:
+	ExploreArt.human_mul = 1.0
 	if Dialogue.get("fx") and Dialogue.fx:
 		Dialogue.fx.vignette = 0.0
 

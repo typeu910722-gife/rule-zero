@@ -39,6 +39,8 @@ const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_teacher": 0.6
 	"h_duty": 0.55, "h_crowd": 0.69, "h_shadow": 0.56}
 
 static var _cache := {}
+## 人類時期的章節：人要比玩偶的房間大一點、看得到臉（Explore 進房間時設定；h_ 開頭的人才放大）
+static var human_mul := 1.0
 
 
 ## 有四方向走路圖就畫（回傳 true）。row：0 下、1 左、2 右、3 上；frame：0～3
@@ -46,7 +48,7 @@ static func draw_walk(ci: CanvasItem, id: String, foot: Vector2, row := 0, frame
 	var t := tex(WALK_DIR % id)
 	if t == null:
 		return false
-	var sc: float = WALK_SCALE.get(id, 0.5)
+	var sc: float = WALK_SCALE.get(id, 0.5) * (human_mul if id.begins_with("h_") else 1.0)
 	ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2((frame % 4) * 160, row * 160, 160, 160))
 	return true
 

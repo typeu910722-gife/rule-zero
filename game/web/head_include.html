@@ -13,6 +13,32 @@
     });
   } catch (e) {}
 })();
+// ── 0b. 聲音解鎖：瀏覽器在玩家點畫面之前不准網頁出聲（直接從 ?dev=ch3 進來時沒有標題畫面可以點）。
+//    記下遊戲開的 AudioContext，之後每一次點擊／觸控／按鍵都叫醒它；
+//    iPhone 的靜音開關會讓網頁音效沒聲音：改成「播放」類型，並播一段無聲的音檔把聲道切過去 ──
+(function () {
+  var AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { return; }
+  var ctxs = [];
+  function Wrapped(opts) { var c = opts === undefined ? new AC() : new AC(opts); ctxs.push(c); return c; }
+  Wrapped.prototype = AC.prototype;
+  window.AudioContext = Wrapped;
+  if (window.webkitAudioContext) { window.webkitAudioContext = Wrapped; }
+  try { if (navigator.audioSession) { navigator.audioSession.type = 'playback'; } } catch (e) {}
+  var tag = null;
+  function wake() {
+    ctxs.forEach(function (c) { if (c.state !== 'running' && c.state !== 'closed') { c.resume().catch(function () {}); } });
+    if (!tag) {
+      tag = document.createElement('audio');
+      tag.setAttribute('playsinline', '');
+      tag.loop = true;
+      tag.src = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+      tag.play().catch(function () { tag = null; });
+    }
+  }
+  window.__rzAudioContexts = ctxs;
+  ['pointerdown', 'touchend', 'mousedown', 'keydown'].forEach(function (t) { window.addEventListener(t, wake, true); });
+})();
 // ── 1. 大檔（引擎 wasm、遊戲內容 pck）切成好幾塊（Cloudflare 單檔 25MB 上限），載入時再接回來 ──
 (function () {
   var of = window.fetch.bind(window);
