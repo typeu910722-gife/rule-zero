@@ -57,12 +57,13 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 - 畫面截圖（需要 xvfb）：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/<screenshots_fx|screenshots_mobile>.gd -- <資料夾>`。
 - 跨平台計畫與進度：`docs/platform_plan.md`。
 - **美術不外包，一律自己出圖**（2026-10-20 決定）：先 `tools/art/setup.sh`，再用 `python3 tools/art/gen.py <預設> …`。畫風 LoRA 與用法見 `docs/art_pipeline.md`；生成的圖記在 `docs/art_generated.md`。
+  - 例外：**人類時期（第四、五章）三年二班 13 人的立繪與走路圖外包**（2026-10-27 使用者決定）。需求 `docs/vendor/human_era_characters_request.txt`，驗收 `docs/vendor/human_era_batch1_acceptance.txt`；圖在 `game/art/human/portraits/`、`game/art/walk4/h_*.png`。
 
 ## 給 Claude 的工作規則（使用者 2026-10-21 指定）
 - **溝通**：一律用繁體中文回報。
 - **升級循環**：每一輪：處理使用者回饋（沒有的話自己挑一個改進）→ 跑驗證 → 更新文件 → commit + push → 用中文簡短回報 → 直接開始下一輪（2026-10-21 使用者：不用等 5 分鐘），直到使用者說「暫停」。使用者的新回饋永遠優先。
 - **驗證**（全部通過才能 push）：
-  - `/tmp/claude-0/bin/rt.sh`（或逐一）：`godot --headless --path game -s tests/<lint_dialogue|save_test|smoke_test|chapter2_test|chapter3_test|chapter4_test|chapter5_test|walkmask_ch2_test|explore_test|chase3d_test|endings_test|memory_test|quests_test|interiors_test|chase_test|scissors_test|forest_test|world_test|idle_test|rooms_art_test|ch2_mid_test|chapter3_patrol_test|no_hold_skip_test|human_zoom_test>.gd`
+  - `/tmp/claude-0/bin/rt.sh`（或逐一）：`godot --headless --path game -s tests/<lint_dialogue|save_test|smoke_test|chapter2_test|chapter3_test|chapter4_test|chapter5_test|walkmask_ch2_test|explore_test|chase3d_test|endings_test|memory_test|quests_test|interiors_test|chase_test|scissors_test|forest_test|world_test|idle_test|rooms_art_test|ch2_mid_test|chapter3_patrol_test|no_hold_skip_test|human_zoom_test|human_art_test>.gd`
   - 動到小遊戲時加跑：`xvfb-run godot --path game --rendering-driver opengl3 -s tests/<minigames_real_ch2|minigames_real_ch345>.gd`
   - 失敗要找根本原因，不能跳過或停用測試。**每修一個 bug 就加一個測試**，避免再壞。
 - **回報測試結果要誠實分類**：單元測試（headless 腳本檢查）／模擬（自動操作、亂按、截圖）／真機（實際在 Windows、Android、iPhone 上玩過；我沒辦法做真機，只能請使用者回報）。

@@ -19,7 +19,7 @@ const BGM := {"memory": "11_memory", "dream": "16_dream", "nirvana": "10_nirvana
 const LEVEL := "res://levels/chapter5.json"
 const STAGES := ["lab", "lesson", "a", "b1", "b2", "b3"]
 const PARTY := ["lulu", "mochi", "popo", "fen", "baimian"]
-const HARUKA := "h_haruka"     # 醒來之後的遙（和第四章同一個樣子：art/walk4/h_haruka.png）
+const HARUKA := "h_haruka_gown"     # 醒來之後的遙：病人服（art/walk4/h_haruka_gown.png）
 const REAL_SLOW := 0.7              # 人類的身體很重、走很慢
 const NIGHT := Color(0.62, 0.66, 0.8)
 
@@ -36,7 +36,9 @@ func _ready() -> void:
 	Sound.bgm("")
 	Sound.ambience("")
 	Sound.set_wear(0)
-	Dialogue.portrait_state = Callable()
+	# 人類時期的立繪：醒來之後，大家都穿病人服（沒有病人服的人退回制服）
+	Dialogue.portrait_state = func(_id: String) -> String:
+		return "gown"
 	Dialogue.event_requested.connect(_on_event)
 	Dialogue.bgm_requested.connect(_bgm)
 	hud = Ch3Hud.new()

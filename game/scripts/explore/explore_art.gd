@@ -23,7 +23,7 @@ const CHARS := {
 	"staff": [SP + "staff_sprite_walk_sheet.png", 160, Vector2(80, 152), 0.6],
 }
 
-## 四方向走路圖（tools/art/make_walk_sheet.py）：res://art/walk4/<id>.png，4 列（下、左、右、上）× 4 格，每格 160px
+## 四方向走路圖：res://art/walk4/<id>.png，4 列（下、左、右、上）× 4 格，每格 160px（tools/art/make_walk_sheet.py）或 320px（外包的人類時期）
 const WALK_DIR := "res://art/walk4/%s.png"
 ## 人類時期的角色（h_<id>）還沒有走路圖時，用這個顏色畫簡單的人影
 const HUMAN_FALLBACK := {"h_haruka": "#33415c", "h_xiaoman": "#8b9a7b", "h_tiwen": "#d9d9d4", "h_hilufei": "#e7a3b4",
@@ -31,12 +31,17 @@ const HUMAN_FALLBACK := {"h_haruka": "#33415c", "h_xiaoman": "#8b9a7b", "h_tiwen
 	"h_qiuge": "#4a4a4a", "h_junzhu": "#7d7d7d", "h_principal": "#4a4f5a", "h_fen_father": "#4a4f5a",
 	"h_nurse": "#9ec3dd", "h_whitecoat": "#eceae4", "h_graduate": "#d9ddd7"}
 ## 走路圖的縮放（預設 0.5＝80px 高；大隻的角色大一點）
-const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_teacher": 0.62, "h_nurse": 0.6, "h_whitecoat": 0.62, "h_junzhu": 0.6,
-	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "h_graduate": 0.62, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
+const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_nurse": 0.6, "h_whitecoat": 0.62,
+	# 三年二班（外包美術包 2026-10-27，docs/vendor/human_era_characters_request.txt）：圖裡每個人一樣高，
+	# 身高差照外包的「全班身高比較圖」（遙＝1：小滿 0.77、郡主 1.29、導師 1.19）
+	"h_haruka": 0.56, "h_haruka_dress": 0.56, "h_haruka_gown": 0.56, "h_xiaoman": 0.43, "h_tiwen": 0.53, "h_duty": 0.54,
+	"h_hilufei": 0.55, "h_classrep": 0.57, "h_xinhe": 0.58, "h_qiuge": 0.59, "h_lien": 0.59, "h_fen": 0.61, "h_fen_gown": 0.61,
+	"h_mingyue": 0.62, "h_teacher": 0.67, "h_junzhu": 0.72,
+	"h_graduate": 0.62, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
 	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
 	"graduate": 0.92, "human_nurse": 0.85,
-	# 第四章：值日生、一群同學（三個人擠在一格，所以放大）、「影子」（tools/art/make_crowd_shadow.py）
-	"h_duty": 0.55, "h_crowd": 0.69, "h_shadow": 0.56}
+	# 第四章：一群同學（三個人擠在一格，所以放大）、「影子」（tools/art/make_crowd_shadow.py）
+	"h_crowd": 0.69, "h_shadow": 0.56}
 
 static var _cache := {}
 ## 人類時期的章節：人要比玩偶的房間大一點、看得到臉（Explore 進房間時設定；h_ 開頭的人才放大）
@@ -49,7 +54,9 @@ static func draw_walk(ci: CanvasItem, id: String, foot: Vector2, row := 0, frame
 	if t == null:
 		return false
 	var sc: float = WALK_SCALE.get(id, 0.5) * (human_mul if id.begins_with("h_") else 1.0)
-	ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2((frame % 4) * 160, row * 160, 160, 160))
+	# 一格的大小看圖：自己做的是 160px，外包的人類時期是 320px（畫面上一樣大，只是更清楚）
+	var cell := t.get_width() / 4.0
+	ci.draw_texture_rect_region(t, Rect2(foot - Vector2(80, 152) * sc, Vector2(160, 160) * sc), Rect2((frame % 4) * cell, row * cell, cell, cell))
 	return true
 
 

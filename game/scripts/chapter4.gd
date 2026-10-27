@@ -30,7 +30,7 @@ const LEVEL := "res://levels/chapter4.json"
 const LOOKS := {"haruka": "h_haruka", "mochi": "h_xiaoman", "tiaoma": "h_tiwen", "lulu": "h_hilufei",
 	"xinhe": "h_xinhe", "popo": "h_mingyue", "teacher": "h_teacher", "fen": "h_fen",
 	"org": "h_shadow", "night": "h_shadow",   # 「你像一個影子一樣，走過那些地方。沒有人看得到你。」
-	"d1": "h_haruka", "d2": "h_duty", "d5": "h_fen", "d8": "h_lien"}   # d2＝值日生（小狗居民的人類時期）
+	"d1": "h_haruka_dress", "d2": "h_duty", "d5": "h_fen", "d8": "h_lien"}   # d1＝那一天穿著喜歡的衣服；d2＝值日生（小狗居民的人類時期）
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
 
@@ -41,7 +41,9 @@ func _ready() -> void:
 	Sound.bgm("")
 	Sound.ambience("")
 	Sound.set_wear(0)
-	Dialogue.portrait_state = Callable()
+	# 人類時期的立繪：制服；「那一天」① 遙穿著自己喜歡的衣服
+	Dialogue.portrait_state = func(id: String) -> String:
+		return "dress" if id == "h_haruka" and GameState.has("c4_pov_d1") else "uniform"
 	Dialogue.event_requested.connect(_on_event)
 	Dialogue.bgm_requested.connect(_bgm)
 	hud = Ch3Hud.new()

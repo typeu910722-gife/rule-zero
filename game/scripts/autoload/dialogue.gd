@@ -33,6 +33,27 @@ const PORTRAITS := {
 	"Fen": "fen",
 }
 const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
+## 人類時期（第四、五章）的立繪：外包美術包（docs/vendor/human_era_characters_request.txt），
+## 檔名 h_<id>_portrait_<服裝>_<表情>.png。服裝由章節導演的 portrait_state 給（uniform／dress／gown；導師是 teacher）
+const HUMAN_PORTRAITS := {"遙": "haruka", "芬": "fen", "導師": "teacher", "希露飛": "hilufei", "銘越": "mingyue",
+	"小滿": "xiaoman", "值日生": "duty", "辛禾": "xinhe", "薙文": "tiwen", "郡主": "junzhu", "秋歌": "qiuge", "李恩": "lien"}
+const HUMAN_PORTRAIT_DIR := "res://art/human/portraits/h_%s_portrait_"
+## 每個人每套服裝的預設表情（@face 沒指定時用這個；外包表情對照表 07_Documentation/expression_dictionary.csv）
+const HUMAN_DEFAULT_FACE := {
+	"haruka": {"uniform": "nervous", "dress": "nervous", "gown": "default"},
+	"fen": {"uniform": "annoyed", "gown": "waking"},
+	"teacher": {"teacher": "forced_smile"},
+	"hilufei": {"uniform": "happy", "gown": "default"},
+	"mingyue": {"uniform": "laugh"},
+	"xiaoman": {"uniform": "looking_down", "gown": "default"},
+	"classrep": {"uniform": "standard_smile"},
+	"duty": {"uniform": "default"},
+	"xinhe": {"uniform": "hostile", "gown": "default"},
+	"tiwen": {"uniform": "phone_blank"},
+	"junzhu": {"uniform": "silent", "gown": "default"},
+	"qiuge": {"uniform": "focused", "gown": "default"},
+	"lien": {"uniform": "sly_grin", "gown": "default"},
+}
 ## 室內背景與 CG（@bg 的名字 → 圖）。第二章時優先找這裡；沒有圖時退回 BG_COLORS 的底色
 const BG_ART := "res://art/ch2/backgrounds/ch2_bg_%s.jpg"
 const CG_ART := "res://art/ch2/cg/ch2_%s.jpg"
@@ -748,6 +769,8 @@ func _expression(key: String, text: String) -> int:
 ## 第二章的立繪
 func _show_portrait_ch2(who: String) -> void:
 	var id: String = PORTRAITS.get(who, "")
+	if id == "" and GameState.chapter >= 4 and HUMAN_PORTRAITS.has(who):
+		id = "h_" + HUMAN_PORTRAITS[who]
 	var path := portrait_path(id, _faces.get(who, "default")) if id != "" else ""
 	# CG（一整張畫好的畫面）上不再疊立繪
 	if _bg_img.visible and _cg_shown:
@@ -765,6 +788,8 @@ func portrait_path(id: String, face := "default") -> String:
 	var key := "%s/%s/%s" % [id, state, face]
 	if _portrait_cache.has(key):
 		return _portrait_cache[key]
+	if id.begins_with("h_"):
+		return _human_portrait_path(id.substr(2), state, face, key)
 	var base := PORTRAIT_DIR % id
 	var tries: Array = []
 	if state != "":
@@ -773,6 +798,26 @@ func portrait_path(id: String, face := "default") -> String:
 	var found := ""
 	for t in tries:
 		if t != "" and ResourceLoader.exists(base + t + ".png"):
+			found = base + t + ".png"
+			break
+	_portrait_cache[key] = found
+	return found
+
+
+## 人類時期：這套服裝的這個表情 → 這套服裝的預設表情 → 制服（導師是 teacher）的預設表情
+func _human_portrait_path(cid: String, outfit: String, face: String, key: String) -> String:
+	var defaults: Dictionary = HUMAN_DEFAULT_FACE.get(cid, {})
+	var base := HUMAN_PORTRAIT_DIR % cid
+	var tries: Array = []
+	for o in [outfit, "uniform", "teacher"]:
+		if o == "" or not defaults.has(o):
+			continue
+		if face != "default":
+			tries.append("%s_%s" % [o, face])
+		tries.append("%s_%s" % [o, defaults[o]])
+	var found := ""
+	for t in tries:
+		if ResourceLoader.exists(base + t + ".png"):
 			found = base + t + ".png"
 			break
 	_portrait_cache[key] = found
