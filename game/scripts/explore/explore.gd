@@ -15,6 +15,8 @@ const REACH := 72.0
 const Keypad := preload("res://scripts/explore/keypad.gd")
 
 var level: Dictionary = {}
+var level_path := ""
+var _art: Dictionary = {}        # 這個房間的美術（_room_art）
 var room_id := ""
 var room: Dictionary = {}
 var player: ExplorePlayer
@@ -38,9 +40,19 @@ var _waiting := ""               # until() 等的條件
 var hidden_in := ""
 ## 不暗的房間的整體色調（第四章「放學後」用暖暗的夕陽色）
 var tint := Color.WHITE
+## 壓迫感：平常的暗角強度（0～1；章節導演可以調）。threat＝最近的巡邏有多近（0～1，給音效、測試看）
+var dread := 0.22
+## 進房間時依主題自動換環境音（章節導演要安靜的段落可以關掉）
+var auto_ambience := true
+const AMB_BY_THEME := {"hospital": "hum", "lab": "hum", "real": "hum", "hospital_old": "drone", "basement": "drone",
+	"platform": "drone", "school": "room", "school_dark": "room", "home": "room", "town": ""}
+var threat := 0.0
+var _vig := 0.0
+var _beat := 0.0
 
 
 func load_level(path: String) -> void:
+	level_path = path
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
 		push_error("找不到關卡 %s" % path)
@@ -111,6 +123,9 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
 	var th := ExploreArt.theme(room.get("theme", "hospital"))
+	_art = _room_art(id)
+	if auto_ambience:
+		Sound.ambience(AMB_BY_THEME.get(room.get("theme", "hospital"), ""))
 	var back := Node2D.new()
 	back.z_index = -10
 	back.draw.connect(func(): _draw_back(back, size, th))
@@ -126,7 +141,13 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		var local := Rect2(Vector2(0, -r.size.y), r.size)
 		var kind: String = p.get("kind", "box")
 		var lab: String = p.get("label", "")
-		n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
+		var key := "prop:%s@%d,%d,%d,%d" % [kind, int(r.position.x), int(r.position.y), int(r.size.x), int(r.size.y)]
+		if _art_tex(key):
+			n.draw.connect(func(): _draw_art(n, key))
+		elif kind in ["window", "rug", "blackboard"] and _art.has("bg"):
+			pass   # 已經畫在房間的背景圖裡
+		else:
+			n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
 		_ysort.add_child(n)
 	# 調查點、NPC、門、躲藏點
 	for s in _things():
@@ -242,7 +263,39 @@ func _things() -> Array:
 	return out
 
 
+## 房間美術（tools/art/blender/room.py 做的）：res://art/rooms/<關卡檔名>/<房間 id>/room.json；沒有就回傳空的，照舊用程式畫
+func _room_art(id: String) -> Dictionary:
+	var dir := "res://art/rooms/%s/%s/" % [level_path.get_file().get_basename(), id]
+	if level_path == "" or not FileAccess.file_exists(dir + "room.json"):
+		return {}
+	var data = JSON.parse_string(FileAccess.get_file_as_string(dir + "room.json"))
+	if not (data is Dictionary):
+		return {}
+	data["dir"] = dir
+	return data
+
+
+func _art_tex(key: String) -> Texture2D:
+	if not _art.get("props", {}).has(key):
+		return null
+	return ExploreArt.tex(_art.dir + str(_art.props[key].tex))
+
+
+func _draw_art(n: Node2D, key: String) -> void:
+	var t := _art_tex(key)
+	if t:
+		n.draw_texture(t, _v(_art.props[key].off))
+
+
 func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
+	var bg_tex := ExploreArt.tex(_art.dir + str(_art.bg)) if _art.has("bg") else null
+	if bg_tex:
+		c.draw_rect(Rect2(-400, -400, size.x + 800, size.y + 800), Color(th.wall).darkened(0.8))
+		c.draw_texture_rect(bg_tex, Rect2(Vector2.ZERO, size), false)
+		for d in room.get("decals", []):
+			if d.get("kind", "") == "text":
+				c.draw_string(GameState.font, _v(d.pos), d.text, HORIZONTAL_ALIGNMENT_CENTER, float(d.get("w", 300)), int(d.get("size", 22)), Color(d.get("color", "#7c98a2")))
+		return
 	var art: String = room.get("art", "")
 	var tex := ExploreArt.tex(art) if art != "" else null
 	if tex:
@@ -298,17 +351,37 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 		"doors":
 			var sz := _v(s.get("size", [90, 26]))
 			var open := _door_open(s)
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#f6d0da") if open else Color("#c8b5ba"))
-			n.draw_rect(Rect2(-sz / 2.0, sz), Color("#d4788f") if open else Color("#8c7a80"), false, 2.0)
-			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 6), s.get("name", "門") + ("" if open else "（鎖著）"), HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color("#6a4c56"))
+			var th := ExploreArt.theme(room.get("theme", "hospital"))
+			var rc := Rect2(-sz / 2.0, sz)
+			if open:
+				# 開著的門：一個暗暗的門洞，越裡面越黑
+				n.draw_rect(rc.grow(4), Color(th.line).darkened(0.25))
+				var steps := 6
+				for k in steps:
+					var f := float(k) / steps
+					n.draw_rect(rc.grow(-minf(sz.x, sz.y) * 0.5 * f), Color(0.04, 0.045, 0.05, 0.55 + 0.45 * f))
+			else:
+				# 鎖著的門：關著的門板＋橫槓
+				n.draw_rect(rc.grow(4), Color(th.line).darkened(0.35))
+				n.draw_rect(rc, Color(th.wall).darkened(0.25))
+				n.draw_rect(Rect2(rc.position + Vector2(0, sz.y * 0.45), Vector2(sz.x, 6)), Color(0.25, 0.27, 0.28))
+			var near := player != null and player.position.distance_to(n.position) < 220.0
+			var label: String = s.get("name", "門") + ("" if open else "（鎖著）")
+			n.draw_string_outline(GameState.font, Vector2(-80, -sz.y / 2.0 - 8), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, 5, Color(1, 1, 1, 0.75 if near else 0.35))
+			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 8), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color(0.25, 0.28, 0.3, 1.0 if near else 0.45))
 		"hides":
 			var sz2 := _v(s.get("size", [60, 30]))
-			ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
+			if _art_tex("hide:" + str(s.get("id", ""))):
+				_draw_art(n, "hide:" + str(s.get("id", "")))
+			else:
+				ExploreArt.draw_prop(n, s.get("kind", "locker"), Rect2(Vector2(-sz2.x / 2.0, -sz2.y), sz2), ExploreArt.theme(room.get("theme", "hospital")))
 			if hidden_in == str(s.get("id", "")):
 				n.draw_string(GameState.font, Vector2(-60, -100), "（躲著）", HORIZONTAL_ALIGNMENT_CENTER, 120, 15, Color("#d65a5a"))
 		_:
 			# 調查點：小小的閃光（有 kind 的話畫成家具）
-			if s.has("kind"):
+			if s.has("kind") and _art_tex("spot:" + str(s.get("id", ""))):
+				_draw_art(n, "spot:" + str(s.get("id", "")))
+			elif s.has("kind"):
 				var sz3 := _v(s.get("size", [60, 30]))
 				ExploreArt.draw_prop(n, s.kind, Rect2(Vector2(-sz3.x / 2.0, -sz3.y), sz3), ExploreArt.theme(room.get("theme", "hospital")))
 			var a := 0.55 + 0.35 * sin(t * 3.0 + n.position.x)
@@ -349,11 +422,44 @@ func _process(delta: float) -> void:
 		_toast_t -= delta
 		if _toast_t <= 0.0:
 			_toast.text = ""
+	_dread_step(delta)
 	if not can:
 		_prompt.text = ""
 		return
 	var it := nearest()
 	_prompt.text = ("%s：%s" % [GameState.interact_key_label(), _thing_name(it)]) if not it.is_empty() else ""
+
+
+## 壓迫感：畫面四周的暗角（暗的房間更重）；巡邏的人越近，暗角越收、心跳越快、畫面微微晃
+func _dread_step(delta: float) -> void:
+	if player == null or room.is_empty():
+		return
+	var close := 0.0
+	for pt in _patrols:
+		if is_instance_valid(pt) and pt.active():
+			var d: float = pt.position.distance_to(player.position)
+			close = maxf(close, clampf(1.0 - (d - 90.0) / 380.0, 0.0, 1.0))
+	threat = close
+	var want := dread + (0.3 if room.get("dark", false) else 0.0) + close * 0.45
+	_vig = lerpf(_vig, clampf(want, 0.0, 1.0), minf(1.0, delta * 3.0))
+	if Dialogue.get("fx") and Dialogue.fx:
+		Dialogue.fx.vignette = _vig
+	var calm := GameState.gentle() or busy
+	if close > 0.15 and not calm:
+		_beat -= delta
+		if _beat <= 0.0:
+			Sound.sfx("heartbeat")
+			_beat = lerpf(1.25, 0.45, close)
+	else:
+		_beat = 0.3
+	if _cam:
+		var k := maxf(0.0, close - 0.55) * 4.0 if not calm else 0.0
+		_cam.offset = Vector2(randf_range(-1, 1), randf_range(-1, 1)) * k
+
+
+func _exit_tree() -> void:
+	if Dialogue.get("fx") and Dialogue.fx:
+		Dialogue.fx.vignette = 0.0
 
 
 func _thing_name(s: Dictionary) -> String:

@@ -119,6 +119,20 @@ CPU 上每張約 3–6 分鐘（加了 ControlNet／IP-Adapter 會久一點）�
 3. `make_walk_sheet.py 正面 左 背面 輸出.png --right 右`：左右不對稱就一定要給 `--right`，不要用翻轉。
 4. 一樣逐格檢查。
 
+## 8. 地圖房間、3D 追逐（Blender，2026-10-27，Windows 電腦）
+**地圖房間**（第三～五章 54 間）：`tools/art/blender/room.py` 照關卡 JSON 蓋出 3D 房間，用 45° 正交鏡頭＋把場景的 Y、Z 拉長 √2 倍，畫出來剛好是遊戲的斜投影（地上照座標、高度往上長），位置和碰撞一像素不差。
+1. `powershell -File tools\art\blender\render_rooms.ps1 chapter3`（整章；或 `-Rooms corridor,lobby`）：每間 10～30 秒（顯示卡），輸出到 `game/art/rooms/<關卡>/<房間>/`。
+2. 檢查：`py -3.11 tools/art/room_sheet.py game/levels/chapter3.json game/art/rooms/chapter3 總覽.jpg`（疊好家具＋紅框＝碰撞框）；單間 `tools/art/room_preview.py ... --boxes`。
+3. 規則（改 `room.py`）：
+   - 比例：第三章、第五章前段的主角是玩偶，人類的家具拉高 1.6 倍（床、櫃子壓在玩偶頭上）；第四章、學校、家、真的醫院照正常比例。
+   - 窗台的鳥（設定：和平鴿＝白鴿、車掌＝烏鴉、理事＝老鷹，都是真的動物）：第三章醫院每扇窗都有紅眼白鴿；第四章學校偶爾、慈愛組織的醫院常常有；第五章和平鴿死後白鴿全部不見，窗台只剩一根褐色的老鷹羽毛。第三章理事室：空的鷹架＋大羽毛。
+   - 牆上空的地方放巨大的門（只看得到下面一截）；靠牆的調查點畫成牆上的海報。
+4. 測試：`tests/rooms_art_test.gd`。
+
+**3D 追逐**：`tools/art/blender/chase_assets.py` 做追兵（神志不清的畢業生：病人服、拖點滴架、長髮蓋住臉、手腕名牌線）、推床、點滴架、輪椅 → `game/art/3d/*.glb`；`tools/art/make_chase_textures.py` 畫牆、地板、天花板貼圖（醫院／學校／真的醫院）→ `game/art/3d/tex/`。畢業生的地圖走路圖：`tools/art/blender/glb_views.py graduate.glb` → `make_walk_sheet.py --right` → `walk4/graduate.png`。
+
+**聲音**（程式合成）：`tools/audio/make_ambience.py`（amb_hum／amb_drone／amb_room）、`tools/audio/make_chase_sfx.py`（sfx_ivdrag：點滴架被拖著走，掛在追兵身上，3D 定位）。用 earshot 量過響度、聽過像不像。
+
 ## 6. 注意
 
 - 設定（`CLAUDE.md`）優先：人類時期的場景用人類本名；遙的隱藏設定只能用細節暗示；遊戲文字不出現歧視用語。

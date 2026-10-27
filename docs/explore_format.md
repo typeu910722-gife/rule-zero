@@ -17,7 +17,18 @@
 | `name` | 房間名（狀態列顯示） |
 | `size` | `[寬, 高]` |
 | `theme` | 佔位配色：hospital、hospital_old、basement、lab、platform、school、school_dark、home、real、town |
-| `art` | 有自製背景圖時的路徑（整個房間一張圖，大小＝size），有圖就不畫佔位 |
+| `art` | 有自製背景圖時的路徑（整個房間一張圖，大小＝size），有圖就不畫佔位（舊做法；新的房間美術用下面的「房間美術」） |
+
+### 房間美術（2026-10-27）
+不用改 JSON：`game/art/rooms/<關卡檔名>/<房間 id>/room.json` 存在就用（`Explore._room_art`）。由 `tools/art/blender/room.py` 照 JSON 在 Blender 蓋出房間、渲染：
+- `bg.jpg`：地板、後牆（門、窗、窗台的鳥）、房間裡的牆、地上的線。文字 decals 照舊由程式畫在上面。
+- 每件家具一張去背 PNG（key：`prop:種類@x,y,w,h`、有 kind 的躲藏點 `hide:<id>`、調查點 `spot:<id>`），在遊戲裡照前後順序疊（角色走到櫃子後面會被擋住）。
+- 改了家具的位置或大小，key 對不上就自動用舊的程式畫法；重跑 `tools/art/blender/render_rooms.ps1 <關卡> -Rooms <id>` 即可。
+- 測試：`tests/rooms_art_test.gd`（每間都有圖、每件家具都對得上）。
+
+### 壓迫感（explore.gd）
+- `dread`（預設 0.22）：平常的暗角；暗的房間再 +0.3；巡邏的人越近越重（`threat` 0～1），近到一定程度會有心跳聲、畫面微晃（溫和模式不放心跳、不晃）。
+- `auto_ambience`（預設開）：進房間依主題換環境音（`AMB_BY_THEME`：醫院／實驗室／真的醫院＝日光燈嗡嗡、舊病棟／地下／月台＝低鳴、學校／家＝空房間）。章節導演要安靜時關掉。
 | `wall_h` | 上面那面牆的高度（預設 90，走不進去） |
 | `dark` | `true`：只有小布身邊一圈亮（手電筒） |
 | `spawns` | 出生點：`{"名字": [x, y]}`，門的 `spawn` 指到這裡 |

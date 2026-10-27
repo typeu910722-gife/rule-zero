@@ -1,0 +1,51 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  2000,
+  620
+ ],
+ "props": {
+  "prop:bed@560,470,180,60": {
+   "tex": "prop_bed_560_470_180_60.png",
+   "off": [
+    -8,
+    -226
+   ]
+  },
+  "prop:bed@1180,470,180,60": {
+   "tex": "prop_bed_1180_470_180_60.png",
+   "off": [
+    -8,
+    -226
+   ]
+  },
+  "prop:cabinet@1550,140,120,40": {
+   "tex": "prop_cabinet_1550_140_120_40.png",
+   "off": [
+    -8,
+    -180
+   ]
+  },
+  "hide:c3_hide_curtain": {
+   "tex": "hide_c3_hide_curtain.png",
+   "off": [
+    -53,
+    -170
+   ]
+  },
+  "hide:c3_hide_cart": {
+   "tex": "hide_c3_hide_cart.png",
+   "off": [
+    -58,
+    -190
+   ]
+  },
+  "hide:c3_hide_cabinet": {
+   "tex": "hide_c3_hide_cabinet.png",
+   "off": [
+    -43,
+    -170
+   ]
+  }
+ }
+}

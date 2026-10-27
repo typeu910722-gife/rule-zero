@@ -44,6 +44,17 @@
 |---|---|---|
 | `game/art/walk4/director.png` | 理事（第五章地圖） | `tools/art/blender/director.py` 在 Blender 建模（白色大衣、白手套、左肩老鷹、臉在白色大簷帽的黑影裡，照車掌的做法），轉 4 個角度用 Cycles 去背渲染 → `make_walk_sheet.py --right`（老鷹只在一邊肩上，右側要另外渲染、不能翻轉）。16 格逐格檢查：方向對、背面沒有臉、老鷹在左肩。 |
 
+| `game/art/walk4/graduate.png` | 第三章失控區的畢業生（地圖 NPC、巡邏） | `chase_assets.py` 的畢業生模型 → `glb_views.py` 四個方向 → `make_walk_sheet.py --right`（點滴架在右手，左右不對稱）。16 格逐格檢查：正面頭髮蓋住臉、背面沒有臉、點滴架一直在右手 |
+| `game/art/walk4/human_nurse.png` | 第三章的人類護理師（二樓巡邏） | 複製 `h_nurse.png`（同一個組織的護理師），在玩偶世界放大（`WALK_SCALE` 0.85） |
+
+## 地圖房間、3D 追逐（2026-10-27，Blender 5.2＋程式）
+| 檔案 | 用途 | 做法 |
+|---|---|---|
+| `game/art/rooms/chapter{3,4,5}/<房間>/`（54 間） | 第三～五章地圖房間的背景＋家具 | `tools/art/blender/room.py`（見 `docs/art_pipeline.md` 第 8 節）。每章逐間檢查：家具落在碰撞框上、窗台的鳥照設定 |
+| `game/art/3d/graduate.glb`、`gurney.glb`、`ivpole.glb`、`wheelchair.glb` | 3D 追逐的追兵、障礙物 | `tools/art/blender/chase_assets.py` |
+| `game/art/3d/tex/*.png` | 3D 追逐的牆、地板、天花板 | `tools/art/make_chase_textures.py`（程式畫的） |
+| `game/audio/amb_hum.ogg`、`amb_drone.ogg`、`amb_room.ogg`、`sfx_ivdrag.ogg` | 環境音、追兵的聲音 | `tools/audio/make_ambience.py`、`make_chase_sfx.py`（程式合成，不是錄音） |
+
 ## 試過但不能用的
 | 項目 | 結果 | 缺少的工具 |
 |---|---|---|

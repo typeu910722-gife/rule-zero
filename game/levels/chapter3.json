@@ -1083,7 +1083,7 @@
    "patrols": [
     {
      "id": "c3_patrol_2f",
-     "char": "human:#f2f4f4",
+     "char": "human_nurse",
      "path": [
       [
        500,
@@ -1477,7 +1477,7 @@
    "patrols": [
     {
      "id": "c3_patrol_nurse2",
-     "char": "human:#f2f4f4",
+     "char": "human_nurse",
      "path": [
       [
        200,
@@ -1965,7 +1965,7 @@
     {
      "id": "c3_wild_grad1",
      "name": "畢業生",
-     "char": "human:#e6e6df",
+     "char": "graduate",
      "pos": [
       520,
       200
@@ -1975,7 +1975,7 @@
     {
      "id": "c3_wild_grad2",
      "name": "畢業生",
-     "char": "human:#e6e6df",
+     "char": "graduate",
      "pos": [
       1720,
       200
@@ -2014,7 +2014,7 @@
    "patrols": [
     {
      "id": "c3_patrol_grad_hall",
-     "char": "human:#e6e6df",
+     "char": "graduate",
      "path": [
       [
        1500,
@@ -2160,7 +2160,7 @@
     {
      "id": "c3_wa_grads",
      "name": "畢業生們",
-     "char": "human:#e6e6df",
+     "char": "graduate",
      "pos": [
       680,
       320
@@ -2373,7 +2373,7 @@
    "patrols": [
     {
      "id": "c3_patrol_grad_store",
-     "char": "human:#e6e6df",
+     "char": "graduate",
      "path": [
       [
        200,

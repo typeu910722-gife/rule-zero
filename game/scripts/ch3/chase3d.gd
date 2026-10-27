@@ -69,9 +69,22 @@ const MAZE_REAL_HALL := [
 ]
 ## 配色：預設是第三章的醫院（暗、有霧、手電筒）
 const LOOK_SCHOOL := {"wall": "#e2d6c2", "floor": "#a8957a", "ceil": "#efe6d6", "bg": "#e9c9a0", "fog": "#e8c49a",
-	"fog_density": 0.035, "ambient": "#f0d2b0", "ambient_energy": 0.75, "lamp": false, "light": "#ffd9a8"}
+	"fog_density": 0.035, "ambient": "#f0d2b0", "ambient_energy": 0.75, "lamp": false, "light": "#ffd9a8", "kit": "school"}
 const LOOK_REAL := {"wall": "#eef0ee", "floor": "#c9cec9", "ceil": "#f7f8f7", "bg": "#f4f6f4", "fog": "#f4f6f4",
-	"fog_density": 0.03, "ambient": "#ffffff", "ambient_energy": 0.7, "lamp": false, "light": "#ffffff"}
+	"fog_density": 0.03, "ambient": "#ffffff", "ambient_energy": 0.7, "lamp": false, "light": "#ffffff", "kit": "real"}
+## 美術（tools/art/make_chase_textures.py、tools/art/blender/chase_assets.py）：沒有檔案就退回純色、內建形狀
+const TEX_DIR := "res://art/3d/tex/"
+const MODEL_DIR := "res://art/3d/"
+const DRAG_SFX := "res://audio/sfx_ivdrag.ogg"
+const VIGNETTE := """
+shader_type canvas_item;
+uniform float strength = 0.0;
+void fragment() {
+	vec2 p = (UV - 0.5) * vec2(1.6, 1.0);
+	float v = smoothstep(0.25, 0.95, length(p));
+	COLOR = vec4(0.02, 0.01, 0.02, v * strength);
+}
+"""
 
 var title := "捉迷藏"
 var hint := "上：往前　左右：轉身　按住互動鍵：跑"
@@ -109,6 +122,12 @@ var _hint: Label
 var _status: Label
 var _step_t := 0.0
 var _has_d := false
+var _vig: ColorRect
+var _drag: AudioStreamPlayer3D
+var _beat := 0.0
+var _panels: Array = []           # 天花板的燈管（跟燈一起閃）
+## 追的人離玩家多近（0～1）
+var threat := 0.0
 
 
 func _ready() -> void:
@@ -129,6 +148,15 @@ func _ready() -> void:
 	_world = Node3D.new()
 	_vp.add_child(_world)
 	_build()
+	# 壓迫感：追的人越近，四周越暗
+	_vig = ColorRect.new()
+	_vig.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_vig.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var vm := ShaderMaterial.new()
+	vm.shader = Shader.new()
+	vm.shader.code = VIGNETTE
+	_vig.material = vm
+	add_child(_vig)
 	var t := _label(Vector2(0, 20), 30)
 	t.text = title
 	_hint = _label(Vector2(0, 664), 20)
@@ -174,6 +202,104 @@ func _mat(col: Color, emit := 0.0) -> StandardMaterial3D:
 	return m
 
 
+func _kit() -> String:
+	return look.get("kit", "hosp")
+
+
+## 有貼圖用貼圖（uv＝一張貼圖重複幾次），沒有就用純色
+func _tex_mat(part: String, fallback: Color, uv := Vector3.ONE) -> StandardMaterial3D:
+	var path := TEX_DIR + "%s_%s.png" % [_kit(), part]
+	if not ResourceLoader.exists(path):
+		return _mat(fallback)
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load(path)
+	m.uv1_scale = uv
+	m.roughness = 0.85
+	return m
+
+
+func _model(name: String) -> Node3D:
+	var path := MODEL_DIR + name + ".glb"
+	if not ResourceLoader.exists(path):
+		return null
+	var ps = load(path)
+	return ps.instantiate() if ps is PackedScene else null
+
+
+## 牆：只蓋面向走道的那幾面（一格一面，貼圖剛好一張）；醫院的牆偶爾有一扇關著的病房門
+func _build_walls(w: int, h: int) -> void:
+	var wall_mat := _tex_mat("wall", Color(look.get("wall", "#cfd8db")))
+	var quad := QuadMesh.new()
+	quad.size = Vector2(CELL, 2.6)
+	var door_mat := _mat(Color("#b9c9c9") if _kit() == "hosp" else (Color("#8a6a4a") if _kit() == "school" else Color("#e4e8e4")))
+	var win_mat := _mat(Color("#1d2629"))
+	var door := QuadMesh.new()
+	door.size = Vector2(1.0, 2.15)
+	var win := QuadMesh.new()
+	win.size = Vector2(0.28, 0.4)
+	var n := 0
+	for y in h:
+		for x in w:
+			if maze[y][x] != "#":
+				continue
+			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				if not walkable(Vector2i(x, y) + d):
+					continue
+				var m := MeshInstance3D.new()
+				m.mesh = quad
+				m.material_override = wall_mat
+				var c := Vector3((x + 0.5) * CELL, 1.3, (y + 0.5) * CELL) + Vector3(d.x, 0, d.y) * (CELL / 2.0)
+				m.position = c
+				m.rotation.y = atan2(float(d.x), float(d.y))
+				_world.add_child(m)
+				n += 1
+				if n % 5 == 2:
+					var dm := MeshInstance3D.new()
+					dm.mesh = door
+					dm.material_override = door_mat
+					dm.position = c + Vector3(d.x, 0, d.y) * 0.01 + Vector3(0, -0.225, 0)
+					dm.rotation.y = m.rotation.y
+					_world.add_child(dm)
+					var wm := MeshInstance3D.new()
+					wm.mesh = win
+					wm.material_override = win_mat
+					wm.position = c + Vector3(d.x, 0, d.y) * 0.02 + Vector3(0, 0.25, 0)
+					wm.rotation.y = m.rotation.y
+					_world.add_child(wm)
+
+
+## 醫院的障礙物：死巷裡的推床、輪椅，走廊邊的點滴架（只是擺著，不擋路）
+func _build_props(w: int, h: int) -> void:
+	if _kit() != "hosp":
+		return
+	var k := 0
+	for y in h:
+		for x in w:
+			var c := Vector2i(x, y)
+			if maze[y][x] != ".":
+				continue
+			var open: Array = []
+			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				if walkable(c + d):
+					open.append(d)
+			var p := _center(c)
+			if open.size() == 1:
+				var mdl := _model("gurney" if k % 2 == 0 else "wheelchair")
+				if mdl:
+					var o: Vector2i = open[0]
+					mdl.position = Vector3(p.x - o.x * 0.45, 0, p.y - o.y * 0.45)
+					mdl.rotation.y = atan2(float(o.x), float(o.y)) + PI / 2.0
+					_world.add_child(mdl)
+				k += 1
+			elif open.size() == 2 and (x * 7 + y * 3) % 9 == 0:
+				var iv := _model("ivpole")
+				if iv:
+					var side: Vector2i = Vector2i(open[0].y, open[0].x)
+					iv.position = Vector3(p.x + side.x * 0.7, 0, p.y + side.y * 0.7)
+					iv.rotation.y = x * 1.3
+					_world.add_child(iv)
+
+
 func _build() -> void:
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
@@ -187,11 +313,10 @@ func _build() -> void:
 	e.fog_density = look.get("fog_density", 0.09)
 	env.environment = e
 	_world.add_child(env)
-	var wall_mat := _mat(Color(look.get("wall", "#cfd8db")))
-	var floor_mat := _mat(Color(look.get("floor", "#8f9a9d")))
 	var line_mat := _mat(Color.WHITE, 0.4)
 	var h := maze.size()
 	var w: int = maze[0].length()
+	var floor_mat := _tex_mat("floor", Color(look.get("floor", "#8f9a9d")), Vector3(w, h, 1))
 	var fl := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(w * CELL, h * CELL)
@@ -202,21 +327,15 @@ func _build() -> void:
 	var ceil := fl.duplicate()
 	ceil.position.y = 2.6
 	ceil.rotation.x = PI
-	ceil.material_override = _mat(Color(look.get("ceil", "#5c6669")))
+	ceil.material_override = _tex_mat("ceil", Color(look.get("ceil", "#5c6669")), Vector3(w, h, 1))
 	_world.add_child(ceil)
-	var box := BoxMesh.new()
-	box.size = Vector3(CELL, 2.6, CELL)
+	_build_walls(w, h)
+	_build_props(w, h)
 	for y in h:
 		for x in w:
 			var ch: String = maze[y][x]
 			var c := Vector2i(x, y)
 			match ch:
-				"#":
-					var m := MeshInstance3D.new()
-					m.mesh = box
-					m.material_override = wall_mat
-					m.position = Vector3((x + 0.5) * CELL, 1.3, (y + 0.5) * CELL)
-					_world.add_child(m)
 				"W":
 					# 地上的白線（橫過走廊）
 					var st := MeshInstance3D.new()
@@ -249,6 +368,16 @@ func _build() -> void:
 				l.light_color = Color(look.get("light", "#dfe9ea"))
 				l.set_meta("flicker", k)
 				_world.add_child(l)
+				# 燈管（會跟著燈一起閃）
+				var pnl := MeshInstance3D.new()
+				var pq := QuadMesh.new()
+				pq.size = Vector2(1.1, 0.32)
+				pnl.mesh = pq
+				pnl.material_override = _mat(Color(look.get("light", "#dfe9ea")), 1.6)
+				pnl.position = Vector3((x + 0.5) * CELL, 2.59, (y + 0.5) * CELL)
+				pnl.rotation.x = PI / 2.0
+				_world.add_child(pnl)
+				l.set_meta("panel", pnl)
 				k += 1
 	# 出口：綠色的光
 	var ex := OmniLight3D.new()
@@ -288,6 +417,28 @@ func _build() -> void:
 
 
 func _make_enemy() -> Node3D:
+	# 第三章：神志不清的畢業生（Blender 模型）＋拖著點滴架的聲音
+	if _kit() == "hosp":
+		var g := _model("graduate")
+		if g:
+			var root := Node3D.new()
+			root.add_child(g)
+			if ResourceLoader.exists(DRAG_SFX):
+				_drag = AudioStreamPlayer3D.new()
+				var st = load(DRAG_SFX)
+				if st is AudioStreamOggVorbis:
+					st.loop = true
+				_drag.stream = st
+				_drag.unit_size = 2.5
+				_drag.max_distance = 22.0
+				_drag.volume_db = -4.0
+				_drag.position.y = 0.4
+				root.add_child(_drag)
+			return root
+	return _make_placeholder_enemy()
+
+
+func _make_placeholder_enemy() -> Node3D:
 	var n := Node3D.new()
 	var body := MeshInstance3D.new()
 	var cap := CapsuleMesh.new()
@@ -341,10 +492,33 @@ func _place_cam() -> void:
 
 
 func _place_enemy() -> void:
-	_enemy.position = Vector3(_epos.x, 0, _epos.y)
+	_enemy.position = Vector3(_epos.x, absf(sin(_t * 2.6)) * 0.03, _epos.y)
 	var to := _pos - _epos
 	if to.length() > 0.01:
 		_enemy.rotation.y = atan2(-to.x, -to.y)
+	_enemy.rotation.z = sin(_t * 1.3) * 0.05    # 走路歪歪斜斜
+
+
+## 壓迫感：追的人越近，越暗、心跳越快、畫面越晃（溫和模式不晃、不放心跳）
+func _dread(delta: float) -> void:
+	var close := 0.0
+	if has_enemy and _t > enemy_delay:
+		close = clampf(1.0 - _epos.distance_to(_pos) / 9.0, 0.0, 1.0)
+	threat = close
+	if _vig:
+		(_vig.material as ShaderMaterial).set_shader_parameter("strength", 0.35 + close * 0.6 if look.is_empty() else close * 0.5)
+	if _drag:
+		if has_enemy and _t > enemy_delay and not _drag.playing:
+			_drag.play()
+		_drag.position = Vector3(0, 0.4, 0)
+	var calm := GameState.gentle()
+	if close > 0.2 and not calm:
+		_beat -= delta
+		if _beat <= 0.0:
+			Sound.sfx("heartbeat")
+			_beat = lerpf(1.2, 0.4, close)
+	if close > 0.6 and not calm:
+		_cam.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * (close - 0.6) * 0.03
 
 
 func play() -> int:
@@ -369,7 +543,11 @@ func _process(delta: float) -> void:
 		if l is OmniLight3D and l.has_meta("flicker"):
 			var k: int = l.get_meta("flicker")
 			if look.is_empty():   # 只有第三章的醫院會一閃一閃
-				l.light_energy = 0.0 if fmod(_t * 1.3 + k * 0.77, 4.0) < 0.12 else 0.7
+				var off := fmod(_t * 1.3 + k * 0.77, 4.0) < 0.12
+				l.light_energy = 0.0 if off else 0.7
+				var pnl = l.get_meta("panel", null)
+				if pnl:
+					pnl.visible = not off
 	# 移動
 	var turn := Input.get_axis("move_right", "move_left")
 	var fwd := Input.get_axis("move_down", "move_up")
@@ -394,6 +572,7 @@ func _process(delta: float) -> void:
 	_try_move(Vector2(dir.x, 0))
 	_try_move(Vector2(0, dir.y))
 	_place_cam()
+	_dread(delta)
 	if fwd != 0.0:
 		_step_t += delta * (1.6 if running else 1.0)
 		_cam.position.y = EYE + sin(_step_t * 9.0) * 0.03

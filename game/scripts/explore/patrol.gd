@@ -83,7 +83,13 @@ func _draw() -> void:
 	var pts := PackedVector2Array([Vector2.ZERO])
 	for k in 13:
 		pts.append(Vector2.from_angle(facing.angle() - fov + fov * 2.0 * k / 12.0) * view)
-	draw_colored_polygon(pts, Color(1, 0.35, 0.4, 0.10 + _alert * 0.5))
+	# 像手電筒的光：近的地方亮、遠的地方淡；快被看到時轉紅
+	var near := Color(1.0, 0.78, 0.45, 0.34).lerp(Color(1, 0.3, 0.32, 0.5), clampf(_alert * 2.0, 0.0, 1.0))
+	var far := Color(near.r, near.g, near.b, 0.06)
+	var cols := PackedColorArray([near])
+	for k in 13:
+		cols.append(far)
+	draw_polygon(pts, cols)
 	var who: String = data.get("char", "staff")
 	if who.begins_with("human:"):
 		ExploreArt.draw_human(self, Vector2.ZERO, who.trim_prefix("human:"), 0 if facing.y > 0 else 3, true, Time.get_ticks_msec() / 1000.0)

@@ -31,7 +31,9 @@ const HUMAN_FALLBACK := {"h_haruka": "#33415c", "h_xiaoman": "#8b9a7b", "h_tiwen
 	"h_qiuge": "#4a4a4a", "h_junzhu": "#7d7d7d", "h_principal": "#4a4f5a", "h_fen_father": "#4a4f5a", "h_nurse": "#9ec3dd", "h_whitecoat": "#eceae4"}
 ## 走路圖的縮放（預設 0.5＝80px 高；大隻的角色大一點）
 const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_teacher": 0.62, "h_nurse": 0.6, "h_whitecoat": 0.62, "h_junzhu": 0.6,
-	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7}
+	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
+	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
+	"graduate": 0.92, "human_nurse": 0.85}
 
 static var _cache := {}
 

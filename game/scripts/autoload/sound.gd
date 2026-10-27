@@ -34,6 +34,10 @@ const SFX := {
 const AMB := {
 	"forest": "res://audio/amb_forest.ogg",
 	"night": "res://audio/amb_night.ogg",
+	# 第三～五章（tools/audio/make_ambience.py 合成）：探索時依房間主題自動換（Explore.AMB_BY_THEME）
+	"hum": "res://audio/amb_hum.ogg",
+	"drone": "res://audio/amb_drone.ogg",
+	"room": "res://audio/amb_room.ogg",
 }
 ## 混音（2026-10-21 混音 QA，docs/audio_mix_qa.md）：播放響度＝檔案響度＋這裡的 dB。
 ## 目標：配樂約 -20 LUFS、環境音約 -28、一般音效（最大瞬時響度）約 -17～-21、很頻繁的小聲音（腳步、打字）約 -28～-32。

@@ -1,0 +1,44 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  2800,
+  720
+ ],
+ "props": {
+  "prop:bed@1180,420,200,70": {
+   "tex": "prop_bed_1180_420_200_70.png",
+   "off": [
+    -8,
+    -236
+   ]
+  },
+  "prop:cabinet@2380,150,100,40": {
+   "tex": "prop_cabinet_2380_150_100_40.png",
+   "off": [
+    -8,
+    -190
+   ]
+  },
+  "prop:crate@400,560,90,50": {
+   "tex": "prop_crate_400_560_90_50.png",
+   "off": [
+    -8,
+    -120
+   ]
+  },
+  "prop:crate@1900,180,90,50": {
+   "tex": "prop_crate_1900_180_90_50.png",
+   "off": [
+    -8,
+    -120
+   ]
+  },
+  "hide:c3_hide_wild_crate": {
+   "tex": "hide_c3_hide_wild_crate.png",
+   "off": [
+    -43,
+    -110
+   ]
+  }
+ }
+}

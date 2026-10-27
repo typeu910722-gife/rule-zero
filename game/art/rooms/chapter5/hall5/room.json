@@ -1,0 +1,37 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  2600,
+  720
+ ],
+ "props": {
+  "prop:cabinet@900,160,140,40": {
+   "tex": "prop_cabinet_900_160_140_40.png",
+   "off": [
+    -8,
+    -200
+   ]
+  },
+  "prop:plant@2450,560,60,40": {
+   "tex": "prop_plant_2450_560_60_40.png",
+   "off": [
+    -8,
+    -198
+   ]
+  },
+  "hide:c5_hide_cart": {
+   "tex": "hide_c5_hide_cart.png",
+   "off": [
+    -58,
+    -130
+   ]
+  },
+  "hide:c5_hide_plant": {
+   "tex": "hide_c5_hide_plant.png",
+   "off": [
+    -48,
+    -218
+   ]
+  }
+ }
+}
