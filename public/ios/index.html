@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>第零條規則 iPhone 安裝</title>
+<title>第零條規則 手機安裝</title>
+<link rel="apple-touch-icon" href="/ios/icon.png">
 <style>
   :root { --bg: #f7efe6; --card: #fffaf4; --ink: #3b2a2e; --sub: #7a6468; --accent: #c8642b; --line: #e6d6c8; --warn: #fff1d6; --warn-line: #e8c27a; }
   @media (prefers-color-scheme: dark) {
@@ -26,6 +27,10 @@
   ol li::before { content: counter(s); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; }
   b { color: var(--accent); }
   h2 { font-size: 18px; margin: 26px 0 10px; }
+  h2.plat { font-size: 21px; margin: 8px 0 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+  section:first-of-type h2.plat { border-top: 0; padding-top: 0; }
+  #wrap { display: flex; flex-direction: column; }
+  header a { color: var(--accent); }
   .small { color: var(--sub); font-size: 15px; }
 </style>
 </head>
@@ -33,13 +38,15 @@
 <main>
   <header>
     <img src="/ios/icon.png" alt="">
-    <link rel="apple-touch-icon" href="/ios/icon.png">
     <div>
       <h1>第零條規則</h1>
-      <p>iPhone／iPad 安裝試玩</p>
+      <p>手機安裝試玩：<a href="#ios">iPhone</a>／<a href="#android">Android</a></p>
     </div>
   </header>
 
+  <div id="wrap">
+  <section id="ios">
+  <h2 class="plat">iPhone／iPad</h2>
   <div class="warn" id="warn">
     你現在不是用 <b>Safari</b> 開的，描述檔會下載不了。<br>
     請點右上角「⋯」或分享按鈕 →「<b>用 Safari 開啟</b>」（LINE 是「⋯」→「用預設瀏覽器開啟」）。
@@ -65,6 +72,29 @@
   </p>
 
   <a class="btn ghost" href="/rule-zero/">不安裝，直接在 Safari 玩</a>
+  </section>
+
+  <section id="android">
+  <h2 class="plat">Android</h2>
+  <a class="btn" href="https://github.com/typeu910722-gife/rule-zero/releases/download/preview/RuleZero.apk">下載 APK（約 110MB）</a>
+  <p class="note">真正的 App，可以離線玩</p>
+
+  <h2>安裝步驟</h2>
+  <ol>
+    <li>用 <b>Chrome</b> 按上面的「下載 APK」。LINE 的內建瀏覽器可能下載失敗，請點右上角「⋯」→「用預設瀏覽器開啟」。</li>
+    <li>下載完成後點開檔案。如果出現「基於安全考量，你的手機目前無法安裝這個來源的不明應用程式」，按「<b>設定</b>」→ 打開「<b>允許這個來源的應用程式</b>」，再按返回。</li>
+    <li>按「<b>安裝</b>」。如果 Google Play 安全防護說「未知的應用程式」，按「更多詳細資料」→「<b>仍要安裝</b>」（測試版沒有上架，所以會這樣）。</li>
+    <li>桌面上點「<b>第零條規則</b>」開始玩。</li>
+  </ol>
+
+  <h2>注意</h2>
+  <p class="small">
+    ・有新版時，直接下載新的 APK 覆蓋安裝就好，存檔會保留。<br>
+    ・這是測試版（debug 簽章），不是 Google Play 上的正式版。<br>
+    ・不想要了：長按圖示 → 解除安裝。
+  </p>
+  </section>
+  </div>
 </main>
 <script>
   // LINE、Facebook、Instagram 的內建瀏覽器和 Chrome 都裝不了描述檔
@@ -72,6 +102,11 @@
   var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   var notSafari = /Line\/|FBAN|FBAV|Instagram|CriOS|FxiOS|EdgiOS|MicroMessenger/.test(ua);
   if (ios && notSafari) document.getElementById("warn").classList.add("show");
+  // Android 手機：Android 的說明排在前面
+  if (/Android/.test(ua)) {
+    var w = document.getElementById("wrap");
+    w.insertBefore(document.getElementById("android"), w.firstChild);
+  }
 </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ extends Node2D
 signal interacted(id: String)
 signal caught(by: String)
 signal room_entered(id: String)
+signal chase_changed(active: bool, by: String)
 
 const REACH := 72.0
 const Keypad := preload("res://scripts/explore/keypad.gd")
@@ -34,6 +35,7 @@ var _fade: ColorRect
 var _dark: CanvasModulate
 var _light: PointLight2D
 var _patrols: Array = []
+var _chasing_patrols := {}
 var _followers: Array = []
 var _entry := Vector2.ZERO       # 被抓到時回到這裡（最後一次進門的位置）
 var _waiting := ""               # until() 等的條件
@@ -119,6 +121,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	for c in _world.get_children():
 		c.queue_free()
 	_patrols.clear()
+	_chasing_patrols.clear()
 	_followers.clear()
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
@@ -296,9 +299,11 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 			if d.get("kind", "") == "text":
 				c.draw_string(GameState.font, _v(d.pos), d.text, HORIZONTAL_ALIGNMENT_CENTER, float(d.get("w", 300)), int(d.get("size", 22)), Color(d.get("color", "#7c98a2")))
 		return
-	var art: String = room.get("art", "")
+	var art := _room_art_path()   # 沒有 Blender 美術時：關卡指定的圖，或第三章舊的整張地圖
 	var tex := ExploreArt.tex(art) if art != "" else null
 	if tex:
+		# 房間比 1280×720 短時，鏡頭會看到邊界外；先鋪同色延伸，避免露出粉紅／黑色清除色。
+		c.draw_rect(Rect2(-400, -400, size.x + 800, size.y + 800), Color(th.wall).darkened(0.18))
 		c.draw_texture_rect(tex, Rect2(Vector2.ZERO, size), false)
 		return
 	var wall := float(room.get("wall_h", 90))
@@ -335,6 +340,14 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 				c.draw_string(GameState.font, _v(d.pos), d.text, HORIZONTAL_ALIGNMENT_CENTER, float(d.get("w", 300)), int(d.get("size", 22)), Color(d.get("color", "#7c98a2")))
 			"rect":
 				c.draw_rect(_r(d.rect), Color(d.get("color", "#ffffff")))
+
+
+func _room_art_path() -> String:
+	var explicit: String = room.get("art", "")
+	if explicit != "" and ResourceLoader.exists(explicit):
+		return explicit
+	var ch3 := "res://art/ch3/maps/ch3_map_%s.jpg" % room_id
+	return ch3 if ResourceLoader.exists(ch3) else ""
 
 
 func _draw_thing(n: Node2D, s: Dictionary) -> void:
@@ -610,9 +623,19 @@ func on_spotted(by: Dictionary) -> void:
 	busy = true
 	var lab: String = by.get("catch", "")
 	if not GameState.fast:
-		Sfx.play(self, "wrong", -4.0)
-		toast("！", 0.8)
-		await get_tree().create_timer(0.6).timeout
+		var scare: String = by.get("scare", "")
+		if scare != "":
+			var j := JumpScare.new()
+			j.who = scare
+			add_child(j)
+			Sound.duck(true)
+			await j.play()
+			Sound.duck(false)
+			j.queue_free()
+		else:
+			Sfx.play(self, "wrong", -4.0)
+			toast("！", 0.8)
+			await get_tree().create_timer(0.6).timeout
 	if lab != "" and Dialogue.has_label(lab):
 		await Dialogue.run(lab)
 	caught.emit(str(by.get("id", by.get("char", ""))))
@@ -624,6 +647,15 @@ func on_spotted(by: Dictionary) -> void:
 		p.reset()
 	await _fade_to(0.0)
 	busy = false
+
+
+## 巡邏者開始／停止追逐。多個追兵同時存在時，最後一個停下才關掉追逐音樂。
+func patrol_chase_changed(active: bool, by: String) -> void:
+	if active:
+		_chasing_patrols[by] = true
+	else:
+		_chasing_patrols.erase(by)
+	chase_changed.emit(not _chasing_patrols.is_empty(), by)
 
 
 ## 劇本的 @event：密碼鎖等由這裡處理；回傳 true 表示處理掉了

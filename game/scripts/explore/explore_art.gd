@@ -28,10 +28,11 @@ const WALK_DIR := "res://art/walk4/%s.png"
 ## 人類時期的角色（h_<id>）還沒有走路圖時，用這個顏色畫簡單的人影
 const HUMAN_FALLBACK := {"h_haruka": "#33415c", "h_xiaoman": "#8b9a7b", "h_tiwen": "#d9d9d4", "h_hilufei": "#e7a3b4",
 	"h_xinhe": "#3a3a3a", "h_mingyue": "#3b4a73", "h_teacher": "#6f6a5e", "h_fen": "#c8642b", "h_lien": "#5b6b78",
-	"h_qiuge": "#4a4a4a", "h_junzhu": "#7d7d7d", "h_principal": "#4a4f5a", "h_fen_father": "#4a4f5a", "h_nurse": "#9ec3dd", "h_whitecoat": "#eceae4"}
+	"h_qiuge": "#4a4a4a", "h_junzhu": "#7d7d7d", "h_principal": "#4a4f5a", "h_fen_father": "#4a4f5a",
+	"h_nurse": "#9ec3dd", "h_whitecoat": "#eceae4", "h_graduate": "#d9ddd7"}
 ## 走路圖的縮放（預設 0.5＝80px 高；大隻的角色大一點）
 const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_teacher": 0.62, "h_nurse": 0.6, "h_whitecoat": 0.62, "h_junzhu": 0.6,
-	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
+	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "h_graduate": 0.62, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
 	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
 	"graduate": 0.92, "human_nurse": 0.85,
 	# 第四章：值日生、一群同學（三個人擠在一格，所以放大）、「影子」（tools/art/make_crowd_shadow.py）

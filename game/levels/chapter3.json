@@ -687,7 +687,7 @@
    "patrols": [
     {
      "id": "c3_patrol_nurse",
-     "char": "staff",
+     "char": "human_nurse",
      "path": [
       [
        300,
@@ -698,11 +698,17 @@
        330
       ]
      ],
+     "random": true,
+     "roam": [180, 230, 1640, 300],
      "speed": 70,
+     "chase_speed": 235,
+     "aggro_distance": 245,
+     "lose_distance": 520,
      "view": 200,
      "fov": 0.7,
      "pause": 1.4,
-     "catch": "c3_corr_caught"
+     "catch": "c3_corr_caught",
+     "scare": "nurse"
     }
    ],
    "spots": [
@@ -1094,12 +1100,18 @@
        420
       ]
      ],
+     "random": true,
+     "roam": [300, 230, 1800, 330],
      "speed": 75,
+     "chase_speed": 240,
+     "aggro_distance": 255,
+     "lose_distance": 540,
      "view": 210,
      "fov": 0.7,
      "pause": 1.6,
      "when": "c3_thermo_done",
-     "catch": "c3_2f_caught"
+     "catch": "c3_2f_caught",
+     "scare": "nurse"
     }
    ],
    "hides": [
@@ -1488,12 +1500,18 @@
        500
       ]
      ],
+     "random": true,
+     "roam": [140, 230, 1000, 360],
      "speed": 55,
+     "chase_speed": 225,
+     "aggro_distance": 230,
+     "lose_distance": 480,
      "view": 180,
      "fov": 0.65,
      "pause": 2.5,
      "when": "c3_thermo_done",
-     "catch": "c3_2f_caught"
+     "catch": "c3_2f_caught",
+     "scare": "nurse"
     }
    ],
    "hides": [

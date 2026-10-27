@@ -123,8 +123,6 @@ var _choices: VBoxContainer
 var _typing := false
 var _choosing := false
 var _shown_at := 0
-var _hold_t := 0.0
-var _skip_t := 0.0
 ## 全螢幕效果（驚悚閃爍、森林暗角）
 var fx: ScreenFx
 
@@ -415,23 +413,12 @@ func _say(who: String, text: String) -> void:
 func _process(delta: float) -> void:
 	# 一句話打完了：右下角的 ▼ 輕輕跳動，告訴玩家可以按下一句
 	_hint.visible = running and _box.visible and not _choosing and not GameState.touch_ui()
-	_hint.text = GameState.hint("按住 E 快轉")
+	_hint.text = GameState.hint("按 E 下一句")
 	if running and _box.visible and not _typing and not _choosing:
 		_more.visible = true
 		var bob := sin(Time.get_ticks_msec() / 160.0) * 3.0
 		_more.offset_top = -76 + bob
 		_more.offset_bottom = -50 + bob
-	# 按住互動鍵（或按住畫面）超過 0.4 秒：快轉對話，重玩時不會煩
-	if running and _box.visible and not _choosing:
-		var held := Input.is_action_pressed("interact") or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
-		_hold_t = _hold_t + delta if held else 0.0
-		if _hold_t > 0.4:
-			_skip_t += delta
-			if _skip_t > 0.07:
-				_skip_t = 0.0
-				_text.visible_characters = -1
-				_typing = false
-				_advance.emit()
 	if _typing:
 		_text.visible_characters += maxi(1, int(CHARS_PER_SEC * delta + 0.5))
 		# 漂白鎮的打字聲：每幾個字「嗒」一下
@@ -578,7 +565,7 @@ func _build_ui() -> void:
 	add_child(_box)
 
 
-	# ▼（下一句）與「按住快轉」提示，貼在對話框右下角
+	# ▼（下一句）提示，貼在對話框右下角
 	_more = Label.new()
 	_more.text = "▼"
 	_more.add_theme_font_size_override("font_size", 20)
@@ -595,7 +582,7 @@ func _build_ui() -> void:
 	_more.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_more)
 	_hint = Label.new()
-	_hint.text = "按住畫面快轉" if DisplayServer.is_touchscreen_available() else "按住 E 快轉"
+	_hint.text = "點一下下一句" if DisplayServer.is_touchscreen_available() else "按 E 下一句"
 	_hint.add_theme_font_size_override("font_size", 14)
 	_hint.add_theme_color_override("font_color", Color("#c9b3bf"))
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT

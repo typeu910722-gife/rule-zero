@@ -63,3 +63,6 @@
 | 項目 | 結果 | 缺少的工具 |
 |---|---|---|
 | 第一章鏡之屋室內（第一輪） | 蓋布的鏡子變成門、畫風不一致 | 已用 ControlNet＋IP-Adapter 解決（見上表） |
+
+## 合併 cursor/ch2-mid-no-hold-skip-6513（2026-10-27）
+那個分支的第三章整張地圖 `game/art/ch3/maps/` 留著當備用；遊戲裡第三章用 Blender 做的房間（有家具前後遮擋）。巡邏的護士、畢業生用 `human_nurse`（＝ `h_nurse` 放大）、`graduate`（Blender 模型，跟 3D 追逐同一個人）；那個分支的 `h_graduate.png` 也留著。

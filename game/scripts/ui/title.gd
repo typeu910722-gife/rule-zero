@@ -9,6 +9,7 @@ extends CanvasLayer
 signal new_game
 signal continue_game
 signal chapter2
+signal chapter2_mid
 signal chapter3
 signal chapter4
 signal chapter5
@@ -110,6 +111,7 @@ func _ready() -> void:
 	var cont := _button("繼續", func(): continue_game.emit())
 	cont.disabled = not GameState.has_save()
 	_menu.add_child(cont)
+	_menu.add_child(_button("第二章後半", func(): chapter2_mid.emit()))
 	if cleared:
 		_menu.add_child(_button("選擇篇章", func(): _open_chapters()))
 		_menu.add_child(_button("蒐集過的東西", func(): _open_panel("mystery")))
@@ -136,6 +138,7 @@ func _button(text: String, cb: Callable, size := 24) -> Button:
 	var b := Button.new()
 	b.text = text
 	UiSkin.button(b, size)
+	b.custom_minimum_size.y = 48
 	b.pressed.connect(func():
 		Sound.sfx("choice")
 		cb.call())
@@ -362,6 +365,10 @@ func _open_chapters() -> void:
 		_panel_chapters.add_child(b)
 		if first == null:
 			first = b
+	if done >= 1:
+		var mid := _button("第二章後半\n從第二天早上的公告欄開始，跳過序章和第一天。", func(): chapter2_mid.emit(), 18)
+		mid.custom_minimum_size = Vector2(560, 70)
+		_panel_chapters.add_child(mid)
 	first.grab_focus.call_deferred()
 
 
