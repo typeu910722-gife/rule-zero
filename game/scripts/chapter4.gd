@@ -29,8 +29,8 @@ const LEVEL := "res://levels/chapter4.json"
 ## 視角 → 主角的樣子（h_<id>：art/walk4 的四方向走路圖；還沒有圖時 ExploreArt.HUMAN_FALLBACK 的人影）
 const LOOKS := {"haruka": "h_haruka", "mochi": "h_xiaoman", "tiaoma": "h_tiwen", "lulu": "h_hilufei",
 	"xinhe": "h_xinhe", "popo": "h_mingyue", "teacher": "h_teacher", "fen": "h_fen",
-	"org": "human:#dfe6ea", "night": "human:#dfe6ea",
-	"d1": "h_haruka", "d2": "human:#7a8a6e", "d5": "h_fen", "d8": "h_lien"}
+	"org": "h_shadow", "night": "h_shadow",   # 「你像一個影子一樣，走過那些地方。沒有人看得到你。」
+	"d1": "h_haruka", "d2": "h_duty", "d5": "h_fen", "d8": "h_lien"}   # d2＝值日生（小狗居民的人類時期）
 const NIGHT := Color(0.55, 0.6, 0.82)
 const EVENING := Color(0.95, 0.78, 0.66)
 

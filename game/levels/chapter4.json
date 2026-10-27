@@ -472,7 +472,7 @@
     {
      "id": "c4_l_whisper",
      "name": "同學們",
-     "char": "human:#8a7f75",
+     "char": "h_crowd",
      "pos": [
       1500,
       420
@@ -482,7 +482,7 @@
     {
      "id": "c4_p_crowd",
      "name": "圍過來的人",
-     "char": "human:#8a7f75",
+     "char": "h_crowd",
      "pos": [
       1000,
       420
@@ -1061,7 +1061,7 @@
     {
      "id": "c4_te_students",
      "name": "學生們",
-     "char": "human:#8a7f75",
+     "char": "h_crowd",
      "pos": [
       800,
       560

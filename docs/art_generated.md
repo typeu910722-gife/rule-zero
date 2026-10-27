@@ -47,6 +47,10 @@
 | `game/art/walk4/graduate.png` | 第三章失控區的畢業生（地圖 NPC、巡邏） | `chase_assets.py` 的畢業生模型 → `glb_views.py` 四個方向 → `make_walk_sheet.py --right`（點滴架在右手，左右不對稱）。16 格逐格檢查：正面頭髮蓋住臉、背面沒有臉、點滴架一直在右手 |
 | `game/art/walk4/human_nurse.png` | 第三章的人類護理師（二樓巡邏） | 複製 `h_nurse.png`（同一個組織的護理師），在玩偶世界放大（`WALK_SCALE` 0.85） |
 
+| `game/art/walk4/h_duty.png` | 第四章「那一天」② 值日生（小狗居民的人類時期） | `gen.py free --no-style` 出正面（白襯衫、灰長褲）→ 頭髮改淺褐色（呼應米色小狗）、胸前口袋畫一條黃抹布（呼應黃圍巾、他在擦窗戶）→ rembg → Zero123++ 90°／210° → `make_walk_sheet.py --match-color --right`（朝右時抹布在另一邊，要拿掉，不能直接翻轉）。16 格逐格檢查 |
+| `game/art/walk4/h_crowd.png` | 第四章的群眾：同學們、圍過來的人、學生們 | 三個沒有名字的同學（兩男一女，`gen.py` 出正面 → Zero123++ → 走路圖，各自逐格檢查）→ `tools/art/make_crowd_shadow.py` 疊成一小群（每格三個人，`WALK_SCALE` 0.69）。正面有臉、背面沒有臉、側面整群同一個方向 |
+| `game/art/walk4/h_shadow.png` | 第四章「那一天之後」「第一個晚上」的主角：「你像一個影子一樣，走過那些地方。沒有人看得到你。」 | `make_crowd_shadow.py`：一個同學的輪廓 → 半透明的暗藍灰色人影（看不到臉、衣服） |
+
 ## 地圖房間、3D 追逐（2026-10-27，Blender 5.2＋程式）
 | 檔案 | 用途 | 做法 |
 |---|---|---|

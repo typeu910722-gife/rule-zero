@@ -44,7 +44,7 @@ rooms["lab5"] = room("實驗室", [1400, 820], "lab",
         {"id": "c5_x_popo", "name": "波波", "char": "popo", "pos": [1000, 520], "when": LAB},
         {"id": "c5_x_fen", "name": "Fen", "char": "fen", "pos": [1120, 380], "when": LAB},
         {"id": "c5_x_baimian", "name": "白面", "char": "baimian", "pos": [160, 360], "when": LAB, "flip": True},
-        {"id": "c5_l_director", "name": "理事", "char": "human:#eceae4", "pos": [860, 300], "when": LES},
+        {"id": "c5_l_director", "name": "理事", "char": "director", "pos": [860, 300], "when": LES},
         {"id": "c5_l_conductor", "name": "車掌", "char": "conductor", "pos": [330, 420], "when": LES},
     ],
     doors=[{"id": "c5_door_lab_hall", "name": "走廊", "pos": [1360, 420], "size": [60, 120], "to": "hall5", "spawn": "from_lab",
@@ -283,5 +283,5 @@ level = {"items": {"c5_read_file": "遙的檔案（看過了）", "c5_a_clip": "
          "keypads": {"c5_pad_drawer": {"title": "抽屜的密碼鎖", "code": "1020", "flag": "c5_l_drawer_open",
                                         "hint": "四個數字。照片背面，好像寫著日期。"}},
          "rooms": rooms}
-json.dump(level, open("game/levels/chapter5.json", "w"), ensure_ascii=False, indent=1)
+json.dump(level, open("game/levels/chapter5.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")

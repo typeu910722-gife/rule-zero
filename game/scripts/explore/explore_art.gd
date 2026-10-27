@@ -33,7 +33,9 @@ const HUMAN_FALLBACK := {"h_haruka": "#33415c", "h_xiaoman": "#8b9a7b", "h_tiwen
 const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_teacher": 0.62, "h_nurse": 0.6, "h_whitecoat": 0.62, "h_junzhu": 0.6,
 	"h_haruka": 0.56, "h_xiaoman": 0.54, "h_hilufei": 0.55, "h_mingyue": 0.58, "h_xinhe": 0.55, "h_tiwen": 0.55, "h_lien": 0.54, "h_qiuge": 0.55, "h_fen": 0.57, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
 	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
-	"graduate": 0.92, "human_nurse": 0.85}
+	"graduate": 0.92, "human_nurse": 0.85,
+	# 第四章：值日生、一群同學（三個人擠在一格，所以放大）、「影子」（tools/art/make_crowd_shadow.py）
+	"h_duty": 0.55, "h_crowd": 0.69, "h_shadow": 0.56}
 
 static var _cache := {}
 

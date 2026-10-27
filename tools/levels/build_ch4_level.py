@@ -75,8 +75,8 @@ rooms["hall1"] = room("一樓走廊", [2400, 700], "school",
         {"id": "c4_fen_why", "name": "走廊盡頭", "pos": [2300, 450], "when": F + "&done_c4_fen_desk&done_c4_fen_trash", "done_when": "c4_f_done"},
     ],
     npcs=[{"id": "c4_h_li_en", "name": "李恩", "char": "h_lien", "pos": [800, 420], "when": H},
-          {"id": "c4_l_whisper", "name": "同學們", "char": "human:#8a7f75", "pos": [1500, 420], "when": L},
-          {"id": "c4_p_crowd", "name": "圍過來的人", "char": "human:#8a7f75", "pos": [1000, 420], "when": P},
+          {"id": "c4_l_whisper", "name": "同學們", "char": "h_crowd", "pos": [1500, 420], "when": L},
+          {"id": "c4_p_crowd", "name": "圍過來的人", "char": "h_crowd", "pos": [1000, 420], "when": P},
           {"id": "c4_d5_teacher_stop", "name": "導師", "char": "h_teacher", "pos": [1700, 450], "when": D5 + "&c4_d5_called"}],
     doors=[{"id": "c4_door_hall_ent", "name": "玄關", "pos": [40, 450], "size": [60, 120], "to": "entrance", "spawn": "from_hall"},
            {"id": "c4_door_hall_class", "name": "三年二班", "pos": [1200, 125], "size": [130, 30], "to": "classroom", "spawn": "from_hall"},
@@ -128,7 +128,7 @@ rooms["classroom"] = room("三年二班", [1600, 900], "school",
         {"id": "c4_h_tiaoma", "name": "薙文", "char": "h_tiwen", "pos": [330, 660], "when": H},
         {"id": "c4_h_junzhu", "name": "郡主", "char": "h_junzhu", "pos": [790, 660], "when": H},
         {"id": "c4_h_qiuge", "name": "秋歌", "char": "h_qiuge", "pos": [1020, 790], "when": H},
-        {"id": "c4_te_students", "name": "學生們", "char": "human:#8a7f75", "pos": [800, 560], "when": TE + "&!c4_te_night"},
+        {"id": "c4_te_students", "name": "學生們", "char": "h_crowd", "pos": [800, 560], "when": TE + "&!c4_te_night"},
     ],
     doors=[{"id": "c4_door_class_out", "name": "走廊", "pos": [800, 880], "size": [140, 30], "to": "hall1", "spawn": "from_class"}])
 # ── 教師辦公室 ──
@@ -229,5 +229,5 @@ rooms["ward4"] = room("慈愛組織的醫院　很多年以前", [1800, 900], "h
     npcs=[{"id": "c4_n_zz", "name": "郡主", "char": "h_junzhu", "pos": [690, 560], "when": N}])
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}
-json.dump(level, open("game/levels/chapter4.json", "w"), ensure_ascii=False, indent=1)
+json.dump(level, open("game/levels/chapter4.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")

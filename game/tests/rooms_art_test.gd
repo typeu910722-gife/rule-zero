@@ -57,6 +57,33 @@ func _run() -> void:
 		_check(missing.is_empty(), "%s：每間房間都有美術 %s" % [lv, str(missing) if missing else ""])
 		_check(bad.is_empty(), "%s：背景、家具的圖都對得上 %s" % [lv, str(bad) if bad else ""])
 
+	# 人形剪影都換成走路圖了：關卡裡的 NPC／巡邏、第四章主角的樣子都不能再是 human:#顏色，圖要讀得到
+	await process_frame   # 等自動載入（GameState 等）好了再載入 chapter4.gd，不然編譯會報錯
+	var silhouettes: Array = []
+	var no_sheet: Array = []
+	var chars: Dictionary = load("res://scripts/explore/explore_art.gd").CHARS
+	for lv in ["chapter3", "chapter4", "chapter5"]:
+		var text := FileAccess.get_file_as_string("res://levels/%s.json" % lv)
+		# 關卡產生器在 Windows 上曾經用 Big5 寫檔，中文全變亂碼（2026-10-27 修好）
+		var cjk := RegEx.create_from_string("[\\x{4e00}-\\x{9fff}]{2}")
+		_check(text.find("�") < 0 and cjk.search(text) != null, "%s：關卡檔是正常的 UTF-8 中文" % lv)
+		var level = JSON.parse_string(text)
+		for rid in level.rooms:
+			for k in ["npcs", "patrols"]:
+				for n in level.rooms[rid].get(k, []):
+					var who := str(n.get("char", ""))
+					if who.begins_with("human:"):
+						silhouettes.append("%s/%s" % [lv, n.get("id", rid)])
+					elif who != "" and not ResourceLoader.exists("res://art/walk4/%s.png" % who) and not chars.has(who):
+						no_sheet.append(who)
+	for look in load("res://scripts/chapter4.gd").LOOKS.values():
+		if str(look).begins_with("human:"):
+			silhouettes.append("chapter4 主角 " + str(look))
+		elif not ResourceLoader.exists("res://art/walk4/%s.png" % look):
+			no_sheet.append(look)
+	_check(silhouettes.is_empty(), "第三～五章沒有人形剪影了 %s" % [str(silhouettes) if silhouettes else ""])
+	_check(no_sheet.is_empty(), "每個角色的走路圖都讀得到 %s" % [str(no_sheet) if no_sheet else ""])
+
 	# 進房間：用了美術、換了環境音；巡邏的人靠近 → threat、暗角
 	var ex = load("res://scripts/explore/explore.gd").new()
 	ex.load_level("res://levels/chapter3.json")
