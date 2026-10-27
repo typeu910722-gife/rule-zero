@@ -205,7 +205,8 @@ func _ready() -> void:
 		_show_title.call_deferred()
 
 
-## 網頁版預覽用：網址加上 ?dev=chase（追逐戰）、?dev=ending（修理室之後）、?dev=room_mayor（某間小屋）
+## 網頁版預覽用：網址加上 ?dev=chase（追逐戰）、?dev=ending（修理室之後）、?dev=room_mayor（某間小屋）、
+## ?dev=ch3／ch4／ch5（直接從第三、四、五章開始，不用先通關前面）
 func _dev_preview() -> String:
 	if not OS.has_feature("web"):
 		return ""
@@ -216,6 +217,16 @@ func _dev_preview() -> String:
 
 func _run_dev_preview(what: String) -> void:
 	GameState.reset()
+	match what:
+		"ch3":
+			enter_chapter3(get_tree())
+			return
+		"ch4":
+			enter_chapter4(get_tree())
+			return
+		"ch5":
+			enter_chapter5(get_tree())
+			return
 	_layout("day")
 	_set_tint("day")
 	player.bounds = WORLD_BOUNDS
