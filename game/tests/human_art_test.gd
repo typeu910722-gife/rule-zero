@@ -91,6 +91,29 @@ func _run() -> void:
 	_check("_gown_" in d.portrait_path("h_fen"), "第五章 芬穿病人服")
 	_check("_uniform_" in d.portrait_path("h_mingyue"), "沒有病人服的人（銘越）退回制服")
 	d.portrait_state = Callable()
+	# 給畫師的表情對照表（docs/vendor/expression_dictionary.csv）要和遊戲一致：
+	# 現有的立繪都在表上、表上的★預設表情就是遊戲用的預設臉（2026-10-28 畫師說少了這張表）
+	var csv := FileAccess.open(ProjectSettings.globalize_path("res://").path_join("../docs/vendor/expression_dictionary.csv"), FileAccess.READ)
+	_check(csv != null, "有表情對照表 expression_dictionary.csv")
+	if csv:
+		var names := {}
+		var defaults_ok := true
+		csv.get_csv_line()
+		while not csv.eof_reached():
+			var r := csv.get_csv_line()
+			if r.size() < 9:
+				continue
+			names[r[8]] = true
+			if r[7] == "★" and d.HUMAN_DEFAULT_FACE.get(r[2], {}).get(r[4], "") != r[5]:
+				defaults_ok = false
+				printerr("    預設表情不一致：", r[2], " ", r[4], " ", r[5])
+		_check(names.size() == 78, "表上 78 張立繪（%d）" % names.size())
+		_check(defaults_ok, "表上的★預設表情 = 遊戲的預設臉")
+		var missing := []
+		for f in DirAccess.get_files_at("res://art/human/portraits"):
+			if f.ends_with(".png") and not names.has(f):
+				missing.append(f)
+		_check(missing.is_empty(), "現有的立繪檔名都在表上 %s" % [missing])
 	# 第二章不受影響：Fen 還是玩偶立繪
 	gs.chapter = 2
 	d._show_portrait_ch2("芬")

@@ -44,7 +44,7 @@ const HUMAN_DEFAULT_FACE := {
 	"fen": {"uniform": "annoyed", "gown": "waking"},
 	"teacher": {"teacher": "forced_smile"},
 	"hilufei": {"uniform": "happy", "gown": "default"},
-	"mingyue": {"uniform": "laugh"},
+	"mingyue": {"uniform": "laugh", "gown": "default"},
 	"xiaoman": {"uniform": "looking_down", "gown": "default"},
 	"classrep": {"uniform": "standard_smile"},
 	"duty": {"uniform": "default"},
