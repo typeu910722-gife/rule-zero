@@ -1,0 +1,1010 @@
+﻿編號,章節,分類,內容,遊戲裡的檔案（交件請用同一個檔名）,目前尺寸,背景,格式,規格／注意,優先度
+1,全遊戲,圖示／Logo,icon,game/art/branding/icon.png,1024×1024,不透明,png,Android 圖示前景要留安全邊距（中間 66%）,B
+2,全遊戲,圖示／Logo,icon_192,game/art/branding/icon_192.png,192×192,不透明,png,Android 圖示前景要留安全邊距（中間 66%）,B
+3,全遊戲,圖示／Logo,icon_android_background,game/art/branding/icon_android_background.png,432×432,不透明,png,Android 圖示前景要留安全邊距（中間 66%）,B
+4,全遊戲,圖示／Logo,icon_android_foreground,game/art/branding/icon_android_foreground.png,432×432,透明,png,Android 圖示前景要留安全邊距（中間 66%）,B
+5,全遊戲,圖示／Logo,logo,game/art/branding/logo.png,768×768,透明,png,Android 圖示前景要留安全邊距（中間 66%）,B
+6,全遊戲,標題畫面小布,姿勢 1,game/art/title_bu_1.png,512×512,透明,png,512×512 透明,A
+7,全遊戲,標題畫面小布,姿勢 2,game/art/title_bu_2.png,512×512,透明,png,512×512 透明,A
+8,全遊戲,標題畫面小布,姿勢 3,game/art/title_bu_3.png,512×512,透明,png,512×512 透明,A
+9,全遊戲,標題畫面小布,姿勢 4,game/art/title_bu_4.png,512×512,透明,png,512×512 透明,A
+10,第一章,UI,按鈕,game/art/ui_button.png,205×72,透明,png,,C
+11,第一章,UI,按鈕（選取中）,game/art/ui_button_focus.png,211×71,透明,png,,C
+12,第一章,UI,選項,game/art/ui_choice.png,172×60,透明,png,,C
+13,第一章,UI,選項（選取中）,game/art/ui_choice_focus.png,177×60,透明,png,,C
+14,第一章,UI,選項（不能選）,game/art/ui_choice_off.png,177×60,透明,png,,C
+15,第一章,UI,對話框（九宮格拉伸）,game/art/ui_dialog.png,400×189,透明,png,,C
+16,第一章,UI,日記本,game/art/ui_diary.png,458×616,透明,png,,C
+17,第一章,UI,鎮規告示板,game/art/ui_rules_board.png,528×633,透明,png,,C
+18,第一章,剪刀事件（連續畫面）,鎮長 第 1 張,game/art/scissors/mayor_1.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+19,第一章,剪刀事件（連續畫面）,鎮長 第 2 張,game/art/scissors/mayor_2.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+20,第一章,剪刀事件（連續畫面）,鎮長 第 3 張,game/art/scissors/mayor_3.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+21,第一章,剪刀事件（連續畫面）,鎮長 第 4 張,game/art/scissors/mayor_4.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+22,第一章,剪刀事件（連續畫面）,鎮長 第 5 張,game/art/scissors/mayor_5.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+23,第一章,剪刀事件（連續畫面）,鎮長 第 6 張,game/art/scissors/mayor_6.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+24,第一章,剪刀事件（連續畫面）,鎮長 第 7 張,game/art/scissors/mayor_7.jpg,1280×720,不透明,jpg,1280×720 不透明，7 張依序播放,A
+25,第一章,可走範圍遮罩,forest_mask,game/art/forest_mask.png,739×532,不透明,png,不是給玩家看的圖；換地圖時我們自己改,D
+26,第一章,可走範圍遮罩,walk_mask,game/art/walk_mask.png,627×627,不透明,png,不是給玩家看的圖；換地圖時我們自己改,D
+27,第一章,室內畫面（進屋）,Fen 的家,game/art/int_fen.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+28,第一章,室內畫面（進屋）,露露 的家,game/art/int_lulu.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+29,第一章,室內畫面（進屋）,熊熊鎮長 的家,game/art/int_mayor.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+30,第一章,室內畫面（進屋）,鏡子 的家,game/art/int_mirror.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+31,第一章,室內畫面（進屋）,麻糬 的家,game/art/int_mochi.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+32,第一章,室內畫面（進屋）,波波 的家,game/art/int_popo.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+33,第一章,室內畫面（進屋）,station,game/art/int_station.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+34,第一章,室內畫面（進屋）,小玉 的家,game/art/int_tama.jpg,1280×720,不透明,jpg,1280×720 不透明,B
+35,第一章,對話表情頭像,小布,game/art/face_bu.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+36,第一章,對話表情頭像,車掌,game/art/face_conductor.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+37,第一章,對話表情頭像,Fen,game/art/face_fen.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+38,第一章,對話表情頭像,露露,game/art/face_lulu.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+39,第一章,對話表情頭像,熊熊鎮長,game/art/face_mayor.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+40,第一章,對話表情頭像,鏡子,game/art/face_mirror.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+41,第一章,對話表情頭像,麻糬,game/art/face_mochi.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+42,第一章,對話表情頭像,波波,game/art/face_popo.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+43,第一章,對話表情頭像,小狗居民,game/art/face_puppy.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+44,第一章,對話表情頭像,小玉,game/art/face_tama.png,1024×512,透明,png,4 欄 × 2 列，每格 256×256，8 個表情（照原圖順序）,A
+45,第一章,物件,Fen 的樹屋（地圖上的建築）,game/art/fen_treehouse.png,600×720,透明,png,,B
+46,第一章,物件,鏡子 4 種狀態（4 格橫排，每格 256×256）,game/art/mirror_states.png,1024×256,透明,png,,B
+47,第一章,背景,麵包店（麻糬）,game/art/bg_bakery.jpg,1280×720,不透明,jpg,,B
+48,第一章,背景,記憶：教室,game/art/bg_classroom.jpg,1280×720,不透明,jpg,,B
+49,第一章,背景,鐘塔,game/art/bg_clocktower.jpg,1280×720,不透明,jpg,,B
+50,第一章,背景,手套事件,game/art/bg_glove.jpg,1280×720,不透明,jpg,,B
+51,第一章,背景,記憶：醫院（孩子）,game/art/bg_hospital_child.jpg,1280×720,不透明,jpg,,B
+52,第一章,背景,記憶：空的病房,game/art/bg_hospital_empty.jpg,1280×720,不透明,jpg,,B
+53,第一章,背景,記憶：遙的病床,game/art/bg_hospital_haruka.jpg,1280×720,不透明,jpg,,B
+54,第一章,背景,壞掉的鎮長,game/art/bg_mayor_broken.jpg,1280×720,不透明,jpg,,B
+55,第一章,背景,記憶：班上,game/art/bg_mem_class.jpg,1280×720,不透明,jpg,,B
+56,第一章,背景,記憶：醫院,game/art/bg_mem_hospital.jpg,1280×720,不透明,jpg,,B
+57,第一章,背景,記憶：海,game/art/bg_mem_sea.jpg,1280×720,不透明,jpg,,B
+58,第一章,背景,記憶：那一天（廁所外，不畫人）,game/art/bg_mem_toilet.jpg,1280×720,不透明,jpg,,B
+59,第一章,背景,夜晚：小狗居民家,game/art/bg_nt_dog.jpg,1280×720,不透明,jpg,,B
+60,第一章,背景,夜晚：露露家,game/art/bg_nt_lulu.jpg,1280×720,不透明,jpg,,B
+61,第一章,背景,夜晚：麻糬家,game/art/bg_nt_mochi.jpg,1280×720,不透明,jpg,,B
+62,第一章,背景,夜晚：波波家,game/art/bg_nt_popo.jpg,1280×720,不透明,jpg,,B
+63,第一章,背景,夜晚：小玉家,game/art/bg_nt_tama.jpg,1280×720,不透明,jpg,,B
+64,第一章,背景,月台,game/art/bg_platform.jpg,1280×720,不透明,jpg,,B
+65,第一章,背景,廣場,game/art/bg_plaza.jpg,1280×720,不透明,jpg,,B
+66,第一章,背景,修理鋪,game/art/bg_repair.jpg,1280×720,不透明,jpg,,B
+67,第一章,背景,小布的房間（夜）,game/art/bg_room_night.jpg,1280×720,不透明,jpg,,B
+68,第一章,背景,小鎮,game/art/bg_town2.jpg,1280×720,不透明,jpg,,B
+69,第一章,背景,火車車廂,game/art/bg_train.jpg,1280×720,不透明,jpg,,B
+70,第一章,背景,火車車廂（夜）,game/art/bg_train_night.jpg,1280×720,不透明,jpg,,B
+71,第一章,背景,開機畫面,game/art/boot_splash.png,1280×720,不透明,png,,B
+72,第一章,背景,森林地圖（探索，俯視）,game/art/forest_map.jpg,1479×1064,不透明,jpg,,B
+73,第一章,背景,小布的房間（探索）,game/art/room.jpg,1280×720,不透明,jpg,,B
+74,第一章,背景,標題畫面背景（月台）,game/art/title_platform.jpg,1280×720,不透明,jpg,,B
+75,第一章,背景,小鎮大地圖（探索，俯視）,game/art/town_map.png,1254×1254,不透明,png,,B
+76,第一章,背景,章節結束畫面背景,game/art/ui_chapter_end_bg.jpg,1280×720,不透明,jpg,,B
+77,第一章,背景,結局畫面背景,game/art/ui_ending_bg.jpg,1280×720,不透明,jpg,,B
+78,第一章,角色站姿（事件用）,車掌,game/art/item_stand_conductor.png,197×560,透明,png,透明 PNG 全身,A
+79,第一章,角色站姿（事件用）,露露,game/art/item_stand_lulu.png,511×560,透明,png,透明 PNG 全身,A
+80,第一章,角色站姿（事件用）,熊熊鎮長,game/art/item_stand_mayor.png,391×560,透明,png,透明 PNG 全身,A
+81,第一章,角色站姿（事件用）,熊熊鎮長（壞掉）,game/art/item_stand_mayor_broken.png,391×560,透明,png,透明 PNG 全身,A
+82,第一章,角色站姿（事件用）,麻糬,game/art/item_stand_mochi.png,533×560,透明,png,透明 PNG 全身,A
+83,第一章,角色站姿（事件用）,小狗居民,game/art/item_stand_puppy.png,447×480,透明,png,透明 PNG 全身,A
+84,第一章,調查物品特寫,bed,game/art/item_bed.png,420×340,透明,png,透明 PNG,C
+85,第一章,調查物品特寫,bow_ear,game/art/item_bow_ear.png,440×280,透明,png,透明 PNG,C
+86,第一章,調查物品特寫,clock,game/art/item_clock.png,300×280,透明,png,透明 PNG,C
+87,第一章,調查物品特寫,dough,game/art/item_dough.png,300×251,透明,png,透明 PNG,C
+88,第一章,調查物品特寫,fox_tail,game/art/item_fox_tail.png,440×290,透明,png,透明 PNG,C
+89,第一章,調查物品特寫,glove,game/art/item_glove.png,420×408,透明,png,透明 PNG,C
+90,第一章,調查物品特寫,key,game/art/item_key.png,300×300,透明,png,透明 PNG,C
+91,第一章,調查物品特寫,mayor_still,game/art/item_mayor_still.png,391×560,透明,png,透明 PNG,C
+92,第一章,調查物品特寫,mirror_cover,game/art/item_mirror_cover.png,249×420,透明,png,透明 PNG,C
+93,第一章,調查物品特寫,note,game/art/item_note.png,233×300,透明,png,透明 PNG,C
+94,第一章,調查物品特寫,photo,game/art/item_photo.png,359×420,透明,png,透明 PNG,C
+95,第一章,調查物品特寫,ring,game/art/item_ring.png,300×297,透明,png,透明 PNG,C
+96,第一章,調查物品特寫,sack,game/art/item_sack.png,420×414,透明,png,透明 PNG,C
+97,第一章,調查物品特寫,scissors,game/art/item_scissors.png,300×300,透明,png,透明 PNG,C
+98,第一章,調查物品特寫,sheep_pile,game/art/item_sheep_pile.png,440×297,透明,png,透明 PNG,C
+99,第一章,調查物品特寫,tag,game/art/item_tag.png,480×269,透明,png,透明 PNG,C
+100,第一章,調查物品特寫,tag_left,game/art/item_tag_left.png,405×420,透明,png,透明 PNG,C
+101,第一章,調查物品特寫,tag_torn,game/art/item_tag_torn.png,480×334,透明,png,透明 PNG,C
+102,第一章,調查物品特寫,tags_pile,game/art/item_tags_pile.png,440×309,透明,png,透明 PNG,C
+103,第一章,調查物品特寫,ticket,game/art/item_ticket.png,300×300,透明,png,透明 PNG,C
+104,第一章,調查物品特寫,ticket_stamped,game/art/item_ticket_stamped.png,300×300,透明,png,透明 PNG,C
+105,第一章,走路圖,小布,game/art/walk_bu.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+106,第一章,走路圖,車掌,game/art/walk_conductor.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+107,第一章,走路圖,Fen,game/art/walk_fen.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+108,第一章,走路圖,露露,game/art/walk_lulu.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+109,第一章,走路圖,熊熊鎮長,game/art/walk_mayor.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+110,第一章,走路圖,麻糬,game/art/walk_mochi.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+111,第一章,走路圖,波波,game/art/walk_popo.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+112,第一章,走路圖,小狗居民,game/art/walk_puppy.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+113,第一章,走路圖,小玉,game/art/walk_tama.png,576×768,透明,png,3 欄（步伐）× 4 列（下、左、右、上），每格 192×192，腳底在格子底部,A
+114,第一章,追逐戰,bench,game/art/chase2d/bench.png,640×480,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+115,第一章,追逐戰,bg,game/art/chase2d/bg.jpg,1920×1080,不透明,jpg,_run_00～03 是跑步循環；角色透明 PNG,C
+116,第一章,追逐戰,bg_z,game/art/chase2d/bg_z.png,640×360,不透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+117,第一章,追逐戰,小布 bu_caught,game/art/chase2d/bu_caught.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+118,第一章,追逐戰,小布 bu_idle,game/art/chase2d/bu_idle.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+119,第一章,追逐戰,小布 bu_open_door,game/art/chase2d/bu_open_door.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+120,第一章,追逐戰,小布 bu_run_00,game/art/chase2d/bu_run_00.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+121,第一章,追逐戰,小布 bu_run_01,game/art/chase2d/bu_run_01.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+122,第一章,追逐戰,小布 bu_run_02,game/art/chase2d/bu_run_02.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+123,第一章,追逐戰,小布 bu_run_03,game/art/chase2d/bu_run_03.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+124,第一章,追逐戰,cotton,game/art/chase2d/cotton.png,640×360,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+125,第一章,追逐戰,door,game/art/chase2d/door.png,900×786,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+126,第一章,追逐戰,lamp,game/art/chase2d/lamp.png,427×640,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+127,第一章,追逐戰,熊熊鎮長 mayor_grab,game/art/chase2d/mayor_grab.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+128,第一章,追逐戰,熊熊鎮長 mayor_rise,game/art/chase2d/mayor_rise.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+129,第一章,追逐戰,熊熊鎮長 mayor_run,game/art/chase2d/mayor_run.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+130,第一章,追逐戰,熊熊鎮長 mayor_run_00,game/art/chase2d/mayor_run_00.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+131,第一章,追逐戰,熊熊鎮長 mayor_run_01,game/art/chase2d/mayor_run_01.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+132,第一章,追逐戰,熊熊鎮長 mayor_run_02,game/art/chase2d/mayor_run_02.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+133,第一章,追逐戰,熊熊鎮長 mayor_run_03,game/art/chase2d/mayor_run_03.png,256×256,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+134,第一章,追逐戰,熊熊鎮長 mayor_twitch,game/art/chase2d/mayor_twitch.png,512×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,A
+135,第一章,追逐戰,nametags,game/art/chase2d/nametags.png,1024×576,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+136,第一章,追逐戰,needle,game/art/chase2d/needle.png,341×512,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+137,第一章,追逐戰,noticeboard,game/art/chase2d/noticeboard.png,640×571,透明,png,_run_00～03 是跑步循環；角色透明 PNG,C
+138,第一章～三章,嚇人畫面（全螢幕的臉）,和平鴿,game/art/scare_dove.png,1024×1024,不透明,png,透明 PNG 正方形，臉塞滿畫面,A
+139,第一章～三章,嚇人畫面（全螢幕的臉）,Fen,game/art/scare_fen.png,1280×1280,透明,png,透明 PNG 正方形，臉塞滿畫面,A
+140,第一章～三章,嚇人畫面（全螢幕的臉）,熊熊鎮長,game/art/scare_mayor.png,1280×1280,透明,png,透明 PNG 正方形，臉塞滿畫面,A
+141,第一章～三章,嚇人畫面（全螢幕的臉）,護理師,game/art/scare_nurse.png,1024×1024,不透明,png,透明 PNG 正方形，臉塞滿畫面,A
+142,第二章,CG,cg01_referral,game/art/ch2/cg/ch2_cg01_referral.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+143,第二章,CG,cg01_referral_blank,game/art/ch2/cg/ch2_cg01_referral_blank.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+144,第二章,CG,cg01_referral_stitch_01,game/art/ch2/cg/ch2_cg01_referral_stitch_01.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+145,第二章,CG,cg01_referral_stitch_02,game/art/ch2/cg/ch2_cg01_referral_stitch_02.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+146,第二章,CG,cg01_referral_stitch_03,game/art/ch2/cg/ch2_cg01_referral_stitch_03.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+147,第二章,CG,cg01_referral_stitch_04,game/art/ch2/cg/ch2_cg01_referral_stitch_04.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+148,第二章,CG,cg01_referral_text_overlay,game/art/ch2/cg/ch2_cg01_referral_text_overlay.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+149,第二章,CG,cg02_ticket,game/art/ch2/cg/ch2_cg02_ticket.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+150,第二章,CG,cg02_ticket_blank,game/art/ch2/cg/ch2_cg02_ticket_blank.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+151,第二章,CG,cg02_ticket_ending,game/art/ch2/cg/ch2_cg02_ticket_ending.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+152,第二章,CG,cg02_ticket_text_overlay,game/art/ch2/cg/ch2_cg02_ticket_text_overlay.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+153,第二章,CG,cg03_arrival_pat,game/art/ch2/cg/ch2_cg03_arrival_pat.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+154,第二章,CG,cg04_photo_hallway,game/art/ch2/cg/ch2_cg04_photo_hallway.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+155,第二章,CG,cg05_photo_mailbox,game/art/ch2/cg/ch2_cg05_photo_mailbox.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+156,第二章,CG,cg05_photo_mailbox_blank,game/art/ch2/cg/ch2_cg05_photo_mailbox_blank.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+157,第二章,CG,cg05_photo_mailbox_text_overlay,game/art/ch2/cg/ch2_cg05_photo_mailbox_text_overlay.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+158,第二章,CG,cg06_photo_nirvana,game/art/ch2/cg/ch2_cg06_photo_nirvana.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+159,第二章,CG,cg07_silhouette,game/art/ch2/cg/ch2_cg07_silhouette.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+160,第二章,CG,cg08_diary,game/art/ch2/cg/ch2_cg08_diary.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+161,第二章,CG,cg08_diary_blank,game/art/ch2/cg/ch2_cg08_diary_blank.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+162,第二章,CG,cg09_clipboard,game/art/ch2/cg/ch2_cg09_clipboard.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+163,第二章,CG,cg09_clipboard_blank,game/art/ch2/cg/ch2_cg09_clipboard_blank.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+164,第二章,CG,cg09_clipboard_text_overlay,game/art/ch2/cg/ch2_cg09_clipboard_text_overlay.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+165,第二章,CG,cg10_platform_two,game/art/ch2/cg/ch2_cg10_platform_two.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+166,第二章,CG,cg11_popo_fence,game/art/ch2/cg/ch2_cg11_popo_fence.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+167,第二章,CG,cg12_mochi_hug,game/art/ch2/cg/ch2_cg12_mochi_hug.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+168,第二章,CG,cg13_paper_plane,game/art/ch2/cg/ch2_cg13_paper_plane.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+169,第二章,CG,cg14_tiaoma_last,game/art/ch2/cg/ch2_cg14_tiaoma_last.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+170,第二章,CG,cg15_mask_break,game/art/ch2/cg/ch2_cg15_mask_break.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+171,第二章,CG,cg16_conductor_photo,game/art/ch2/cg/ch2_cg16_conductor_photo.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+172,第二章,CG,cg17_dream_orphanage,game/art/ch2/cg/ch2_cg17_dream_orphanage.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+173,第二章,CG,cg18_dream_classroom,game/art/ch2/cg/ch2_cg18_dream_classroom.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+174,第二章,CG,cg18_dream_classroom_faceless,game/art/ch2/cg/ch2_cg18_dream_classroom_faceless.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+175,第二章,CG,cg19_bad_end,game/art/ch2/cg/ch2_cg19_bad_end.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+176,第二章,CG,cg20_ending_all,game/art/ch2/cg/ch2_cg20_ending_all.jpg,1280×720,不透明,jpg,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+177,第二章,CG,cg20_baimian（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_baimian.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+178,第二章,CG,cg20_conductor（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_conductor.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+179,第二章,CG,cg20_gaga（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_gaga.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+180,第二章,CG,cg20_lulu（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_lulu.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+181,第二章,CG,cg20_mochi（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_mochi.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+182,第二章,CG,cg20_pip（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_pip.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+183,第二章,CG,cg20_popo（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_popo.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+184,第二章,CG,cg20_xiaoji_bald（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_xiaoji_bald.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+185,第二章,CG,cg20_xiaoji_onequill（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_xiaoji_onequill.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+186,第二章,CG,cg20_youyou（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_youyou.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+187,第二章,CG,cg20_zhongzhong（結局 CG 的分層，每層一個角色，要能疊在一起）,game/art/ch2/cg/ending_layers/ch2_cg20_zhongzhong.png,1280×720,透明,png,_text_overlay 是字的圖層、_blank 是沒有字的版本、_stitch_01～04 是逐步縫上的動畫格,A
+188,第二章,UI,01_dialogue,game/art/ch2/ui/ch2_ui_01_dialogue.png,1160×160,透明,png,,C
+189,第二章,UI,01_nameplate,game/art/ch2/ui/ch2_ui_01_nameplate.png,300×72,透明,png,,C
+190,第二章,UI,02_conduct,game/art/ch2/ui/ch2_ui_02_conduct.png,620×750,透明,png,,C
+191,第二章,UI,03_ink_drips,game/art/ch2/ui/ch2_ui_03_ink_drips.png,450×120,透明,png,,C
+192,第二章,UI,03_rules,game/art/ch2/ui/ch2_ui_03_rules.png,650×780,透明,png,,C
+193,第二章,UI,04_blackout,game/art/ch2/ui/ch2_ui_04_blackout.png,490×80,透明,png,,C
+194,第二章,UI,04_rollcall,game/art/ch2/ui/ch2_ui_04_rollcall.png,550×740,透明,png,,C
+195,第二章,UI,05_hud,game/art/ch2/ui/ch2_ui_05_hud.png,525×75,透明,png,,C
+196,第二章,UI,05_star_bright,game/art/ch2/ui/ch2_ui_05_star_bright.png,128×128,透明,png,,C
+197,第二章,UI,05_star_dark,game/art/ch2/ui/ch2_ui_05_star_dark.png,128×128,透明,png,,C
+198,第二章,UI,06_diary,game/art/ch2/ui/ch2_ui_06_diary.png,980×630,透明,png,,C
+199,第二章,UI,07_results,game/art/ch2/ui/ch2_ui_07_results.png,1080×650,透明,png,,C
+200,第二章,UI,07_status_disposed,game/art/ch2/ui/ch2_ui_07_status_disposed.png,160×160,透明,png,,C
+201,第二章,UI,07_status_graduate,game/art/ch2/ui/ch2_ui_07_status_graduate.png,160×160,透明,png,,C
+202,第二章,UI,07_status_platform,game/art/ch2/ui/ch2_ui_07_status_platform.png,160×160,透明,png,,C
+203,第二章,UI,07_status_train,game/art/ch2/ui/ch2_ui_07_status_train.png,160×160,透明,png,,C
+204,第二章,UI,08_nameplate_baimian_alive,game/art/ch2/ui/ch2_ui_08_nameplate_baimian_alive.png,180×68,透明,png,,C
+205,第二章,UI,08_nameplate_baimian_dead,game/art/ch2/ui/ch2_ui_08_nameplate_baimian_dead.png,180×68,透明,png,,C
+206,第二章,UI,08_nameplate_baimian_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_baimian_graduate.png,180×68,透明,png,,C
+207,第二章,UI,08_nameplate_gaga_alive,game/art/ch2/ui/ch2_ui_08_nameplate_gaga_alive.png,180×68,透明,png,,C
+208,第二章,UI,08_nameplate_gaga_dead,game/art/ch2/ui/ch2_ui_08_nameplate_gaga_dead.png,180×68,透明,png,,C
+209,第二章,UI,08_nameplate_gaga_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_gaga_graduate.png,180×68,透明,png,,C
+210,第二章,UI,08_nameplate_tiaoma_alive,game/art/ch2/ui/ch2_ui_08_nameplate_tiaoma_alive.png,180×68,透明,png,,C
+211,第二章,UI,08_nameplate_tiaoma_dead,game/art/ch2/ui/ch2_ui_08_nameplate_tiaoma_dead.png,180×68,透明,png,,C
+212,第二章,UI,08_nameplate_tiaoma_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_tiaoma_graduate.png,180×68,透明,png,,C
+213,第二章,UI,08_nameplate_xiaoji_alive,game/art/ch2/ui/ch2_ui_08_nameplate_xiaoji_alive.png,180×68,透明,png,,C
+214,第二章,UI,08_nameplate_xiaoji_dead,game/art/ch2/ui/ch2_ui_08_nameplate_xiaoji_dead.png,180×68,透明,png,,C
+215,第二章,UI,08_nameplate_xiaoji_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_xiaoji_graduate.png,180×68,透明,png,,C
+216,第二章,UI,08_nameplate_youyou_alive,game/art/ch2/ui/ch2_ui_08_nameplate_youyou_alive.png,180×68,透明,png,,C
+217,第二章,UI,08_nameplate_youyou_dead,game/art/ch2/ui/ch2_ui_08_nameplate_youyou_dead.png,180×68,透明,png,,C
+218,第二章,UI,08_nameplate_youyou_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_youyou_graduate.png,180×68,透明,png,,C
+219,第二章,UI,08_nameplate_zhongzhong_alive,game/art/ch2/ui/ch2_ui_08_nameplate_zhongzhong_alive.png,180×68,透明,png,,C
+220,第二章,UI,08_nameplate_zhongzhong_dead,game/art/ch2/ui/ch2_ui_08_nameplate_zhongzhong_dead.png,180×68,透明,png,,C
+221,第二章,UI,08_nameplate_zhongzhong_graduate,game/art/ch2/ui/ch2_ui_08_nameplate_zhongzhong_graduate.png,180×68,透明,png,,C
+222,第二章,UI,08_white_stamp,game/art/ch2/ui/ch2_ui_08_white_stamp.png,1280×720,透明,png,,C
+223,第二章,UI,09_chapter2,game/art/ch2/ui/ch2_ui_09_chapter2.png,900×350,透明,png,,C
+224,第二章,UI,09_chapter2_blank,game/art/ch2/ui/ch2_ui_09_chapter2_blank.png,900×350,透明,png,,C
+225,第二章,UI,09_chapter3,game/art/ch2/ui/ch2_ui_09_chapter3.png,900×350,透明,png,,C
+226,第二章,UI,09_chapter3_blank,game/art/ch2/ui/ch2_ui_09_chapter3_blank.png,900×350,透明,png,,C
+227,第二章,UI,10_blue_yarn,game/art/ch2/ui/ch2_ui_10_blue_yarn.png,128×128,透明,png,,C
+228,第二章,UI,10_green_patch,game/art/ch2/ui/ch2_ui_10_green_patch.png,128×128,透明,png,,C
+229,第二章,UI,10_pink_button,game/art/ch2/ui/ch2_ui_10_pink_button.png,128×128,透明,png,,C
+230,第二章,UI,10_yellow_ribbon,game/art/ch2/ui/ch2_ui_10_yellow_ribbon.png,128×128,透明,png,,C
+231,第二章,UI,11_heart_badge,game/art/ch2/ui/ch2_ui_11_heart_badge.png,180×180,透明,png,,C
+232,第二章,UI,11_heart_line,game/art/ch2/ui/ch2_ui_11_heart_line.png,180×180,透明,png,,C
+233,第二章,UI,11_heart_stamp,game/art/ch2/ui/ch2_ui_11_heart_stamp.png,180×180,透明,png,,C
+234,第二章,可走範圍遮罩,地圖哪裡可以走（黑白）,game/art/ch2/walk_mask_ch2.png,800×575,不透明,png,不是給玩家看的圖；換地圖時我們自己改,D
+235,第二章,對話立繪（玩偶）,baimian_portrait_a_blank,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_blank.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+236,第二章,對話立繪（玩偶）,baimian_portrait_a_default,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+237,第二章,對話立繪（玩偶）,baimian_portrait_a_faraway,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_faraway.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+238,第二章,對話立繪（玩偶）,baimian_portrait_a_realsmile,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_realsmile.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+239,第二章,對話立繪（玩偶）,baimian_portrait_a_scorn,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_scorn.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+240,第二章,對話立繪（玩偶）,baimian_portrait_a_still,game/art/ch2/characters/portraits/ch2_baimian_portrait_a_still.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+241,第二章,對話立繪（玩偶）,baimian_portrait_default,game/art/ch2/characters/portraits/ch2_baimian_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+242,第二章,對話立繪（玩偶）,baimian_portrait_notail_default,game/art/ch2/characters/portraits/ch2_baimian_portrait_notail_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+243,第二章,對話立繪（玩偶）,conductor_portrait_back,game/art/ch2/characters/portraits/ch2_conductor_portrait_back.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+244,第二章,對話立繪（玩偶）,conductor_portrait_photo,game/art/ch2/characters/portraits/ch2_conductor_portrait_photo.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+245,第二章,對話立繪（玩偶）,conductor_portrait_stand,game/art/ch2/characters/portraits/ch2_conductor_portrait_stand.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+246,第二章,對話立繪（玩偶）,dove_portrait_a_default,game/art/ch2/characters/portraits/ch2_dove_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+247,第二章,對話立繪（玩偶）,dove_portrait_a_lean,game/art/ch2/characters/portraits/ch2_dove_portrait_a_lean.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+248,第二章,對話立繪（玩偶）,dove_portrait_a_tilt,game/art/ch2/characters/portraits/ch2_dove_portrait_a_tilt.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+249,第二章,對話立繪（玩偶）,dove_portrait_a_turn,game/art/ch2/characters/portraits/ch2_dove_portrait_a_turn.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+250,第二章,對話立繪（玩偶）,dove_portrait_a_up,game/art/ch2/characters/portraits/ch2_dove_portrait_a_up.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+251,第二章,對話立繪（玩偶）,dove_portrait_back,game/art/ch2/characters/portraits/ch2_dove_portrait_back.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+252,第二章,對話立繪（玩偶）,dove_portrait_cracked_default,game/art/ch2/characters/portraits/ch2_dove_portrait_cracked_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+253,第二章,對話立繪（玩偶）,dove_portrait_crouch,game/art/ch2/characters/portraits/ch2_dove_portrait_crouch.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+254,第二章,對話立繪（玩偶）,dove_portrait_default,game/art/ch2/characters/portraits/ch2_dove_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+255,第二章,對話立繪（玩偶）,dove_portrait_hug,game/art/ch2/characters/portraits/ch2_dove_portrait_hug.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+256,第二章,對話立繪（玩偶）,fen_portrait_a_away,game/art/ch2/characters/portraits/ch2_fen_portrait_a_away.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+257,第二章,對話立繪（玩偶）,fen_portrait_a_default,game/art/ch2/characters/portraits/ch2_fen_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+258,第二章,對話立繪（玩偶）,gaga_portrait_a_closed,game/art/ch2/characters/portraits/ch2_gaga_portrait_a_closed.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+259,第二章,對話立繪（玩偶）,gaga_portrait_a_default,game/art/ch2/characters/portraits/ch2_gaga_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+260,第二章,對話立繪（玩偶）,gaga_portrait_a_write,game/art/ch2/characters/portraits/ch2_gaga_portrait_a_write.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+261,第二章,對話立繪（玩偶）,gaga_portrait_default,game/art/ch2/characters/portraits/ch2_gaga_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+262,第二章,對話立繪（玩偶）,gaga_portrait_project_default,game/art/ch2/characters/portraits/ch2_gaga_portrait_project_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+263,第二章,對話立繪（玩偶）,gaga_portrait_unsewn_closed,game/art/ch2/characters/portraits/ch2_gaga_portrait_unsewn_closed.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+264,第二章,對話立繪（玩偶）,gaga_portrait_unsewn_silent,game/art/ch2/characters/portraits/ch2_gaga_portrait_unsewn_silent.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+265,第二章,對話立繪（玩偶）,lulu_portrait_default,game/art/ch2/characters/portraits/ch2_lulu_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+266,第二章,對話立繪（玩偶）,lulu_portrait_letter,game/art/ch2/characters/portraits/ch2_lulu_portrait_letter.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+267,第二章,對話立繪（玩偶）,lulu_portrait_no,game/art/ch2/characters/portraits/ch2_lulu_portrait_no.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+268,第二章,對話立繪（玩偶）,mechbird_portrait_front,game/art/ch2/characters/portraits/ch2_mechbird_portrait_front.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+269,第二章,對話立繪（玩偶）,mechbird_portrait_side,game/art/ch2/characters/portraits/ch2_mechbird_portrait_side.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+270,第二章,對話立繪（玩偶）,mechbird_portrait_stopped,game/art/ch2/characters/portraits/ch2_mechbird_portrait_stopped.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+271,第二章,對話立繪（玩偶）,mochi_portrait_default,game/art/ch2/characters/portraits/ch2_mochi_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+272,第二章,對話立繪（玩偶）,mochi_portrait_name,game/art/ch2/characters/portraits/ch2_mochi_portrait_name.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+273,第二章,對話立繪（玩偶）,mochi_portrait_shake,game/art/ch2/characters/portraits/ch2_mochi_portrait_shake.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+274,第二章,對話立繪（玩偶）,mochi_portrait_torn,game/art/ch2/characters/portraits/ch2_mochi_portrait_torn.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+275,第二章,對話立繪（玩偶）,pip_portrait_default,game/art/ch2/characters/portraits/ch2_pip_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+276,第二章,對話立繪（玩偶）,pip_portrait_marks,game/art/ch2/characters/portraits/ch2_pip_portrait_marks.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+277,第二章,對話立繪（玩偶）,pip_portrait_ring,game/art/ch2/characters/portraits/ch2_pip_portrait_ring.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+278,第二章,對話立繪（玩偶）,pip_portrait_scared,game/art/ch2/characters/portraits/ch2_pip_portrait_scared.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+279,第二章,對話立繪（玩偶）,popo_portrait_default,game/art/ch2/characters/portraits/ch2_popo_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+280,第二章,對話立繪（玩偶）,popo_portrait_hands,game/art/ch2/characters/portraits/ch2_popo_portrait_hands.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+281,第二章,對話立繪（玩偶）,popo_portrait_shocked,game/art/ch2/characters/portraits/ch2_popo_portrait_shocked.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+282,第二章,對話立繪（玩偶）,staff_portrait_carry,game/art/ch2/characters/portraits/ch2_staff_portrait_carry.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+283,第二章,對話立繪（玩偶）,staff_portrait_stand,game/art/ch2/characters/portraits/ch2_staff_portrait_stand.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+284,第二章,對話立繪（玩偶）,tiaoma_portrait_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+285,第二章,對話立繪（玩偶）,tiaoma_portrait_s0_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s0_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+286,第二章,對話立繪（玩偶）,tiaoma_portrait_s0_last,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s0_last.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+287,第二章,對話立繪（玩偶）,tiaoma_portrait_s0mark_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s0mark_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+288,第二章,對話立繪（玩偶）,tiaoma_portrait_s0mark_last,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s0mark_last.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+289,第二章,對話立繪（玩偶）,tiaoma_portrait_s1_blurt,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s1_blurt.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+290,第二章,對話立繪（玩偶）,tiaoma_portrait_s1_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s1_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+291,第二章,對話立繪（玩偶）,tiaoma_portrait_s1_washed,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s1_washed.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+292,第二章,對話立繪（玩偶）,tiaoma_portrait_s2_blurt,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s2_blurt.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+293,第二章,對話立繪（玩偶）,tiaoma_portrait_s2_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s2_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+294,第二章,對話立繪（玩偶）,tiaoma_portrait_s2_washed,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s2_washed.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+295,第二章,對話立繪（玩偶）,tiaoma_portrait_s3_blurt,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s3_blurt.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+296,第二章,對話立繪（玩偶）,tiaoma_portrait_s3_default,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s3_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+297,第二章,對話立繪（玩偶）,tiaoma_portrait_s3_washed,game/art/ch2/characters/portraits/ch2_tiaoma_portrait_s3_washed.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+298,第二章,對話立繪（玩偶）,xiaoji_portrait_a_crack,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_a_crack.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+299,第二章,對話立繪（玩偶）,xiaoji_portrait_a_cry,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_a_cry.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+300,第二章,對話立繪（玩偶）,xiaoji_portrait_a_default,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+301,第二章,對話立繪（玩偶）,xiaoji_portrait_a_startle,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_a_startle.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+302,第二章,對話立繪（玩偶）,xiaoji_portrait_a_tired,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_a_tired.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+303,第二章,對話立繪（玩偶）,xiaoji_portrait_bald_cry,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_bald_cry.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+304,第二章,對話立繪（玩偶）,xiaoji_portrait_bald_default,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_bald_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+305,第二章,對話立繪（玩偶）,xiaoji_portrait_bald_hugged,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_bald_hugged.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+306,第二章,對話立繪（玩偶）,xiaoji_portrait_bald_tired,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_bald_tired.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+307,第二章,對話立繪（玩偶）,xiaoji_portrait_default,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+308,第二章,對話立繪（玩偶）,xiaoji_portrait_onequill_default,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_onequill_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+309,第二章,對話立繪（玩偶）,xiaoji_portrait_onequill_hugged,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_onequill_hugged.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+310,第二章,對話立繪（玩偶）,xiaoji_portrait_tied_default,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_tied_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+311,第二章,對話立繪（玩偶）,xiaoji_portrait_white_hollow,game/art/ch2/characters/portraits/ch2_xiaoji_portrait_white_hollow.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+312,第二章,對話立繪（玩偶）,youyou_portrait_a_block,game/art/ch2/characters/portraits/ch2_youyou_portrait_a_block.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+313,第二章,對話立繪（玩偶）,youyou_portrait_a_default,game/art/ch2/characters/portraits/ch2_youyou_portrait_a_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+314,第二章,對話立繪（玩偶）,youyou_portrait_a_dontlook,game/art/ch2/characters/portraits/ch2_youyou_portrait_a_dontlook.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+315,第二章,對話立繪（玩偶）,youyou_portrait_a_whisper,game/art/ch2/characters/portraits/ch2_youyou_portrait_a_whisper.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+316,第二章,對話立繪（玩偶）,youyou_portrait_a_wink,game/art/ch2/characters/portraits/ch2_youyou_portrait_a_wink.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+317,第二章,對話立繪（玩偶）,youyou_portrait_broken_wink,game/art/ch2/characters/portraits/ch2_youyou_portrait_broken_wink.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+318,第二章,對話立繪（玩偶）,youyou_portrait_default,game/art/ch2/characters/portraits/ch2_youyou_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+319,第二章,對話立繪（玩偶）,youyou_portrait_nothread_default,game/art/ch2/characters/portraits/ch2_youyou_portrait_nothread_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+320,第二章,對話立繪（玩偶）,youyou_portrait_nothread_dontlook,game/art/ch2/characters/portraits/ch2_youyou_portrait_nothread_dontlook.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+321,第二章,對話立繪（玩偶）,youyou_portrait_nothread_whisper,game/art/ch2/characters/portraits/ch2_youyou_portrait_nothread_whisper.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+322,第二章,對話立繪（玩偶）,zhongzhong_portrait_a_candy,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_a_candy.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+323,第二章,對話立繪（玩偶）,zhongzhong_portrait_a_hold,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_a_hold.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+324,第二章,對話立繪（玩偶）,zhongzhong_portrait_a_shiver,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_a_shiver.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+325,第二章,對話立繪（玩偶）,zhongzhong_portrait_a_shocked,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_a_shocked.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+326,第二章,對話立繪（玩偶）,zhongzhong_portrait_a_whisper,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_a_whisper.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+327,第二章,對話立繪（玩偶）,zhongzhong_portrait_default,game/art/ch2/characters/portraits/ch2_zhongzhong_portrait_default.png,512×768,透明,png,512×768 透明，半身，同一角色每個表情位置對齊,A
+328,第二章,小遊戲：修剪,cotton_puff_01,game/art/ch2/minigames/trim/ch2_trim_cotton_puff_01.png,140×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+329,第二章,小遊戲：修剪,cotton_puff_02,game/art/ch2/minigames/trim/ch2_trim_cotton_puff_02.png,140×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+330,第二章,小遊戲：修剪,letter,game/art/ch2/minigames/trim/ch2_trim_letter.png,380×250,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+331,第二章,小遊戲：修剪,letter_blank,game/art/ch2/minigames/trim/ch2_trim_letter_blank.png,380×250,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+332,第二章,小遊戲：修剪,letter_text_overlay,game/art/ch2/minigames/trim/ch2_trim_letter_text_overlay.png,380×250,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+333,第二章,小遊戲：修剪,pointer,game/art/ch2/minigames/trim/ch2_trim_pointer.png,45×50,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+334,第二章,小遊戲：修剪,quill_01,game/art/ch2/minigames/trim/ch2_trim_quill_01.png,45×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+335,第二章,小遊戲：修剪,quill_02,game/art/ch2/minigames/trim/ch2_trim_quill_02.png,54×92,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+336,第二章,小遊戲：修剪,quill_03,game/art/ch2/minigames/trim/ch2_trim_quill_03.png,62×108,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+337,第二章,小遊戲：修剪,quill_04,game/art/ch2/minigames/trim/ch2_trim_quill_04.png,45×124,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+338,第二章,小遊戲：修剪,quill_05,game/art/ch2/minigames/trim/ch2_trim_quill_05.png,54×141,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+339,第二章,小遊戲：修剪,quill_06,game/art/ch2/minigames/trim/ch2_trim_quill_06.png,62×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+340,第二章,小遊戲：修剪,quill_07,game/art/ch2/minigames/trim/ch2_trim_quill_07.png,45×92,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+341,第二章,小遊戲：修剪,quill_08,game/art/ch2/minigames/trim/ch2_trim_quill_08.png,54×108,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+342,第二章,小遊戲：修剪,quill_09,game/art/ch2/minigames/trim/ch2_trim_quill_09.png,62×124,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+343,第二章,小遊戲：修剪,quill_10,game/art/ch2/minigames/trim/ch2_trim_quill_10.png,45×141,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+344,第二章,小遊戲：修剪,quill_11,game/art/ch2/minigames/trim/ch2_trim_quill_11.png,54×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+345,第二章,小遊戲：修剪,quill_12,game/art/ch2/minigames/trim/ch2_trim_quill_12.png,62×92,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+346,第二章,小遊戲：修剪,remote_flash,game/art/ch2/minigames/trim/ch2_trim_remote_flash.png,250×250,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+347,第二章,小遊戲：修剪,scissors_closed,game/art/ch2/minigames/trim/ch2_trim_scissors_closed.png,260×260,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+348,第二章,小遊戲：修剪,scissors_open,game/art/ch2/minigames/trim/ch2_trim_scissors_open.png,260×260,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+349,第二章,小遊戲：修剪,smile_meter,game/art/ch2/minigames/trim/ch2_trim_smile_meter.png,450×60,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+350,第二章,小遊戲：修剪,xiaoji_base,game/art/ch2/minigames/trim/ch2_trim_xiaoji_base.png,800×500,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+351,第二章,小遊戲：偷偷走,dove_back,game/art/ch2/minigames/sneak/ch2_sneak_dove_back.png,325×525,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+352,第二章,小遊戲：偷偷走,dove_coat,game/art/ch2/minigames/sneak/ch2_sneak_dove_coat.png,325×525,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+353,第二章,小遊戲：偷偷走,dove_front,game/art/ch2/minigames/sneak/ch2_sneak_dove_front.png,325×525,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+354,第二章,小遊戲：偷偷走,dove_turn_hint,game/art/ch2/minigames/sneak/ch2_sneak_dove_turn_hint.png,325×525,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+355,第二章,小遊戲：偷偷走,pip_tiptoe_01,game/art/ch2/minigames/sneak/ch2_sneak_pip_tiptoe_01.png,160×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+356,第二章,小遊戲：偷偷走,pip_tiptoe_02,game/art/ch2/minigames/sneak/ch2_sneak_pip_tiptoe_02.png,160×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+357,第二章,小遊戲：偷偷走,pip_tiptoe_03,game/art/ch2/minigames/sneak/ch2_sneak_pip_tiptoe_03.png,160×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+358,第二章,小遊戲：偷偷走,pip_tiptoe_04,game/art/ch2/minigames/sneak/ch2_sneak_pip_tiptoe_04.png,160×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+359,第二章,小遊戲：刷洗,brush,game/art/ch2/minigames/scrub/ch2_scrub_brush.png,220×220,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+360,第二章,小遊戲：刷洗,bubble_01,game/art/ch2/minigames/scrub/ch2_scrub_bubble_01.png,40×40,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+361,第二章,小遊戲：刷洗,bubble_02,game/art/ch2/minigames/scrub/ch2_scrub_bubble_02.png,60×60,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+362,第二章,小遊戲：刷洗,bubble_03,game/art/ch2/minigames/scrub/ch2_scrub_bubble_03.png,90×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+363,第二章,小遊戲：刷洗,bubble_04,game/art/ch2/minigames/scrub/ch2_scrub_bubble_04.png,120×120,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+364,第二章,小遊戲：刷洗,cotton_01,game/art/ch2/minigames/scrub/ch2_scrub_cotton_01.png,140×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+365,第二章,小遊戲：刷洗,cotton_02,game/art/ch2/minigames/scrub/ch2_scrub_cotton_02.png,140×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+366,第二章,小遊戲：刷洗,done_button_hover,game/art/ch2/minigames/scrub/ch2_scrub_done_button_hover.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+367,第二章,小遊戲：刷洗,done_button_normal,game/art/ch2/minigames/scrub/ch2_scrub_done_button_normal.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+368,第二章,小遊戲：刷洗,done_button_pressed,game/art/ch2/minigames/scrub/ch2_scrub_done_button_pressed.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+369,第二章,小遊戲：刷洗,hole_01,game/art/ch2/minigames/scrub/ch2_scrub_hole_01.png,115×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+370,第二章,小遊戲：刷洗,hole_02,game/art/ch2/minigames/scrub/ch2_scrub_hole_02.png,115×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+371,第二章,小遊戲：刷洗,hole_03,game/art/ch2/minigames/scrub/ch2_scrub_hole_03.png,115×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+372,第二章,小遊戲：刷洗,peg,game/art/ch2/minigames/scrub/ch2_scrub_peg.png,220×220,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+373,第二章,小遊戲：刷洗,star_bright,game/art/ch2/minigames/scrub/ch2_scrub_star_bright.png,110×110,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+374,第二章,小遊戲：刷洗,star_dark,game/art/ch2/minigames/scrub/ch2_scrub_star_dark.png,110×110,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+375,第二章,小遊戲：刷洗,sticker_01,game/art/ch2/minigames/scrub/ch2_scrub_sticker_01.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+376,第二章,小遊戲：刷洗,sticker_01_blank,game/art/ch2/minigames/scrub/ch2_scrub_sticker_01_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+377,第二章,小遊戲：刷洗,sticker_02,game/art/ch2/minigames/scrub/ch2_scrub_sticker_02.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+378,第二章,小遊戲：刷洗,sticker_02_blank,game/art/ch2/minigames/scrub/ch2_scrub_sticker_02_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+379,第二章,小遊戲：刷洗,stripe_01,game/art/ch2/minigames/scrub/ch2_scrub_stripe_01.png,700×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+380,第二章,小遊戲：刷洗,stripe_02,game/art/ch2/minigames/scrub/ch2_scrub_stripe_02.png,700×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+381,第二章,小遊戲：刷洗,stripe_03,game/art/ch2/minigames/scrub/ch2_scrub_stripe_03.png,700×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+382,第二章,小遊戲：刷洗,tiaoma_base,game/art/ch2/minigames/scrub/ch2_scrub_tiaoma_base.png,700×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+383,第二章,小遊戲：刷洗,tiaoma_full,game/art/ch2/minigames/scrub/ch2_scrub_tiaoma_full.png,700×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+384,第二章,小遊戲：刷洗,washboard,game/art/ch2/minigames/scrub/ch2_scrub_washboard.png,450×500,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+385,第二章,小遊戲：告解卡,card_back,game/art/ch2/minigames/confession/ch2_confession_card_back.png,380×510,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+386,第二章,小遊戲：告解卡,card_flip,game/art/ch2/minigames/confession/ch2_confession_card_flip.png,50×510,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+387,第二章,小遊戲：告解卡,card_front,game/art/ch2/minigames/confession/ch2_confession_card_front.png,380×510,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+388,第二章,小遊戲：告解卡,chant_01,game/art/ch2/minigames/confession/ch2_confession_chant_01.png,450×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+389,第二章,小遊戲：告解卡,chant_02,game/art/ch2/minigames/confession/ch2_confession_chant_02.png,450×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+390,第二章,小遊戲：告解卡,chant_03,game/art/ch2/minigames/confession/ch2_confession_chant_03.png,450×85,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+391,第二章,小遊戲：告解卡,sticker_01,game/art/ch2/minigames/confession/ch2_confession_sticker_01.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+392,第二章,小遊戲：告解卡,sticker_01_blank,game/art/ch2/minigames/confession/ch2_confession_sticker_01_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+393,第二章,小遊戲：告解卡,xiaoji_fade_01,game/art/ch2/minigames/confession/ch2_confession_xiaoji_fade_01.png,500×580,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+394,第二章,小遊戲：告解卡,xiaoji_fade_02,game/art/ch2/minigames/confession/ch2_confession_xiaoji_fade_02.png,500×580,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+395,第二章,小遊戲：告解卡,xiaoji_fade_03,game/art/ch2/minigames/confession/ch2_confession_xiaoji_fade_03.png,500×580,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+396,第二章,小遊戲：告解卡,xiaoji_fade_04,game/art/ch2/minigames/confession/ch2_confession_xiaoji_fade_04.png,500×580,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+397,第二章,小遊戲：告解卡,xiaoji_fade_05,game/art/ch2/minigames/confession/ch2_confession_xiaoji_fade_05.png,500×580,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+398,第二章,小遊戲：忍耐,chair,game/art/ch2/minigames/hold_endure/ch2_hold_endure_chair.png,300×400,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+399,第二章,小遊戲：忍耐,dove,game/art/ch2/minigames/hold_endure/ch2_hold_endure_dove.png,425×625,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+400,第二章,小遊戲：忍耐,good_button_hover,game/art/ch2/minigames/hold_endure/ch2_hold_endure_good_button_hover.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+401,第二章,小遊戲：忍耐,good_button_normal,game/art/ch2/minigames/hold_endure/ch2_hold_endure_good_button_normal.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+402,第二章,小遊戲：忍耐,good_button_pressed,game/art/ch2/minigames/hold_endure/ch2_hold_endure_good_button_pressed.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+403,第二章,小遊戲：忍耐,hold_progress_00,game/art/ch2/minigames/hold_endure/ch2_hold_endure_hold_progress_00.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+404,第二章,小遊戲：忍耐,hold_progress_01,game/art/ch2/minigames/hold_endure/ch2_hold_endure_hold_progress_01.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+405,第二章,小遊戲：忍耐,hold_progress_02,game/art/ch2/minigames/hold_endure/ch2_hold_endure_hold_progress_02.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+406,第二章,小遊戲：忍耐,hold_progress_03,game/art/ch2/minigames/hold_endure/ch2_hold_endure_hold_progress_03.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+407,第二章,小遊戲：忍耐,hold_progress_04,game/art/ch2/minigames/hold_endure/ch2_hold_endure_hold_progress_04.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+408,第二章,小遊戲：忍耐,metal_ring,game/art/ch2/minigames/hold_endure/ch2_hold_endure_metal_ring.png,130×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+409,第二章,小遊戲：忍耐,pip_seated,game/art/ch2/minigames/hold_endure/ch2_hold_endure_pip_seated.png,480×550,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+410,第二章,小遊戲：忍耐,whiteout,game/art/ch2/minigames/hold_endure/ch2_hold_endure_whiteout.png,1280×720,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+411,第二章,小遊戲：找不同,camera,game/art/ch2/minigames/find_odd/ch2_find_odd_camera.png,150×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+412,第二章,小遊戲：找不同,normal,game/art/ch2/minigames/find_odd/ch2_find_odd_normal.png,150×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+413,第二章,小遊戲：找不同,redthread,game/art/ch2/minigames/find_odd/ch2_find_odd_redthread.png,150×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+414,第二章,小遊戲：找不同,selection,game/art/ch2/minigames/find_odd/ch2_find_odd_selection.png,120×120,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+415,第二章,小遊戲：找不同,stare,game/art/ch2/minigames/find_odd/ch2_find_odd_stare.png,150×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+416,第二章,小遊戲：找不同,timer,game/art/ch2/minigames/find_odd/ch2_find_odd_timer.png,120×140,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+417,第二章,小遊戲：搶椅子,baimian_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_baimian_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+418,第二章,小遊戲：搶椅子,baimian_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_baimian_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+419,第二章,小遊戲：搶椅子,baimian_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_baimian_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+420,第二章,小遊戲：搶椅子,baimian_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_baimian_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+421,第二章,小遊戲：搶椅子,chair,game/art/ch2/minigames/chairs/ch2_chairs_chair.png,190×225,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+422,第二章,小遊戲：搶椅子,dove_musicbox_01,game/art/ch2/minigames/chairs/ch2_chairs_dove_musicbox_01.png,300×400,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+423,第二章,小遊戲：搶椅子,dove_musicbox_02,game/art/ch2/minigames/chairs/ch2_chairs_dove_musicbox_02.png,300×400,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+424,第二章,小遊戲：搶椅子,gaga_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_gaga_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+425,第二章,小遊戲：搶椅子,gaga_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_gaga_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+426,第二章,小遊戲：搶椅子,gaga_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_gaga_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+427,第二章,小遊戲：搶椅子,gaga_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_gaga_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+428,第二章,小遊戲：搶椅子,musicbox,game/art/ch2/minigames/chairs/ch2_chairs_musicbox.png,250×250,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+429,第二章,小遊戲：搶椅子,pip_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_pip_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+430,第二章,小遊戲：搶椅子,pip_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_pip_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+431,第二章,小遊戲：搶椅子,pip_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_pip_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+432,第二章,小遊戲：搶椅子,pip_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_pip_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+433,第二章,小遊戲：搶椅子,sticker_01,game/art/ch2/minigames/chairs/ch2_chairs_sticker_01.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+434,第二章,小遊戲：搶椅子,sticker_01_blank,game/art/ch2/minigames/chairs/ch2_chairs_sticker_01_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+435,第二章,小遊戲：搶椅子,sticker_02,game/art/ch2/minigames/chairs/ch2_chairs_sticker_02.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+436,第二章,小遊戲：搶椅子,sticker_02_blank,game/art/ch2/minigames/chairs/ch2_chairs_sticker_02_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+437,第二章,小遊戲：搶椅子,xiaoji_bald_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_bald_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+438,第二章,小遊戲：搶椅子,xiaoji_bald_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_bald_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+439,第二章,小遊戲：搶椅子,xiaoji_bald_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_bald_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+440,第二章,小遊戲：搶椅子,xiaoji_bald_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_bald_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+441,第二章,小遊戲：搶椅子,xiaoji_onequill_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_onequill_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+442,第二章,小遊戲：搶椅子,xiaoji_onequill_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_onequill_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+443,第二章,小遊戲：搶椅子,xiaoji_onequill_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_onequill_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+444,第二章,小遊戲：搶椅子,xiaoji_onequill_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_onequill_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+445,第二章,小遊戲：搶椅子,xiaoji_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+446,第二章,小遊戲：搶椅子,xiaoji_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+447,第二章,小遊戲：搶椅子,xiaoji_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+448,第二章,小遊戲：搶椅子,xiaoji_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_xiaoji_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+449,第二章,小遊戲：搶椅子,youyou_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_youyou_walk_01.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+450,第二章,小遊戲：搶椅子,youyou_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_youyou_walk_02.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+451,第二章,小遊戲：搶椅子,youyou_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_youyou_walk_03.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+452,第二章,小遊戲：搶椅子,youyou_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_youyou_walk_04.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+453,第二章,小遊戲：搶椅子,zhongzhong_walk_01,game/art/ch2/minigames/chairs/ch2_chairs_zhongzhong_walk_01.png,104×104,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+454,第二章,小遊戲：搶椅子,zhongzhong_walk_02,game/art/ch2/minigames/chairs/ch2_chairs_zhongzhong_walk_02.png,104×104,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+455,第二章,小遊戲：搶椅子,zhongzhong_walk_03,game/art/ch2/minigames/chairs/ch2_chairs_zhongzhong_walk_03.png,104×104,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+456,第二章,小遊戲：搶椅子,zhongzhong_walk_04,game/art/ch2/minigames/chairs/ch2_chairs_zhongzhong_walk_04.png,104×104,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+457,第二章,小遊戲：道歉,good_button_hover,game/art/ch2/minigames/apology/ch2_apology_good_button_hover.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+458,第二章,小遊戲：道歉,good_button_normal,game/art/ch2/minigames/apology/ch2_apology_good_button_normal.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+459,第二章,小遊戲：道歉,good_button_pressed,game/art/ch2/minigames/apology/ch2_apology_good_button_pressed.png,300×75,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+460,第二章,小遊戲：道歉,heart_meter_0,game/art/ch2/minigames/apology/ch2_apology_heart_meter_0.png,140×135,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+461,第二章,小遊戲：道歉,heart_meter_1,game/art/ch2/minigames/apology/ch2_apology_heart_meter_1.png,140×135,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+462,第二章,小遊戲：道歉,heart_meter_2,game/art/ch2/minigames/apology/ch2_apology_heart_meter_2.png,140×135,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+463,第二章,小遊戲：道歉,heart_meter_3,game/art/ch2/minigames/apology/ch2_apology_heart_meter_3.png,140×135,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+464,第二章,小遊戲：道歉,heart_meter_4,game/art/ch2/minigames/apology/ch2_apology_heart_meter_4.png,140×135,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+465,第二章,小遊戲：道歉,hold_progress_00,game/art/ch2/minigames/apology/ch2_apology_hold_progress_00.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+466,第二章,小遊戲：道歉,hold_progress_01,game/art/ch2/minigames/apology/ch2_apology_hold_progress_01.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+467,第二章,小遊戲：道歉,hold_progress_02,game/art/ch2/minigames/apology/ch2_apology_hold_progress_02.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+468,第二章,小遊戲：道歉,hold_progress_03,game/art/ch2/minigames/apology/ch2_apology_hold_progress_03.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+469,第二章,小遊戲：道歉,hold_progress_04,game/art/ch2/minigames/apology/ch2_apology_hold_progress_04.png,300×24,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+470,第二章,小遊戲：道歉,judge_ring,game/art/ch2/minigames/apology/ch2_apology_judge_ring.png,110×110,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+471,第二章,小遊戲：道歉,note_bu,game/art/ch2/minigames/apology/ch2_apology_note_bu.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+472,第二章,小遊戲：道歉,note_dui,game/art/ch2/minigames/apology/ch2_apology_note_dui.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+473,第二章,小遊戲：道歉,note_qi,game/art/ch2/minigames/apology/ch2_apology_note_qi.png,80×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+474,第二章,小遊戲：道歉,sticker_01,game/art/ch2/minigames/apology/ch2_apology_sticker_01.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+475,第二章,小遊戲：道歉,sticker_01_blank,game/art/ch2/minigames/apology/ch2_apology_sticker_01_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+476,第二章,小遊戲：道歉,sticker_02,game/art/ch2/minigames/apology/ch2_apology_sticker_02.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+477,第二章,小遊戲：道歉,sticker_02_blank,game/art/ch2/minigames/apology/ch2_apology_sticker_02_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+478,第二章,小遊戲：道歉,sticker_03,game/art/ch2/minigames/apology/ch2_apology_sticker_03.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+479,第二章,小遊戲：道歉,sticker_03_blank,game/art/ch2/minigames/apology/ch2_apology_sticker_03_blank.png,425×80,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+480,第二章,小遊戲：道歉,track,game/art/ch2/minigames/apology/ch2_apology_track.png,1000×90,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+481,第二章,小遊戲：道歉,zhongzhong_shocked,game/art/ch2/minigames/apology/ch2_apology_zhongzhong_shocked.png,350×425,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+482,第二章,小遊戲：重新塞棉花,cotton_black_01,game/art/ch2/minigames/restuff/ch2_restuff_cotton_black_01.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+483,第二章,小遊戲：重新塞棉花,cotton_black_02,game/art/ch2/minigames/restuff/ch2_restuff_cotton_black_02.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+484,第二章,小遊戲：重新塞棉花,cotton_black_03,game/art/ch2/minigames/restuff/ch2_restuff_cotton_black_03.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+485,第二章,小遊戲：重新塞棉花,cotton_white_01,game/art/ch2/minigames/restuff/ch2_restuff_cotton_white_01.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+486,第二章,小遊戲：重新塞棉花,cotton_white_02,game/art/ch2/minigames/restuff/ch2_restuff_cotton_white_02.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+487,第二章,小遊戲：重新塞棉花,cotton_white_03,game/art/ch2/minigames/restuff/ch2_restuff_cotton_white_03.png,160×160,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+488,第二章,小遊戲：重新塞棉花,memory,game/art/ch2/minigames/restuff/ch2_restuff_memory.png,600×375,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+489,第二章,小遊戲：重新塞棉花,needle_thread,game/art/ch2/minigames/restuff/ch2_restuff_needle_thread.png,350×180,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+490,第二章,小遊戲：重新塞棉花,step_01,game/art/ch2/minigames/restuff/ch2_restuff_step_01.png,65×65,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+491,第二章,小遊戲：重新塞棉花,step_02,game/art/ch2/minigames/restuff/ch2_restuff_step_02.png,65×65,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+492,第二章,小遊戲：重新塞棉花,step_03,game/art/ch2/minigames/restuff/ch2_restuff_step_03.png,65×65,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+493,第二章,小遊戲：重新塞棉花,step_04,game/art/ch2/minigames/restuff/ch2_restuff_step_04.png,65×65,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+494,第二章,小遊戲：重新塞棉花,steps_blank,game/art/ch2/minigames/restuff/ch2_restuff_steps_blank.png,330×500,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+495,第二章,小遊戲：重新塞棉花,tablecloth,game/art/ch2/minigames/restuff/ch2_restuff_tablecloth.png,1280×720,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+496,第二章,小遊戲：重新塞棉花,xiaoji_open,game/art/ch2/minigames/restuff/ch2_restuff_xiaoji_open.png,800×500,透明,png,_01～ 是動畫格；_normal/_hover/_pressed 是按鈕三態,C
+497,第二章,背景,classroom,game/art/ch2/backgrounds/ch2_bg_classroom.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+498,第二章,背景,dining,game/art/ch2/backgrounds/ch2_bg_dining.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+499,第二章,背景,dorm_night,game/art/ch2/backgrounds/ch2_bg_dorm_night.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+500,第二章,背景,ending_color,game/art/ch2/backgrounds/ch2_bg_ending_color.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+501,第二章,背景,ending_grey,game/art/ch2/backgrounds/ch2_bg_ending_grey.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+502,第二章,背景,fence,game/art/ch2/backgrounds/ch2_bg_fence.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+503,第二章,背景,graduation,game/art/ch2/backgrounds/ch2_bg_graduation.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+504,第二章,背景,incinerator,game/art/ch2/backgrounds/ch2_bg_incinerator.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+505,第二章,背景,laundry,game/art/ch2/backgrounds/ch2_bg_laundry.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+506,第二章,背景,office,game/art/ch2/backgrounds/ch2_bg_office.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+507,第二章,背景,platform,game/art/ch2/backgrounds/ch2_bg_platform.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+508,第二章,背景,platform_negative,game/art/ch2/backgrounds/ch2_bg_platform_negative.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+509,第二章,背景,town_clinic_overlay,game/art/ch2/backgrounds/ch2_bg_town_clinic_overlay.png,1600×1150,透明,png,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+510,第二章,背景,town_day,game/art/ch2/backgrounds/ch2_bg_town_day.jpg,1600×1150,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+511,第二章,背景,town_evening,game/art/ch2/backgrounds/ch2_bg_town_evening.jpg,1600×1150,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+512,第二章,背景,town_graduation_overlay,game/art/ch2/backgrounds/ch2_bg_town_graduation_overlay.png,1600×1150,透明,png,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+513,第二章,背景,town_incinerator_closed,game/art/ch2/backgrounds/ch2_bg_town_incinerator_closed.png,1600×1150,透明,png,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+514,第二章,背景,town_negative,game/art/ch2/backgrounds/ch2_bg_town_negative.jpg,1600×1150,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+515,第二章,背景,town_night,game/art/ch2/backgrounds/ch2_bg_town_night.jpg,1600×1150,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+516,第二章,背景,town_train_overlay,game/art/ch2/backgrounds/ch2_bg_town_train_overlay.png,1600×1150,透明,png,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+517,第二章,背景,train_grey,game/art/ch2/backgrounds/ch2_bg_train_grey.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+518,第二章,背景,treatment,game/art/ch2/backgrounds/ch2_bg_treatment.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+519,第二章,背景,treatment_window,game/art/ch2/backgrounds/ch2_bg_treatment_window.jpg,1280×720,不透明,jpg,_overlay / 透明 PNG 是疊在背景上的圖層，要和底圖對齊,B
+520,第二章,角色動作圖（sheet）,baimian_sprite_notail_sheet,game/art/ch2/characters/sprites/ch2_baimian_sprite_notail_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+521,第二章,角色動作圖（sheet）,baimian_sprite_sheet,game/art/ch2/characters/sprites/ch2_baimian_sprite_sheet.png,320×320,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+522,第二章,角色動作圖（sheet）,baimian_sprite_stand_sheet,game/art/ch2/characters/sprites/ch2_baimian_sprite_stand_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+523,第二章,角色動作圖（sheet）,conductor_sprite_stand_sheet,game/art/ch2/characters/sprites/ch2_conductor_sprite_stand_sheet.png,384×832,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+524,第二章,角色動作圖（sheet）,dove_sprite_clap_sheet,game/art/ch2/characters/sprites/ch2_dove_sprite_clap_sheet.png,768×416,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+525,第二章,角色動作圖（sheet）,dove_sprite_cracked_sheet,game/art/ch2/characters/sprites/ch2_dove_sprite_cracked_sheet.png,1536×832,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+526,第二章,角色動作圖（sheet）,dove_sprite_sheet,game/art/ch2/characters/sprites/ch2_dove_sprite_sheet.png,1536×832,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+527,第二章,角色動作圖（sheet）,dove_sprite_unmasked_sheet,game/art/ch2/characters/sprites/ch2_dove_sprite_unmasked_sheet.png,1536×416,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+528,第二章,角色動作圖（sheet）,fen_sprite_stand_sheet,game/art/ch2/characters/sprites/ch2_fen_sprite_stand_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+529,第二章,角色動作圖（sheet）,gaga_sprite_sheet,game/art/ch2/characters/sprites/ch2_gaga_sprite_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+530,第二章,角色動作圖（sheet）,gaga_sprite_unsewn_sheet,game/art/ch2/characters/sprites/ch2_gaga_sprite_unsewn_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+531,第二章,角色動作圖（sheet）,lulu_sprite_wave_sheet,game/art/ch2/characters/sprites/ch2_lulu_sprite_wave_sheet.png,320×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+532,第二章,角色動作圖（sheet）,mochi_sprite_wave_sheet,game/art/ch2/characters/sprites/ch2_mochi_sprite_wave_sheet.png,320×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+533,第二章,角色動作圖（sheet）,pip_sprite_walk_marks_sheet,game/art/ch2/characters/sprites/ch2_pip_sprite_walk_marks_sheet.png,640×640,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+534,第二章,角色動作圖（sheet）,pip_sprite_walk_sheet,game/art/ch2/characters/sprites/ch2_pip_sprite_walk_sheet.png,640×640,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+535,第二章,角色動作圖（sheet）,popo_sprite_wave_sheet,game/art/ch2/characters/sprites/ch2_popo_sprite_wave_sheet.png,320×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+536,第二章,角色動作圖（sheet）,staff_sprite_walk_sheet,game/art/ch2/characters/sprites/ch2_staff_sprite_walk_sheet.png,1152×1248,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+537,第二章,角色動作圖（sheet）,tiaoma_sprite_s0_sheet,game/art/ch2/characters/sprites/ch2_tiaoma_sprite_s0_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+538,第二章,角色動作圖（sheet）,tiaoma_sprite_s1_sheet,game/art/ch2/characters/sprites/ch2_tiaoma_sprite_s1_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+539,第二章,角色動作圖（sheet）,tiaoma_sprite_s2_sheet,game/art/ch2/characters/sprites/ch2_tiaoma_sprite_s2_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+540,第二章,角色動作圖（sheet）,tiaoma_sprite_s3_sheet,game/art/ch2/characters/sprites/ch2_tiaoma_sprite_s3_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+541,第二章,角色動作圖（sheet）,tiaoma_sprite_sheet,game/art/ch2/characters/sprites/ch2_tiaoma_sprite_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+542,第二章,角色動作圖（sheet）,xiaoji_sprite_bald_sheet,game/art/ch2/characters/sprites/ch2_xiaoji_sprite_bald_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+543,第二章,角色動作圖（sheet）,xiaoji_sprite_onequill_sheet,game/art/ch2/characters/sprites/ch2_xiaoji_sprite_onequill_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+544,第二章,角色動作圖（sheet）,xiaoji_sprite_sheet,game/art/ch2/characters/sprites/ch2_xiaoji_sprite_sheet.png,320×320,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+545,第二章,角色動作圖（sheet）,xiaoji_sprite_stand_sheet,game/art/ch2/characters/sprites/ch2_xiaoji_sprite_stand_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+546,第二章,角色動作圖（sheet）,xiaoji_sprite_white_sheet,game/art/ch2/characters/sprites/ch2_xiaoji_sprite_white_sheet.png,160×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+547,第二章,角色動作圖（sheet）,youyou_sprite_crawl_sheet,game/art/ch2/characters/sprites/ch2_youyou_sprite_crawl_sheet.png,320×160,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+548,第二章,角色動作圖（sheet）,youyou_sprite_nothread_sheet,game/art/ch2/characters/sprites/ch2_youyou_sprite_nothread_sheet.png,640×640,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+549,第二章,角色動作圖（sheet）,youyou_sprite_sheet,game/art/ch2/characters/sprites/ch2_youyou_sprite_sheet.png,640×640,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+550,第二章,角色動作圖（sheet）,zhongzhong_sprite_sheet,game/art/ch2/characters/sprites/ch2_zhongzhong_sprite_sheet.png,416×416,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+551,第二章,角色動作圖（sheet）,zhongzhong_sprite_shiver_sheet,game/art/ch2/characters/sprites/ch2_zhongzhong_sprite_shiver_sheet.png,416×208,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+552,第二章,角色動作圖（sheet）,zhongzhong_sprite_stand_sheet,game/art/ch2/characters/sprites/ch2_zhongzhong_sprite_stand_sheet.png,208×208,透明,png,格子排法照原圖（每格大小＝原圖寬÷欄數），只換內容,A
+553,第二～五章,四方向走路圖,白面,game/art/walk4/baimian.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+554,第二～五章,四方向走路圖,車掌,game/art/walk4/conductor.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+555,第二～五章,四方向走路圖,理事,game/art/walk4/director.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+556,第二～五章,四方向走路圖,和平鴿,game/art/walk4/dove.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+557,第二～五章,四方向走路圖,Fen,game/art/walk4/fen.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+558,第二～五章,四方向走路圖,嘎嘎,game/art/walk4/gaga.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+559,第二～五章,四方向走路圖,畢業生,game/art/walk4/graduate.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+560,第二～五章,四方向走路圖,露露,game/art/walk4/lulu.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+561,第二～五章,四方向走路圖,麻糬,game/art/walk4/mochi.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+562,第二～五章,四方向走路圖,波波,game/art/walk4/popo.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+563,第二～五章,四方向走路圖,小狗居民,game/art/walk4/puppy.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+564,第二～五章,四方向走路圖,工作人員,game/art/walk4/staff.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+565,第二～五章,四方向走路圖,小玉,game/art/walk4/tama.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+566,第二～五章,四方向走路圖,條碼,game/art/walk4/tiaoma.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+567,第二～五章,四方向走路圖,小棘,game/art/walk4/xiaoji.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+568,第二～五章,四方向走路圖,鼬鼬,game/art/walk4/youyou.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+569,第二～五章,四方向走路圖,重重,game/art/walk4/zhongzhong.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+570,第三章,CG,arrival,game/art/ch3/bg/ch3_bg_cg_arrival.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+571,第三章,CG,crow,game/art/ch3/bg/ch3_bg_cg_crow.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+572,第三章,CG,ending,game/art/ch3/bg/ch3_bg_cg_ending.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+573,第三章,CG,monitor,game/art/ch3/bg/ch3_bg_cg_monitor.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+574,第三章,CG,nirvana,game/art/ch3/bg/ch3_bg_cg_nirvana.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+575,第三章,CG,records,game/art/ch3/bg/ch3_bg_cg_records.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,A
+576,第三章,可躲藏的家具,地下二樓　走廊：b2,game/art/rooms/chapter3/b2_hall/hide_c3_hide_b2_crate.png,86×116,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+577,第三章,可躲藏的家具,地下二樓　走廊：b2,game/art/rooms/chapter3/b2_hall/hide_c3_hide_b2_gurney.png,136×97,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+578,第三章,可躲藏的家具,一樓　診間走廊：櫃子,game/art/rooms/chapter3/corridor/hide_c3_hide_cabinet.png,86×177,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+579,第三章,可躲藏的家具,一樓　診間走廊：cart,game/art/rooms/chapter3/corridor/hide_c3_hide_cart.png,116×196,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+580,第三章,可躲藏的家具,一樓　診間走廊：curtain,game/art/rooms/chapter3/corridor/hide_c3_hide_curtain.png,106×177,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+581,第三章,可躲藏的家具,二樓　走廊：2f,game/art/rooms/chapter3/hall2/hide_c3_hide_2f_chairs.png,136×138,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+582,第三章,可躲藏的家具,二樓　走廊：2f,game/art/rooms/chapter3/hall2/hide_c3_hide_2f_plant.png,76×204,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+583,第三章,可躲藏的家具,二樓　護理站：nurse2,game/art/rooms/chapter3/nurse2/hide_c3_hide_nurse2_desk.png,116×97,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+584,第三章,可躲藏的家具,舊病棟　走廊：wild,game/art/rooms/chapter3/wild_hall/hide_c3_hide_wild_crate.png,86×116,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+585,第三章,可躲藏的家具,舊病棟　倉庫：store,game/art/rooms/chapter3/wild_storage/hide_c3_hide_store_crate.png,96×116,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+586,第三章,可躲藏的家具,舊病棟　倉庫：store,game/art/rooms/chapter3/wild_storage/hide_c3_hide_store_shelf.png,76×276,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+587,第三章,探索家具,地下二樓　走廊：床（房間座標 x880 y520，底面 200×70）,game/art/rooms/chapter3/b2_hall/prop_bed_880_520_200_70.png,216×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+588,第三章,探索家具,地下二樓　走廊：箱子（房間座標 x2200 y560，底面 90×50）,game/art/rooms/chapter3/b2_hall/prop_crate_2200_560_90_50.png,106×126,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+589,第三章,探索家具,地下二樓　走廊：機器（房間座標 x1500 y170，底面 120×50）,game/art/rooms/chapter3/b2_hall/prop_machine_1500_170_120_50.png,137×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+590,第三章,探索家具,地下二樓　置物間：置物櫃（房間座標 x100 y160，底面 400×40）,game/art/rooms/chapter3/b2_lockers/prop_locker_100_160_400_40.png,416×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+591,第三章,探索家具,地下二樓　置物間：置物櫃（房間座標 x780 y160，底面 400×40）,game/art/rooms/chapter3/b2_lockers/prop_locker_780_160_400_40.png,416×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+592,第三章,探索家具,地下二樓　置物間：桌子（房間座標 x520 y400，底面 240×60）,game/art/rooms/chapter3/b2_lockers/prop_table_520_400_240_60.png,256×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+593,第三章,探索家具,地下二樓　監控室：機器（房間座標 x300 y160，底面 700×60）,game/art/rooms/chapter3/b2_monitor/prop_machine_300_160_700_60.png,716×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+594,第三章,探索家具,地下二樓　特別病房：床（房間座標 x520 y300，底面 240×80）,game/art/rooms/chapter3/b2_special/prop_bed_520_300_240_80.png,256×252,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+595,第三章,探索家具,地下二樓　特別病房：櫃子（房間座標 x160 y160，底面 120×40）,game/art/rooms/chapter3/b2_special/prop_cabinet_160_160_120_40.png,136×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+596,第三章,探索家具,地下二樓　特別病房：機器（房間座標 x860 y250，底面 110×60）,game/art/rooms/chapter3/b2_special/prop_machine_860_250_110_60.png,126×288,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+597,第三章,探索家具,地下二樓　病房：床（房間座標 x1060 y300，底面 180×70）,game/art/rooms/chapter3/b2_ward/prop_bed_1060_300_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+598,第三章,探索家具,地下二樓　病房：床（房間座標 x160 y300，底面 180×70）,game/art/rooms/chapter3/b2_ward/prop_bed_160_300_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+599,第三章,探索家具,地下二樓　病房：床（房間座標 x460 y300，底面 180×70）,game/art/rooms/chapter3/b2_ward/prop_bed_460_300_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+600,第三章,探索家具,地下二樓　病房：床（房間座標 x760 y300，底面 180×70）,game/art/rooms/chapter3/b2_ward/prop_bed_760_300_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+601,第三章,探索家具,一樓　診間：床（房間座標 x120 y420，底面 200×70）,game/art/rooms/chapter3/clinic/prop_bed_120_420_200_70.png,216×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+602,第三章,探索家具,一樓　診間：桌子（房間座標 x820 y360，底面 220×70）,game/art/rooms/chapter3/clinic/prop_desk_820_360_220_70.png,236×210,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+603,第三章,探索家具,一樓　診間：機器（房間座標 x270 y330，底面 70×40）,game/art/rooms/chapter3/clinic/prop_machine_270_330_70_40.png,86×268,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+604,第三章,探索家具,一樓　診間：洗手台（房間座標 x150 y150，底面 110×40）,game/art/rooms/chapter3/clinic/prop_sink_150_150_110_40.png,126×188,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+605,第三章,探索家具,一樓　診間走廊：床（房間座標 x1180 y470，底面 180×60）,game/art/rooms/chapter3/corridor/prop_bed_1180_470_180_60.png,196×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+606,第三章,探索家具,一樓　診間走廊：床（房間座標 x560 y470，底面 180×60）,game/art/rooms/chapter3/corridor/prop_bed_560_470_180_60.png,196×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+607,第三章,探索家具,一樓　診間走廊：櫃子（房間座標 x1550 y140，底面 120×40）,game/art/rooms/chapter3/corridor/prop_cabinet_1550_140_120_40.png,136×186,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+608,第三章,探索家具,二樓　理事室：桌子（房間座標 x480 y330，底面 320×80）,game/art/rooms/chapter3/director/prop_desk_480_330_320_80.png,336×220,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+609,第三章,探索家具,二樓　理事室：盆栽（房間座標 x160 y180，底面 60×40）,game/art/rooms/chapter3/director/prop_plant_160_180_60_40.png,76×204,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+610,第三章,探索家具,二樓　走廊：椅子（房間座標 x1450 y560，底面 300×40）,game/art/rooms/chapter3/hall2/prop_chair_1450_560_300_40.png,316×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+611,第三章,探索家具,二樓　走廊：盆栽（房間座標 x420 y170，底面 60×40）,game/art/rooms/chapter3/hall2/prop_plant_420_170_60_40.png,76×205,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+612,第三章,探索家具,二樓　走廊：桌子（房間座標 x960 y520，底面 160×50）,game/art/rooms/chapter3/hall2/prop_table_960_520_160_50.png,176×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+613,第三章,探索家具,二樓　被服室：箱子（房間座標 x760 y420，底面 140×60）,game/art/rooms/chapter3/linen/prop_crate_760_420_140_60.png,156×137,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+614,第三章,探索家具,二樓　被服室：機器（房間座標 x900 y160，底面 120×60）,game/art/rooms/chapter3/linen/prop_machine_900_160_120_60.png,136×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+615,第三章,探索家具,二樓　被服室：架子（房間座標 x120 y160，底面 500×40）,game/art/rooms/chapter3/linen/prop_shelf_120_160_500_40.png,516×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+616,第三章,探索家具,一樓　白色大廳：椅子（房間座標 x560 y440，底面 420×40）,game/art/rooms/chapter3/lobby/prop_chair_560_440_420_40.png,436×148,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+617,第三章,探索家具,一樓　白色大廳：椅子（房間座標 x560 y560，底面 420×40）,game/art/rooms/chapter3/lobby/prop_chair_560_560_420_40.png,436×148,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+618,第三章,探索家具,一樓　白色大廳：桌子（房間座標 x1300 y330，底面 380×70）,game/art/rooms/chapter3/lobby/prop_desk_1300_330_380_70.png,396×211,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+619,第三章,探索家具,一樓　白色大廳：盆栽（房間座標 x120 y200，底面 60×40）,game/art/rooms/chapter3/lobby/prop_plant_120_200_60_40.png,76×204,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+620,第三章,探索家具,一樓　白色大廳：盆栽（房間座標 x1740 y200，底面 60×40）,game/art/rooms/chapter3/lobby/prop_plant_1740_200_60_40.png,76×204,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+621,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1020 y260，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1020_260_180_70.png,197×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+622,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1020 y640，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1020_640_180_70.png,197×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+623,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1420 y260，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1420_260_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+624,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1420 y640，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1420_640_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+625,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1820 y260，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1820_260_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+626,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x1820 y640，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_1820_640_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+627,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x220 y260，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_220_260_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+628,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x220 y640，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_220_640_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+629,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x620 y260，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_620_260_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+630,第三章,探索家具,二樓　涅槃計畫區：床（房間座標 x620 y640，底面 180×70）,game/art/rooms/chapter3/nirvana/prop_bed_620_640_180_70.png,196×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+631,第三章,探索家具,二樓　涅槃計畫區：機器（房間座標 x2200 y160，底面 90×50）,game/art/rooms/chapter3/nirvana/prop_machine_2200_160_90_50.png,106×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+632,第三章,探索家具,二樓　護理站：櫃子（房間座標 x1050 y160，底面 120×40）,game/art/rooms/chapter3/nurse2/prop_cabinet_1050_160_120_40.png,136×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+633,第三章,探索家具,二樓　護理站：桌子（房間座標 x380 y330，底面 520×70）,game/art/rooms/chapter3/nurse2/prop_desk_380_330_520_70.png,536×210,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+634,第三章,探索家具,二樓　護理站：機器（房間座標 x140 y160，底面 140×50）,game/art/rooms/chapter3/nurse2/prop_machine_140_160_140_50.png,156×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+635,第三章,探索家具,一樓　藥局：櫃子（房間座標 x1040 y170，底面 120×50）,game/art/rooms/chapter3/pharmacy/prop_cabinet_1040_170_120_50.png,136×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+636,第三章,探索家具,一樓　藥局：桌子（房間座標 x720 y380，底面 220×70）,game/art/rooms/chapter3/pharmacy/prop_desk_720_380_220_70.png,236×210,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+637,第三章,探索家具,一樓　藥局：架子（房間座標 x140 y170，底面 520×40）,game/art/rooms/chapter3/pharmacy/prop_shelf_140_170_520_40.png,536×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+638,第三章,探索家具,一樓　藥局：架子（房間座標 x140 y330，底面 360×40）,game/art/rooms/chapter3/pharmacy/prop_shelf_140_330_360_40.png,376×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+639,第三章,探索家具,地下月台：椅子（房間座標 x440 y600，底面 180×40）,game/art/rooms/chapter3/platform/prop_chair_440_600_180_40.png,196×148,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+640,第三章,探索家具,地下月台：機器（房間座標 x1160 y260，底面 90×50）,game/art/rooms/chapter3/platform/prop_machine_1160_260_90_50.png,106×278,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+641,第三章,探索家具,地下月台：柱子（房間座標 x1420 y520，底面 50×40）,game/art/rooms/chapter3/platform/prop_pillar_1420_520_50_40.png,66×566,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+642,第三章,探索家具,地下月台：柱子（房間座標 x820 y520，底面 50×40）,game/art/rooms/chapter3/platform/prop_pillar_820_520_50_40.png,66×566,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+643,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x260 y200，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_260_200_200_50.png,215×256,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+644,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x260 y520，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_260_520_200_50.png,215×261,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+645,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x560 y200，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_560_200_200_50.png,216×256,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+646,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x560 y520，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_560_520_200_50.png,216×261,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+647,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x860 y200，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_860_200_200_50.png,216×256,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+648,第三章,探索家具,二樓　病歷室：櫃子（房間座標 x860 y520，底面 200×50）,game/art/rooms/chapter3/records/prop_cabinet_860_520_200_50.png,216×261,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+649,第三章,探索家具,二樓　病歷室：桌子（房間座標 x1180 y620，底面 220×70）,game/art/rooms/chapter3/records/prop_desk_1180_620_220_70.png,236×210,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+650,第三章,探索家具,一樓　候診室：椅子（房間座標 x380 y380，底面 640×40）,game/art/rooms/chapter3/waiting/prop_chair_380_380_640_40.png,656×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+651,第三章,探索家具,一樓　候診室：椅子（房間座標 x380 y500，底面 640×40）,game/art/rooms/chapter3/waiting/prop_chair_380_500_640_40.png,656×148,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+652,第三章,探索家具,一樓　候診室：箱子（房間座標 x1200 y470，底面 70×50）,game/art/rooms/chapter3/waiting/prop_crate_1200_470_70_50.png,86×126,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+653,第三章,探索家具,一樓　候診室：機器（房間座標 x250 y170，底面 100×50）,game/art/rooms/chapter3/waiting/prop_machine_250_170_100_50.png,117×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+654,第三章,探索家具,一樓　候診室：架子（房間座標 x1050 y160，底面 140×40）,game/art/rooms/chapter3/waiting/prop_shelf_1050_160_140_40.png,156×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+655,第三章,探索家具,舊病棟　走廊：床（房間座標 x1180 y420，底面 200×70）,game/art/rooms/chapter3/wild_hall/prop_bed_1180_420_200_70.png,216×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+656,第三章,探索家具,舊病棟　走廊：櫃子（房間座標 x2380 y150，底面 100×40）,game/art/rooms/chapter3/wild_hall/prop_cabinet_2380_150_100_40.png,116×196,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+657,第三章,探索家具,舊病棟　走廊：箱子（房間座標 x1900 y180，底面 90×50）,game/art/rooms/chapter3/wild_hall/prop_crate_1900_180_90_50.png,106×127,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+658,第三章,探索家具,舊病棟　走廊：箱子（房間座標 x400 y560，底面 90×50）,game/art/rooms/chapter3/wild_hall/prop_crate_400_560_90_50.png,106×126,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+659,第三章,探索家具,舊病棟　倉庫：箱子（房間座標 x1550 y700，底面 120×60）,game/art/rooms/chapter3/wild_storage/prop_crate_1550_700_120_60.png,136×136,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+660,第三章,探索家具,舊病棟　倉庫：架子（房間座標 x1000 y250，底面 500×40）,game/art/rooms/chapter3/wild_storage/prop_shelf_1000_250_500_40.png,516×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+661,第三章,探索家具,舊病棟　倉庫：架子（房間座標 x1000 y520，底面 500×40）,game/art/rooms/chapter3/wild_storage/prop_shelf_1000_520_500_40.png,516×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+662,第三章,探索家具,舊病棟　倉庫：架子（房間座標 x300 y250，底面 500×40）,game/art/rooms/chapter3/wild_storage/prop_shelf_300_250_500_40.png,516×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+663,第三章,探索家具,舊病棟　倉庫：架子（房間座標 x300 y520，底面 500×40）,game/art/rooms/chapter3/wild_storage/prop_shelf_300_520_500_40.png,516×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+664,第三章,探索家具,舊病棟　交誼廳：機器（房間座標 x1100 y160，底面 140×60）,game/art/rooms/chapter3/wild_ward_a/prop_machine_1100_160_140_60.png,156×226,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+665,第三章,探索家具,舊病棟　交誼廳：架子（房間座標 x150 y160，底面 200×40）,game/art/rooms/chapter3/wild_ward_a/prop_shelf_150_160_200_40.png,216×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+666,第三章,探索家具,舊病棟　交誼廳：桌子（房間座標 x420 y330，底面 520×80）,game/art/rooms/chapter3/wild_ward_a/prop_table_420_330_520_80.png,536×236,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+667,第三章,探索家具,舊病棟　兒童病房：床（房間座標 x1080 y300，底面 160×60）,game/art/rooms/chapter3/wild_ward_b/prop_bed_1080_300_160_60.png,176×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+668,第三章,探索家具,舊病棟　兒童病房：床（房間座標 x180 y300，底面 160×60）,game/art/rooms/chapter3/wild_ward_b/prop_bed_180_300_160_60.png,176×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+669,第三章,探索家具,舊病棟　兒童病房：床（房間座標 x480 y300，底面 160×60）,game/art/rooms/chapter3/wild_ward_b/prop_bed_480_300_160_60.png,176×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+670,第三章,探索家具,舊病棟　兒童病房：床（房間座標 x780 y300，底面 160×60）,game/art/rooms/chapter3/wild_ward_b/prop_bed_780_300_160_60.png,176×232,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+671,第三章,探索房間（地板、牆，俯視）,地下二樓　走廊,game/art/rooms/chapter3/b2_hall/bg.jpg,2800×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+672,第三章,探索房間（地板、牆，俯視）,地下二樓　置物間,game/art/rooms/chapter3/b2_lockers/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+673,第三章,探索房間（地板、牆，俯視）,地下二樓　監控室,game/art/rooms/chapter3/b2_monitor/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+674,第三章,探索房間（地板、牆，俯視）,地下二樓　特別病房,game/art/rooms/chapter3/b2_special/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+675,第三章,探索房間（地板、牆，俯視）,地下二樓　病房,game/art/rooms/chapter3/b2_ward/bg.jpg,1400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+676,第三章,探索房間（地板、牆，俯視）,一樓　診間,game/art/rooms/chapter3/clinic/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+677,第三章,探索房間（地板、牆，俯視）,一樓　診間走廊,game/art/rooms/chapter3/corridor/bg.jpg,2000×620,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+678,第三章,探索房間（地板、牆，俯視）,二樓　理事室,game/art/rooms/chapter3/director/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+679,第三章,探索房間（地板、牆，俯視）,二樓　走廊,game/art/rooms/chapter3/hall2/bg.jpg,2400×700,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+680,第三章,探索房間（地板、牆，俯視）,二樓　被服室,game/art/rooms/chapter3/linen/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+681,第三章,探索房間（地板、牆，俯視）,一樓　白色大廳,game/art/rooms/chapter3/lobby/bg.jpg,2400×900,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+682,第三章,探索房間（地板、牆，俯視）,二樓　涅槃計畫區,game/art/rooms/chapter3/nirvana/bg.jpg,2400×1000,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+683,第三章,探索房間（地板、牆，俯視）,二樓　護理站,game/art/rooms/chapter3/nurse2/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+684,第三章,探索房間（地板、牆，俯視）,一樓　藥局,game/art/rooms/chapter3/pharmacy/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+685,第三章,探索房間（地板、牆，俯視）,地下月台,game/art/rooms/chapter3/platform/bg.jpg,1800×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+686,第三章,探索房間（地板、牆，俯視）,二樓　病歷室,game/art/rooms/chapter3/records/bg.jpg,1800×900,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+687,第三章,探索房間（地板、牆，俯視）,一樓　候診室,game/art/rooms/chapter3/waiting/bg.jpg,1400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+688,第三章,探索房間（地板、牆，俯視）,舊病棟　盡頭,game/art/rooms/chapter3/wild_end/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+689,第三章,探索房間（地板、牆，俯視）,舊病棟　走廊,game/art/rooms/chapter3/wild_hall/bg.jpg,2800×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+690,第三章,探索房間（地板、牆，俯視）,舊病棟　倉庫,game/art/rooms/chapter3/wild_storage/bg.jpg,1800×900,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+691,第三章,探索房間（地板、牆，俯視）,舊病棟　交誼廳,game/art/rooms/chapter3/wild_ward_a/bg.jpg,1400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+692,第三章,探索房間（地板、牆，俯視）,舊病棟　兒童病房,game/art/rooms/chapter3/wild_ward_b/bg.jpg,1400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+693,第三章,背景,b2,game/art/ch3/bg/ch3_bg_b2.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+694,第三章,背景,director,game/art/ch3/bg/ch3_bg_director.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+695,第三章,背景,hall,game/art/ch3/bg/ch3_bg_hall.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+696,第三章,背景,lab,game/art/ch3/bg/ch3_bg_lab.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+697,第三章,背景,monitor,game/art/ch3/bg/ch3_bg_monitor.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+698,第三章,背景,nirvana,game/art/ch3/bg/ch3_bg_nirvana.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+699,第三章,背景,nurse,game/art/ch3/bg/ch3_bg_nurse.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+700,第三章,背景,platform,game/art/ch3/bg/ch3_bg_platform.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+701,第三章,背景,records,game/art/ch3/bg/ch3_bg_records.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+702,第三章,背景,wild,game/art/ch3/bg/ch3_bg_wild.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+703,第三章,舊版整張地圖（目前沒用到）,b2_hall,game/art/ch3/maps/ch3_map_b2_hall.jpg,2800×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+704,第三章,舊版整張地圖（目前沒用到）,b2_lockers,game/art/ch3/maps/ch3_map_b2_lockers.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+705,第三章,舊版整張地圖（目前沒用到）,b2_monitor,game/art/ch3/maps/ch3_map_b2_monitor.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+706,第三章,舊版整張地圖（目前沒用到）,b2_special,game/art/ch3/maps/ch3_map_b2_special.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+707,第三章,舊版整張地圖（目前沒用到）,b2_ward,game/art/ch3/maps/ch3_map_b2_ward.jpg,1400×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+708,第三章,舊版整張地圖（目前沒用到）,clinic,game/art/ch3/maps/ch3_map_clinic.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+709,第三章,舊版整張地圖（目前沒用到）,corridor,game/art/ch3/maps/ch3_map_corridor.jpg,2000×620,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+710,第三章,舊版整張地圖（目前沒用到）,director,game/art/ch3/maps/ch3_map_director.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+711,第三章,舊版整張地圖（目前沒用到）,hall2,game/art/ch3/maps/ch3_map_hall2.jpg,2400×700,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+712,第三章,舊版整張地圖（目前沒用到）,linen,game/art/ch3/maps/ch3_map_linen.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+713,第三章,舊版整張地圖（目前沒用到）,lobby,game/art/ch3/maps/ch3_map_lobby.jpg,2400×900,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+714,第三章,舊版整張地圖（目前沒用到）,nirvana,game/art/ch3/maps/ch3_map_nirvana.jpg,2400×1000,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+715,第三章,舊版整張地圖（目前沒用到）,nurse2,game/art/ch3/maps/ch3_map_nurse2.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+716,第三章,舊版整張地圖（目前沒用到）,pharmacy,game/art/ch3/maps/ch3_map_pharmacy.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+717,第三章,舊版整張地圖（目前沒用到）,platform,game/art/ch3/maps/ch3_map_platform.jpg,1800×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+718,第三章,舊版整張地圖（目前沒用到）,records,game/art/ch3/maps/ch3_map_records.jpg,1800×900,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+719,第三章,舊版整張地圖（目前沒用到）,waiting,game/art/ch3/maps/ch3_map_waiting.jpg,1400×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+720,第三章,舊版整張地圖（目前沒用到）,wild_end,game/art/ch3/maps/ch3_map_wild_end.jpg,1280×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+721,第三章,舊版整張地圖（目前沒用到）,wild_hall,game/art/ch3/maps/ch3_map_wild_hall.jpg,2800×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+722,第三章,舊版整張地圖（目前沒用到）,wild_storage,game/art/ch3/maps/ch3_map_wild_storage.jpg,1800×900,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+723,第三章,舊版整張地圖（目前沒用到）,wild_ward_a,game/art/ch3/maps/ch3_map_wild_ward_a.jpg,1400×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+724,第三章,舊版整張地圖（目前沒用到）,wild_ward_b,game/art/ch3/maps/ch3_map_wild_ward_b.jpg,1400×720,不透明,jpg,已被「探索房間」＋「探索家具」取代，不用做,D
+725,第三～五章,3D 模型,graduate,game/art/3d/graduate.glb,3D,—,glb,glb，Godot 4 可讀；面數低（手機要跑）,C
+726,第三～五章,3D 模型,gurney,game/art/3d/gurney.glb,3D,—,glb,glb，Godot 4 可讀；面數低（手機要跑）,C
+727,第三～五章,3D 模型,ivpole,game/art/3d/ivpole.glb,3D,—,glb,glb，Godot 4 可讀；面數低（手機要跑）,C
+728,第三～五章,3D 模型,wheelchair,game/art/3d/wheelchair.glb,3D,—,glb,glb，Godot 4 可讀；面數低（手機要跑）,C
+729,第三～五章,3D 貼圖,hosp_ceil,game/art/3d/tex/hosp_ceil.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+730,第三～五章,3D 貼圖,hosp_floor,game/art/3d/tex/hosp_floor.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+731,第三～五章,3D 貼圖,hosp_wall,game/art/3d/tex/hosp_wall.png,512×666,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+732,第三～五章,3D 貼圖,real_ceil,game/art/3d/tex/real_ceil.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+733,第三～五章,3D 貼圖,real_floor,game/art/3d/tex/real_floor.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+734,第三～五章,3D 貼圖,real_wall,game/art/3d/tex/real_wall.png,512×666,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+735,第三～五章,3D 貼圖,school_ceil,game/art/3d/tex/school_ceil.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+736,第三～五章,3D 貼圖,school_floor,game/art/3d/tex/school_floor.png,512×512,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+737,第三～五章,3D 貼圖,school_wall,game/art/3d/tex/school_wall.png,512×666,不透明,png,要能無縫重複（上下左右接起來看不出接縫）,C
+738,第四章,探索家具,三年二班：桌子（房間座標 x1180 y420，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_1180_420_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+739,第四章,探索家具,三年二班：桌子（房間座標 x1180 y550，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_1180_550_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+740,第四章,探索家具,三年二班：桌子（房間座標 x1180 y680，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_1180_680_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+741,第四章,探索家具,三年二班：桌子（房間座標 x260 y420，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_260_420_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+742,第四章,探索家具,三年二班：桌子（房間座標 x260 y550，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_260_550_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+743,第四章,探索家具,三年二班：桌子（房間座標 x260 y680，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_260_680_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+744,第四章,探索家具,三年二班：桌子（房間座標 x490 y420，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_490_420_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+745,第四章,探索家具,三年二班：桌子（房間座標 x490 y550，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_490_550_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+746,第四章,探索家具,三年二班：桌子（房間座標 x490 y680，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_490_680_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+747,第四章,探索家具,三年二班：桌子（房間座標 x700 y230，底面 200×60）,game/art/rooms/chapter4/classroom/prop_desk_700_230_200_60.png,216×152,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+748,第四章,探索家具,三年二班：桌子（房間座標 x720 y420，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_720_420_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+749,第四章,探索家具,三年二班：桌子（房間座標 x720 y550，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_720_550_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+750,第四章,探索家具,三年二班：桌子（房間座標 x720 y680，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_720_680_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+751,第四章,探索家具,三年二班：桌子（房間座標 x950 y420，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_950_420_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+752,第四章,探索家具,三年二班：桌子（房間座標 x950 y550，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_950_550_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+753,第四章,探索家具,三年二班：桌子（房間座標 x950 y680，底面 140×50）,game/art/rooms/chapter4/classroom/prop_desk_950_680_140_50.png,156×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+754,第四章,探索家具,玄關：架子（房間座標 x140 y170，底面 500×40）,game/art/rooms/chapter4/entrance/prop_shelf_140_170_500_40.png,516×202,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+755,第四章,探索家具,玄關：架子（房間座標 x760 y170，底面 500×40）,game/art/rooms/chapter4/entrance/prop_shelf_760_170_500_40.png,516×202,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+756,第四章,探索家具,校門：箱子（房間座標 x1380 y320，底面 80×60）,game/art/rooms/chapter4/gate/prop_box_1380_320_80_60.png,96×112,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+757,第四章,探索家具,校門：柱子（房間座標 x1240 y160，底面 60×50）,game/art/rooms/chapter4/gate/prop_pillar_1240_160_60_50.png,76×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+758,第四章,探索家具,校門：柱子（房間座標 x300 y160，底面 60×50）,game/art/rooms/chapter4/gate/prop_pillar_300_160_60_50.png,76×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+759,第四章,探索家具,校門：盆栽（房間座標 x120 y420，底面 70×50）,game/art/rooms/chapter4/gate/prop_plant_120_420_70_50.png,86×157,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+760,第四章,探索家具,一樓走廊：櫃子（房間座標 x500 y160，底面 200×40）,game/art/rooms/chapter4/hall1/prop_cabinet_500_160_200_40.png,215×176,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+761,第四章,探索家具,一樓走廊：盆栽（房間座標 x2200 y170，底面 60×40）,game/art/rooms/chapter4/hall1/prop_plant_2200_170_60_40.png,76×148,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+762,第四章,探索家具,醫院（很多年以前）：床（房間座標 x420 y280，底面 200×80）,game/art/rooms/chapter4/hospital4/prop_bed_420_280_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+763,第四章,探索家具,醫院（很多年以前）：床（房間座標 x820 y280，底面 200×80）,game/art/rooms/chapter4/hospital4/prop_bed_820_280_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+764,第四章,探索家具,醫院（很多年以前）：機器（房間座標 x640 y200，底面 80×50）,game/art/rooms/chapter4/hospital4/prop_machine_640_200_80_50.png,96×197,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+765,第四章,探索家具,希露飛的房間：床（房間座標 x140 y280，底面 260×110）,game/art/rooms/chapter4/lulu_room/prop_bed_140_280_260_110.png,276×222,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+766,第四章,探索家具,希露飛的房間：桌子（房間座標 x880 y280，底面 240×70）,game/art/rooms/chapter4/lulu_room/prop_desk_880_280_240_70.png,256×162,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+767,第四章,探索家具,教師辦公室：櫃子（房間座標 x520 y150，底面 240×40）,game/art/rooms/chapter4/office/prop_cabinet_520_150_240_40.png,256×176,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+768,第四章,探索家具,教師辦公室：桌子（房間座標 x200 y260，底面 260×70）,game/art/rooms/chapter4/office/prop_desk_200_260_260_70.png,276×162,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+769,第四章,探索家具,教師辦公室：桌子（房間座標 x820 y260，底面 260×70）,game/art/rooms/chapter4/office/prop_desk_820_260_260_70.png,276×162,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+770,第四章,探索家具,校長室：桌子（房間座標 x420 y300，底面 440×80）,game/art/rooms/chapter4/principal/prop_desk_420_300_440_80.png,456×172,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+771,第四章,探索家具,校長室：桌子（房間座標 x160 y420，底面 200×60）,game/art/rooms/chapter4/principal/prop_table_160_420_200_60.png,216×163,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+772,第四章,探索家具,薙文的房間：床（房間座標 x860 y300，底面 280×110）,game/art/rooms/chapter4/tiaoma_room/prop_bed_860_300_280_110.png,296×222,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+773,第四章,探索家具,薙文的房間：桌子（房間座標 x140 y260，底面 260×70）,game/art/rooms/chapter4/tiaoma_room/prop_desk_140_260_260_70.png,276×162,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+774,第四章,探索家具,薙文的房間：架子（房間座標 x480 y150，底面 200×40）,game/art/rooms/chapter4/tiaoma_room/prop_shelf_480_150_200_40.png,216×196,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+775,第四章,探索家具,廁所前　樓梯口：洗手台（房間座標 x140 y160，底面 120×40）,game/art/rooms/chapter4/toilet_hall/prop_sink_140_160_120_40.png,136×137,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+776,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1000 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1000_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+777,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1000 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1000_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+778,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x120 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_120_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+779,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x120 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_120_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+780,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1240 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1240_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+781,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1240 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1240_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+782,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1480 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1480_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+783,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x1480 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_1480_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+784,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x360 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_360_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+785,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x360 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_360_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+786,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x600 y220，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_600_220_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+787,第四章,探索家具,慈愛組織的醫院　很多年以前：床（房間座標 x600 y440，底面 180×80）,game/art/rooms/chapter4/ward4/prop_bed_600_440_180_80.png,196×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+788,第四章,探索家具,慈愛組織的醫院　很多年以前：機器（房間座標 x1660 y130，底面 100×60）,game/art/rooms/chapter4/ward4/prop_machine_1660_130_100_60.png,116×196,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+789,第四章,探索房間（地板、牆，俯視）,三年二班,game/art/rooms/chapter4/classroom/bg.jpg,1600×900,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+790,第四章,探索房間（地板、牆，俯視）,樓下　樓梯底,game/art/rooms/chapter4/downstairs/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+791,第四章,探索房間（地板、牆，俯視）,玄關,game/art/rooms/chapter4/entrance/bg.jpg,1400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+792,第四章,探索房間（地板、牆，俯視）,校門,game/art/rooms/chapter4/gate/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+793,第四章,探索房間（地板、牆，俯視）,一樓走廊,game/art/rooms/chapter4/hall1/bg.jpg,2400×700,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+794,第四章,探索房間（地板、牆，俯視）,醫院（很多年以前）,game/art/rooms/chapter4/hospital4/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+795,第四章,探索房間（地板、牆，俯視）,希露飛的房間,game/art/rooms/chapter4/lulu_room/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+796,第四章,探索房間（地板、牆，俯視）,教師辦公室,game/art/rooms/chapter4/office/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+797,第四章,探索房間（地板、牆，俯視）,白色的月台,game/art/rooms/chapter4/platform4/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+798,第四章,探索房間（地板、牆，俯視）,校長室,game/art/rooms/chapter4/principal/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+799,第四章,探索房間（地板、牆，俯視）,薙文的房間,game/art/rooms/chapter4/tiaoma_room/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+800,第四章,探索房間（地板、牆，俯視）,廁所前　樓梯口,game/art/rooms/chapter4/toilet_hall/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+801,第四章,探索房間（地板、牆，俯視）,慈愛組織的醫院　很多年以前,game/art/rooms/chapter4/ward4/bg.jpg,1800×900,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+802,第四章,背景,classroom,game/art/ch4/bg/ch4_bg_classroom.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+803,第四章,背景,downstairs,game/art/ch4/bg/ch4_bg_downstairs.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+804,第四章,背景,gate,game/art/ch4/bg/ch4_bg_gate.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+805,第四章,背景,hallway,game/art/ch4/bg/ch4_bg_hallway.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+806,第四章,背景,home,game/art/ch4/bg/ch4_bg_home.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+807,第四章,背景,hospital,game/art/ch4/bg/ch4_bg_hospital.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+808,第四章,背景,mailbox,game/art/ch4/bg/ch4_bg_mailbox.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+809,第四章,背景,office,game/art/ch4/bg/ch4_bg_office.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+810,第四章,背景,orphanage,game/art/ch4/bg/ch4_bg_orphanage.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+811,第四章,背景,phone,game/art/ch4/bg/ch4_bg_phone.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+812,第四章,背景,platform,game/art/ch4/bg/ch4_bg_platform.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+813,第四章,背景,principal,game/art/ch4/bg/ch4_bg_principal.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+814,第四章,背景,stairs,game/art/ch4/bg/ch4_bg_stairs.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+815,第四章,背景,toilet_door,game/art/ch4/bg/ch4_bg_toilet_door.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+816,第四章,背景,ward,game/art/ch4/bg/ch4_bg_ward.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+817,第四章,背景,ward_dark,game/art/ch4/bg/ch4_bg_ward_dark.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+818,第四章,背景,window,game/art/ch4/bg/ch4_bg_window.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+819,第四、五章,人類時期立繪,h_classrep_portrait_uniform_nervous,game/art/human/portraits/h_classrep_portrait_uniform_nervous.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+820,第四、五章,人類時期立繪,h_classrep_portrait_uniform_standard_smile,game/art/human/portraits/h_classrep_portrait_uniform_standard_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+821,第四、五章,人類時期立繪,h_classrep_portrait_uniform_true_smile,game/art/human/portraits/h_classrep_portrait_uniform_true_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+822,第四、五章,人類時期立繪,h_classrep_portrait_uniform_vacant,game/art/human/portraits/h_classrep_portrait_uniform_vacant.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+823,第四、五章,人類時期立繪,h_duty_portrait_uniform_default,game/art/human/portraits/h_duty_portrait_uniform_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+824,第四、五章,人類時期立繪,h_duty_portrait_uniform_sorry,game/art/human/portraits/h_duty_portrait_uniform_sorry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+825,第四、五章,人類時期立繪,h_duty_portrait_uniform_witness,game/art/human/portraits/h_duty_portrait_uniform_witness.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+826,第四、五章,人類時期立繪,h_fen_portrait_gown_eyes_closed,game/art/human/portraits/h_fen_portrait_gown_eyes_closed.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+827,第四、五章,人類時期立繪,h_fen_portrait_gown_smile_soft,game/art/human/portraits/h_fen_portrait_gown_smile_soft.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+828,第四、五章,人類時期立繪,h_fen_portrait_gown_waking,game/art/human/portraits/h_fen_portrait_gown_waking.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+829,第四、五章,人類時期立繪,h_fen_portrait_uniform_angry,game/art/human/portraits/h_fen_portrait_uniform_angry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+830,第四、五章,人類時期立繪,h_fen_portrait_uniform_annoyed,game/art/human/portraits/h_fen_portrait_uniform_annoyed.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+831,第四、五章,人類時期立繪,h_fen_portrait_uniform_blushing_away,game/art/human/portraits/h_fen_portrait_uniform_blushing_away.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+832,第四、五章,人類時期立繪,h_fen_portrait_uniform_panic,game/art/human/portraits/h_fen_portrait_uniform_panic.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+833,第四、五章,人類時期立繪,h_fen_portrait_uniform_regret,game/art/human/portraits/h_fen_portrait_uniform_regret.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+834,第四、五章,人類時期立繪,h_fen_portrait_uniform_tiny_smile,game/art/human/portraits/h_fen_portrait_uniform_tiny_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+835,第四、五章,人類時期立繪,h_haruka_portrait_dress_nervous,game/art/human/portraits/h_haruka_portrait_dress_nervous.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+836,第四、五章,人類時期立繪,h_haruka_portrait_dress_practicing,game/art/human/portraits/h_haruka_portrait_dress_practicing.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+837,第四、五章,人類時期立繪,h_haruka_portrait_dress_startled,game/art/human/portraits/h_haruka_portrait_dress_startled.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+838,第四、五章,人類時期立繪,h_haruka_portrait_gown_cry,game/art/human/portraits/h_haruka_portrait_gown_cry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+839,第四、五章,人類時期立繪,h_haruka_portrait_gown_default,game/art/human/portraits/h_haruka_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+840,第四、五章,人類時期立繪,h_haruka_portrait_gown_smile_soft,game/art/human/portraits/h_haruka_portrait_gown_smile_soft.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+841,第四、五章,人類時期立繪,h_haruka_portrait_gown_waking,game/art/human/portraits/h_haruka_portrait_gown_waking.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+842,第四、五章,人類時期立繪,h_haruka_portrait_uniform_afraid,game/art/human/portraits/h_haruka_portrait_uniform_afraid.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+843,第四、五章,人類時期立繪,h_haruka_portrait_uniform_daydream,game/art/human/portraits/h_haruka_portrait_uniform_daydream.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+844,第四、五章,人類時期立繪,h_haruka_portrait_uniform_nervous,game/art/human/portraits/h_haruka_portrait_uniform_nervous.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+845,第四、五章,人類時期立繪,h_haruka_portrait_uniform_quiet_cry,game/art/human/portraits/h_haruka_portrait_uniform_quiet_cry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+846,第四、五章,人類時期立繪,h_haruka_portrait_uniform_resolved,game/art/human/portraits/h_haruka_portrait_uniform_resolved.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+847,第四、五章,人類時期立繪,h_haruka_portrait_uniform_smile_small,game/art/human/portraits/h_haruka_portrait_uniform_smile_small.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+848,第四、五章,人類時期立繪,h_hilufei_portrait_gown_default,game/art/human/portraits/h_hilufei_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+849,第四、五章,人類時期立繪,h_hilufei_portrait_gown_smile_soft,game/art/human/portraits/h_hilufei_portrait_gown_smile_soft.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+850,第四、五章,人類時期立繪,h_hilufei_portrait_uniform_bashful,game/art/human/portraits/h_hilufei_portrait_uniform_bashful.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+851,第四、五章,人類時期立繪,h_hilufei_portrait_uniform_cry,game/art/human/portraits/h_hilufei_portrait_uniform_cry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+852,第四、五章,人類時期立繪,h_hilufei_portrait_uniform_embarrassed,game/art/human/portraits/h_hilufei_portrait_uniform_embarrassed.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+853,第四、五章,人類時期立繪,h_hilufei_portrait_uniform_happy,game/art/human/portraits/h_hilufei_portrait_uniform_happy.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+854,第四、五章,人類時期立繪,h_junzhu_portrait_gown_default,game/art/human/portraits/h_junzhu_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+855,第四、五章,人類時期立繪,h_junzhu_portrait_gown_whisper,game/art/human/portraits/h_junzhu_portrait_gown_whisper.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+856,第四、五章,人類時期立繪,h_junzhu_portrait_uniform_angry,game/art/human/portraits/h_junzhu_portrait_uniform_angry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+857,第四、五章,人類時期立繪,h_junzhu_portrait_uniform_hide_hand,game/art/human/portraits/h_junzhu_portrait_uniform_hide_hand.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+858,第四、五章,人類時期立繪,h_junzhu_portrait_uniform_protest,game/art/human/portraits/h_junzhu_portrait_uniform_protest.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+859,第四、五章,人類時期立繪,h_junzhu_portrait_uniform_silent,game/art/human/portraits/h_junzhu_portrait_uniform_silent.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+860,第四、五章,人類時期立繪,h_lien_portrait_gown_default,game/art/human/portraits/h_lien_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+861,第四、五章,人類時期立繪,h_lien_portrait_gown_sly_grin,game/art/human/portraits/h_lien_portrait_gown_sly_grin.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+862,第四、五章,人類時期立繪,h_lien_portrait_uniform_panic,game/art/human/portraits/h_lien_portrait_uniform_panic.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+863,第四、五章,人類時期立繪,h_lien_portrait_uniform_serious,game/art/human/portraits/h_lien_portrait_uniform_serious.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+864,第四、五章,人類時期立繪,h_lien_portrait_uniform_sly_grin,game/art/human/portraits/h_lien_portrait_uniform_sly_grin.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+865,第四、五章,人類時期立繪,h_lien_portrait_uniform_whisper,game/art/human/portraits/h_lien_portrait_uniform_whisper.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+866,第四、五章,人類時期立繪,h_mingyue_portrait_uniform_awkward,game/art/human/portraits/h_mingyue_portrait_uniform_awkward.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+867,第四、五章,人類時期立繪,h_mingyue_portrait_uniform_disappointed,game/art/human/portraits/h_mingyue_portrait_uniform_disappointed.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+868,第四、五章,人類時期立繪,h_mingyue_portrait_uniform_laugh,game/art/human/portraits/h_mingyue_portrait_uniform_laugh.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+869,第四、五章,人類時期立繪,h_mingyue_portrait_uniform_proud,game/art/human/portraits/h_mingyue_portrait_uniform_proud.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+870,第四、五章,人類時期立繪,h_qiuge_portrait_gown_default,game/art/human/portraits/h_qiuge_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+871,第四、五章,人類時期立繪,h_qiuge_portrait_gown_looking_down,game/art/human/portraits/h_qiuge_portrait_gown_looking_down.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+872,第四、五章,人類時期立繪,h_qiuge_portrait_uniform_focused,game/art/human/portraits/h_qiuge_portrait_uniform_focused.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+873,第四、五章,人類時期立繪,h_qiuge_portrait_uniform_trembling,game/art/human/portraits/h_qiuge_portrait_uniform_trembling.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+874,第四、五章,人類時期立繪,h_qiuge_portrait_uniform_unreadable,game/art/human/portraits/h_qiuge_portrait_uniform_unreadable.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+875,第四、五章,人類時期立繪,h_teacher_portrait_teacher_forced_smile,game/art/human/portraits/h_teacher_portrait_teacher_forced_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+876,第四、五章,人類時期立繪,h_teacher_portrait_teacher_stunned,game/art/human/portraits/h_teacher_portrait_teacher_stunned.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+877,第四、五章,人類時期立繪,h_teacher_portrait_teacher_tired,game/art/human/portraits/h_teacher_portrait_teacher_tired.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+878,第四、五章,人類時期立繪,h_teacher_portrait_teacher_uneasy,game/art/human/portraits/h_teacher_portrait_teacher_uneasy.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+879,第四、五章,人類時期立繪,h_teacher_portrait_teacher_vacant,game/art/human/portraits/h_teacher_portrait_teacher_vacant.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+880,第四、五章,人類時期立繪,h_tiwen_portrait_uniform_phone_blank,game/art/human/portraits/h_tiwen_portrait_uniform_phone_blank.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+881,第四、五章,人類時期立繪,h_tiwen_portrait_uniform_side_glance,game/art/human/portraits/h_tiwen_portrait_uniform_side_glance.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+882,第四、五章,人類時期立繪,h_tiwen_portrait_uniform_stunned,game/art/human/portraits/h_tiwen_portrait_uniform_stunned.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+883,第四、五章,人類時期立繪,h_xiaoman_portrait_gown_default,game/art/human/portraits/h_xiaoman_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+884,第四、五章,人類時期立繪,h_xiaoman_portrait_gown_smile_small,game/art/human/portraits/h_xiaoman_portrait_gown_smile_small.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+885,第四、五章,人類時期立繪,h_xiaoman_portrait_uniform_brave_smile,game/art/human/portraits/h_xiaoman_portrait_uniform_brave_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+886,第四、五章,人類時期立繪,h_xiaoman_portrait_uniform_cry,game/art/human/portraits/h_xiaoman_portrait_uniform_cry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+887,第四、五章,人類時期立繪,h_xiaoman_portrait_uniform_looking_down,game/art/human/portraits/h_xiaoman_portrait_uniform_looking_down.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+888,第四、五章,人類時期立繪,h_xiaoman_portrait_uniform_whisper,game/art/human/portraits/h_xiaoman_portrait_uniform_whisper.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+889,第四、五章,人類時期立繪,h_xinhe_portrait_gown_default,game/art/human/portraits/h_xinhe_portrait_gown_default.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+890,第四、五章,人類時期立繪,h_xinhe_portrait_gown_vacant,game/art/human/portraits/h_xinhe_portrait_gown_vacant.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+891,第四、五章,人類時期立繪,h_xinhe_portrait_uniform_cry,game/art/human/portraits/h_xinhe_portrait_uniform_cry.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+892,第四、五章,人類時期立繪,h_xinhe_portrait_uniform_fake_smile,game/art/human/portraits/h_xinhe_portrait_uniform_fake_smile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+893,第四、五章,人類時期立繪,h_xinhe_portrait_uniform_guilty,game/art/human/portraits/h_xinhe_portrait_uniform_guilty.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+894,第四、五章,人類時期立繪,h_xinhe_portrait_uniform_hostile,game/art/human/portraits/h_xinhe_portrait_uniform_hostile.png,512×768,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+895,第四、五章,人類時期走路圖（Q 版）,h_classrep,game/art/walk4/h_classrep.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+896,第四、五章,人類時期走路圖（Q 版）,h_duty,game/art/walk4/h_duty.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+897,第四、五章,人類時期走路圖（Q 版）,h_fen,game/art/walk4/h_fen.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+898,第四、五章,人類時期走路圖（Q 版）,h_fen_gown,game/art/walk4/h_fen_gown.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+899,第四、五章,人類時期走路圖（Q 版）,h_haruka,game/art/walk4/h_haruka.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+900,第四、五章,人類時期走路圖（Q 版）,h_haruka_dress,game/art/walk4/h_haruka_dress.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+901,第四、五章,人類時期走路圖（Q 版）,h_haruka_gown,game/art/walk4/h_haruka_gown.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+902,第四、五章,人類時期走路圖（Q 版）,h_hilufei,game/art/walk4/h_hilufei.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+903,第四、五章,人類時期走路圖（Q 版）,h_junzhu,game/art/walk4/h_junzhu.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+904,第四、五章,人類時期走路圖（Q 版）,h_lien,game/art/walk4/h_lien.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+905,第四、五章,人類時期走路圖（Q 版）,h_mingyue,game/art/walk4/h_mingyue.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+906,第四、五章,人類時期走路圖（Q 版）,h_qiuge,game/art/walk4/h_qiuge.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+907,第四、五章,人類時期走路圖（Q 版）,h_teacher,game/art/walk4/h_teacher.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+908,第四、五章,人類時期走路圖（Q 版）,h_tiwen,game/art/walk4/h_tiwen.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+909,第四、五章,人類時期走路圖（Q 版）,h_xiaoman,game/art/walk4/h_xiaoman.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+910,第四、五章,人類時期走路圖（Q 版）,h_xinhe,game/art/walk4/h_xinhe.png,1280×1280,透明,png,已在《人類時期角色需求 v2.1》裡，照那份做,A（已發包）
+911,第四、五章,四方向走路圖,人類：路人學生,game/art/walk4/h_crowd.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+912,第四、五章,四方向走路圖,人類：芬的爸爸,game/art/walk4/h_fen_father.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+913,第四、五章,四方向走路圖,人類：畢業生,game/art/walk4/h_graduate.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+914,第四、五章,四方向走路圖,人類：護理師,game/art/walk4/h_nurse.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+915,第四、五章,四方向走路圖,人類：校長,game/art/walk4/h_principal.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+916,第四、五章,四方向走路圖,人類：影子,game/art/walk4/h_shadow.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+917,第四、五章,四方向走路圖,人類：白袍研究員,game/art/walk4/h_whitecoat.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+918,第四、五章,四方向走路圖,人類：護理師（舊）,game/art/walk4/human_nurse.png,640×640,透明,png,4×4 格（下、左、右、上 × 走路 4 格），可以做成每格 160 或 320（整張 640 或 1280）,A
+919,第五章,可躲藏的家具,實驗室外的走廊：cart,game/art/rooms/chapter5/hall5/hide_c5_hide_cart.png,116×136,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+920,第五章,可躲藏的家具,實驗室外的走廊：盆栽,game/art/rooms/chapter5/hall5/hide_c5_hide_plant.png,96×223,透明,png,透明 PNG；玩家會躲在後面，要有遮得住人的高度,C
+921,第五章,探索家具,走廊：椅子（房間座標 x1950 y180，底面 80×50）,game/art/rooms/chapter5/a_hall5/prop_chair_1950_180_80_50.png,96×123,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+922,第五章,探索家具,走廊：桌子（房間座標 x600 y170，底面 300×50）,game/art/rooms/chapter5/a_hall5/prop_desk_600_170_300_50.png,316×142,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+923,第五章,探索家具,醫院的大廳：椅子（房間座標 x200 y560，底面 300×50）,game/art/rooms/chapter5/a_lobby5/prop_chair_200_560_300_50.png,316×122,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+924,第五章,探索家具,醫院的大廳：桌子（房間座標 x600 y180，底面 400×60）,game/art/rooms/chapter5/a_lobby5/prop_desk_600_180_400_60.png,416×152,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+925,第五章,探索家具,醫院的大廳：盆栽（房間座標 x1400 y170，底面 60×40）,game/art/rooms/chapter5/a_lobby5/prop_plant_1400_170_60_40.png,76×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+926,第五章,探索家具,白線的另一邊：床（房間座標 x120 y200，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_120_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+927,第五章,探索家具,白線的另一邊：床（房間座標 x120 y460，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_120_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+928,第五章,探索家具,白線的另一邊：床（房間座標 x1380 y200，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_1380_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+929,第五章,探索家具,白線的另一邊：床（房間座標 x1380 y460，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_1380_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+930,第五章,探索家具,白線的另一邊：床（房間座標 x540 y200，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_540_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+931,第五章,探索家具,白線的另一邊：床（房間座標 x540 y460，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_540_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+932,第五章,探索家具,白線的另一邊：床（房間座標 x960 y200，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_960_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+933,第五章,探索家具,白線的另一邊：床（房間座標 x960 y460，底面 200×80）,game/art/rooms/chapter5/a_other5/prop_bed_960_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+934,第五章,探索家具,真的病房：床（房間座標 x1200 y560，底面 200×80）,game/art/rooms/chapter5/a_ward5/prop_bed_1200_560_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+935,第五章,探索家具,真的病房：床（房間座標 x120 y560，底面 200×80）,game/art/rooms/chapter5/a_ward5/prop_bed_120_560_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+936,第五章,探索家具,真的病房：床（房間座標 x480 y560，底面 200×80）,game/art/rooms/chapter5/a_ward5/prop_bed_480_560_200_80.png,217×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+937,第五章,探索家具,真的病房：床（房間座標 x700 y200，底面 200×80）,game/art/rooms/chapter5/a_ward5/prop_bed_700_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+938,第五章,探索家具,真的病房：床（房間座標 x840 y560，底面 200×80）,game/art/rooms/chapter5/a_ward5/prop_bed_840_560_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+939,第五章,探索家具,真的病房：洗手台（房間座標 x140 y170，底面 100×50）,game/art/rooms/chapter5/a_ward5/prop_sink_140_170_100_50.png,116×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+940,第五章,探索家具,鎮長公館：櫃子（房間座標 x960 y160，底面 180×40）,game/art/rooms/chapter5/b1_office5/prop_cabinet_960_160_180_40.png,196×176,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+941,第五章,探索家具,鎮長公館：桌子（房間座標 x440 y220，底面 400×70）,game/art/rooms/chapter5/b1_office5/prop_desk_440_220_400_70.png,416×162,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+942,第五章,探索家具,鎮長公館：架子（房間座標 x120 y160，底面 220×40）,game/art/rooms/chapter5/b1_office5/prop_shelf_120_160_220_40.png,236×202,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+943,第五章,探索家具,修理室：架子（房間座標 x140 y160，底面 260×40）,game/art/rooms/chapter5/b1_repair5/prop_shelf_140_160_260_40.png,276×202,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+944,第五章,探索家具,修理室：桌子（房間座標 x480 y300，底面 320×90）,game/art/rooms/chapter5/b1_repair5/prop_table_480_300_320_90.png,336×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+945,第五章,探索家具,棉花糖鎮　廣場：柱子（房間座標 x960 y300，底面 80×80）,game/art/rooms/chapter5/b1_square5/prop_pillar_960_300_80_80.png,96×387,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+946,第五章,探索家具,棉花糖鎮　廣場：盆栽（房間座標 x1540 y200，底面 60×40）,game/art/rooms/chapter5/b1_square5/prop_plant_1540_200_60_40.png,76×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+947,第五章,探索家具,棉花糖鎮　廣場：盆栽（房間座標 x400 y200，底面 60×40）,game/art/rooms/chapter5/b1_square5/prop_plant_400_200_60_40.png,76×147,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+948,第五章,探索家具,棉花糖鎮　廣場：桌子（房間座標 x1400 y540，底面 160×60）,game/art/rooms/chapter5/b1_square5/prop_table_1400_540_160_60.png,176×163,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+949,第五章,探索家具,醫院的走廊　晚上：床（房間座標 x2380 y300，底面 180×80）,game/art/rooms/chapter5/b2_hall5/prop_bed_2380_300_180_80.png,196×252,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+950,第五章,探索家具,醫院的走廊　晚上：椅子（房間座標 x1300 y600，底面 80×50）,game/art/rooms/chapter5/b2_hall5/prop_chair_1300_600_80_50.png,96×158,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+951,第五章,探索家具,芬的病房：床（房間座標 x540 y220，底面 200×80）,game/art/rooms/chapter5/b3_fen5/prop_bed_540_220_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+952,第五章,探索家具,校門口：箱子（房間座標 x1380 y320，底面 80×60）,game/art/rooms/chapter5/b3_gate5/prop_box_1380_320_80_60.png,96×112,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+953,第五章,探索家具,校門口：柱子（房間座標 x1240 y160，底面 60×50）,game/art/rooms/chapter5/b3_gate5/prop_pillar_1240_160_60_50.png,76×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+954,第五章,探索家具,校門口：柱子（房間座標 x300 y160，底面 60×50）,game/art/rooms/chapter5/b3_gate5/prop_pillar_300_160_60_50.png,76×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+955,第五章,探索家具,真的病房：床（房間座標 x140 y460，底面 200×80）,game/art/rooms/chapter5/b3_ward5/prop_bed_140_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+956,第五章,探索家具,真的病房：床（房間座標 x540 y200，底面 200×80）,game/art/rooms/chapter5/b3_ward5/prop_bed_540_200_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+957,第五章,探索家具,真的病房：床（房間座標 x940 y460，底面 200×80）,game/art/rooms/chapter5/b3_ward5/prop_bed_940_460_200_80.png,216×192,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+958,第五章,探索家具,教官室：床（房間座標 x980 y400，底面 180×80）,game/art/rooms/chapter5/dove5/prop_bed_980_400_180_80.png,196×253,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+959,第五章,探索家具,教官室：櫃子（房間座標 x120 y160，底面 160×40）,game/art/rooms/chapter5/dove5/prop_cabinet_120_160_160_40.png,176×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+960,第五章,探索家具,教官室：桌子（房間座標 x460 y200，底面 360×60）,game/art/rooms/chapter5/dove5/prop_desk_460_200_360_60.png,376×200,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+961,第五章,探索家具,教官室：架子（房間座標 x980 y160，底面 200×40）,game/art/rooms/chapter5/dove5/prop_shelf_980_160_200_40.png,216×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+962,第五章,探索家具,實驗室外的走廊：櫃子（房間座標 x900 y160，底面 140×40）,game/art/rooms/chapter5/hall5/prop_cabinet_900_160_140_40.png,156×206,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+963,第五章,探索家具,實驗室外的走廊：盆栽（房間座標 x2450 y560，底面 60×40）,game/art/rooms/chapter5/hall5/prop_plant_2450_560_60_40.png,76×204,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+964,第五章,探索家具,實驗室：床（房間座標 x1140 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_1140_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+965,第五章,探索家具,實驗室：床（房間座標 x140 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_140_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+966,第五章,探索家具,實驗室：床（房間座標 x340 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_340_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+967,第五章,探索家具,實驗室：床（房間座標 x540 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_540_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+968,第五章,探索家具,實驗室：床（房間座標 x740 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_740_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+969,第五章,探索家具,實驗室：床（房間座標 x940 y560，底面 150×70）,game/art/rooms/chapter5/lab5/prop_bed_940_560_150_70.png,166×242,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+970,第五章,探索家具,實驗室：機器（房間座標 x600 y250，底面 200×90）,game/art/rooms/chapter5/lab5/prop_machine_600_250_200_90.png,215×318,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+971,第五章,探索家具,監視室：椅子（房間座標 x600 y300，底面 80×60）,game/art/rooms/chapter5/monitor5/prop_chair_600_300_80_60.png,96×168,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+972,第五章,探索家具,監視室：機器（房間座標 x140 y140，底面 1000×70）,game/art/rooms/chapter5/monitor5/prop_machine_140_140_1000_70.png,1016×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+973,第五章,探索家具,理事室：櫃子（房間座標 x1000 y170，底面 160×40）,game/art/rooms/chapter5/office5/prop_cabinet_1000_170_160_40.png,176×216,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+974,第五章,探索家具,理事室：桌子（房間座標 x440 y220，底面 400×70）,game/art/rooms/chapter5/office5/prop_desk_440_220_400_70.png,416×210,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+975,第五章,探索家具,理事室：盆栽（房間座標 x140 y180，底面 60×40）,game/art/rooms/chapter5/office5/prop_plant_140_180_60_40.png,76×204,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+976,第五章,探索家具,檔案室：桌子（房間座標 x560 y160，底面 280×60）,game/art/rooms/chapter5/records5/prop_desk_560_160_280_60.png,295×200,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+977,第五章,探索家具,檔案室：架子（房間座標 x1160 y300，底面 200×40）,game/art/rooms/chapter5/records5/prop_shelf_1160_300_200_40.png,216×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+978,第五章,探索家具,檔案室：架子（房間座標 x120 y300，底面 200×40）,game/art/rooms/chapter5/records5/prop_shelf_120_300_200_40.png,216×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+979,第五章,探索家具,檔案室：架子（房間座標 x380 y460，底面 200×40）,game/art/rooms/chapter5/records5/prop_shelf_380_460_200_40.png,216×293,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+980,第五章,探索家具,檔案室：架子（房間座標 x640 y300，底面 200×40）,game/art/rooms/chapter5/records5/prop_shelf_640_300_200_40.png,215×292,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+981,第五章,探索家具,檔案室：架子（房間座標 x900 y460，底面 200×40）,game/art/rooms/chapter5/records5/prop_shelf_900_460_200_40.png,216×293,透明,png,透明 PNG，俯視角度要和房間一致；腳底面積不能變（碰撞是照這個算的）,C
+982,第五章,探索房間（地板、牆，俯視）,走廊,game/art/rooms/chapter5/a_hall5/bg.jpg,2400×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+983,第五章,探索房間（地板、牆，俯視）,醫院的大廳,game/art/rooms/chapter5/a_lobby5/bg.jpg,1600×760,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+984,第五章,探索房間（地板、牆，俯視）,白線的另一邊,game/art/rooms/chapter5/a_other5/bg.jpg,1800×820,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+985,第五章,探索房間（地板、牆，俯視）,真的病房,game/art/rooms/chapter5/a_ward5/bg.jpg,1600×820,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+986,第五章,探索房間（地板、牆，俯視）,鎮長公館,game/art/rooms/chapter5/b1_office5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+987,第五章,探索房間（地板、牆，俯視）,棉花糖鎮　月台,game/art/rooms/chapter5/b1_platform5/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+988,第五章,探索房間（地板、牆，俯視）,修理室,game/art/rooms/chapter5/b1_repair5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+989,第五章,探索房間（地板、牆，俯視）,棉花糖鎮　廣場,game/art/rooms/chapter5/b1_square5/bg.jpg,2000×820,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+990,第五章,探索房間（地板、牆，俯視）,醫院的走廊　晚上,game/art/rooms/chapter5/b2_hall5/bg.jpg,2600×760,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+991,第五章,探索房間（地板、牆，俯視）,芬的病房,game/art/rooms/chapter5/b3_fen5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+992,第五章,探索房間（地板、牆，俯視）,校門口,game/art/rooms/chapter5/b3_gate5/bg.jpg,1600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+993,第五章,探索房間（地板、牆，俯視）,很長的走廊,game/art/rooms/chapter5/b3_hall5/bg.jpg,2600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+994,第五章,探索房間（地板、牆，俯視）,真的病房,game/art/rooms/chapter5/b3_ward5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+995,第五章,探索房間（地板、牆，俯視）,教官室,game/art/rooms/chapter5/dove5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+996,第五章,探索房間（地板、牆，俯視）,實驗室外的走廊,game/art/rooms/chapter5/hall5/bg.jpg,2600×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+997,第五章,探索房間（地板、牆，俯視）,實驗室,game/art/rooms/chapter5/lab5/bg.jpg,1400×820,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+998,第五章,探索房間（地板、牆，俯視）,監視室,game/art/rooms/chapter5/monitor5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+999,第五章,探索房間（地板、牆，俯視）,理事室,game/art/rooms/chapter5/office5/bg.jpg,1280×720,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+1000,第五章,探索房間（地板、牆，俯視）,檔案室,game/art/rooms/chapter5/records5/bg.jpg,1400×760,不透明,jpg,不透明；家具另外是透明 PNG 疊上去，這張不要畫家具,B
+1001,第五章,背景,lab,game/art/ch5/bg/ch5_bg_lab.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1002,第五章,背景,lab_dark,game/art/ch5/bg/ch5_bg_lab_dark.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1003,第五章,背景,outside,game/art/ch5/bg/ch5_bg_outside.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1004,第五章,背景,real_hall,game/art/ch5/bg/ch5_bg_real_hall.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1005,第五章,背景,real_ward,game/art/ch5/bg/ch5_bg_real_ward.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1006,第五章,背景,school_gate,game/art/ch5/bg/ch5_bg_school_gate.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1007,第五章,背景,town,game/art/ch5/bg/ch5_bg_town.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1008,第五章,背景,town_office,game/art/ch5/bg/ch5_bg_town_office.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
+1009,第五章,背景,ward_empty,game/art/ch5/bg/ch5_bg_ward_empty.jpg,1280×720,不透明,jpg,1280×720 不透明（可交 2560×1440）,B
