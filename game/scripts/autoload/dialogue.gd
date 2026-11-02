@@ -36,13 +36,15 @@ const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
 ## 人類時期（第四、五章）的立繪：外包美術包（docs/vendor/human_era_characters_request.txt），
 ## 檔名 h_<id>_portrait_<服裝>_<表情>.png。服裝由章節導演的 portrait_state 給（uniform／dress／gown；導師是 teacher）
 const HUMAN_PORTRAITS := {"遙": "haruka", "芬": "fen", "導師": "teacher", "希露飛": "hilufei", "銘越": "mingyue",
-	"小滿": "xiaoman", "值日生": "duty", "辛禾": "xinhe", "薙文": "tiwen", "郡主": "junzhu", "秋歌": "qiuge", "李恩": "lien"}
+	"小滿": "xiaoman", "值日生": "duty", "辛禾": "xinhe", "薙文": "tiwen", "郡主": "junzhu", "秋歌": "qiuge", "李恩": "lien",
+	"校長": "principal"}
 const HUMAN_PORTRAIT_DIR := "res://art/human/portraits/h_%s_portrait_"
 ## 每個人每套服裝的預設表情（@face 沒指定時用這個；外包表情對照表 07_Documentation/expression_dictionary.csv）
 const HUMAN_DEFAULT_FACE := {
 	"haruka": {"uniform": "nervous", "dress": "nervous", "gown": "default"},
 	"fen": {"uniform": "annoyed", "gown": "waking"},
 	"teacher": {"teacher": "forced_smile"},
+	"principal": {"teacher": "smile_tired"},
 	"hilufei": {"uniform": "happy", "gown": "default"},
 	"mingyue": {"uniform": "laugh", "gown": "default"},
 	"xiaoman": {"uniform": "looking_down", "gown": "default"},

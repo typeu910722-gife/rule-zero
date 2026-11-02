@@ -10,7 +10,7 @@
 
 需要先跑 tools/art/setup.sh。每張圖都會啟動一個新的 ComfyUI（CPU、記憶體 15GB 時連續出圖會被系統終止）。
 """
-import argparse, json, os, shutil, subprocess, sys, tempfile, time, urllib.request, uuid
+import argparse, json, os, shutil, subprocess, sys, tempfile, time, urllib.parse, urllib.request, uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -98,10 +98,9 @@ def build(a):
     pos, neg = ["3", 0], ["4", 0]
 
     def put(path):
+        # 用 ComfyUI 的上傳介面：開著的 ComfyUI 可能設了別的 input 資料夾（例如 OCTA Video Studio 開的那個）
         n = "rz_%s%s" % (uuid.uuid4().hex[:8], Path(path).suffix or ".png")
-        (COMFY / "input").mkdir(exist_ok=True)
-        shutil.copy(path, COMFY / "input" / n)
-        return n
+        return n if a.dry else upload(path, n)
 
     if a.ref:
         g["20"] = {"class_type": "IPAdapterModelLoader", "inputs": {"ipadapter_file": "ip-adapter-plus_sdxl_vit-h.safetensors"}}
@@ -156,6 +155,16 @@ def start_server(heavy):
     p.kill(); sys.exit("ComfyUI 啟動逾時")
 
 
+def upload(path, name):
+    boundary = uuid.uuid4().hex
+    body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"image\"; filename=\"{name}\"\r\n"
+            f"Content-Type: application/octet-stream\r\n\r\n").encode() + Path(path).read_bytes() + \
+        f"\r\n--{boundary}\r\nContent-Disposition: form-data; name=\"overwrite\"\r\n\r\ntrue\r\n--{boundary}--\r\n".encode()
+    req = urllib.request.Request(HOST + "/upload/image", data=body,
+                                 headers={"Content-Type": "multipart/form-data; boundary=" + boundary})
+    return json.loads(urllib.request.urlopen(req).read())["name"]
+
+
 def run(graph, out):
     req = urllib.request.Request(HOST + "/prompt", data=json.dumps({"prompt": graph, "client_id": str(uuid.uuid4())}).encode(),
                                  headers={"Content-Type": "application/json"})
@@ -168,8 +177,10 @@ def run(graph, out):
                 sys.exit("出圖失敗：" + json.dumps(st, ensure_ascii=False)[:1500])
             for node in h[pid]["outputs"].values():
                 for img in node.get("images", []):
-                    src = COMFY / "output" / img.get("subfolder", "") / img["filename"]
-                    shutil.move(str(src), out); return
+                    # 透過 /view 下載（輸出資料夾不一定是 COMFY/output）
+                    q = urllib.parse.urlencode({"filename": img["filename"], "subfolder": img.get("subfolder", ""),
+                                                "type": img.get("type", "output")})
+                    Path(out).write_bytes(urllib.request.urlopen(HOST + "/view?" + q).read()); return
         time.sleep(2)
 
 
@@ -241,12 +252,13 @@ def main():
     try:
         for i in range(a.count):
             out = a.out if a.count == 1 else "%s_%d%s" % (os.path.splitext(a.out)[0], i + 1, os.path.splitext(a.out)[1])
+            if a.dry:
+                print("提示詞：", build(a)[1]); return
+            t0 = time.time()
+            if not started:   # 先開好 ComfyUI：build() 會把參考圖上傳過去
+                p, started = start_server(bool(a.ref or a.control)), True
             g, prompt, heavy = build(a)
             if i == 0: print("提示詞：", prompt)
-            if a.dry: return
-            t0 = time.time()
-            if not started:
-                p, started = start_server(heavy), True
             run(g, out)
             if DEVICE != "gpu" and p:   # 只有 CPU：每張圖之後關掉，釋放記憶體
                 p.kill(); p.wait(); p, started = None, False

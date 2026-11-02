@@ -59,6 +59,7 @@ Godot 4.3 劇情冒險遊戲。設計文件在 `docs/`，遊戲在 `game/`（說
 - **美術不外包，一律自己出圖**（2026-10-20 決定）：先 `tools/art/setup.sh`，再用 `python3 tools/art/gen.py <預設> …`。畫風 LoRA 與用法見 `docs/art_pipeline.md`；生成的圖記在 `docs/art_generated.md`。
   - 10-28 起：**全遊戲美術都可以外包替換**（使用者決定）。清單 `docs/vendor/full_art_request.txt`＋`full_art_inventory.csv`（`py -P tools/art/make_art_inventory.py` 重新產生）。換圖照同檔名、同尺寸。
   - 例外：**人類時期（第四、五章）三年二班 13 人的立繪、走路圖、CG、追逐戰圖外包**（2026-10-27 使用者決定；10-28：對話立繪、CG、追逐戰用日漫正常比例，地圖走路圖用 Q 版）。需求 `docs/vendor/human_era_characters_request_v2.txt`（v1 已被取代），驗收 `docs/vendor/human_era_batch1_acceptance.txt`；圖在 `game/art/human/portraits/`、`game/art/walk4/h_*.png`。
+  - 2026-11-03：人類時期 79 張對話立繪改用 ChatGPT 重畫（使用者的標準：ChatGPT／Codex 日漫風；本機 SDXL 出圖使用者不接受）。流程與原圖位置見 `docs/art_generated.md` 最後一節。
 
 ## 給 Claude 的工作規則（使用者 2026-10-21 指定）
 - **溝通**：一律用繁體中文回報。

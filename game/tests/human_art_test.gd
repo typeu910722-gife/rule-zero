@@ -89,7 +89,9 @@ func _run() -> void:
 	d.portrait_state = func(_id: String) -> String:
 		return "gown"
 	_check("_gown_" in d.portrait_path("h_fen"), "第五章 芬穿病人服")
-	_check("_uniform_" in d.portrait_path("h_mingyue"), "沒有病人服的人（銘越）退回制服")
+	# 2026-11-03 ChatGPT 補畫了銘越的病人服（之前沒有，會退回制服）
+	_check("_gown_" in d.portrait_path("h_mingyue"), "第五章 銘越穿病人服")
+	_check("_uniform_" in d.portrait_path("h_classrep"), "沒有病人服的人（班長）退回制服")
 	d.portrait_state = Callable()
 	# 給畫師的表情對照表（docs/vendor/expression_dictionary.csv）要和遊戲一致：
 	# 現有的立繪都在表上、表上的★預設表情就是遊戲用的預設臉（2026-10-28 畫師說少了這張表）
@@ -107,7 +109,8 @@ func _run() -> void:
 			if r[7] == "★" and d.HUMAN_DEFAULT_FACE.get(r[2], {}).get(r[4], "") != r[5]:
 				defaults_ok = false
 				printerr("    預設表情不一致：", r[2], " ", r[4], " ", r[5])
-		_check(names.size() == 78, "表上 78 張立繪（%d）" % names.size())
+		# 78 張外包立繪＋校長（2026-11-03 ChatGPT 出圖）
+		_check(names.size() == 79, "表上 79 張立繪（%d）" % names.size())
 		_check(defaults_ok, "表上的★預設表情 = 遊戲的預設臉")
 		var missing := []
 		for f in DirAccess.get_files_at("res://art/human/portraits"):

@@ -66,3 +66,11 @@
 
 ## 合併 cursor/ch2-mid-no-hold-skip-6513（2026-10-27）
 那個分支的第三章整張地圖 `game/art/ch3/maps/` 留著當備用；遊戲裡第三章用 Blender 做的房間（有家具前後遮擋）。巡邏的護士、畢業生用 `human_nurse`（＝ `h_nurse` 放大）、`graduate`（Blender 模型，跟 3D 追逐同一個人）；那個分支的 `h_graduate.png` 也留著。
+
+## 人類時期立繪全部重畫（2026-11-03，ChatGPT）
+外包第一批（程式化向量初版）品質不夠，使用者指定的標準是 ChatGPT／Codex 的日漫風。
+- 用 ChatGPT（使用者的 ChatGPT Classic 桌面版）照 `docs/vendor/human_era_characters_request_v2.txt` 第 3 節與身高比較設計稿（D1），在同一個對話裡一張一張畫：先畫每個人的第一張，之後「同一個人、同樣構圖，只換表情」。
+- 共 79 張：三年二班 13 人的 78 張（表情對照表 `docs/vendor/expression_dictionary.csv` 全部）＋校長 1 張（新角色立繪）。銘越的病人服 2 張是第一次有。
+- 原圖（約 1086×1448 透明 PNG）留在使用者電腦 `E:\哲\第零條規則\chatgpt_art\`（不進 Git）；外包第一批的舊圖備份在 `E:\哲\第零條規則\vendor_v1_portraits\`。
+- 進遊戲：`py -3.11 tools/art/fit_human_portrait.py <原圖> game/art/human/portraits/<檔名>`（512×768、頭頂離上緣 9%、身體貼齊下緣、左右置中）。
+- AI 生成，上架要揭露。
