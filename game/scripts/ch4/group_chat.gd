@@ -4,7 +4,7 @@ extends Ch3Mini
 ## 最後一則：名字被打上去（「遙」）。這一則可以不按：什麼都不做，訊息框會停很久，然後畫面自己暗下去。
 ## 回傳：最後一則有沒有按讚（true／false）。
 
-const PHONE := Rect2(440, 80, 400, 550)
+const PHONE_BOX := Rect2(440, 80, 400, 550)
 const COUNT := 7          # 前面幾則（看不清楚）
 const WAIT_LAST := 9.0    # 最後一則停多久
 
@@ -66,7 +66,15 @@ func _press(down: bool, _e: InputEvent) -> void:
 
 func _paint(c: Control) -> void:
 	var f: Font = GameState.font
-	c.draw_rect(PHONE.grow(14), Color("#111114"))
+	var phone_tex := art4("phone")
+	var PHONE := PHONE_BOX
+	if phone_tex != null:
+		# 手機的圖（螢幕大約在圖的 7%～93% 寬、6.5%～94% 高）：螢幕對齊訊息區
+		var pr := Rect2(640 - 345 * 0.53, 30, 345 * 1.06, 640 * 1.06)
+		c.draw_texture_rect(phone_tex, pr, false)
+		PHONE = Rect2(pr.position + pr.size * Vector2(0.07, 0.06), pr.size * Vector2(0.86, 0.895))
+	else:
+		c.draw_rect(PHONE.grow(14), Color("#111114"))
 	c.draw_rect(PHONE, Color("#eceaf0"))
 	c.draw_rect(Rect2(PHONE.position, Vector2(PHONE.size.x, 54)), Color("#7d8fa3"))
 	c.draw_string(f, PHONE.position + Vector2(0, 36), "三年二班（30）", HORIZONTAL_ALIGNMENT_CENTER, PHONE.size.x, 22, Color.WHITE)
@@ -79,7 +87,8 @@ func _paint(c: Control) -> void:
 		if y < PHONE.position.y + 60:
 			break
 		var left := k % 3 != 1
-		var r := Rect2(PHONE.position.x + (16.0 if left else 110.0), y, 274, h)
+		var bw := minf(274.0, PHONE.size.x - 40.0)
+		var r := Rect2(PHONE.position.x + (12.0 if left else PHONE.size.x - bw - 12.0), y, bw, h)
 		c.draw_rect(r, Color.WHITE if left else Color("#d7efc8"))
 		if last:
 			# 只有這一則看得清楚：一個名字

@@ -106,13 +106,24 @@ func _rect(i: int) -> Rect2:
 func _paint(c: Control) -> void:
 	var f: Font = GameState.font
 	var sh := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 10.0 * _shake
-	# 講台與台下（一排排的頭，看不清楚臉）
-	for row in 3:
-		for k in 9:
-			var p := Vector2(110 + k * 132 + row * 20, 630 - row * 22) + sh * (row + 1) * 0.3
-			c.draw_circle(p, 18, Color("#5c5246").lightened(row * 0.15))
-	c.draw_string(f, Vector2(0, 150), "三年二班。黑板上寫著：「轉學生」", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, INK)
-	c.draw_string(f, Vector2(0, 250) + sh, LAUGH[laugh - 1] if laugh > 0 else "（安靜）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, Color("#a0583c") if laugh > 2 else SOFT)
+	var bg := art4("bg_podium")
+	var top_col := INK
+	var laugh_col := Color("#a0583c") if laugh > 2 else SOFT
+	if bg != null:
+		# 從講台看出去：台下的人都是逆光的影子，笑得越大聲畫面越暗、晃得越厲害
+		c.draw_texture_rect(bg, Rect2(Vector2(-12, -12) + sh * 0.6, Vector2(1304, 744)), false)
+		c.draw_rect(Rect2(0, 0, 1280, 720), Color(0.1, 0.05, 0.03, 0.08 * laugh))
+		c.draw_rect(Rect2(0, 112, 1280, 164), Color(0, 0, 0, 0.35))
+		top_col = Color("#f3ece0")
+		laugh_col = Color("#ffb08a") if laugh > 2 else Color("#e6ddd0")
+	else:
+		# 講台與台下（一排排的頭，看不清楚臉）
+		for row in 3:
+			for k in 9:
+				var p := Vector2(110 + k * 132 + row * 20, 630 - row * 22) + sh * (row + 1) * 0.3
+				c.draw_circle(p, 18, Color("#5c5246").lightened(row * 0.15))
+	c.draw_string(f, Vector2(0, 150), "三年二班。黑板上寫著：「轉學生」", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, top_col)
+	c.draw_string(f, Vector2(0, 250) + sh, LAUGH[laugh - 1] if laugh > 0 else "（安靜）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, laugh_col)
 	for i in LINES.size():
 		var r := _rect(i)
 		var g := grey.has(i)

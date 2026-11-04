@@ -358,14 +358,26 @@ func _viewfinder() -> void:
 		var tt := (Time.get_ticks_msec() - t0) / 1000.0
 		var shake := Vector2(sin(tt * 23.0), cos(tt * 17.0)) * 6.0
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color("#111"))
-		var phone := Rect2(390, 40, 500, 640)
-		c.draw_rect(phone, Color("#000"))
-		var view := Rect2(410, 90, 460, 540)
-		c.draw_rect(view, Color("#8a8276"))
-		c.draw_rect(Rect2(view.position + Vector2(110, 60) + shake, Vector2(240, 420)), Color("#6e6558"))
-		c.draw_rect(Rect2(view.position + Vector2(110, 472) + shake, Vector2(240, 8)), Color("#1c1915"))
-		c.draw_circle(Vector2(440, 70), 8, Color("#e33") if fmod(tt, 1.0) < 0.6 else Color("#511"))
-		c.draw_string(GameState.font, Vector2(456, 78), "REC  00:%02d" % int(tt), HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color.WHITE)
+		var phone_tex := Ch3Mini.art4("phone")
+		var door_bg := Ch3Mini.art4("bg_toilet_door")
+		var rec := Vector2(440, 70)
+		if phone_tex != null and door_bg != null:
+			# 手機（直拿）的螢幕裡：廁所的門，跟著手一起抖
+			var pr := Rect2(640 - 345 * 0.53, 30, 345 * 1.06, 640 * 1.06)
+			var view := Rect2(pr.position + pr.size * Vector2(0.07, 0.06), pr.size * Vector2(0.86, 0.895))
+			var src := Rect2(Vector2(637 - view.size.x * 0.6, 40) + shake * 1.5, view.size * 1.2)
+			c.draw_texture_rect(phone_tex, pr, false)
+			c.draw_texture_rect_region(door_bg, view, src, Color(0.85, 0.8, 0.75))
+			rec = view.position + Vector2(24, 48)
+		else:
+			var phone := Rect2(390, 40, 500, 640)
+			c.draw_rect(phone, Color("#000"))
+			var view := Rect2(410, 90, 460, 540)
+			c.draw_rect(view, Color("#8a8276"))
+			c.draw_rect(Rect2(view.position + Vector2(110, 60) + shake, Vector2(240, 420)), Color("#6e6558"))
+			c.draw_rect(Rect2(view.position + Vector2(110, 472) + shake, Vector2(240, 8)), Color("#1c1915"))
+		c.draw_circle(rec, 8, Color("#e33") if fmod(tt, 1.0) < 0.6 else Color("#511"))
+		c.draw_string(GameState.font, rec + Vector2(16, 8), "REC  00:%02d" % int(tt), HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color.WHITE)
 		c.draw_string(GameState.font, Vector2(0, 700), "（按一下繼續）", HORIZONTAL_ALIGNMENT_CENTER, 1280, 18, Color("#777")))
 	var tick := func(): c.queue_redraw()
 	if not GameState.fast:
@@ -390,7 +402,27 @@ func _shoes() -> void:
 	layer.add_child(c)
 	var shoes := [Color("#2d2d33"), Color("#e9e6e0"), Color("#6b4a32"), Color("#2f4a6b"), Color("#8c2f2f"), Color("#3d5b3f")]
 	var state := {"k": 0}
+	var door_bg := Ch3Mini.art4("bg_toilet_door")
 	c.draw.connect(func():
+		var shoe_tex := Ch3Mini.art4("shoes_%d" % (state.k % shoes.size()))
+		if door_bg != null and shoe_tex != null:
+			# 同一扇門前，站著把風的人只看得到腳；一雙一雙換
+			c.draw_texture_rect(door_bg, Rect2(0, 0, 1280, 720), false)
+			# 只看得到鞋子和褲管下緣：圖的下半截，上面慢慢淡掉（看不到人）
+			var sw := float(shoe_tex.get_width())
+			var sh := float(shoe_tex.get_height())
+			var y0 := sh * 0.3
+			var slices := 12
+			for k in slices:
+				var sy := y0 + (sh - y0) * k / slices
+				var sh_k := (sh - y0) / slices
+				var a := clampf(float(k) / (slices * 0.5), 0.0, 1.0)
+				var scale := 150.0 / (sh - y0)
+				var dst := Rect2(640 - sw * scale / 2.0, 615 - (sh - sy) * scale, sw * scale, sh_k * scale + 0.5)
+				c.draw_texture_rect_region(shoe_tex, dst, Rect2(0, sy, sw, sh_k), Color(1, 1, 1, a))
+			c.draw_rect(Rect2(0, 652, 1280, 48), Color(0, 0, 0, 0.35) if state.k > 0 else Color(0, 0, 0, 0))
+			c.draw_string(GameState.font, Vector2(0, 685), "換了一雙鞋。" if state.k > 0 else "", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#f3ece0"))
+			return
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color("#cfc6b6"))
 		c.draw_colored_polygon(PackedVector2Array([Vector2(0, 720), Vector2(420, 430), Vector2(860, 430), Vector2(1280, 720)]), Color("#b9a68a"))
 		c.draw_rect(Rect2(500, 120, 280, 310), Color("#7f7466"))

@@ -33,6 +33,10 @@ func _tick(delta: float) -> void:
 
 
 func _paint(c: Control) -> void:
+	var bg := art4("bg_toilet_door")
+	if bg != null:
+		_paint_art(c, bg)
+		return
 	var f: Font = GameState.font
 	# 樓梯口、廁所的門、窗戶
 	c.draw_rect(Rect2(520, 120, 240, 360), Color("#8a7f70"))
@@ -61,5 +65,38 @@ func _paint(c: Control) -> void:
 		c.draw_rect(Rect2(440, 610, 400, 18), Color(1, 1, 1, 0.5))
 		c.draw_rect(Rect2(440, 610, 400 * stand, 18), PINK if stand > 0.35 else RED)
 		c.draw_string(f, Vector2(0, 600), "芬" if stand > 0.35 else "……再站回去。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, INK)
+	elif dove_t > 0.3 and dove_t < 0.55 and not GameState.gentle():
+		c.draw_rect(Rect2(0, 0, 1280, 720), Color(1, 1, 1, 0.8))
+
+
+## 有圖的版本：放學後的廁所門口（左下是往下的樓梯、右邊是窗戶）
+func _paint_art(c: Control, bg: Texture2D) -> void:
+	var f: Font = GameState.font
+	c.draw_texture_rect(bg, Rect2(0, 0, 1280, 720), false)
+	# 窗台上的白鴿：一直看著
+	var dove := Vector2(1110, 382)
+	if dove_t >= 0.0:
+		dove = dove.lerp(Vector2(700, 380), clampf(dove_t / 0.35, 0.0, 1.0))
+	var dv := art4("dove")
+	if dv != null:
+		draw_art_h(c, dv, dove, 64.0 + (40.0 if dove_t >= 0.0 else 0.0) * clampf(dove_t / 0.35, 0.0, 1.0))
+	# 芬（剪影）：張開手擋在門前；不穩時被推到旁邊
+	var off := (1.0 - stand) * 140.0
+	var feet := Vector2(640 + off, 660)
+	var pose := "fen_stand" if stand > 0.35 else "fen_push"
+	var alpha := 1.0
+	if dove_t > 0.35:
+		var k := clampf((dove_t - 0.35) / 0.8, 0.0, 1.0)
+		feet = Vector2(640, 660).lerp(Vector2(230, 760), k)
+		pose = "fen_push"
+		alpha = 1.0 - k * 0.6
+	var ft := art4(pose)
+	if ft != null:
+		draw_art_h(c, ft, feet, 400.0, Color(1, 1, 1, alpha))
+	# 站穩的程度
+	if dove_t < 0.0:
+		c.draw_rect(Rect2(440, 110, 400, 14), Color(1, 1, 1, 0.5))
+		c.draw_rect(Rect2(440, 110, 400 * stand, 14), PINK if stand > 0.35 else RED)
+		c.draw_string(f, Vector2(0, 100), "芬" if stand > 0.35 else "……再站回去。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, INK)
 	elif dove_t > 0.3 and dove_t < 0.55 and not GameState.gentle():
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color(1, 1, 1, 0.8))

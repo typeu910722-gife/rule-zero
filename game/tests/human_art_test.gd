@@ -186,7 +186,7 @@ func _run() -> void:
 		if MB.art(pn) == null:
 			no_part.append(pn)
 	_check(no_part.is_empty(), "第三章小遊戲 %d 個零件都有圖 %s" % [parts.size(), no_part])
-	_check(MB.art("cpr_heart") == MB.art("cpr_heart") and MB._art_cache.has("cpr_heart"), "零件圖有快取（不會畫成白色方塊）")
+	_check(MB.art("cpr_heart") == MB.art("cpr_heart") and MB._art_cache.has(MB.ART_DIR + "cpr_heart"), "零件圖有快取（不會畫成白色方塊）")
 	_check(MB.art("no_such_part") == null, "沒有的零件回傳 null（退回原本的色塊）")
 	var was_fast: bool = gs.fast
 	gs.fast = false
@@ -202,6 +202,32 @@ func _run() -> void:
 		_check(not mg._finished, "%s 用零件圖畫得出來" % gp)
 		mg.queue_free()
 	gs.fast = was_fast
+	# 第四、五章小遊戲與演出（2026-11-05 ChatGPT）：game/art/ch4/mini/
+	var parts4 := ["bg_toilet_door", "bg_podium", "bg_hospital_side", "phone", "dove", "fen_stand", "fen_push", "staff_01", "staff_02"]
+	for k in 6:
+		parts4.append("shoes_%d" % k)
+	var no4 := []
+	for pn in parts4:
+		if MB.art4(pn) == null:
+			no4.append(pn)
+	_check(no4.is_empty(), "第四、五章 %d 個零件都有圖 %s" % [parts4.size(), no4])
+	_check(MB.art4("phone") != MB.art("phone"), "第三章和第四章的零件分開放（同名不會拿錯）")
+	var ch4src := FileAccess.get_file_as_string("res://scripts/chapter4.gd")
+	_check("Ch3Mini.art4(\"phone\")" in ch4src and "Ch3Mini.art4(\"shoes_%d\"" in ch4src, "第四章 手機取景、門縫的鞋子用圖")
+	was_fast = gs.fast
+	gs.fast = false
+	for gp in ["ch4/speech", "ch4/group_chat", "ch4/hold_door", "ch5/breath_walk", "ch5/guard"]:
+		var mg = load("res://scripts/%s.gd" % gp).new()
+		root.add_child(mg)
+		for k in 3:
+			await process_frame
+		_check(not mg._finished, "%s 用圖畫得出來" % gp)
+		mg.queue_free()
+	gs.fast = was_fast
+	var bw = load("res://scripts/ch5/breath_walk.gd").new()
+	bw.held = true
+	_check(bw._haruka_frame(false) != null and bw._haruka_frame(true) == MB.art("h_haruka_chase_gown_breath", "res://art/human/chase/"), "終章 醒來走路：遙用病人服的全身圖，跌坐時喘氣")
+	bw.free()
 	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()

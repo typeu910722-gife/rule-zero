@@ -53,6 +53,9 @@ func _label(pos: Vector2, size: int, col: Color) -> Label:
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", col)
+	# 白色描邊：小遊戲有背景圖（暗的教室、走廊）時字也看得清楚
+	l.add_theme_constant_override("outline_size", 6)
+	l.add_theme_color_override("font_outline_color", Color(1, 1, 1, 0.85))
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(l)
 	return l
@@ -140,17 +143,26 @@ const ART_DIR := "res://art/ch3/mini/"
 static var _art_cache := {}
 
 
-static func art(name: String) -> Texture2D:
-	if _art_cache.has(name):
-		return _art_cache[name]
+static func art(name: String, dir := ART_DIR) -> Texture2D:
+	var key := dir + name
+	if _art_cache.has(key):
+		return _art_cache[key]
 	var tex: Texture2D = null
 	for ext in [".png", ".jpg"]:
-		var p: String = ART_DIR + name + ext
+		var p: String = dir + name + ext
 		if ResourceLoader.exists(p):
 			tex = load(p)
 			break
-	_art_cache[name] = tex
+	_art_cache[key] = tex
 	return tex
+
+
+## 第四、五章（人類時期）的小遊戲零件：game/art/ch4/mini/
+const ART4_DIR := "res://art/ch4/mini/"
+
+
+static func art4(name: String) -> Texture2D:
+	return art(name, ART4_DIR)
 
 
 ## 依高度畫圖：bottom_center＝圖的底邊中點
