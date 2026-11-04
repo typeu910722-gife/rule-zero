@@ -78,3 +78,6 @@
 77,李恩,lien,病人服＋脖子上的紅繩,gown,default,平常,★,h_lien_portrait_gown_default.png,第 3 批
 78,李恩,lien,病人服＋脖子上的紅繩,gown,sly_grin,賊賊的笑,,h_lien_portrait_gown_sly_grin.png,第 3 批
 79,校長,principal,西裝（校徽）,teacher,smile_tired,客氣但疲倦的微笑、眼神迴避,★,h_principal_portrait_teacher_smile_tired.png,ChatGPT 2026-11-03
+80,穿白大衣的人,whitecoat,白大衣（口罩、鴿子徽章）,teacher,polite,眼睛彎彎的客氣、讓人不安,★,h_whitecoat_portrait_teacher_polite.png,ChatGPT 2026-11-04
+81,芬的父親,fen_father,深藍西裝,teacher,stern,嚴厲、自以為是為孩子好（伸手要握手）,★,h_fen_father_portrait_teacher_stern.png,ChatGPT 2026-11-04
+82,護理師,nurse,淺藍護理師制服,teacher,smile,很標準、像練習過的微笑,★,h_nurse_portrait_teacher_smile.png,ChatGPT 2026-11-04

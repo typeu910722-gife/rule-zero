@@ -55,7 +55,10 @@ func _run() -> void:
 	pt.reset()
 	pt.facing = Vector2.RIGHT
 	ex.player.place(Vector2(900, 450))
-	for i in 40:
+	# 巡邏要「看到 0.28 秒」才開始追，算的是實際秒數；無畫面模式下畫格很快，
+	# 以前固定等 40 格，電腦閒的時候還不到 0.28 秒就檢查，時過時不過（2026-11-04）。改成等到回入口、最多 8 秒。
+	var t0 := Time.get_ticks_msec()
+	while ex.player.position != Vector2(100, 450) and Time.get_ticks_msec() - t0 < 8000:
 		await process_frame
 	_check(ex.player.position == Vector2(100, 450), "被巡邏看到：回到入口（%s）" % ex.player.position)
 	ex.busy = false

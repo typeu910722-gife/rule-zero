@@ -82,3 +82,11 @@
 - 進遊戲：`py -3.11 tools/art/fit_walk_sheet.py <原圖> game/art/walk4/<id>.png`（每格各自找人、同一比例縮放、x=160 置中、腳底 y=304；ChatGPT 偶爾給半透明白底，工具會挖掉）。
 - Q 版頭比外包的寬，`human_art_test` 的格子範圍放寬為 x 50～270。
 - 2026-11-04 補畫郡主、秋歌、李恩的病人服（`h_junzhu_gown`、`h_qiuge_gown`、`h_lien_gown`）；第五章病房的辛禾、郡主、秋歌、李恩改用 `*_gown`（`tools/levels/build_ch5_level.py` 和 `chapter5.json` 一起改）。人類時期走路圖共 20 張，外包需求列的 20 套都有了。
+## 大人的對話立繪（2026-11-04，ChatGPT）
+同一個 ChatGPT 對話接著畫，原圖在 `E:\哲\第零條規則\chatgpt_art\portrait_*.png`。
+- 人類時期（日漫風、半身，和校長同一套）：`py -3.11 tools/art/fit_human_portrait.py` 轉成 512×768。
+  - 穿白大衣的人（第四章，組織的研究員）：白口罩、細框眼鏡、白手套、胸前小小的白鴿徽章，眼睛彎彎的客氣 → `h_whitecoat_portrait_teacher_polite.png`
+  - 芬的父親（第四章）：深橘棕色往後梳、深藍三件式西裝、伸手要握手、嚴厲 → `h_fen_father_portrait_teacher_stern.png`
+  - 護理師（第五章醒來之後）：淺藍制服、護士帽、寫字板、名牌字看不清楚、很標準的微笑 → `h_nurse_portrait_teacher_smile.png`
+  - 服裝代號照校長用 `teacher`（第五章的病人服狀態會退回這一套）；已加進 `expression_dictionary.csv`（82 張）。
+- 理事（第五章實驗室，玩偶世界的真人，CLAUDE.md 1-5）：改用羊毛氈／布偶 3D 質感，和車掌、和平鴿同一個世界；白色長大衣、白手套、左肩一隻布做的老鷹，**臉是光滑的白布、沒有五官**。全身圖，比照和平鴿立繪的位置（512×768、頭頂 y≈11、腳底 y≈757）→ `game/art/ch2/characters/portraits/ch2_director_portrait_default.png`，`dialogue.gd` 的 `PORTRAITS["理事"]`。

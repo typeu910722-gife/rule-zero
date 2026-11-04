@@ -31,13 +31,15 @@ const PORTRAITS := {
 	"重重": "zhongzhong", "鼬鼬": "youyou", "和平鴿": "dove",
 	"露露": "lulu", "麻糬": "mochi", "波波": "popo", "小布": "pip", "車掌": "conductor", "職員": "staff",
 	"Fen": "fen",
+	# 理事：玩偶世界裡的真人（CLAUDE.md 1-5），照車掌、和平鴿的布料質感、臉不畫出來
+	"理事": "director",
 }
 const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
 ## 人類時期（第四、五章）的立繪：外包美術包（docs/vendor/human_era_characters_request.txt），
 ## 檔名 h_<id>_portrait_<服裝>_<表情>.png。服裝由章節導演的 portrait_state 給（uniform／dress／gown；導師是 teacher）
 const HUMAN_PORTRAITS := {"遙": "haruka", "芬": "fen", "導師": "teacher", "希露飛": "hilufei", "銘越": "mingyue",
 	"小滿": "xiaoman", "值日生": "duty", "辛禾": "xinhe", "薙文": "tiwen", "郡主": "junzhu", "秋歌": "qiuge", "李恩": "lien",
-	"校長": "principal"}
+	"校長": "principal", "穿白大衣的人": "whitecoat", "芬的父親": "fen_father", "護理師": "nurse"}
 const HUMAN_PORTRAIT_DIR := "res://art/human/portraits/h_%s_portrait_"
 ## 每個人每套服裝的預設表情（@face 沒指定時用這個；外包表情對照表 07_Documentation/expression_dictionary.csv）
 const HUMAN_DEFAULT_FACE := {
@@ -45,6 +47,8 @@ const HUMAN_DEFAULT_FACE := {
 	"fen": {"uniform": "annoyed", "gown": "waking"},
 	"teacher": {"teacher": "forced_smile"},
 	"principal": {"teacher": "smile_tired"},
+	# 大人（2026-11-04 ChatGPT）：服裝代號照校長用 teacher（第五章的病人服狀態會退回這一套）
+	"whitecoat": {"teacher": "polite"}, "fen_father": {"teacher": "stern"}, "nurse": {"teacher": "smile"},
 	"hilufei": {"uniform": "happy", "gown": "default"},
 	"mingyue": {"uniform": "laugh", "gown": "default"},
 	"xiaoman": {"uniform": "looking_down", "gown": "default"},

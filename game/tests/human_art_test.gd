@@ -95,6 +95,12 @@ func _run() -> void:
 	# 2026-11-03 ChatGPT 補畫了銘越的病人服（之前沒有，會退回制服）
 	_check("_gown_" in d.portrait_path("h_mingyue"), "第五章 銘越穿病人服")
 	_check("_uniform_" in d.portrait_path("h_classrep"), "沒有病人服的人（班長）退回制服")
+	# 2026-11-04 大人的立繪：第五章（病人服狀態）的護理師退回她自己的那一套
+	_check("h_nurse_portrait_teacher_smile" in d.portrait_path("h_nurse"), "第五章 護理師有立繪")
+	for who in ["穿白大衣的人", "芬的父親", "護理師"]:
+		_check(d.HUMAN_PORTRAITS.has(who) and d.portrait_path("h_" + d.HUMAN_PORTRAITS[who]) != "", "%s 有立繪" % who)
+	# 理事是玩偶世界的真人：布料質感、沒有臉（CLAUDE.md 1-5），用第二章那一套立繪
+	_check(d.PORTRAITS.get("理事", "") == "director" and d.portrait_path("director") != "", "理事 有立繪")
 	d.portrait_state = Callable()
 	# 給畫師的表情對照表（docs/vendor/expression_dictionary.csv）要和遊戲一致：
 	# 現有的立繪都在表上、表上的★預設表情就是遊戲用的預設臉（2026-10-28 畫師說少了這張表）
@@ -112,8 +118,8 @@ func _run() -> void:
 			if r[7] == "★" and d.HUMAN_DEFAULT_FACE.get(r[2], {}).get(r[4], "") != r[5]:
 				defaults_ok = false
 				printerr("    預設表情不一致：", r[2], " ", r[4], " ", r[5])
-		# 78 張外包立繪＋校長（2026-11-03 ChatGPT 出圖）
-		_check(names.size() == 79, "表上 79 張立繪（%d）" % names.size())
+		# 78 張外包立繪＋校長（2026-11-03 ChatGPT 出圖）＋穿白大衣的人、芬的父親、護理師（2026-11-04）
+		_check(names.size() == 82, "表上 82 張立繪（%d）" % names.size())
 		_check(defaults_ok, "表上的★預設表情 = 遊戲的預設臉")
 		var missing := []
 		for f in DirAccess.get_files_at("res://art/human/portraits"):
