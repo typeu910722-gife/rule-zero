@@ -74,3 +74,11 @@
 - 原圖（約 1086×1448 透明 PNG）留在使用者電腦 `E:\哲\第零條規則\chatgpt_art\`（不進 Git）；外包第一批的舊圖備份在 `E:\哲\第零條規則\vendor_v1_portraits\`。
 - 進遊戲：`py -3.11 tools/art/fit_human_portrait.py <原圖> game/art/human/portraits/<檔名>`（512×768、頭頂離上緣 9%、身體貼齊下緣、左右置中）。
 - AI 生成，上架要揭露。
+
+## 人類時期 Q 版走路圖全部重畫（2026-11-03，ChatGPT）
+外包的向量小人跟新立繪不搭，同一個 ChatGPT 對話接著畫 Q 版走路圖（每次寫清楚該角色的髮型與服裝，否則 ChatGPT 會畫錯人）。
+- 17 張：遙（制服／喜歡的衣服／病人服）、芬（制服／病人服）、導師、希露飛、銘越、小滿、班長、值日生、辛禾、薙文、郡主、秋歌、李恩，加上辛禾的病人服。
+- 原圖（約 1254×1254，4×4）在 `E:\哲\第零條規則\chatgpt_art\walk_<id>.png`；總覽 `E:\哲\第零條規則\walk_overview.jpg`。
+- 進遊戲：`py -3.11 tools/art/fit_walk_sheet.py <原圖> game/art/walk4/<id>.png`（每格各自找人、同一比例縮放、x=160 置中、腳底 y=304；ChatGPT 偶爾給半透明白底，工具會挖掉）。
+- Q 版頭比外包的寬，`human_art_test` 的格子範圍放寬為 x 50～270。
+- 2026-11-04 補畫郡主、秋歌、李恩的病人服（`h_junzhu_gown`、`h_qiuge_gown`、`h_lien_gown`）；第五章病房的辛禾、郡主、秋歌、李恩改用 `*_gown`（`tools/levels/build_ch5_level.py` 和 `chapter5.json` 一起改）。人類時期走路圖共 20 張，外包需求列的 20 套都有了。

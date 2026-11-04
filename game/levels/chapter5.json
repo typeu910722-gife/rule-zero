@@ -1421,7 +1421,7 @@
     {
      "id": "c5_a_xinhe",
      "name": "辛禾",
-     "char": "h_xinhe",
+     "char": "h_xinhe_gown",
      "pos": [
       220,
       380
@@ -1431,7 +1431,7 @@
     {
      "id": "c5_a_junzhu",
      "name": "郡主",
-     "char": "h_junzhu",
+     "char": "h_junzhu_gown",
      "pos": [
       640,
       380
@@ -1441,7 +1441,7 @@
     {
      "id": "c5_a_qiuge",
      "name": "秋歌",
-     "char": "h_qiuge",
+     "char": "h_qiuge_gown",
      "pos": [
       1060,
       380
@@ -1451,7 +1451,7 @@
     {
      "id": "c5_a_lien",
      "name": "李恩",
-     "char": "h_lien",
+     "char": "h_lien_gown",
      "pos": [
       1480,
       380

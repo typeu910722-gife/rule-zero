@@ -5,7 +5,9 @@ extends SceneTree
 
 var failures := 0
 const CLASS := ["h_haruka", "h_haruka_dress", "h_haruka_gown", "h_fen", "h_fen_gown", "h_teacher", "h_hilufei", "h_mingyue",
-	"h_xiaoman", "h_classrep", "h_duty", "h_xinhe", "h_tiwen", "h_junzhu", "h_qiuge", "h_lien"]
+	"h_xiaoman", "h_classrep", "h_duty", "h_xinhe", "h_tiwen", "h_junzhu", "h_qiuge", "h_lien",
+	# 2026-11-04 第五章醒來的四個人改穿病人服
+	"h_xinhe_gown", "h_junzhu_gown", "h_qiuge_gown", "h_lien_gown"]
 
 
 func _check(cond: bool, msg: String) -> void:
@@ -54,8 +56,9 @@ func _run() -> void:
 		for r in 4:
 			for c in 4:
 				var b := _bounds(img, c, r, cell)
-				# 人在格子正中間（x 約 108～216）；腳底在下緣附近
-				if b.position.x < 90 or b.end.x > 235 or b.end.y < 290:
+				# 人在格子正中間、腳底在下緣附近。2026-11-03 換成 ChatGPT 的 Q 版大頭（頭髮比外包的寬，約 x 62～258），
+				# 範圍放寬到 50～270；外包那次往外刺的頭髮會碰到格子邊，還是抓得到
+				if b.position.x < 50 or b.end.x > 270 or b.end.y < 290:
 					ok = false
 					worst = "第 %d 列第 %d 格 %s" % [r + 1, c + 1, b]
 		_check(ok, "%s 走路圖 1280×1280、每一格的人都在中間 %s" % [id, worst])

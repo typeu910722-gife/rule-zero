@@ -35,8 +35,8 @@ const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_nurse": 0.6, 
 	# 三年二班（外包美術包 2026-10-27，docs/vendor/human_era_characters_request.txt）：圖裡每個人一樣高，
 	# 身高差照外包的「全班身高比較圖」（遙＝1：小滿 0.77、郡主 1.29、導師 1.19）
 	"h_haruka": 0.56, "h_haruka_dress": 0.56, "h_haruka_gown": 0.56, "h_xiaoman": 0.43, "h_tiwen": 0.53, "h_duty": 0.54,
-	"h_hilufei": 0.55, "h_classrep": 0.57, "h_xinhe": 0.58, "h_qiuge": 0.59, "h_lien": 0.59, "h_fen": 0.61, "h_fen_gown": 0.61,
-	"h_mingyue": 0.62, "h_teacher": 0.67, "h_junzhu": 0.72,
+	"h_hilufei": 0.55, "h_classrep": 0.57, "h_xinhe": 0.58, "h_xinhe_gown": 0.58, "h_qiuge": 0.59, "h_qiuge_gown": 0.59, "h_lien": 0.59, "h_lien_gown": 0.59, "h_fen": 0.61, "h_fen_gown": 0.61,
+	"h_mingyue": 0.62, "h_teacher": 0.67, "h_junzhu": 0.72, "h_junzhu_gown": 0.72,
 	"h_graduate": 0.62, "zhongzhong": 0.62, "conductor": 0.75, "dove": 0.75, "director": 0.8, "staff": 0.7, "nurse": 0.7,
 	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
 	"graduate": 0.92, "human_nurse": 0.85,
