@@ -43,6 +43,7 @@
 === c4_haruka_speech
 導師：遙，上台自我介紹。
 > 你走上講台。粉筆灰的味道。
+@bg c4_cg01_speech
 @event c4_speech
 > 下台的時候，你的腳在發抖。
 > 回到座位。前面那個人沒有笑。
@@ -272,6 +273,7 @@
 
 === c4_xinhe_leave
 @set c4_letter_not_taken
+@bg c4_cg03_mailbox
 > 你的手停在投信口前面。
 > ……你沒有拿。
 > 可是這是記憶。記憶不會因為你現在不想，就變成別的樣子。
@@ -357,6 +359,7 @@
 > 你沒有打開那張紙。你把石頭放進抽屜的最裡面。
 
 === c4_l_shard1
+@bg c4_cg02_mirror
 > 你蹲下去，撿起一片鏡子的碎片。
 > 碎片裡，有你的一隻眼睛。
 > 你把它翻過去，背面朝上。
@@ -504,6 +507,7 @@
 @set c4_te_night
 
 === c4_teacher_rules
+@bg c4_cg04_teacher_night
 > 晚上的教室。很安靜。
 > 你把班規撕下來，重新寫了一遍。
 > 字寫得更大。條數變得更多。
@@ -581,6 +585,7 @@
 遙：（對不起。）
 
 === c4_d1_practice
+@bg c4_cg05_practice
 > 走廊。沒有人。只有你的腳步聲。
 > 教室在最裡面。芬說過，放假他會來教室讀書。
 遙：（那天的話，你可以忘掉。）
@@ -706,8 +711,10 @@
 @goto c4_day_6_fall
 
 === c4_day_6_fall
+@bg c4_cg06_dove
 @sfx wings
 > 白鴿撞在芬的胸口。
+@bg c4_stairs
 > 芬往後倒。
 @sfx door_thud
 > 滾下樓梯。
@@ -728,8 +735,10 @@
 
 === c4_day_6b_window
 @set c4_win_6
+@bg c4_cg06_dove
 @sfx wings
 > 白鴿從窗戶衝進來。
+@bg c4_stairs
 @goto c4_day_6b_end
 
 === c4_day_6b_end
@@ -836,6 +845,7 @@
 === c4_org_hospital
 > 醫院。一排病床。
 > 遙的床、芬的床。
+@bg c4_cg07_hairclip
 > 遙的床頭有一個塑膠袋，袋子上寫著「遺留物」。
 > 袋子裡，是那個粉紅色的髮夾。
 
@@ -926,6 +936,7 @@
 
 === c4_n_end
 @sfx dove_step
+@bg c4_cg08_first_night
 > 門開了。
 > 一個戴著鴿子面具的人走進來。白色的大衣，一點聲音都沒有。
 和平鴿：不要怕。

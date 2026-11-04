@@ -24,7 +24,10 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"c4_classroom", "c4_hallway", "c4_toilet_door", "c4_stairs", "c4_gate", "c4_window", "c4_phone", "c4_home",
 	"c4_mailbox", "c4_orphanage", "c4_office", "c4_downstairs", "c4_principal", "c4_hospital", "c4_ward", "c4_ward_dark",
 	"c4_platform", "c5_lab", "c5_lab_dark", "c5_real_ward", "c5_real_hall", "c5_outside", "c5_town", "c5_town_office",
-	"c5_ward_empty", "c5_school_gate"]
+	"c5_ward_empty", "c5_school_gate",
+	# 人類時期的 CG（dialogue.gd 的 HUMAN_CG）
+	"c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
+	"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside"]
 
 var cmds: Array = []
 var labels := {}

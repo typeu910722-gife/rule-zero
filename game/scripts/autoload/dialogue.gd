@@ -72,6 +72,8 @@ const BG_COLORS_3 := {
 }
 ## 第四、五章：art/ch4/bg/ch4_bg_<名字>.jpg、art/ch5/bg/ch5_bg_<名字>.jpg；沒有圖時用底色
 const BG_ART_45 := "res://art/ch%s/bg/ch%s_bg_%s.jpg"
+## 人類時期的 CG（第四、五章，2026-11-04 ChatGPT）：@bg c4_cg01_speech → res://art/human/cg/h_cg01_speech.jpg
+const HUMAN_CG := "res://art/human/cg/h_%s.jpg"
 const BG_COLORS_45 := {
 	# 第四章：人類時期的學校（暖一點的舊照片色）
 	"c4_classroom": Color("#d8cbb6"), "c4_hallway": Color("#cfc6b6"), "c4_toilet_door": Color("#b9b5ab"),
@@ -336,6 +338,14 @@ func _set_bg_ch2(mode: String) -> void:
 	_bg_img.visible = false
 	_cg_shown = false
 	if not _bg.visible:
+		return
+	if mode.begins_with("c4_cg") or mode.begins_with("c5_cg"):
+		var cg := HUMAN_CG % mode.substr(3)
+		if ResourceLoader.exists(cg):
+			_bg_img.texture = load(cg)
+			_bg_img.visible = true
+			_cg_shown = true   # CG 上不疊立繪
+		_bg.color = BG_COLORS.black
 		return
 	if mode.begins_with("c4_") or mode.begins_with("c5_"):
 		var n := mode.substr(1, 1)

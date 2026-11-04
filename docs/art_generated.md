@@ -90,3 +90,20 @@
   - 護理師（第五章醒來之後）：淺藍制服、護士帽、寫字板、名牌字看不清楚、很標準的微笑 → `h_nurse_portrait_teacher_smile.png`
   - 服裝代號照校長用 `teacher`（第五章的病人服狀態會退回這一套）；已加進 `expression_dictionary.csv`（82 張）。
 - 理事（第五章實驗室，玩偶世界的真人，CLAUDE.md 1-5）：改用羊毛氈／布偶 3D 質感，和車掌、和平鴿同一個世界；白色長大衣、白手套、左肩一隻布做的老鷹，**臉是光滑的白布、沒有五官**。全身圖，比照和平鴿立繪的位置（512×768、頭頂 y≈11、腳底 y≈757）→ `game/art/ch2/characters/portraits/ch2_director_portrait_default.png`，`dialogue.gd` 的 `PORTRAITS["理事"]`。
+## 人類時期 CG 10 張（2026-11-04，ChatGPT）
+照 `docs/vendor/human_era_characters_request_v2.txt` 第 4 節的 CG 清單，同一個 ChatGPT 對話畫（日漫風、和立繪同一套角色設計）。每張都把角色的髮型、服裝寫清楚，並要求「不畫血、傷口、暴力」「畫面上方 2/3 放重點」「沒有字」。
+- 原圖：`E:\哲\第零條規則\chatgpt_art\cg_h_cgXX_*.png`（約 1672×941）。進遊戲：`py -3.11 tools/art/fit_cg.py <原圖> game/art/human/cg/h_cgXX_*.jpg --top 0.4`（裁成 16:9、放大到 2560×1440）。
+- 劇本用 `@bg c4_cgXX_*`／`@bg c5_cgXX_*`（`dialogue.gd` 的 `HUMAN_CG`，顯示時不疊立繪）：
+  | CG | 位置 |
+  |---|---|
+  | 01 自我介紹 | `c4_haruka_speech`（走上講台之後） |
+  | 02 鏡子碎片 | `c4_l_shard1`（希露飛的地圖，第一片碎片） |
+  | 03 郵筒前 | `c4_xinhe_leave`（選「不拿」，手停在投信口前） |
+  | 04 留到晚上的導師 | `c4_teacher_rules` |
+  | 05 練習要說的話 | `c4_d1_practice`（「那一天」①，畫得溫柔明亮；廁所只有遠遠的標示） |
+  | 06 樓梯口的白鴿 | `c4_day_6_fall`、`c4_day_6b_window`（停在白鴿飛進來的一刻，下一句切回樓梯背景） |
+  | 07 遺留物 | `c4_org_hospital` |
+  | 08 第一個晚上 | `c4_n_end`（門開了 → 電閘；床上的人看不清楚、沒有綁的細節） |
+  | 09 醒來 | `c5_a_intro`（舉起手 → 遺留物；之後回 `c5_real_ward`） |
+  | 10 走出大門 | `c5_a_outside`（9 個人的背影＋遠處排隊進醫院、拿白色糖果的孩子） |
+- `human_art_test` 檢查 10 張都在、2560×1440、劇本有用到、CG 上不疊立繪。

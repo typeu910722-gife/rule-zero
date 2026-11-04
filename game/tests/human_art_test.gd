@@ -126,6 +126,23 @@ func _run() -> void:
 			if f.ends_with(".png") and not names.has(f):
 				missing.append(f)
 		_check(missing.is_empty(), "現有的立繪檔名都在表上 %s" % [missing])
+	# CG 10 張（2026-11-04 ChatGPT）：檔案都在、2560×1440、劇本裡都用到；顯示 CG 時不疊立繪
+	var scripts := FileAccess.get_file_as_string("res://dialogue/chapter4.txt") + FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
+	for cg in ["c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
+			"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside"]:
+		var p: String = d.HUMAN_CG % cg.substr(3)
+		var ok := ResourceLoader.exists(p)
+		if ok:
+			var t: Texture2D = load(p)
+			ok = t.get_width() == 2560 and t.get_height() == 1440
+		_check(ok, "CG %s 有圖、2560×1440" % cg)
+		_check(("@bg %s" % cg) in scripts, "CG %s 在劇本裡" % cg)
+	gs.chapter = 4
+	d.set_bg("c4_cg01_speech")
+	_check(d._bg_img.visible and d._cg_shown, "@bg c4_cg01_speech 顯示 CG")
+	d._show_portrait_ch2("遙")
+	_check(not d._ch2_portrait.visible, "CG 上不疊立繪")
+	d.set_bg("none")
 	# 第二章不受影響：Fen 還是玩偶立繪
 	gs.chapter = 2
 	d._show_portrait_ch2("芬")
