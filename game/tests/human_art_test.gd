@@ -153,6 +153,29 @@ func _run() -> void:
 		_check(bad.is_empty(), "%s 12 張都在、512×512、腳底對齊 %s" % [pre, bad])
 	_check('r.runner = "h_fen_chase_uniform"' in FileAccess.get_file_as_string("res://scripts/chapter4.gd"), "第四章 芬跑過走廊：左下角是芬")
 	_check('r.runner = "h_haruka_chase_gown"' in FileAccess.get_file_as_string("res://scripts/chapter5.gd"), "第五章 走出醫院：左下角是遙（病人服）")
+	# 小玉（2026-11-04 ChatGPT 布偶）：第五章有台詞，要有第二章那種立繪；@face 用到的表情都有圖；走路圖換成布偶
+	_check(d.PORTRAITS.get("小玉", "") == "tama", "小玉 有布偶立繪")
+	for f in ["default", "smile_hard", "bow"]:
+		_check(ResourceLoader.exists(d.PORTRAIT_DIR % "tama" + f + ".png"), "小玉 立繪 %s" % f)
+	var ch5txt := FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
+	_check("@face 小玉 bow" in ch5txt and "@face 小玉 smile_hard" in ch5txt, "第五章 小玉鞠躬、笑得很用力")
+	var tama: Texture2D = load("res://art/walk4/tama.png")
+	_check(tama.get_width() == 1280 and tama.get_height() == 1280, "小玉 走路圖是新的布偶版（1280×1280）")
+	# 門（2026-11-04 ChatGPT）：第三～五章地圖上每一種房間主題的門，正面／俯視、鎖著／開著都找得到圖
+	var EA = load("res://scripts/explore/explore_art.gd")
+	var themes := {}
+	for chn in [3, 4, 5]:
+		var lv = JSON.parse_string(FileAccess.get_file_as_string("res://levels/chapter%d.json" % chn))
+		for rid in lv.rooms:
+			if not lv.rooms[rid].get("doors", []).is_empty():
+				themes[lv.rooms[rid].get("theme", "hospital")] = true
+	var miss := []
+	for th in themes:
+		for view in ["front", "side"]:
+			for o in [true, false]:
+				if EA.door_art(th, view, o).is_empty():
+					miss.append("%s/%s/%s" % [th, view, o])
+	_check(miss.is_empty() and themes.size() >= 8, "%d 種房間主題的門都有圖 %s" % [themes.size(), miss])
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()
 	ch.maze = C3.MAZE_REAL_HALL.duplicate()

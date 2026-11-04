@@ -380,7 +380,10 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			var open := _door_open(s)
 			var th := ExploreArt.theme(room.get("theme", "hospital"))
 			var rc := Rect2(-sz / 2.0, sz)
-			if open:
+			var art_kind := _draw_door_art(n, s, sz, open)
+			if art_kind != "":
+				pass
+			elif open:
 				# 開著的門：一個暗暗的門洞，越裡面越黑
 				n.draw_rect(rc.grow(4), Color(th.line).darkened(0.25))
 				var steps := 6
@@ -394,8 +397,10 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 				n.draw_rect(Rect2(rc.position + Vector2(0, sz.y * 0.45), Vector2(sz.x, 6)), Color(0.25, 0.27, 0.28))
 			var near := player != null and player.position.distance_to(n.position) < 220.0
 			var label: String = s.get("name", "門") + ("" if open else "（鎖著）")
-			n.draw_string_outline(GameState.font, Vector2(-80, -sz.y / 2.0 - 8), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, 5, Color(1, 1, 1, 0.75 if near else 0.35))
-			n.draw_string(GameState.font, Vector2(-80, -sz.y / 2.0 - 8), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color(0.25, 0.28, 0.3, 1.0 if near else 0.45))
+			# 上面牆的門畫了正面的圖：名字寫在門的下面，不壓在門上
+			var ly := sz.y / 2.0 + 20.0 if art_kind == "front" else -sz.y / 2.0 - 8.0
+			n.draw_string_outline(GameState.font, Vector2(-80, ly), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, 5, Color(1, 1, 1, 0.75 if near else 0.35))
+			n.draw_string(GameState.font, Vector2(-80, ly), label, HORIZONTAL_ALIGNMENT_CENTER, 160, 15, Color(0.25, 0.28, 0.3, 1.0 if near else 0.45))
 		"hides":
 			var sz2 := _v(s.get("size", [60, 30]))
 			if _art_tex("hide:" + str(s.get("id", ""))):
@@ -414,6 +419,41 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			var a := 0.55 + 0.35 * sin(t * 3.0 + n.position.x)
 			n.draw_circle(Vector2(0, -12), 5, Color(1, 1, 1, a))
 			n.draw_arc(Vector2(0, -12), 10, 0, TAU, 16, Color(0.95, 0.55, 0.68, a), 2.0)
+
+
+## 門的圖：上面牆（橫的門、在房間上半）畫正面、腳在門框的下緣；左右牆、下面牆畫俯視的細長門。
+## 右邊牆的門左右翻過來（門板朝房間裡開）。回傳畫了哪一種（"front"／"side"）；沒有圖回傳 ""，退回程式畫的方塊
+func _draw_door_art(n: Node2D, _s: Dictionary, sz: Vector2, open: bool) -> String:
+	var th: String = room.get("theme", "hospital")
+	var room_sz := _v(room.get("size", [1280, 720]))
+	var room_h := room_sz.y
+	var room_w := room_sz.x
+	var top := sz.x > sz.y and n.position.y < room_h / 2.0
+	var art := ExploreArt.door_art(th, "front" if top else "side", open)
+	if art.is_empty():
+		return ""
+	var t: Texture2D = art[0]
+	var ratio := float(t.get_width()) / t.get_height()
+	if top:
+		# 正面：門的高度不超出房間上緣，寬度最多比門的範圍寬一點
+		var h := minf(n.position.y + sz.y / 2.0 + 6.0, (sz.x + 12.0) / ratio)
+		var w := h * ratio
+		n.draw_texture_rect(t, Rect2(Vector2(-w / 2.0, sz.y / 2.0 - h), Vector2(w, h)), false, art[1])
+	elif sz.y >= sz.x:
+		var h2 := sz.y + 16.0
+		var w2 := h2 * ratio
+		var flip := n.position.x > room_w / 2.0
+		n.draw_set_transform(Vector2.ZERO, 0.0, Vector2(-1 if flip else 1, 1))
+		n.draw_texture_rect(t, Rect2(Vector2(-w2 / 2.0, -h2 / 2.0), Vector2(w2, h2)), false, art[1])
+		n.draw_set_transform(Vector2.ZERO)
+	else:
+		# 下面牆：俯視的門轉 90 度躺平
+		var ln := sz.x + 16.0
+		var thick := ln * ratio
+		n.draw_set_transform(Vector2.ZERO, -PI / 2.0)
+		n.draw_texture_rect(t, Rect2(Vector2(-thick / 2.0, -ln / 2.0), Vector2(thick, ln)), false, art[1])
+		n.draw_set_transform(Vector2.ZERO)
+	return "front" if top else "side"
 
 
 func _door_open(s: Dictionary) -> bool:

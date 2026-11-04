@@ -139,6 +139,25 @@ static func theme(name: String) -> Dictionary:
 	return THEMES.get(name, THEMES.hospital)
 
 
+## 門的圖（art/doors/door_<套>_<front|side>_<locked|open>.png，tools/art/fit_door_sheet.py）：
+## 每個房間主題用哪一套、要不要調暗。front＝上面牆的門（正面），side＝左右牆、下面牆的門（俯視）
+const DOOR_SETS := {
+	"school": ["school", Color.WHITE], "school_dark": ["school", Color(0.72, 0.68, 0.62)], "home": ["school", Color.WHITE],
+	"hospital": ["hospital", Color.WHITE], "lab": ["hospital", Color(0.95, 0.98, 1.0)], "platform": ["hospital", Color(0.9, 0.9, 0.9)],
+	"hospital_old": ["hospital", Color(0.7, 0.74, 0.72)], "basement": ["hospital", Color(0.42, 0.46, 0.47)],
+	"real": ["real", Color.WHITE], "town": ["town", Color.WHITE],
+}
+
+
+## 回傳 [Texture2D, 顏色]；沒有圖回傳 []
+static func door_art(theme_name: String, view: String, open: bool) -> Array:
+	var set: Array = DOOR_SETS.get(theme_name, DOOR_SETS.hospital)
+	var path := "res://art/doors/door_%s_%s_%s.png" % [set[0], view, "open" if open else "locked"]
+	if not _cache.has(path):
+		_cache[path] = load(path) if ResourceLoader.exists(path) else null
+	return [] if _cache[path] == null else [_cache[path], set[1]]
+
+
 ## 家具（佔位）：rect 是地上的佔地範圍（房間座標）
 static func draw_prop(ci: CanvasItem, kind: String, r: Rect2, th: Dictionary, label := "") -> void:
 	var line := Color(th.line)

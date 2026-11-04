@@ -31,6 +31,8 @@ const PORTRAITS := {
 	"重重": "zhongzhong", "鼬鼬": "youyou", "和平鴿": "dove",
 	"露露": "lulu", "麻糬": "mochi", "波波": "popo", "小布": "pip", "車掌": "conductor", "職員": "staff",
 	"Fen": "fen",
+	# 小玉：第五章壞結局回到棉花糖鎮時說話（2026-11-04 ChatGPT 布偶立繪）
+	"小玉": "tama",
 	# 理事：玩偶世界裡的真人（CLAUDE.md 1-5），照車掌、和平鴿的布料質感、臉不畫出來
 	"理事": "director",
 }

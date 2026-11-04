@@ -121,3 +121,24 @@
 遊戲裡的用法：3D 追逐（`scripts/ch3/chase3d.gd`）設 `runner` 後，畫面左下角出現側面全身小人：
 往前＝跑步循環（每秒 12 格；終章 A 慢一點），撞牆＝踉蹌 0.6 秒，喘不過氣停下來＝撐膝蓋（輕輕上下動），偶爾＝回頭 0.5 秒。
 第三章（玩偶）不設 `runner`，不顯示。測試：`human_art_test.gd`。
+
+## 小玉（布偶）與地圖上的門（ChatGPT，2026-11-04）
+**小玉**：第五章壞結局 B 回到棉花糖鎮時有台詞，原本沒有第二章那種布偶立繪；地圖走路圖也還是第一章的 Q 版。
+- 立繪 `game/art/ch2/characters/portraits/ch2_tama_portrait_{default,smile_hard,bow}.png`（512×768）：
+  原圖 `chatgpt_art\portrait_tama_felt.png`（參考第一章表情圖＋麻糬、波波的立繪，三花貓布偶、黃領巾、墨綠吊帶裙）。
+  dialogue.gd `PORTRAITS["小玉"] = "tama"`；chapter5.txt 鞠躬那句 `@face 小玉 bow`、「很好的一天」那句 `@face 小玉 smile_hard`。
+- 走路圖 `game/art/walk4/tama.png`（1280×1280，取代第一章原圖做的 640 版）：原圖 `chatgpt_art\walk_tama_felt.png`，
+  `py -3.11 tools/art/fit_walk_sheet.py <原圖> game/art/walk4/tama.png --height 286`（和舊圖一樣高）。
+  第一章的 `walk_tama.png`、`face_tama.png` 沒有動。
+
+**門**（全遊戲美術清單第 4 節 C，原本是方塊＋字）：4 套 × 4 張，`game/art/doors/door_<套>_<front|side>_<locked|open>.png`。
+原圖 `chatgpt_art\door_{school,hospital,real,town}.png`（2×2 白底），`py -3.11 tools/art/fit_door_sheet.py <原圖> game/art/doors <套>`。
+| 套 | 用在哪些房間主題（explore_art.gd `DOOR_SETS`） |
+|---|---|
+| school 木頭教室門 | school、school_dark（調暗）、home |
+| hospital 玩偶世界的舊病房門 | hospital、lab、platform、hospital_old（調暗）、basement（更暗） |
+| real 現實的白色病房門＋電子鎖 | real |
+| town 棉花糖鎮的粉紅拱門 | town |
+畫法（explore.gd `_draw_door_art`）：上面牆的門畫正面（腳在門的範圍下緣、不超出房間上緣），名字改寫在門下面；
+左右牆、下面牆的門畫俯視的細長門（右牆左右翻、下牆轉 90 度）。鎖著的門有鎖鏈（真實醫院是亮紅燈的電子鎖），開著的門是暗的門洞。
+測試：`human_art_test.gd`（小玉立繪／走路圖、每一種有門的房間主題都找得到 4 張門）。
