@@ -107,3 +107,17 @@
   | 09 醒來 | `c5_a_intro`（舉起手 → 遺留物；之後回 `c5_real_ward`） |
   | 10 走出大門 | `c5_a_outside`（9 個人的背影＋遠處排隊進醫院、拿白色糖果的孩子） |
 - `human_art_test` 檢查 10 張都在、2560×1440、劇本有用到、CG 上不疊立繪。
+## 追逐戰全身圖 3 套 × 12 張（ChatGPT，2026-11-04）
+需求 v2 第 2-4 節。ChatGPT 一套畫一張 4 欄 × 3 列的白底動作表（原圖 `E:\哲\第零條規則\chatgpt_art\chase_h_*.png`，1774×887），
+`py -3.11 tools/art/fit_chase_sheet.py <原圖> game/art/human/chase <前綴>` 切成 12 張 512×512 透明 PNG：
+12 格同一個縮放比例、腳底 y=488、頭＋上半身的中心 x=256。動作：run_00～07、idle、look_back、stumble、breath。
+
+| 套 | 前綴 | 用在哪裡 |
+|---|---|---|
+| A 遙（制服） | `h_haruka_chase_uniform` | 目前劇本沒有遙穿制服跑的段落，圖先備著 |
+| B 遙（病人服） | `h_haruka_chase_gown` | 第五章終章 A「走出去」（chapter5.gd `_walk_out`）；走路格子是慢慢走 |
+| C 芬（制服） | `h_fen_chase_uniform` | 第四章「走廊盡頭」（chapter4.gd `c4_run`） |
+
+遊戲裡的用法：3D 追逐（`scripts/ch3/chase3d.gd`）設 `runner` 後，畫面左下角出現側面全身小人：
+往前＝跑步循環（每秒 12 格；終章 A 慢一點），撞牆＝踉蹌 0.6 秒，喘不過氣停下來＝撐膝蓋（輕輕上下動），偶爾＝回頭 0.5 秒。
+第三章（玩偶）不設 `runner`，不顯示。測試：`human_art_test.gd`。

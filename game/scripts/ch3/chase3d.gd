@@ -99,6 +99,19 @@ var start_motif := "whistle"
 var late := false
 var breath_stops := 0             # 喘不過氣、停下來的次數
 var _stop_t := 0.0
+## 左下角的側面全身小人（art/human/chase/<runner>_<動作>.png，需求 v2 第 2-4 節）；空＝不顯示
+var runner := ""
+var runner_pose := ""             # 目前的動作（測試用）
+var _runner: TextureRect
+var _runner_tex := {}
+var _run_t := 0.0
+var _stumble_t := 0.0
+var _look_t := 0.0
+var _look_cd := 6.0
+var _stumble_cd := 0.0
+const RUNNER_DIR := "res://art/human/chase/"
+const RUNNER_POSES := ["run_00", "run_01", "run_02", "run_03", "run_04", "run_05", "run_06", "run_07",
+	"idle", "look_back", "stumble", "breath"]
 
 var _vp: SubViewport
 var _world: Node3D
@@ -162,6 +175,66 @@ func _ready() -> void:
 	_hint = _label(Vector2(0, 664), 20)
 	_hint.text = hint
 	_status = _label(Vector2(0, 60), 22)
+	_make_runner()
+
+
+func _make_runner() -> void:
+	if runner == "":
+		return
+	for p in RUNNER_POSES:
+		var path: String = RUNNER_DIR + "%s_%s.png" % [runner, p]
+		if ResourceLoader.exists(path):
+			_runner_tex[p] = load(path)
+	if _runner_tex.size() != RUNNER_POSES.size():
+		_runner_tex.clear()
+		return
+	_runner = TextureRect.new()
+	_runner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_runner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_runner.size = Vector2(230, 230)
+	_runner.position = Vector2(16, 720 - 230 - 8)
+	_runner.modulate = Color(1, 1, 1, 0.92)
+	add_child(_runner)
+	_set_runner("idle")
+
+
+func _set_runner(pose: String) -> void:
+	runner_pose = pose
+	if _runner:
+		_runner.texture = _runner_tex[pose]
+
+
+## 小人跟著玩家：往前＝跑（終章 A 是慢慢走）、撞牆＝踉蹌、喘不過氣＝撐膝蓋、追的人靠近或偶爾＝回頭
+func _update_runner(delta: float, fwd: float, running: bool, blocked: bool) -> void:
+	if _runner == null:
+		return
+	_stumble_t = maxf(0.0, _stumble_t - delta)
+	_look_t = maxf(0.0, _look_t - delta)
+	_look_cd -= delta
+	_stumble_cd -= delta
+	var bob := 0.0
+	if fwd > 0.0 and blocked and _stumble_cd <= 0.0 and _look_t <= 0.0:
+		_stumble_t = 0.6
+		_stumble_cd = 2.0
+	if fwd > 0.0 and _look_cd <= 0.0 and _stumble_t <= 0.0:
+		_look_t = 0.5
+		_look_cd = randf_range(5.0, 9.0) if threat < 0.3 else randf_range(1.5, 3.0)
+	if _stop_t > 0.0:
+		_set_runner("breath")
+		bob = sin(_t * 5.0) * 3.0
+	elif _stumble_t > 0.0:
+		_set_runner("stumble")
+	elif _look_t > 0.0:
+		_set_runner("look_back")
+	elif fwd != 0.0:
+		_run_t += delta * (12.0 if running else (7.0 if breath else 10.0))
+		_set_runner("run_%02d" % (int(_run_t) % 8))
+	elif _stamina < 0.3:
+		_set_runner("breath")
+		bob = sin(_t * 5.0) * 3.0
+	else:
+		_set_runner("idle")
+	_runner.position.y = 720 - 230 - 8 + bob
 
 
 func _label(pos: Vector2, size: int) -> Label:
@@ -569,8 +642,9 @@ func _process(delta: float) -> void:
 	else:
 		_stamina = clampf(_stamina + (-0.35 if running else 0.18) * delta, 0.0, 1.0)
 	var dir := Vector2(-sin(_yaw), -cos(_yaw)) * fwd * speed * delta
-	_try_move(Vector2(dir.x, 0))
-	_try_move(Vector2(0, dir.y))
+	var moved_x := _try_move(Vector2(dir.x, 0))
+	var moved_z := _try_move(Vector2(0, dir.y))
+	_update_runner(delta, fwd, running, fwd > 0.0 and not moved_x and not moved_z)
 	_place_cam()
 	_dread(delta)
 	if fwd != 0.0:
@@ -615,13 +689,17 @@ func _process(delta: float) -> void:
 		_finish()
 
 
-func _try_move(v: Vector2) -> void:
+## 走得動回傳 true；被牆擋住、或這個方向沒有要動，回傳 false
+func _try_move(v: Vector2) -> bool:
+	if v == Vector2.ZERO:
+		return false
 	var np := _pos + v
 	var r := 0.28
 	for off in [Vector2(r, r), Vector2(-r, r), Vector2(r, -r), Vector2(-r, -r)]:
 		if not walkable(_cell(np + off)):
-			return
+			return false
 	_pos = np
+	return true
 
 
 func _bfs(from: Vector2i, to: Vector2i) -> Array:

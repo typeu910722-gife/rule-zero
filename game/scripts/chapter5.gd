@@ -215,6 +215,7 @@ func _walk_out() -> void:
 	r.look = Chase3DScript.LOOK_REAL
 	r.has_enemy = false
 	r.breath = true
+	r.runner = "h_haruka_chase_gown"   # 左下角：遙（病人服）慢慢走、喘氣
 	r.start_motif = ""
 	r.title = "走出去"
 	r.hint = "上：往前　左右：轉身　喘不過氣的時候，停下來"

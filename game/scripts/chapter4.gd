@@ -303,6 +303,7 @@ func _on_event(event_name: String) -> void:
 			r.maze = Chase3DScript.MAZE_SCHOOL.duplicate()
 			r.look = Chase3DScript.LOOK_SCHOOL
 			r.has_enemy = false
+			r.runner = "h_fen_chase_uniform"   # 左下角：芬的側面全身
 			r.time_limit = 50.0
 			r.start_motif = ""
 			r.title = "走廊盡頭"

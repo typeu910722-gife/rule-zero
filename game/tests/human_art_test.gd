@@ -137,6 +137,55 @@ func _run() -> void:
 			ok = t.get_width() == 2560 and t.get_height() == 1440
 		_check(ok, "CG %s 有圖、2560×1440" % cg)
 		_check(("@bg %s" % cg) in scripts, "CG %s 在劇本裡" % cg)
+	# 追逐戰全身圖 3 套 × 12 張（2026-11-04 ChatGPT）：512×512、腳底在 y≈488、人在格子中間
+	var C3 = load("res://scripts/ch3/chase3d.gd")
+	for pre in ["h_haruka_chase_uniform", "h_haruka_chase_gown", "h_fen_chase_uniform"]:
+		var bad := []
+		for pose in C3.RUNNER_POSES:
+			var p: String = C3.RUNNER_DIR + "%s_%s.png" % [pre, pose]
+			if not ResourceLoader.exists(p):
+				bad.append(pose + " 沒有圖")
+				continue
+			var img: Image = load(p).get_image()
+			var r := img.get_used_rect()
+			if img.get_width() != 512 or img.get_height() != 512 or absi(r.end.y - 488) > 3 or r.position.y < 24 or r.position.x < 0:
+				bad.append("%s %s" % [pose, r])
+		_check(bad.is_empty(), "%s 12 張都在、512×512、腳底對齊 %s" % [pre, bad])
+	_check('r.runner = "h_fen_chase_uniform"' in FileAccess.get_file_as_string("res://scripts/chapter4.gd"), "第四章 芬跑過走廊：左下角是芬")
+	_check('r.runner = "h_haruka_chase_gown"' in FileAccess.get_file_as_string("res://scripts/chapter5.gd"), "第五章 走出醫院：左下角是遙（病人服）")
+	# 小人跟著玩家的狀態換動作
+	var ch = C3.new()
+	ch.maze = C3.MAZE_REAL_HALL.duplicate()
+	ch.look = C3.LOOK_REAL
+	ch.has_enemy = false
+	ch.breath = true
+	ch.runner = "h_haruka_chase_gown"
+	root.add_child(ch)
+	await process_frame
+	ch._vp.size = Vector2i(64, 36)
+	ch.set_process(false)
+	_check(ch._runner != null and ch.runner_pose == "idle", "一開始站著（idle）")
+	ch._look_cd = 99.0
+	ch._update_runner(0.2, 1.0, false, false)
+	_check(ch.runner_pose.begins_with("run_"), "往前走：播走路的格子（%s）" % ch.runner_pose)
+	ch._update_runner(0.05, 1.0, false, true)
+	_check(ch.runner_pose == "stumble", "撞到牆：踉蹌")
+	ch._stop_t = 1.0
+	ch._update_runner(0.05, 0.0, false, false)
+	_check(ch.runner_pose == "breath", "喘不過氣、停下來：撐膝蓋喘氣")
+	ch._stop_t = 0.0
+	ch._stumble_t = 0.0
+	ch._look_cd = 0.0
+	ch._update_runner(0.05, 1.0, false, false)
+	_check(ch.runner_pose == "look_back", "偶爾回頭看")
+	ch.queue_free()
+	var ch3 = C3.new()
+	root.add_child(ch3)
+	await process_frame
+	ch3._vp.size = Vector2i(64, 36)
+	_check(ch3._runner == null, "第三章（玩偶）的 3D 追逐不顯示人類小人")
+	ch3.queue_free()
+	await process_frame
 	gs.chapter = 4
 	d.set_bg("c4_cg01_speech")
 	_check(d._bg_img.visible and d._cg_shown, "@bg c4_cg01_speech 顯示 CG")
