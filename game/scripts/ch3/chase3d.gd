@@ -275,8 +275,32 @@ func _mat(col: Color, emit := 0.0) -> StandardMaterial3D:
 	return m
 
 
+## 自己會發光的貼圖（燈具、逃生燈牌）；沒有圖回傳 null
+func _glow_mat(name: String, col: Color, emit: float) -> StandardMaterial3D:
+	var path := TEX_DIR + name + ".png"
+	if not ResourceLoader.exists(path):
+		return null
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load(path)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	m.emission_enabled = true
+	m.emission_texture = m.albedo_texture
+	m.emission = col
+	m.emission_energy_multiplier = emit
+	return m
+
+
 func _kit() -> String:
 	return look.get("kit", "hosp")
+
+
+## 3D 走廊的門：跟地圖上的門同一套圖（玩偶醫院／學校／真實醫院）
+const DOOR_KITS := {"hosp": "hospital", "school": "school", "real": "real"}
+
+
+static func door_texture(kit: String) -> Texture2D:
+	var p := "res://art/doors/door_%s_front_locked.png" % DOOR_KITS.get(kit, "hospital")
+	return load(p) if ResourceLoader.exists(p) else null
 
 
 ## 有貼圖用貼圖（uv＝一張貼圖重複幾次），沒有就用純色
@@ -308,6 +332,15 @@ func _build_walls(w: int, h: int) -> void:
 	var win_mat := _mat(Color("#1d2629"))
 	var door := QuadMesh.new()
 	door.size = Vector2(1.0, 2.15)
+	# 有門的圖（地圖上用的那套，2026-11-04 ChatGPT）就貼上去：鎖著的正面
+	var door_tex := door_texture(_kit())
+	if door_tex != null:
+		door_mat = StandardMaterial3D.new()
+		door_mat.albedo_texture = door_tex
+		door_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		door_mat.alpha_scissor_threshold = 0.5
+		door_mat.roughness = 0.8
+		door.size = Vector2(2.15 * door_tex.get_width() / door_tex.get_height(), 2.15)
 	var win := QuadMesh.new()
 	win.size = Vector2(0.28, 0.4)
 	var n := 0
@@ -333,6 +366,8 @@ func _build_walls(w: int, h: int) -> void:
 					dm.position = c + Vector3(d.x, 0, d.y) * 0.01 + Vector3(0, -0.225, 0)
 					dm.rotation.y = m.rotation.y
 					_world.add_child(dm)
+					if door_tex != null:
+						continue  # 門的圖上已經有窗
 					var wm := MeshInstance3D.new()
 					wm.mesh = win
 					wm.material_override = win_mat
@@ -429,7 +464,8 @@ func _build() -> void:
 				"D":
 					_enemy_start = c
 					_has_d = true
-	# 天花板的燈（一閃一閃）
+	# 天花板的燈（一閃一閃）；有燈具的圖就貼圖並自己發光
+	var lamp_mat := _glow_mat("ceiling_lamp", Color(look.get("light", "#dfe9ea")), 1.3)
 	var k := 0
 	for y in h:
 		for x in w:
@@ -446,7 +482,9 @@ func _build() -> void:
 				var pq := QuadMesh.new()
 				pq.size = Vector2(1.1, 0.32)
 				pnl.mesh = pq
-				pnl.material_override = _mat(Color(look.get("light", "#dfe9ea")), 1.6)
+				pnl.material_override = lamp_mat if lamp_mat != null else _mat(Color(look.get("light", "#dfe9ea")), 1.6)
+				if lamp_mat != null:
+					pq.size = Vector2(1.1, 1.1 * 222.0 / 512.0)
 				pnl.position = Vector3((x + 0.5) * CELL, 2.59, (y + 0.5) * CELL)
 				pnl.rotation.x = PI / 2.0
 				_world.add_child(pnl)
@@ -464,6 +502,19 @@ func _build() -> void:
 	sb.size = Vector3(0.8, 0.3, 0.05)
 	sign.mesh = sb
 	sign.material_override = _mat(Color("#5be38a"), 2.0)
+	# 逃生燈牌的圖：玩偶的醫院是毛氈的，學校和真實的醫院是發光的（2026-11-05 ChatGPT）
+	var sign_mat := _glow_mat("exit_sign_felt" if _kit() == "hosp" else "exit_sign", Color("#5be38a"), 1.2)
+	if sign_mat != null:
+		var sq := QuadMesh.new()
+		sq.size = Vector2(0.9, 0.9 * sign_mat.albedo_texture.get_height() / sign_mat.albedo_texture.get_width())
+		sign.mesh = sq
+		sign.material_override = sign_mat
+		sign_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		# 正面朝向走過來的那一格（不然從背面看箭頭是反的）
+		for d in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0)]:
+			if walkable(_exit + d):
+				sign.rotation.y = atan2(float(d.x), float(d.y))
+				break
 	sign.position = Vector3(_center(_exit).x, 2.1, _center(_exit).y)
 	_world.add_child(sign)
 	# 玩家的手電筒

@@ -479,6 +479,19 @@ func _chapter_end() -> void:
 	bg.color = Color.BLACK
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	card.add_child(bg)
+	# 章末卡片的背景（ChatGPT 2026-11-05）：很暗的一張圖，慢慢浮出來；沒有圖就是全黑
+	if ResourceLoader.exists("res://art/ch3/bg/ch3_end_card.jpg"):
+		var pic := TextureRect.new()
+		pic.texture = load("res://art/ch3/bg/ch3_end_card.jpg")
+		pic.set_anchors_preset(Control.PRESET_FULL_RECT)
+		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		pic.modulate = Color(0.55, 0.55, 0.6, 0.0)
+		card.add_child(pic)
+		if GameState.fast:
+			pic.modulate.a = 1.0
+		else:
+			create_tween().tween_property(pic, "modulate:a", 1.0, 3.0)
 	# 結算的音樂先停一拍
 	if not GameState.fast:
 		await get_tree().create_timer(1.5).timeout

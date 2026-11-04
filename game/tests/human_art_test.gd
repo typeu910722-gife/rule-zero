@@ -274,6 +274,14 @@ func _run() -> void:
 	kp3.free()
 	_check(load("res://scripts/ch3/hud.gd").bar_style() is StyleBoxTexture, "狀態列用底條圖")
 	gs.chapter = was_ch2
+	# 3D 走廊：門用地圖那套圖、逃生燈牌與天花板燈有貼圖；第三、四章的章末卡片有背景（2026-11-05）
+	var C3d = load("res://scripts/ch3/chase3d.gd")
+	for kit in ["hosp", "school", "real"]:
+		_check(C3d.door_texture(kit) != null, "3D 走廊的門有圖（%s）" % kit)
+	for tn in ["exit_sign", "exit_sign_felt", "ceiling_lamp"]:
+		_check(ResourceLoader.exists("res://art/3d/tex/%s.png" % tn), "3D 的 %s 有圖" % tn)
+	for pair in [["chapter3", "res://art/ch3/bg/ch3_end_card.jpg"], ["chapter4", "res://art/ch4/bg/ch4_end_card.jpg"]]:
+		_check(ResourceLoader.exists(pair[1]) and pair[1] in FileAccess.get_file_as_string("res://scripts/%s.gd" % pair[0]), "%s 章末卡片有背景圖" % pair[0])
 	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()

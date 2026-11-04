@@ -177,3 +177,11 @@
 - 密碼鎖：`kp3_*`（毛氈，第三章）、`kp5_*`（金屬，第五章）；狀態列底條：`hud3_bar`（毛氈）、`hud4_bar`（筆記本紙），都在 `game/art/ch3/mini/`
   （原圖 `ui_keypad_hud.png`）。狀態列底條高 60px，九宮格邊才不會比狀態列高。
 - 切圖：很寬的東西（對話框）或格子不平均的零件表用 `tools/art/fit_ui_pieces.py`（找連在一起的幾塊；`--pos` 照位置排）。
+
+## 章末卡片背景、3D 走廊的門／逃生燈牌／天花板燈（2026-11-05）
+- 章末卡片：`game/art/ch3/bg/ch3_end_card.jpg`（玩偶醫院夜裡空的病床，原圖 `chatgpt_art\ch3_end_card.png`）、
+  `game/art/ch4/bg/ch4_end_card.jpg`（夜裡空的三年二班，`ch4_end_card.png`）。很暗、慢慢浮出來，字疊在上面。
+- 3D 走廊的門：直接用地圖那套門圖（`door_<hospital|school|real>_front_locked.png`），不另外畫。
+- `game/art/3d/tex/exit_sign.png`（發光的逃生燈牌，學校與真實醫院）、`exit_sign_felt.png`（毛氈的，玩偶醫院）、
+  `ceiling_lamp.png`（天花板燈具）；原圖 `chatgpt_art\3d_exit_lamp.png`。燈牌朝向走過來的那一格。
+- 還沒做：3D 走廊的桌椅、置物櫃、長椅等模型（ChatGPT 只能出平面圖）。
