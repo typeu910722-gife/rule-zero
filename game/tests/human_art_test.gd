@@ -129,7 +129,8 @@ func _run() -> void:
 	# CG 10 張（2026-11-04 ChatGPT）：檔案都在、2560×1440、劇本裡都用到；顯示 CG 時不疊立繪
 	var scripts := FileAccess.get_file_as_string("res://dialogue/chapter4.txt") + FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
 	for cg in ["c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
-			"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside"]:
+			"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside",
+			"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note"]:
 		var p: String = d.HUMAN_CG % cg.substr(3)
 		var ok := ResourceLoader.exists(p)
 		if ok:
@@ -278,10 +279,19 @@ func _run() -> void:
 	var C3d = load("res://scripts/ch3/chase3d.gd")
 	for kit in ["hosp", "school", "real"]:
 		_check(C3d.door_texture(kit) != null, "3D 走廊的門有圖（%s）" % kit)
+	# 學校、真實醫院 3D 走廊的擺設（tools/art/make_props_3d.py，2026-11-05）
+	for kit in C3d.PROPS:
+		var names: Array = C3d.PROPS[kit][0].duplicate()
+		names.append(C3d.PROPS[kit][1])
+		for mn in names:
+			_check(ResourceLoader.exists(C3d.MODEL_DIR + mn + ".glb"), "3D 走廊（%s）的 %s 模型在" % [kit, mn])
 	for tn in ["exit_sign", "exit_sign_felt", "ceiling_lamp"]:
 		_check(ResourceLoader.exists("res://art/3d/tex/%s.png" % tn), "3D 的 %s 有圖" % tn)
 	for pair in [["chapter3", "res://art/ch3/bg/ch3_end_card.jpg"], ["chapter4", "res://art/ch4/bg/ch4_end_card.jpg"]]:
 		_check(ResourceLoader.exists(pair[1]) and pair[1] in FileAccess.get_file_as_string("res://scripts/%s.gd" % pair[0]), "%s 章末卡片有背景圖" % pair[0])
+	# 第二章結局車廂：Fen 的分層（2026-11-05 ChatGPT），排在前排（波波）之前畫
+	var ch2src := FileAccess.get_file_as_string("res://scripts/chapter2.gd")
+	_check(ResourceLoader.exists("res://art/ch2/cg/ending_layers/ch2_cg20_fen.png") and "[\"fen\", \"conductor\"" in ch2src, "第二章結局車廂有 Fen，而且被前排擋住下半身")
 	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()

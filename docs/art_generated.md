@@ -185,3 +185,19 @@
 - `game/art/3d/tex/exit_sign.png`（發光的逃生燈牌，學校與真實醫院）、`exit_sign_felt.png`（毛氈的，玩偶醫院）、
   `ceiling_lamp.png`（天花板燈具）；原圖 `chatgpt_art\3d_exit_lamp.png`。燈牌朝向走過來的那一格。
 - 還沒做：3D 走廊的桌椅、置物櫃、長椅等模型（ChatGPT 只能出平面圖）。
+
+## 第五章事件 CG 3 張（ChatGPT，2026-11-05）
+- `h_cg11_director`（理事帶著老鷹走進實驗室；玩偶世界的真人，臉是一片陰影；上傳 `ch2_director_portrait_default.png` 當參考）、
+  `h_cg12_vest`（白面的背心蓋在芬的手上，只畫手）、`h_cg13_vest_note`（壞結局：空床上摺好的背心和看不清楚的紙條）。
+- 原圖 `chatgpt_art\cg_h_cg11_director.png` 等，裁 16:9、放大到 2560×1440，放在 `game/art/human/cg/`。
+- 劇本：`c5_director`（老鷹那句之後顯示，接著回到 `c5_lab`）、`c5_a_baimian`、`c5_b3_fen`。
+
+## 學校、真實醫院 3D 走廊的擺設（Blender 命令列，2026-11-05）
+- `tools/art/make_props_3d.py` 用 Blender 5.2 不開視窗產生低面數 glb：`school_desk`（課桌＋倒放的椅子）、`locker`（三格置物櫃）、
+  `bench`（候診長椅）、`cart`（推車），放在 `game/art/3d/`。
+- `chase3d.gd` 的 `PROPS`：死巷裡放第一組、直走廊每隔幾格靠牆放第二組（正面朝走廊）。
+
+## 第二章結局車廂的 Fen 分層（ChatGPT，2026-11-05）
+- 原圖 `chatgpt_art\ch2_cg20_fen_src.png`（上傳 `ch2_fen_portrait_a_default.png`，畫坐著的 Fen），去背後縮到 140px 高、稍微調暗，
+  放在右邊第二排靠走道（中心 x=748、頭頂 y=292），存成 `game/art/ch2/cg/ending_layers/ch2_cg20_fen.png`（1280×720 透明）。
+- chapter2.gd 的疊圖順序：Fen 在車掌和前排之前畫。

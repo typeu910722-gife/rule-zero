@@ -731,7 +731,7 @@ func _on_event(event_name: String) -> void:
 		"c2_ending_cg":
 			# 結尾的車廂：上車的人每人一層（外包 CG-20 分層）
 			var layers := ["res://art/ch2/backgrounds/ch2_bg_ending_color.jpg"]
-			# Fen 的分層還沒有圖（缺圖時自動略過）：見 docs/chapter2_asset_requests.txt 追加需求
+			# Fen 的分層（2026-11-05 ChatGPT）：坐在右邊第二排靠走道，所以排在前排的人之前畫
 			# 後排先畫，前排蓋住他們的下半身，才不會疊在走道中間
 			var aboard := []
 			for id in ["baimian", "zhongzhong", "gaga", "youyou"]:
@@ -739,7 +739,7 @@ func _on_event(event_name: String) -> void:
 					aboard.append(id)
 			if GameState.has("fate_xiaoji_aboard"):
 				aboard.append("xiaoji_onequill" if GameState.has("xiaoji_last_quill") else "xiaoji_bald")
-			aboard.append_array(["conductor", "pip", "lulu", "mochi", "popo", "fen"])
+			aboard.append_array(["fen", "conductor", "pip", "lulu", "mochi", "popo"])
 			for id in aboard:
 				layers.append("res://art/ch2/cg/ending_layers/ch2_cg20_%s.png" % id)
 			Dialogue.set_bg_layers(layers)

@@ -377,9 +377,15 @@ func _build_walls(w: int, h: int) -> void:
 
 
 ## 醫院的障礙物：死巷裡的推床、輪椅，走廊邊的點滴架（只是擺著，不擋路）
+## 每一種走廊的擺設：[死巷裡的（輪流）, 走廊邊靠牆的]；學校和真實醫院的是 tools/art/make_props_3d.py 做的（2026-11-05）
+const PROPS := {"hosp": [["gurney", "wheelchair"], "ivpole"], "school": [["school_desk"], "locker"], "real": [["cart"], "bench"]}
+
+
 func _build_props(w: int, h: int) -> void:
-	if _kit() != "hosp":
+	if not PROPS.has(_kit()):
 		return
+	var dead_end: Array = PROPS[_kit()][0]
+	var side_name: String = PROPS[_kit()][1]
 	var k := 0
 	for y in h:
 		for x in w:
@@ -392,7 +398,7 @@ func _build_props(w: int, h: int) -> void:
 					open.append(d)
 			var p := _center(c)
 			if open.size() == 1:
-				var mdl := _model("gurney" if k % 2 == 0 else "wheelchair")
+				var mdl := _model(dead_end[k % dead_end.size()])
 				if mdl:
 					var o: Vector2i = open[0]
 					mdl.position = Vector3(p.x - o.x * 0.45, 0, p.y - o.y * 0.45)
@@ -400,12 +406,20 @@ func _build_props(w: int, h: int) -> void:
 					_world.add_child(mdl)
 				k += 1
 			elif open.size() == 2 and (x * 7 + y * 3) % 9 == 0:
-				var iv := _model("ivpole")
-				if iv:
-					var side: Vector2i = Vector2i(open[0].y, open[0].x)
-					iv.position = Vector3(p.x + side.x * 0.7, 0, p.y + side.y * 0.7)
-					iv.rotation.y = x * 1.3
-					_world.add_child(iv)
+				var side: Vector2i = Vector2i(open[0].y, open[0].x)
+				if side_name == "ivpole":
+					var iv := _model(side_name)
+					if iv:
+						iv.position = Vector3(p.x + side.x * 0.7, 0, p.y + side.y * 0.7)
+						iv.rotation.y = x * 1.3
+						_world.add_child(iv)
+				elif not walkable(c + side):
+					# 靠牆放（置物櫃、長椅），正面朝走廊
+					var sm := _model(side_name)
+					if sm:
+						sm.position = Vector3(p.x + side.x * 0.74, 0, p.y + side.y * 0.74)
+						sm.rotation.y = atan2(float(-side.x), float(-side.y))
+						_world.add_child(sm)
 
 
 func _build() -> void:
