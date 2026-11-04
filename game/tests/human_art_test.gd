@@ -176,6 +176,33 @@ func _run() -> void:
 				if EA.door_art(th, view, o).is_empty():
 					miss.append("%s/%s/%s" % [th, view, o])
 	_check(miss.is_empty() and themes.size() >= 8, "%d 種房間主題的門都有圖 %s" % [themes.size(), miss])
+	# 第三章小遊戲零件（2026-11-05 ChatGPT）：每一種都找得到圖；圖要被快取住（只在 draw 裡 load 會被釋放，畫成一塊白色）
+	var MB = load("res://scripts/ch3/mini_base.gd")
+	var parts := ["cpr_heart", "cpr_heart_press", "cpr_monitor", "drip_bag", "drip_drop", "card_back", "card_front",
+		"thermo", "sew_cloth", "sew_needle", "sew_cotton", "rules_board", "corridor",
+		"run_gurney", "run_pole", "run_hand", "run_wheelchair", "run_bu_01", "run_bu_02"]
+	var no_part := []
+	for pn in parts:
+		if MB.art(pn) == null:
+			no_part.append(pn)
+	_check(no_part.is_empty(), "第三章小遊戲 %d 個零件都有圖 %s" % [parts.size(), no_part])
+	_check(MB.art("cpr_heart") == MB.art("cpr_heart") and MB._art_cache.has("cpr_heart"), "零件圖有快取（不會畫成白色方塊）")
+	_check(MB.art("no_such_part") == null, "沒有的零件回傳 null（退回原本的色塊）")
+	var was_fast: bool = gs.fast
+	gs.fast = false
+	for gp in ["cpr", "drip", "heart_cards", "sew", "thermo", "runner"]:
+		var mg = load("res://scripts/ch3/%s.gd" % gp).new()
+		if gp == "sew":
+			mg.patients = [["lulu", "露露"]]
+		if gp == "thermo":
+			mg.queue = [["lulu", "露露"]]
+		root.add_child(mg)
+		for k in 3:
+			await process_frame
+		_check(not mg._finished, "%s 用零件圖畫得出來" % gp)
+		mg.queue_free()
+	gs.fast = was_fast
+	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()
 	ch.maze = C3.MAZE_REAL_HALL.duplicate()

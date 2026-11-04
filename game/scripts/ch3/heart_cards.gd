@@ -74,13 +74,30 @@ func _paint(c: Control) -> void:
 	c.draw_string(f, Vector2(0, 170), "「%s」" % RANKS[count], HORIZONTAL_ALIGNMENT_CENTER, 1280, 56, INK)
 	# 牌
 	var r := Rect2(560, 210, 160, 230)
-	c.draw_rect(r, Color.WHITE)
-	c.draw_rect(r, INK, false, 3.0)
+	var front := art("card_front")
+	var back := art("card_back")
+	# 翻牌：每張牌一開始先看到牌背，一下下就翻過來
+	var flip := clampf(step / 0.12, 0.0, 1.0)
+	if front != null and back != null and flip < 1.0:
+		var w := r.size.x * absf(1.0 - flip * 2.0)
+		var fr := Rect2(r.get_center().x - w / 2.0, r.position.y, w, r.size.y)
+		c.draw_texture_rect(back if flip < 0.5 else front, fr, false)
+		_paint_rest(c, f)
+		return
+	if front != null:
+		c.draw_texture_rect(front, r, false)
+	else:
+		c.draw_rect(r, Color.WHITE)
+		c.draw_rect(r, INK, false, 3.0)
 	if flash > 0.0:
 		c.draw_rect(r.grow(8), Color(flash_col, flash * 0.6), false, 8.0)
 	var red := card % 2 == 0
 	c.draw_string(f, r.position + Vector2(0, 140), RANKS[card], HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 80, PINK if red else INK)
 	c.draw_string(f, r.position + Vector2(10, 34), "♥" if red else "♠", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, PINK if red else INK)
+	_paint_rest(c, f)
+
+
+func _paint_rest(c: Control, f: Font) -> void:
 	# 回合
 	c.draw_string(f, Vector2(0, 490), "回合 %d／3　　這回合 %d／3" % [round_i + 1, hits], HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, SOFT)
 	# 背景的心電圖（拍錯時亂掉）

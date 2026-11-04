@@ -382,12 +382,28 @@ func _show_rules() -> void:
 	sb.set_border_width_all(4)
 	sb.set_corner_radius_all(14)
 	sb.set_content_margin_all(28)
-	panel.add_theme_stylebox_override("panel", sb)
+	# 有告示板的圖（軟木板＋釘著的紙）就用圖，字寫在紙上
+	var board := Ch3Mini.art("rules_board")
+	if board != null:
+		var bs := StyleBoxTexture.new()
+		bs.texture = board
+		var bw := 600.0
+		var bh := bw * board.get_height() / board.get_width()
+		bs.content_margin_left = bw * 0.23
+		bs.content_margin_right = bw * 0.21
+		bs.content_margin_top = bh * 0.25
+		bs.content_margin_bottom = bh * 0.12
+		panel.custom_minimum_size = Vector2(bw, bh)
+		panel.position = Vector2(640 - bw / 2.0, (720 - bh) / 2.0)
+		panel.add_theme_stylebox_override("panel", bs)
+	else:
+		panel.add_theme_stylebox_override("panel", sb)
 	layer.add_child(panel)
 	var t := RichTextLabel.new()
 	t.bbcode_enabled = true
 	t.fit_content = true
-	t.add_theme_font_size_override("normal_font_size", 26)
+	t.add_theme_font_size_override("normal_font_size", 22 if board != null else 26)
+	t.add_theme_font_size_override("bold_font_size", 24 if board != null else 26)
 	t.add_theme_color_override("default_color", Color("#3d4a4f"))
 	t.text = "[center][b]慈愛實驗醫院　醫院守則[/b][/center]\n\n1. 請保持安靜。\n2. 請不要離開病床。\n3. 請按時吃藥（白色的）。\n4. 探病時間以外，請不要看自己。\n5. 夜間巡房時，請閉上眼睛。\n\n[center][color=#9fb3ba]（按一下關閉）[/color][/center]"
 	panel.add_child(t)

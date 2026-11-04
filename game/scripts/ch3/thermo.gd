@@ -85,14 +85,28 @@ func _paint(c: Control) -> void:
 	var x0 := 340.0
 	var w := 600.0
 	var y := 330.0
-	c.draw_rect(Rect2(x0, y, w, 36), Color.WHITE)
-	c.draw_rect(Rect2(x0 + w * GREEN_LO, y, w * (GREEN_HI - GREEN_LO), 36), Color(GREEN, 0.7))
-	c.draw_rect(Rect2(x0, y, w, 36), INK, false, 2.0)
-	c.draw_rect(Rect2(x0, y + 6, w * clampf(needle, 0, 1), 24), Color(RED, 0.75))
-	c.draw_circle(Vector2(x0 - 20, y + 18), 26, RED)
+	var tex := art("thermo")
+	var tick_y := y + 40.0
+	if tex != null:
+		# 玻璃管大約從圖的 22% 到 92%：刻度範圍縮成 500 寬，對齊玻璃管
+		x0 = 420.0
+		w = 480.0
+		var tw := w / (0.92 - 0.22)
+		var th := tw * tex.get_height() / tex.get_width()
+		c.draw_texture_rect(tex, Rect2(x0 - tw * 0.22, y + 18 - th / 2.0, tw, th), false)
+		c.draw_rect(Rect2(x0 + w * GREEN_LO, y + 2, w * (GREEN_HI - GREEN_LO), 32), Color(GREEN, 0.55))
+		c.draw_rect(Rect2(x0 - 40, y + 13, 40 + w * clampf(needle, 0, 1), 10), Color(RED, 0.8))
+		c.draw_circle(Vector2(x0 - tw * 0.12, y + 18), th * 0.24, Color(RED, 0.5))
+		tick_y = y + 18 + th / 2.0
+	else:
+		c.draw_rect(Rect2(x0, y, w, 36), Color.WHITE)
+		c.draw_rect(Rect2(x0 + w * GREEN_LO, y, w * (GREEN_HI - GREEN_LO), 36), Color(GREEN, 0.7))
+		c.draw_rect(Rect2(x0, y, w, 36), INK, false, 2.0)
+		c.draw_rect(Rect2(x0, y + 6, w * clampf(needle, 0, 1), 24), Color(RED, 0.75))
+		c.draw_circle(Vector2(x0 - 20, y + 18), 26, RED)
 	for k in 6:
 		var tx := x0 + w * k / 5.0
-		c.draw_line(Vector2(tx, y + 40), Vector2(tx, y + 52), SOFT, 2.0)
-		c.draw_string(f, Vector2(tx - 30, y + 78), "%d°" % (35 + k), HORIZONTAL_ALIGNMENT_CENTER, 60, 18, SOFT)
+		c.draw_line(Vector2(tx, tick_y), Vector2(tx, tick_y + 12), SOFT, 2.0)
+		c.draw_string(f, Vector2(tx - 30, tick_y + 38), "%d°" % (35 + k), HORIZONTAL_ALIGNMENT_CENTER, 60, 18, SOFT)
 	if msg_t > 0.0:
 		c.draw_string(f, Vector2(0, 500), msg, HORIZONTAL_ALIGNMENT_CENTER, 1280, 26, INK)

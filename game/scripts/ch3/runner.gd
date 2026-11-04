@@ -18,6 +18,9 @@ var call_ok := false
 var _swipe_from := Vector2.ZERO
 const NAMES := ["希露飛", "銘越", "小滿", "芬", "……沒有名字的那一個", "遙"]
 var _call_i := 0
+## 障礙物：0 病床推車、1 點滴架、2 伸出來的手、3 輪椅（零件圖名稱、在最近處的高度）
+const OBSTACLE_ART := ["run_gurney", "run_pole", "run_hand", "run_wheelchair"]
+const OBSTACLE_H := [130.0, 170.0, 120.0, 130.0]
 var next_call := 5.0
 
 
@@ -34,7 +37,8 @@ func _tick(delta: float) -> void:
 	spawn -= delta
 	if spawn <= 0.0 and t < duration - 2.0:
 		spawn = randf_range(0.7, 1.2) / (1.0 + t / duration)
-		obstacles.append([randi() % 3, 1.0, randi() % 3])
+		# 有輪椅的圖才會出現第 4 種（輪椅）
+		obstacles.append([randi() % 3, 1.0, randi() % (4 if art("run_wheelchair") != null else 3)])
 	for o in obstacles:
 		o[1] -= speed * delta
 	for o in obstacles.duplicate():
@@ -101,16 +105,23 @@ func _proj(l: float, z: float) -> Vector2:
 
 func _paint(c: Control) -> void:
 	var f: Font = GameState.font
-	# 長廊
-	c.draw_rect(Rect2(0, 0, 1280, 720), Color("#2a3133") if rollcall else Color("#dfe6e8"))
+	# 長廊（有背景圖就用圖；點名的時候整條走廊暗下來）
+	var bg := art("corridor")
+	if bg != null:
+		c.draw_texture_rect(bg, Rect2(0, 0, 1280, 720), false, Color(0.32, 0.36, 0.4) if rollcall else Color.WHITE)
+	else:
+		c.draw_rect(Rect2(0, 0, 1280, 720), Color("#2a3133") if rollcall else Color("#dfe6e8"))
 	var vp := Vector2(640, 250)
 	for side in [-1, 1]:
-		c.draw_line(vp, Vector2(640 + side * 900, 720), SOFT, 3.0)
+		if bg == null:
+			c.draw_line(vp, Vector2(640 + side * 900, 720), SOFT, 3.0)
 	for k in 8:
 		var z := fmod(1.0 - (t * 0.6 + k / 8.0), 1.0)
 		var a := _proj(-0.5, z)
 		var b := _proj(2.5, z)
-		c.draw_line(a, b, Color(SOFT, 0.35), 1.0)
+		c.draw_line(a, b, Color(SOFT, 0.35 if bg == null else 0.18), 1.0)
+		if bg != null:
+			continue  # 背景圖已經有燈
 		# 天花板的燈
 		var lamp := Vector2(640, 250 - 200 * (1.0 - z) * (1.0 - z))
 		c.draw_rect(Rect2(lamp - Vector2(30 * (1.2 - z), 4), Vector2(60 * (1.2 - z), 8)), Color(1, 1, 0.9, 0.7))
@@ -119,6 +130,10 @@ func _paint(c: Control) -> void:
 	for o in obstacles:
 		var p := _proj(float(o[0]), float(o[1]))
 		var s := 0.25 + (1.0 - float(o[1])) * 1.3
+		var tex := art(OBSTACLE_ART[int(o[2])])
+		if tex != null:
+			draw_art_h(c, tex, p + Vector2(0, 10) * s, OBSTACLE_H[int(o[2])] * s, Color(0.55, 0.6, 0.65) if rollcall else Color.WHITE)
+			continue
 		match int(o[2]):
 			0:  # 病床推車
 				c.draw_rect(Rect2(p - Vector2(60, 40) * s, Vector2(120, 50) * s), Color("#f4f4f2"))
@@ -131,9 +146,13 @@ func _paint(c: Control) -> void:
 				c.draw_circle(p - Vector2(0, 30) * s, 22 * s, Color("#e8c9b0"))
 	# 小布
 	var me := _proj(lane_x, 0.0) - Vector2(0, 50)
-	c.draw_circle(me, 34, Color("#fff8ee"))
-	c.draw_circle(me + Vector2(0, 30), 26, Color("#7a9a6a"))
-	c.draw_string(f, Vector2(0, 690), "剩下 %d 秒　　撞到 %d" % [int(maxf(0.0, duration - t)), hits], HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color.WHITE if rollcall else INK)
+	var bu := art("run_bu_%02d" % (1 + int(t * 8.0) % 2))
+	if bu != null:
+		draw_art_h(c, bu, me + Vector2(0, 62), 150)
+	else:
+		c.draw_circle(me, 34, Color("#fff8ee"))
+		c.draw_circle(me + Vector2(0, 30), 26, Color("#7a9a6a"))
+	c.draw_string(f, Vector2(0, 112), "剩下 %d 秒　　撞到 %d" % [int(maxf(0.0, duration - t)), hits], HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, Color.WHITE if rollcall else INK)
 	if hit_flash > 0.0:
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color(RED, hit_flash * 0.35))
 	if call_name != "":

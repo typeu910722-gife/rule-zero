@@ -132,6 +132,37 @@ func _paint(_c: Control) -> void:
 	pass
 
 
+## 小遊戲零件圖（game/art/ch3/mini/）：沒有圖就回傳 null，畫面退回原本的色塊。
+const ART_DIR := "res://art/ch3/mini/"
+
+
+## 要留著參照：只在 draw 裡 load() 的話，畫完就被釋放，畫面上會變成一塊白色
+static var _art_cache := {}
+
+
+static func art(name: String) -> Texture2D:
+	if _art_cache.has(name):
+		return _art_cache[name]
+	var tex: Texture2D = null
+	for ext in [".png", ".jpg"]:
+		var p: String = ART_DIR + name + ext
+		if ResourceLoader.exists(p):
+			tex = load(p)
+			break
+	_art_cache[name] = tex
+	return tex
+
+
+## 依高度畫圖：bottom_center＝圖的底邊中點
+static func draw_art_h(c: Control, tex: Texture2D, bottom_center: Vector2, h: float, col := Color.WHITE, flip := false) -> void:
+	var w := h * tex.get_width() / tex.get_height()
+	var r := Rect2(bottom_center - Vector2(w / 2.0, h), Vector2(w, h))
+	if flip:
+		r.position.x += w
+		r.size.x = -w
+	c.draw_texture_rect(tex, r, false, col)
+
+
 func sfx(path: String, db := -4.0) -> void:
 	if GameState.fast:
 		return

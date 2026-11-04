@@ -54,16 +54,27 @@ func _paint(c: Control) -> void:
 	var f: Font = GameState.font
 	if idx >= patients.size():
 		return
-	c.draw_string(f, Vector2(0, 140), "%s（%d／%d）　第 %d 針" % [patients[idx][1], idx + 1, patients.size(), stitch + 1], HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, INK)
+	c.draw_string(f, Vector2(0, 112), "%s（%d／%d）　第 %d 針" % [patients[idx][1], idx + 1, patients.size(), stitch + 1], HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, INK)
 	# 布與破洞
-	var cloth := Rect2(240, 220, 800, 260)
-	c.draw_rect(cloth, Color("#f7e6d6"))
-	c.draw_rect(cloth, Color("#c9a98a"), false, 3.0)
 	var y := 350.0
+	var cloth_tex := art("sew_cloth")
+	var cotton := art("sew_cotton")
+	if cloth_tex != null:
+		# 布塊的裂口大約在圖的 42% 高：對齊虛線
+		var ch := 680.0 * cloth_tex.get_height() / cloth_tex.get_width()
+		c.draw_texture_rect(cloth_tex, Rect2(300, y - ch * 0.42, 680, ch), false)
+	else:
+		var cloth := Rect2(240, 220, 800, 260)
+		c.draw_rect(cloth, Color("#f7e6d6"))
+		c.draw_rect(cloth, Color("#c9a98a"), false, 3.0)
 	# 掉出來的棉花
 	for k in 9:
 		var cx := 300.0 + k * 85.0 + sin(t * 2.0 + k) * 6.0
-		c.draw_circle(Vector2(cx, y + sin(t * 3.0 + k * 1.7) * 10.0), 18, Color(1, 1, 1, 0.95))
+		var cy := y + sin(t * 3.0 + k * 1.7) * 10.0
+		if cotton != null:
+			draw_art_h(c, cotton, Vector2(cx, cy + 16), 32)
+		else:
+			c.draw_circle(Vector2(cx, cy), 18, Color(1, 1, 1, 0.95))
 	# 虛線
 	var x0 := 280.0
 	var w := 720.0
@@ -79,5 +90,9 @@ func _paint(c: Control) -> void:
 		c.draw_line(Vector2(px - 10, y - (8 if p[1] else 20)), Vector2(px + 10, y + (8 if p[1] else 4)), INK, 4.0)
 	# 針
 	var nx := x0 + w * pos
-	c.draw_line(Vector2(nx, y - 60), Vector2(nx, y - 6), INK, 3.0)
-	c.draw_circle(Vector2(nx, y - 62), 5, INK)
+	var needle := art("sew_needle")
+	if needle != null:
+		draw_art_h(c, needle, Vector2(nx, y - 4), 90)
+	else:
+		c.draw_line(Vector2(nx, y - 60), Vector2(nx, y - 6), INK, 3.0)
+		c.draw_circle(Vector2(nx, y - 62), 5, INK)

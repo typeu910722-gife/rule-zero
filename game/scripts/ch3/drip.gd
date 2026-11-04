@@ -51,16 +51,28 @@ func _paint(c: Control) -> void:
 	if dark:
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color(0, 0, 0, 0.45))
 		c.draw_string(f, Vector2(0, 140), "……腳步聲。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 34, Color.WHITE)
-	# 點滴袋
+	# 點滴袋（有圖就用圖：液面畫在袋子透明的部分上）
 	var bag := Rect2(560, 170, 160, 260)
-	c.draw_rect(bag, Color(1, 1, 1, 0.85))
-	c.draw_rect(bag, INK, false, 2.0)
-	c.draw_rect(Rect2(bag.position.x + 4, bag.position.y + bag.size.y * (1.0 - level), bag.size.x - 8, bag.size.y * level), Color("#bfe3f0"))
+	var tex := art("drip_bag")
+	var tex_rect := Rect2(640 - 167 * 0.5 * 1.1, 130, 167 * 1.1, 300 * 1.1)
+	if tex != null:
+		c.draw_texture_rect(tex, tex_rect, false)
+		bag = Rect2(tex_rect.position + tex_rect.size * Vector2(0.1, 0.12), tex_rect.size * Vector2(0.8, 0.62))
+		c.draw_rect(Rect2(bag.position.x, bag.position.y + bag.size.y * (1.0 - level), bag.size.x, bag.size.y * level), Color("#9fd3e6", 0.55))
+	else:
+		c.draw_rect(bag, Color(1, 1, 1, 0.85))
+		c.draw_rect(bag, INK, false, 2.0)
+		c.draw_rect(Rect2(bag.position.x + 4, bag.position.y + bag.size.y * (1.0 - level), bag.size.x - 8, bag.size.y * level), Color("#bfe3f0"))
 	for lv: float in [0.35, 0.65]:
 		var y := bag.position.y + bag.size.y * (1.0 - lv)
 		c.draw_line(Vector2(bag.position.x - 20, y), Vector2(bag.end.x + 20, y), GREEN, 3.0)
-	c.draw_line(Vector2(640, bag.end.y), Vector2(640, 560), SOFT, 2.0)
+	var tube_top := tex_rect.end.y if tex != null else bag.end.y
+	c.draw_line(Vector2(640, tube_top), Vector2(640, 560), SOFT, 2.0)
 	# 滴下來的水滴
-	var drop_y := 450.0 + fmod(t * (60.0 + rate * 120.0), 100.0)
-	c.draw_circle(Vector2(640, drop_y), 5, Color("#8cc8de"))
+	var drop_y := 470.0 + fmod(t * (60.0 + rate * 120.0), 90.0)
+	var drop := art("drip_drop")
+	if drop != null:
+		draw_art_h(c, drop, Vector2(640, drop_y + 8), 22)
+	else:
+		c.draw_circle(Vector2(640, drop_y), 5, Color("#8cc8de"))
 	c.draw_string(f, Vector2(0, 610), "剩下 %d 秒" % int(maxf(0.0, duration - t)), HORIZONTAL_ALIGNMENT_CENTER, 1280, 22, Color.WHITE if dark else SOFT)
