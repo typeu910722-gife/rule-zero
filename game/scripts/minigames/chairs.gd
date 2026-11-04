@@ -71,7 +71,7 @@ func _ready() -> void:
 			_dove_tex.append(t)
 	_sticker_top = _tex(ART + "ch2_chairs_sticker_01_blank.png")
 	_sticker_bottom = _tex(ART + "ch2_chairs_sticker_02_blank.png")
-	for id in ["pip", "gaga", "zhongzhong", "youyou"]:
+	for id in ["pip", "gaga", "zhongzhong", "youyou", "tiaoma"]:
 		var frames: Array = []
 		for k in 4:
 			var t := _tex(ART + "ch2_chairs_%s_walk_%02d.png" % [id, k + 1])
@@ -94,9 +94,9 @@ func _ready() -> void:
 		var hog := _tex(SP + "xiaoji_sprite_%s_sheet.png" % hog_state)
 		if hog:
 			_still["xiaoji"] = hog
-	# 條碼沒有走路圖：用只剩一條斑紋的站姿（跟原本畫的 stripes: 1 一樣）
+	# 條碼的走路圖（2026-11-05，只剩一條斑紋）；沒有圖時用站姿
 	var zebra := _tex(SP + "tiaoma_sprite_s1_sheet.png")
-	if zebra:
+	if zebra and not _walk.has("tiaoma"):
 		_still["tiaoma"] = zebra
 	# 嘎嘎被舉報過，嘴上的線拆了
 	if GameState.has("reported_gaga"):

@@ -142,9 +142,15 @@ func _draw_object() -> void:
 			draw_circle(Vector2(0, -10), 5, Color(1, 1, 1, 0.8))
 			draw_arc(Vector2(0, -10), 9, 0, TAU, 16, Color(1, 0.8, 0.9, 0.7), 2)
 		"c2_pillow":
-			Ch2Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#f5f5f5"))
-			Ch2Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#cfcfcf"))
-			Ch2Critter.ellipse(self, Vector2(0, -9), Vector2(16, 7), Color("#fafafa"))
+			var pillow := Interactable.prop_tex("pillow")
+			if pillow != null:
+				var pw := 40.0
+				var ph := pw * pillow.get_height() / pillow.get_width()
+				draw_texture_rect(pillow, Rect2(-pw / 2.0, -ph + 2, pw, ph), false)
+			else:
+				Ch2Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#f5f5f5"))
+				Ch2Critter.ellipse(self, Vector2(0, -8), Vector2(18, 9), Color("#cfcfcf"))
+				Ch2Critter.ellipse(self, Vector2(0, -9), Vector2(16, 7), Color("#fafafa"))
 			if not GameState.has("c2_pillow_done"):
 				draw_circle(Vector2(10, -3), 3, Color("#f28fb0"))
 		"c2_board":

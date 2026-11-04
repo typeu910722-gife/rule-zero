@@ -228,6 +228,18 @@ func _run() -> void:
 	bw.held = true
 	_check(bw._haruka_frame(false) != null and bw._haruka_frame(true) == MB.art("h_haruka_chase_gown_breath", "res://art/human/chase/"), "終章 醒來走路：遙用病人服的全身圖，跌坐時喘氣")
 	bw.free()
+	# 地圖上的小道具與條碼的走路圖（2026-11-05 ChatGPT）
+	var IA = load("res://scripts/world/interactable.gd")
+	var no_prop := []
+	for pn in ["candy_0", "candy_1", "candy_2", "note", "mailbox", "pillow"]:
+		if IA.prop_tex(pn) == null:
+			no_prop.append(pn)
+	_check(no_prop.is_empty() and IA._props.has("candy_0"), "糖果、紙條、信箱、枕頭都有圖，而且有快取 %s" % [no_prop])
+	var zebra_ok := true
+	for k in 4:
+		var zt: Texture2D = load("res://art/ch2/minigames/chairs/ch2_chairs_tiaoma_walk_%02d.png" % (k + 1))
+		zebra_ok = zebra_ok and zt != null and zt.get_width() == 80 and zt.get_height() == 80
+	_check(zebra_ok and "\"youyou\", \"tiaoma\"]" in FileAccess.get_file_as_string("res://scripts/minigames/chairs.gd"), "搶椅子：條碼有 4 格走路圖（80×80）")
 	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()

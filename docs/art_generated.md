@@ -164,3 +164,8 @@
   秋歌的手機取景（手機螢幕裡是那扇門）、門縫的鞋子（只看得到鞋子，往上淡掉，看不到人）、
   醒來走路（醫院走廊側面，遙用 `h_haruka_chase_gown_*` 走路／喘氣）、守走廊（白衣職員一步一步走過來）。
 - 「那一天」照設定：畫面只有門外、鞋子、聲音，門裡面什麼都不畫。
+
+## 地圖小道具與條碼的走路圖（ChatGPT，2026-11-05）
+- 原圖：`chatgpt_art\misc_props_tiaoma.png`（4×3：條碼正面／右／背面／左、糖果粉綠黃、紙條、信箱、枕頭；上傳小布的搶椅子走路格＋條碼站姿當參考）。
+- 條碼：`game/art/ch2/minigames/chairs/ch2_chairs_tiaoma_walk_01～04.png`（80×80，跟小布一樣腳底在 y=75、高 70），搶椅子改用走路圖。
+- 道具：`game/art/props/`（candy_0～2、note、mailbox、pillow），`Interactable.prop_tex()` 讀（有快取），沒有圖退回原本的形狀。

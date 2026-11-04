@@ -158,8 +158,38 @@ func _draw_mark() -> void:
 	draw_string(GameState.font, c + Vector2(-15, 8), "！", HORIZONTAL_ALIGNMENT_CENTER, 30, 20, Color("#e05780"))
 
 
+## 地圖上的小道具圖（game/art/props/）；要留參照，不然畫完就被釋放（會變白色方塊）
+static var _props := {}
+
+
+static func prop_tex(name: String) -> Texture2D:
+	if not _props.has(name):
+		var p := "res://art/props/%s.png" % name
+		_props[name] = load(p) if ResourceLoader.exists(p) else null
+	return _props[name]
+
+
+## 以底邊中點畫一張道具圖（寬度固定）
+func _draw_prop(tex: Texture2D, bottom: Vector2, w: float) -> void:
+	var h := w * tex.get_height() / tex.get_width()
+	draw_texture_rect(tex, Rect2(bottom - Vector2(w / 2.0, h), Vector2(w, h)), false)
+
+
 func _draw_object() -> void:
-	# 支線物件（素材還沒畫，先用簡單的形狀，外加一點閃光讓玩家找得到）
+	# 支線物件：有圖（ChatGPT，2026-11-05）就用圖，外加一點閃光讓玩家找得到
+	if id.begins_with("candy_") and prop_tex("candy_%d" % (int(id.right(1)) % 3)) != null:
+		_draw_prop(prop_tex("candy_%d" % (int(id.right(1)) % 3)), Vector2(0, -2), 40)
+		_glint(Vector2(12, -22))
+		return
+	if id.begins_with("note_") and prop_tex("note") != null:
+		draw_set_transform(Vector2(0, 0), 0.2, Vector2.ONE)
+		_draw_prop(prop_tex("note"), Vector2(0, 4), 32)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		_glint(Vector2(12, -24))
+		return
+	if id == "lulu_mailbox" and prop_tex("mailbox") != null:
+		_draw_prop(prop_tex("mailbox"), Vector2(0, 2), 42)
+		return
 	if id.begins_with("candy_"):
 		var c: Color = [Color("#ffb3c7"), Color("#b5e8d5"), Color("#ffe08a")][int(id.right(1)) % 3]
 		draw_circle(Vector2(0, -10), 9, c)
