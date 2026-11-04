@@ -19,10 +19,7 @@ func _ready() -> void:
 	back.position = Vector2(8, 6)
 	back.size = Vector2(1000, 66)
 	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(1, 1, 1, 0.82)
-	sb.set_corner_radius_all(12)
-	back.add_theme_stylebox_override("panel", sb)
+	back.add_theme_stylebox_override("panel", bar_style())
 	add_child(back)
 	_label = RichTextLabel.new()
 	_label.bbcode_enabled = true
@@ -44,6 +41,26 @@ func _ready() -> void:
 	_build_menu()
 	GameState.changed.connect(refresh)
 	refresh()
+
+
+## 狀態列的底條：第三章是毛氈、第四、五章是筆記本紙（ChatGPT 2026-11-05）；沒有圖就是半透明白色
+static func bar_style() -> StyleBox:
+	var name := "hud3_bar" if GameState.chapter <= 3 else "hud4_bar"
+	var tex := Ch3Mini.art(name)
+	if tex == null:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(1, 1, 1, 0.82)
+		sb.set_corner_radius_all(12)
+		return sb
+	var st := StyleBoxTexture.new()
+	st.texture = tex
+	var m := tex.get_height() * 0.3
+	st.texture_margin_left = m
+	st.texture_margin_right = m
+	st.texture_margin_top = m
+	st.texture_margin_bottom = m
+	st.modulate_color = Color(1, 1, 1, 0.94)
+	return st
 
 
 func refresh() -> void:

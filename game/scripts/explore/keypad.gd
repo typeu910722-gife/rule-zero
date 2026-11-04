@@ -81,10 +81,20 @@ func _tick(delta: float) -> void:
 	wrong_t = maxf(0.0, wrong_t - delta)
 
 
+## 密碼鎖的圖：第三章是毛氈（玩偶的醫院），第五章是金屬（研究所）；沒有圖就畫方塊
+func _skin() -> String:
+	return "kp3" if GameState.chapter <= 3 else "kp5"
+
+
 func _paint(c: Control) -> void:
 	var f: Font = GameState.font
 	var shake := Vector2(sin(t * 60.0) * 8.0 * wrong_t, 0)
 	var disp := Rect2(500 + shake.x, 150, 280, 70)
+	var panel := art(_skin() + "_panel")
+	var key_tex := art(_skin() + "_key")
+	var key_sel := art(_skin() + "_key_sel")
+	if panel != null:
+		c.draw_texture_rect(panel, Rect2(Vector2(462, 116) + shake, Vector2(356, 498)), false)
 	c.draw_rect(disp, Color("#1c2622"))
 	var s := ""
 	for i in code.length():
@@ -92,8 +102,11 @@ func _paint(c: Control) -> void:
 	c.draw_string(f, disp.position + Vector2(0, 48), s, HORIZONTAL_ALIGNMENT_CENTER, disp.size.x, 34, RED if wrong_t > 0.0 else GREEN)
 	for i in KEYS.size():
 		var r := _key_rect(i)
-		c.draw_rect(r, Color.WHITE)
-		c.draw_rect(r, PINK if i == cursor else SOFT, false, 4.0 if i == cursor else 2.0)
+		if key_tex != null and key_sel != null:
+			c.draw_texture_rect(key_sel if i == cursor else key_tex, r, false)
+		else:
+			c.draw_rect(r, Color.WHITE)
+			c.draw_rect(r, PINK if i == cursor else SOFT, false, 4.0 if i == cursor else 2.0)
 		c.draw_string(f, r.position + Vector2(0, 50), KEYS[i], HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 22 if KEYS[i].length() > 1 else 30, INK)
 	if hint_text != "":
-		c.draw_string(f, Vector2(0, 610), hint_text, HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, SOFT)
+		c.draw_string(f, Vector2(0, 642), hint_text, HORIZONTAL_ALIGNMENT_CENTER, 1280, 20, SOFT)

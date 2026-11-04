@@ -425,6 +425,7 @@ func _say(who: String, text: String) -> void:
 	# 名字放在對話框左上角的布標上；旁白時留空（版面不跳動）
 	_name.visible = true
 	_name.text = who
+	_name.add_theme_stylebox_override("normal", _plate_sb if (_plate_sb != null and who != "") else _plate_empty)
 	if _ch2():
 		_portrait.visible = false
 		_show_portrait_ch2(who)
@@ -690,6 +691,8 @@ func _build_ui() -> void:
 	_name.add_theme_color_override("font_outline_color", Color("#5e7048"))
 	_name.add_theme_constant_override("outline_size", 4)
 	_name.add_theme_font_size_override("font_size", 21)
+	# 名牌只包住名字（不要撐滿整條）
+	_name.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	name_pad.add_child(_name)
 	_text = RichTextLabel.new()
 	_text.bbcode_enabled = true
@@ -842,17 +845,73 @@ func _human_portrait_path(cid: String, outfit: String, face: String, key: String
 	return found
 
 
-## 依章節換對話框：第一章是布料對話框，第二章是被洗白的布標；手機上字放大
+## 第二章以後每一章的對話框與名牌：[對話框圖, 名牌圖, 對話框九宮格邊距(左上右下), 名牌九宮格邊距, 名字顏色]
+## 第二章＝洗白的麻布（外包圖）、第三章＝醫院的毛氈（ChatGPT）、第四、五章＝人類時期的筆記本紙＋深藍名牌（ChatGPT）
+const CHAPTER_SKINS := {
+	2: ["res://art/ch2/ui/ch2_ui_01_dialogue.png", "res://art/ch2/ui/ch2_ui_01_nameplate.png", Vector4(30, 30, 30, 30), Vector4(22, 20, 22, 20), Color("#555555")],
+	3: ["res://art/ch3/ui/dialog.png", "res://art/ch3/ui/nameplate.png", Vector4(64, 64, 132, 56), Vector4(26, 24, 26, 24), Color("#6b3a48")],
+	4: ["res://art/human/ui/dialog.png", "res://art/human/ui/nameplate.png", Vector4(140, 70, 40, 40), Vector4(22, 22, 22, 22), Color("#f4f1ea")],
+}
+var _plate_sb: StyleBox = null
+var _plate_empty := StyleBoxEmpty.new()
+
+
+## 這一章的對話框（StyleBox）與名牌；沒有圖就回傳 []
+func chapter_skin(ch: int) -> Array:
+	var key := 4 if ch >= 4 else ch
+	if not CHAPTER_SKINS.has(key):
+		return []
+	var d: Array = CHAPTER_SKINS[key]
+	if not ResourceLoader.exists(d[0]) or not ResourceLoader.exists(d[1]):
+		return []
+	var box := StyleBoxTexture.new()
+	box.texture = load(d[0])
+	var m: Vector4 = d[2]
+	box.texture_margin_left = m.x
+	box.texture_margin_top = m.y
+	box.texture_margin_right = m.z
+	box.texture_margin_bottom = m.w
+	box.content_margin_left = 34
+	box.content_margin_right = 40
+	box.content_margin_top = 14
+	box.content_margin_bottom = 16
+	var plate := StyleBoxTexture.new()
+	plate.texture = load(d[1])
+	var pm: Vector4 = d[3]
+	plate.texture_margin_left = pm.x
+	plate.texture_margin_top = pm.y
+	plate.texture_margin_right = pm.z
+	plate.texture_margin_bottom = pm.w
+	plate.content_margin_left = 22
+	plate.content_margin_right = 22
+	plate.content_margin_top = 3
+	plate.content_margin_bottom = 5
+	return [box, plate, d[4]]
+
+
+## 依章節換對話框：第一章是布料對話框，第二章以後每章一套（見 CHAPTER_SKINS）；手機上字放大
 func _apply_style() -> void:
 	var cold := _ch2()
 	var touch := GameState.touch_ui()
 	_box.add_theme_stylebox_override("panel", _cold_box if cold else _skin_box)
+	_plate_sb = null
+	_name.add_theme_stylebox_override("normal", _plate_empty)
 	if cold:
 		_name.add_theme_color_override("font_color", Color("#555555"))
 		_name.add_theme_constant_override("outline_size", 0)
 		_text.add_theme_color_override("default_color", Color("#2e2e2e"))
 		_name.add_theme_font_size_override("font_size", 28 if touch else 22)
 		_text.add_theme_font_size_override("normal_font_size", 34 if touch else 26)
+		var skin := chapter_skin(GameState.chapter)
+		if not skin.is_empty():
+			_box.add_theme_stylebox_override("panel", skin[0])
+			_plate_sb = skin[1]
+			_name.add_theme_color_override("font_color", skin[2])
+			# 名牌沒有字的時候（旁白）也留一樣的高度，版面不跳動
+			_plate_empty.content_margin_left = 22
+			_plate_empty.content_margin_right = 22
+			_plate_empty.content_margin_top = 3
+			_plate_empty.content_margin_bottom = 5
 	else:
 		_name.add_theme_color_override("font_color", Color("#f8f1df"))
 		_name.add_theme_constant_override("outline_size", 4)

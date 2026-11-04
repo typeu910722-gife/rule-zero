@@ -240,6 +240,40 @@ func _run() -> void:
 		var zt: Texture2D = load("res://art/ch2/minigames/chairs/ch2_chairs_tiaoma_walk_%02d.png" % (k + 1))
 		zebra_ok = zebra_ok and zt != null and zt.get_width() == 80 and zt.get_height() == 80
 	_check(zebra_ok and "\"youyou\", \"tiaoma\"]" in FileAccess.get_file_as_string("res://scripts/minigames/chairs.gd"), "搶椅子：條碼有 4 格走路圖（80×80）")
+	# 每一章的對話框與名牌（第二章外包圖、第三～五章 ChatGPT，2026-11-05）
+	_check(d.chapter_skin(1).is_empty(), "第一章維持原本的布料對話框")
+	for chn in [2, 3, 4, 5]:
+		var sk: Array = d.chapter_skin(chn)
+		_check(sk.size() == 3 and sk[0] is StyleBoxTexture and sk[1] is StyleBoxTexture, "第 %d 章有自己的對話框和名牌" % chn)
+	_check(d.chapter_skin(4)[0].texture == d.chapter_skin(5)[0].texture, "第四、五章（人類時期）用同一套")
+	var was_ch: int = gs.chapter
+	gs.chapter = 3
+	d._apply_style()
+	d._say("露露", "測試")
+	_check(d._name.get_theme_stylebox("normal") is StyleBoxTexture, "說話的人有名牌")
+	d._say("", "旁白")
+	_check(d._name.get_theme_stylebox("normal") is StyleBoxEmpty, "旁白不顯示名牌")
+	_check(d._name.size_flags_horizontal == Control.SIZE_SHRINK_BEGIN, "名牌只包住名字，不撐滿整條")
+	d._box.visible = false
+	gs.chapter = was_ch
+	d._apply_style()
+	# 密碼鎖、狀態列（2026-11-05 ChatGPT）：第三章毛氈、第五章金屬；狀態列第三章毛氈、第四五章筆記本紙
+	var no_ui := []
+	for pn in ["kp3_panel", "kp3_key", "kp3_key_sel", "kp5_panel", "kp5_key", "kp5_key_sel", "hud3_bar", "hud4_bar"]:
+		if MB.art(pn) == null:
+			no_ui.append(pn)
+	_check(no_ui.is_empty(), "密碼鎖、狀態列的圖都在 %s" % [no_ui])
+	for pn in ["hud3_bar", "hud4_bar"]:
+		_check(MB.art(pn).get_height() <= 66, "%s 高度不超過狀態列（九宮格邊不會溢出）" % pn)
+	var was_ch2: int = gs.chapter
+	var kp3 = load("res://scripts/explore/keypad.gd").new()
+	gs.chapter = 5
+	_check(kp3._skin() == "kp5", "第五章的密碼鎖是金屬的")
+	gs.chapter = 3
+	_check(kp3._skin() == "kp3", "第三章的密碼鎖是毛氈的")
+	kp3.free()
+	_check(load("res://scripts/ch3/hud.gd").bar_style() is StyleBoxTexture, "狀態列用底條圖")
+	gs.chapter = was_ch2
 	_check("Ch3Mini.art(\"rules_board\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "醫院守則貼在告示板上")
 	# 小人跟著玩家的狀態換動作
 	var ch = C3.new()

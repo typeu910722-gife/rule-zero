@@ -169,3 +169,11 @@
 - 原圖：`chatgpt_art\misc_props_tiaoma.png`（4×3：條碼正面／右／背面／左、糖果粉綠黃、紙條、信箱、枕頭；上傳小布的搶椅子走路格＋條碼站姿當參考）。
 - 條碼：`game/art/ch2/minigames/chairs/ch2_chairs_tiaoma_walk_01～04.png`（80×80，跟小布一樣腳底在 y=75、高 70），搶椅子改用走路圖。
 - 道具：`game/art/props/`（candy_0～2、note、mailbox、pillow），`Interactable.prop_tex()` 讀（有快取），沒有圖退回原本的形狀。
+
+## 第二～五章的對話框、名牌、密碼鎖、狀態列（2026-11-05）
+- 對話框與名牌：第二章接上外包的 `ch2_ui_01_dialogue.png`／`ch2_ui_01_nameplate.png`（原本是程式畫的灰框）；
+  第三章 `game/art/ch3/ui/`（醫院毛氈，原圖 `chatgpt_art\ui_ch3_dialog.png`）；第四、五章 `game/art/human/ui/`（筆記本紙＋深藍名牌，`ui_human_dialog.png`）。
+  `Dialogue.CHAPTER_SKINS` 設定每章的圖和九宮格邊距；名牌只包住名字，旁白時不顯示（高度不變）。
+- 密碼鎖：`kp3_*`（毛氈，第三章）、`kp5_*`（金屬，第五章）；狀態列底條：`hud3_bar`（毛氈）、`hud4_bar`（筆記本紙），都在 `game/art/ch3/mini/`
+  （原圖 `ui_keypad_hud.png`）。狀態列底條高 60px，九宮格邊才不會比狀態列高。
+- 切圖：很寬的東西（對話框）或格子不平均的零件表用 `tools/art/fit_ui_pieces.py`（找連在一起的幾塊；`--pos` 照位置排）。
