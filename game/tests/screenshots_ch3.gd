@@ -30,7 +30,8 @@ func _run() -> void:
 	hud.place = "一樓　白色走廊"
 	root.add_child(hud)
 	var C = load("res://scripts/chapter3.gd")
-	for rid in ["hall", "nirvana", "records", "b2"]:
+	# 房間大多已經改成探索地圖（screenshots_ch3_map.gd）；這裡只拍還留在舊房間表裡的
+	for rid in ["hall", "nirvana", "records", "b2"].filter(func(k): return C.ROOMS.has(k)):
 		gs.set_flag("c3_heart_done"); gs.set_flag("c3_haruka_slip")
 		var r = load("res://scripts/ch3/room.gd").new()
 		r.room_id = rid

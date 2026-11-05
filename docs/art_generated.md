@@ -238,3 +238,11 @@ un_bu_passing.png`），
 - 點滴小遊戲的腳步聲 `dove_step` 是和平鴿走近的提示（聽到要停手），不是借錯的音效，維持原樣。
 - 只重做幾個：`uv run --no-project --python 3.12 --with numpy --with scipy python tools/make_ch3_sfx.py drip compress thermo_beep`
 
+## 畫面總檢查（自動截圖，2026-11-05）
+- 跑了第二章（13）、第二章小遊戲（12）、第三章地圖（22）、第三章小遊戲（7）、第四、五章地圖（11）、第四、五章小遊戲與背景（7）、標題（2）的截圖，逐張看過。
+- 修正：終章「守住走廊」牆上的心電監視器原本是四個深綠色方塊 → ChatGPT 畫的壁掛監視器 `game/art/ch4/mini/wall_monitor.png`
+  （原圖 `chatgpt_art\ch5_wall_monitor.png`，260×104，螢幕在 (20, 32) 起 220×52，波形畫在螢幕裡）；
+  第三章「心臟病」的「值班護士：一、二、三～」往上移，不再壓到心電圖。
+- `tests/screenshots_ch3.gd`、`screenshots_ch45.gd` 還在讀舊的房間表（已經改成探索地圖），改成只拍還存在的；房間畫面看 `screenshots_ch*_map.gd`。
+- 看起來是「空房間」的第四章校門、玄關：背景圖上的黑色方塊是家具的位置，遊戲裡會疊上家具圖，不是缺圖。
+

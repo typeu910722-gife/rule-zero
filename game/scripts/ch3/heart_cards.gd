@@ -114,4 +114,4 @@ func _paint_rest(c: Control, f: Font) -> void:
 			y += randf_range(-30, 30) * ecg_glitch
 		pts.append(Vector2(x, y))
 	c.draw_polyline(pts, RED if ecg_glitch > 0.0 else GREEN, 2.0)
-	c.draw_string(f, Vector2(160, 545), "值班護士：一、二、三～", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, SOFT)
+	c.draw_string(f, Vector2(160, 520), "值班護士：一、二、三～", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, SOFT)

@@ -61,17 +61,27 @@ func _paint(c: Control) -> void:
 		c.draw_rect(Rect2(0, 200, 1280, 320), Color("#e9ece9"))
 		c.draw_rect(Rect2(0, 520, 1280, 100), Color("#c9cec8"))
 	# 四間病房的心電圖
+	# 有壁掛監視器的圖（art/ch4/mini/wall_monitor.png，260×104，螢幕在 (20, 32) 起 220×52）就畫在牆上，波形畫在螢幕裡
+	var mon := art4("wall_monitor")
 	for k in 4:
 		var on := lit >= k + 1
 		var r := Rect2(60 + k * 300, 110, 220, 70)
-		c.draw_rect(r, Color("#1c2622"))
+		var base := 40.0
+		var peak := -24.0
+		if mon != null:
+			c.draw_texture_rect(mon, Rect2(r.position + Vector2(-20, -24), Vector2(260, 104)), false)
+			r = Rect2(r.position + Vector2(0, 8), Vector2(220, 52))
+			base = 34.0
+			peak = -20.0
+		else:
+			c.draw_rect(r, Color("#1c2622"))
 		var col := GREEN if on else Color("#3a4a42")
 		var pts := PackedVector2Array()
 		for x in 22:
 			var y := 0.0
 			if on and (x + int(t * 10.0)) % 11 == 5:
-				y = -24.0
-			pts.append(r.position + Vector2(10 + x * 9.5, 40 + y))
+				y = peak
+			pts.append(r.position + Vector2(10 + x * 9.5, base + y))
 		c.draw_polyline(pts, col, 2.0)
 	# 小布（玩偶）站在病房門前
 	var floor_y := 650.0 if use_art else 520.0

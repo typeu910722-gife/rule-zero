@@ -410,6 +410,8 @@ func _run() -> void:
 	for pair in [["drip", "drip"], ["cpr", "compress"], ["thermo", "thermo_beep"]]:
 		var p3 := "res://audio/ch3/%s.ogg" % pair[1]
 		_check(ResourceLoader.exists(p3) and p3 in FileAccess.get_file_as_string("res://scripts/ch3/%s.gd" % pair[0]), "第三章 %s 小遊戲用 %s 音效" % pair)
+	_check(MB.art4("wall_monitor") != null and "art4(\"wall_monitor\")" in FileAccess.get_file_as_string("res://scripts/ch5/guard.gd"), "終章 守走廊：牆上的心電監視器用圖")
+	_check("Vector2(160, 520), \"值班護士" in FileAccess.get_file_as_string("res://scripts/ch3/heart_cards.gd"), "心臟病：值班護士的字不壓到心電圖")
 	_check("@bgm far_shore" in FileAccess.get_file_as_string("res://dialogue/chapter2.txt"), "河對岸的模範生出現時播〈far shore〉")
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
 	for c in [2, 3, 4, 5]:

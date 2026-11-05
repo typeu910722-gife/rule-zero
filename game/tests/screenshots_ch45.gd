@@ -26,17 +26,11 @@ func _run() -> void:
 	var dlg := root.get_node("Dialogue")
 	gs.reset()
 	gs.chapter = 4
-	var room = load("res://scripts/ch3/room.gd").new()
-	room.room_id = "classroom"
-	room.art_path = "res://art/ch4/bg/ch4_bg_classroom.jpg"
-	room.spots = load("res://scripts/chapter4.gd").ROOMS.classroom
-	root.add_child(room)
+	# 房間的畫面改用 screenshots_ch4_map.gd／screenshots_ch5_map.gd（第四、五章已經改成探索地圖）
 	var hud = load("res://scripts/ch3/hud.gd").new()
 	hud.header = "[b]第四章　三年二班[/b]"
 	hud.place = "視角：遙"
 	root.add_child(hud)
-	await _shot("ch4_room_classroom")
-	room.queue_free()
 	for m in [["ch4/speech", "ch4_speech"], ["ch4/group_chat", "ch4_chat"], ["ch4/hold_door", "ch4_hold_door"]]:
 		var g = load("res://scripts/%s.gd" % m[0]).new()
 		root.add_child(g)
@@ -64,9 +58,4 @@ func _run() -> void:
 			await process_frame
 		await _shot(m[1])
 		g.queue_free()
-	var r2 = load("res://scripts/ch3/room.gd").new()
-	r2.room_id = "real_ward"
-	r2.spots = load("res://scripts/chapter5.gd").ROOMS.real_ward
-	root.add_child(r2)
-	await _shot("ch5_room_real_ward")
 	quit(0)
