@@ -402,6 +402,10 @@ func _run() -> void:
 		var code := FileAccess.get_file_as_string(f)
 		for id in hooks[f]:
 			_check(("\"%s\"" % id) in code and sfx_lib.stream(id) != null, "第二章音效 %s 有接上" % id)
+	var ch2txt := FileAccess.get_file_as_string("res://dialogue/chapter2.txt")
+	for id in ["fold", "wind", "train_whistle", "bird_peck", "bird_eye", "river"]:
+		_check(("@sfx %s" % id) in ch2txt and sfx_lib.stream(id) != null, "第二章劇本用到外包音效 %s" % id)
+	_check("\"meter_max\"" in FileAccess.get_file_as_string("res://scripts/minigames/hold_endure.gd"), "忍耐小遊戲滿格有音效")
 	_check("@bgm far_shore" in FileAccess.get_file_as_string("res://dialogue/chapter2.txt"), "河對岸的模範生出現時播〈far shore〉")
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
 	for c in [2, 3, 4, 5]:

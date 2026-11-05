@@ -67,6 +67,7 @@ func _process(delta: float) -> void:
 			Tones.buzz(self, 0.25)
 	if _hold >= 1.0:
 		_flash = 0.8
+		Sfx.play(self, "meter_max", -6.0)   # 量表滿格：撐過這一題
 
 
 ## 讀一張外包圖；找不到就回傳 null（呼叫的地方會改用程式畫的版本）

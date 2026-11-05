@@ -885,6 +885,7 @@ Fen：小布。不要吃他們給的東西。
 
 === c2_office
 @if office_done c2_office_again
+@sfx bird_eye
 > 辦公室的門口，站著一隻白色的機械鳥。眼睛會轉。
 @if kept_white_candy c2_office_candy
 @if reported_youyou c2_office_blocked
@@ -895,10 +896,12 @@ Fen：小布。不要吃他們給的東西。
 @goto c2_office_in
 # c2_office_candy
 > 你把口袋裡那顆白色的糖果，放在地上。
+@sfx bird_peck
 > 機械鳥啄了一下。停住了。
 > 「……什麼都不用想了。」
 @goto c2_office_in
 # c2_office_blocked
+@sfx bird_eye
 > 機械鳥的眼睛，轉向你。你退了回來。
 @end
 # c2_office_in
@@ -1189,6 +1192,7 @@ Fen：小布。不要吃他們給的東西。
 // ───────── 第三天傍晚：自由時間 ─────────
 === c2_xiaoji_day3_explore
 > 鐵絲網關電的十五分鐘。
+@sfx river
 > 小棘一個人坐在河邊。光禿禿的。
 > 鐵絲網對面，有東西在動。
 @event c2_mochi_cross
@@ -1232,7 +1236,9 @@ Fen：小布。不要吃他們給的東西。
 * 把那封信折成紙飛機，射過鐵絲網 -> c2_letter_fly $1
 * 把信留著 -> c2_letter_keep
 # c2_letter_fly
+@sfx fold
 @bg cg13_paper_plane
+@sfx wind
 > 紙飛機飛過河。露露接住了。
 > 她打開。讀了很久。
 > 她抬起頭，看向隊伍裡的波波。
@@ -1321,6 +1327,7 @@ Fen：小布。不要吃他們給的東西。
 [!mochi_tag_written] > 麻糬的圍裙是破的。
 > 台下，被帶去「準備畢業」的孩子，一個一個躺在白色的工作台上，蓋著白布。
 > 月台的方向，傳來火車進站的汽笛聲。
+@sfx train_whistle
 和平鴿：今天，是很美的日子。
 和平鴿：壞的部分，會被拿掉。剩下的，會被送到一個很棒的地方。
 和平鴿：外面的世界，會說你們是好孩子。爸爸媽媽會很高興。

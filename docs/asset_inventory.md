@@ -124,6 +124,8 @@ UI-01 對話框＋名字牌；UI-02 操行成績單；UI-03 守則板＋滴墨�
   （2026-11-05：`06_apology` 接上道歉練習；`07_chairs`／`07_chairs_stop` 接上搶椅子——音樂從曲子隨機位置開始、停下時播刮唱盤聲）
 - 2026-11-05 接上的 SE：brush、bubble（刷洗）、snip、snip_flesh（剪刺）、stuff_in（塞棉花）、found、wrong（找不同）、
   card_flip、chant（告解）、chair_drag、chair_sit（搶椅子）、bird_peck（第三章烏鴉敲窗）、wings（第三章和平鴿從車頂滑下來）。
+  再接上（劇本 @sfx）：fold、wind（摺紙飛機射過河）、train_whistle（畢業典禮遠處的汽笛）、bird_eye、bird_peck（辦公室門口的機械鳥）、river（小棘坐在河邊）；meter_max（忍耐小遊戲滿格）。
+  還沒用到：stuff_out、unstitch、seam_rip、stitch_tick、hold_buzz、wind_stop（場景裡沒有適合的地方，不硬塞）。
   另外接上：conduct_up／conduct_down（`@conduct` 加減分）、rule_break（選了違反守則的★選項）、save（第二章以後存檔）、title_card（章末卡片）。
   下面是當時的清單，上面這些已經不算「沒用到」。
 - **SE（35 種／105 檔）從未觸發**：brush、sew、confirm、cursor、conduct_up/down、rule_break、paper、save、title_card、river、broadcast、dove_step、fold、bird_eye、bird_peck、train_whistle、meter_max、hold_buzz、bubble、seam_rip、found、wrong、card_flip、chant、snip、snip_flesh、wind、wind_stop、chair_drag、chair_sit、stuff_in、stuff_out、unstitch、stitch_tick。
