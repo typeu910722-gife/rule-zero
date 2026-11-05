@@ -246,6 +246,9 @@ func _command(op: String, args: Array) -> int:
 			GameState.add_suspicion(int(args[0]))
 		"conduct":
 			GameState.add_conduct(int(args[0]))
+			# 第二章的操行：加分、扣分各有外包的音效
+			if _ch2() and int(args[0]) != 0:
+				Sfx.play(self, "conduct_up" if int(args[0]) > 0 else "conduct_down", -6.0)
 		"bgm":
 			bgm_requested.emit("" if args.is_empty() or args[0] == "stop" else args[0])
 		"face":
@@ -532,6 +535,8 @@ func _choose(opts: Array) -> int:
 		b.pressed.connect(func():
 			if not _ch2():
 				Sound.sfx("choice")
+			elif o.cost > 0:
+				Sfx.play(self, "rule_break", -6.0)   # 選了違反守則的選項
 			_chosen.emit(k))
 		_choices.add_child(b)
 		if first == null and not b.disabled:

@@ -664,6 +664,8 @@ func _path(name: String) -> String:
 
 func save_game(cp: String) -> void:
 	checkpoint = cp
+	if chapter >= 2 and not fast:
+		Sfx.play(self, "save", -10.0)   # 存檔的小聲音（第二章以後）
 	record_collected()
 	save_meta()
 	var data := {"version": 2, "checkpoint": cp, "chapter": chapter, "day": day, "courage": courage,

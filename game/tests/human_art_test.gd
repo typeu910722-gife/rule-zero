@@ -395,6 +395,14 @@ func _run() -> void:
 	_check("@event c3_tatters" in FileAccess.get_file_as_string("res://dialogue/chapter3.txt"), "劇本在和平鴿看見大家時顯示破爛玩偶")
 	tl.queue_free()
 	c3e.free()
+	# 第二章的系統音效：操行加減、違反守則、存檔、章末卡片，以及河對岸的配樂
+	var hooks := {"res://scripts/autoload/dialogue.gd": ["conduct_up", "conduct_down", "rule_break"],
+		"res://scripts/autoload/game_state.gd": ["save"], "res://scripts/ch2/end_card.gd": ["title_card"]}
+	for f in hooks:
+		var code := FileAccess.get_file_as_string(f)
+		for id in hooks[f]:
+			_check(("\"%s\"" % id) in code and sfx_lib.stream(id) != null, "第二章音效 %s 有接上" % id)
+	_check("@bgm far_shore" in FileAccess.get_file_as_string("res://dialogue/chapter2.txt"), "河對岸的模範生出現時播〈far shore〉")
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
 	for c in [2, 3, 4, 5]:
 		gs.chapter = c
