@@ -130,7 +130,7 @@ func _run() -> void:
 	var scripts := FileAccess.get_file_as_string("res://dialogue/chapter4.txt") + FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
 	for cg in ["c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
 			"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside",
-			"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note"]:
+			"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note", "c5_cg14_queue"]:
 		var p: String = d.HUMAN_CG % cg.substr(3)
 		var ok := ResourceLoader.exists(p)
 		if ok:
@@ -336,5 +336,53 @@ func _run() -> void:
 	gs.chapter = 2
 	d._show_portrait_ch2("芬")
 	_check(not d._ch2_portrait.visible, "第二章「芬」不會出現人類立繪")
+	# 第三章結尾「舉槍、上膛」特寫：有圖，_gunshot 會先切到這張
+	gs.chapter = 3
+	d.set_bg("c3_cg_gun")
+	_check(d._bg_img.visible and d._bg_img.texture != null and d._bg_img.texture.resource_path.ends_with("ch3_bg_cg_gun.jpg"), "第三章 舉槍特寫 CG 有圖")
+	_check("set_bg(\"c3_cg_gun\")" in FileAccess.get_file_as_string("res://scripts/chapter3.gd"), "第三章 槍聲前會顯示舉槍特寫")
+	d.set_bg("none")
+	# 第三章 3D 追逐被抓到：棉花噴出來；第四、五章（人類）不噴
+	var fast_before: bool = gs.fast
+	gs.fast = false
+	var cz = C3.new()
+	_check(cz._cotton_burst() == 9, "第三章 3D 追逐被抓到會噴棉花")
+	cz.look = {"kit": "school"}
+	_check(cz._cotton_burst() == 0, "第四章 3D 追逐被抓到不噴棉花")
+	cz.free()
+	# 搶椅子：用外包的配樂，停下時有刮唱盤聲；道歉練習有自己的配樂
+	var chairs = load("res://scripts/minigames/chairs.gd").new()
+	root.add_child(chairs)
+	chairs._music_start()
+	_check(chairs._music != null and chairs._music.stream != null, "搶椅子用外包配樂 bgm07_chairs")
+	chairs.queue_free()
+	gs.fast = fast_before
+	var ch2_code := FileAccess.get_file_as_string("res://scripts/chapter2.gd")
+	_check("_with_bgm(\"apology\", game)" in ch2_code and "\"apology\": \"06_apology\"" in ch2_code, "道歉練習有配樂 bgm06_apology")
+	# 第二章小遊戲接上外包音效（不是只有程式合成的嗶聲）
+	var sfx_lib = load("res://scripts/audio/sfx.gd")
+	for pair in [["scrub", "brush"], ["trim", "snip"], ["restuff", "stuff_in"], ["find_odd", "found"], ["confession", "card_flip"], ["chairs", "chair_sit"]]:
+		var src := FileAccess.get_file_as_string("res://scripts/minigames/%s.gd" % pair[0])
+		_check(("\"%s\"" % pair[1]) in src and sfx_lib.stream(pair[1]) != null, "%s 小遊戲用外包音效 %s" % pair)
+	# 第四、五章有自己的配樂（鋼琴），檔案都在；組織／玩偶世界的段落才沿用第二章
+	for scr in ["res://scripts/chapter4.gd", "res://scripts/chapter5.gd"]:
+		var bgm: Dictionary = load(scr).BGM
+		var no_file := []
+		for k in bgm:
+			if not ResourceLoader.exists(bgm[k]):
+				no_file.append(k)
+		_check(no_file.is_empty(), "%s 配樂檔案都在 %s" % [scr.get_file(), no_file])
+		_check(String(bgm["memory"]).contains("/ch45/"), "%s 回憶段落用人類時期自己的配樂" % scr.get_file())
+	_check(String(load("res://scripts/chapter5.gd").BGM["waking"]).ends_with("ch5_bgm02_waking.ogg"), "終章 A 用〈醒來〉")
+	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
+	for c in [2, 3, 4, 5]:
+		gs.chapter = c
+		var bt := Button.new()
+		d._style_button(bt)
+		var n_sb = bt.get_theme_stylebox("normal")
+		var f_sb = bt.get_theme_stylebox("focus")
+		_check(n_sb is StyleBoxTexture and n_sb.texture != null, "第%d章 選項按鈕有圖" % c)
+		_check(f_sb is StyleBoxTexture and f_sb.texture != n_sb.texture, "第%d章 選到的選項換一張圖" % c)
+		bt.free()
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

@@ -121,7 +121,7 @@ const BGM := {
 	"town": "01_bleach_town", "evening": "02_evening", "far_shore": "03_far_shore", "dove": "04_dove",
 	"correction": "05_correction_time", "night": "08_night", "humming": "09_humming", "nirvana": "10_nirvana",
 	"memory": "11_memory", "graduation": "12_graduation", "escape": "13_escape", "next_stop": "14_next_stop",
-	"special_love": "15_special_love", "dream": "16_dream",
+	"special_love": "15_special_love", "dream": "16_dream", "apology": "06_apology",
 }
 ## 只播一次、不循環的曲子
 const BGM_ONCE := ["humming", "escape", "special_love"]
@@ -587,7 +587,7 @@ func _on_event(event_name: String) -> void:
 		"apology":
 			var game := Apology.new()
 			add_child(game)
-			await _with_bgm("", game)
+			await _with_bgm("apology", game)
 		"roll_list":
 			var r := RollList.new()
 			add_child(r)

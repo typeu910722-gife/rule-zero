@@ -13,8 +13,16 @@ const PLACES := {"opening": "實驗室", "director": "實驗室", "choice": "實
 const THRESHOLD := 4
 const ROUTES := {"a": "終章 A「醒來」", "b1": "終章 B-1「新鎮長」", "b2": "終章 B-2「最後一張床」", "b3": "終章 B-3「一個人的出院」"}
 
-const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
-const BGM := {"memory": "11_memory", "dream": "16_dream", "nirvana": "10_nirvana", "next_stop": "14_next_stop", "night": "08_night"}
+## 終章的配樂：最後一堂課、醒來、空的病房是人類時期的鋼琴（tools/make_ch45_bgm.py）；
+## 理事的實驗室沿用〈涅槃〉，B-1（變成新鎮長，留在玩偶世界）沿用第二章的〈夢〉
+const BGM := {
+	"memory": "res://audio/ch45/bgm/ch5_bgm01_lesson.ogg",
+	"waking": "res://audio/ch45/bgm/ch5_bgm02_waking.ogg",
+	"night": "res://audio/ch45/bgm/ch5_bgm03_hollow.ogg",
+	"dream": "res://audio/ch2/bgm/ch2_bgm16_dream.ogg",
+	"nirvana": "res://audio/ch2/bgm/ch2_bgm10_nirvana.ogg",
+	"next_stop": "res://audio/ch2/bgm/ch2_bgm14_next_stop.ogg",
+}
 
 const LEVEL := "res://levels/chapter5.json"
 const STAGES := ["lab", "lesson", "a", "b1", "b2", "b3"]
@@ -65,7 +73,7 @@ func _bgm(name: String) -> void:
 	if name == _bgm_name:
 		return
 	_bgm_name = name
-	var path: String = BGM_DIR % BGM[name] if BGM.has(name) else ""
+	var path: String = BGM.get(name, "")
 	Audio.play_music(path, true, -3.0)
 
 
@@ -177,7 +185,7 @@ func _seg_ending() -> void:
 	hud.refresh()
 	match route:
 		"a":
-			_bgm("dream")
+			_bgm("waking")
 			if not GameState.has("explore_room"):
 				await Dialogue.run("c5_a_intro")
 				var w := BreathWalk.new()

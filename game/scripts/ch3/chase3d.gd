@@ -794,6 +794,7 @@ func _bfs(from: Vector2i, to: Vector2i) -> Array:
 func _get_caught() -> void:
 	_caught += 1
 	Sfx.play(self, "wrong", -2.0)
+	_cotton_burst()
 	if _caught >= MAX_CAUGHT:
 		_finish()
 		return
@@ -810,3 +811,33 @@ func _finish() -> void:
 		return
 	_finished = true
 	done.emit(_caught)
+
+
+## 玩偶醫院裡被抓到：棉花從畫面中間噴出來、散開、淡掉（chapter3.md 第 9 節「撞到時棉花飛出來」）。
+## 第四、五章是人類的身體，不噴棉花。回傳噴出來的片數（測試用）。
+func _cotton_burst() -> int:
+	if _kit() != "hosp" or GameState.fast:
+		return 0
+	var tex: Texture2D = Ch3Mini.art("sew_cotton")
+	if tex == null:
+		return 0
+	var center := Vector2(640, 400)
+	for i in 9:
+		var r := TextureRect.new()
+		r.texture = tex
+		r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var size := randf_range(60.0, 120.0)
+		r.size = Vector2(size, size)
+		r.pivot_offset = r.size / 2
+		r.position = center - r.size / 2
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(r)
+		var ang := TAU * i / 9.0 + randf_range(-0.3, 0.3)
+		var to := center + Vector2.from_angle(ang) * randf_range(220.0, 420.0) - r.size / 2
+		var tw := r.create_tween().set_parallel()
+		tw.tween_property(r, "position", to + Vector2(0, 60), 1.1).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tw.tween_property(r, "rotation", randf_range(-1.5, 1.5), 1.1)
+		tw.tween_property(r, "modulate:a", 0.0, 1.1).set_delay(0.35)
+		tw.chain().tween_callback(r.queue_free)
+	return 9

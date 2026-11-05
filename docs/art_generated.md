@@ -201,3 +201,23 @@
 - 原圖 `chatgpt_art\ch2_cg20_fen_src.png`（上傳 `ch2_fen_portrait_a_default.png`，畫坐著的 Fen），去背後縮到 140px 高、稍微調暗，
   放在右邊第二排靠走道（中心 x=748、頭頂 y=292），存成 `game/art/ch2/cg/ending_layers/ch2_cg20_fen.png`（1280×720 透明）。
 - chapter2.gd 的疊圖順序：Fen 在車掌和前排之前畫。
+
+## 選項按鈕三套（ChatGPT，2026-11-05）
+- 原圖 `chatgpt_art\choice_buttons.png`（3×3：漂白宿舍／毛氈醫院／筆記本紙 × 一般／選到／不能選），
+  `py -3.11 tools/art/fit_ui_pieces.py … --pos` 切成 `game/art/ui_choices/ch{2,3,4}_{normal,focus,off}.png`（寬 360）。
+- `dialogue.gd` 的 `CHOICE_SKIN`：第二章 ch2、第三章 ch3、第四五章 ch4；九宮格左邊留 80px（十字貼布、紙膠帶不會被拉長）。
+
+## 第三章「舉槍、上膛」特寫、終章 A 門口排隊的孩子（ChatGPT，2026-11-05）
+- `ch3_bg_cg_gun.jpg`（1280×720）：和平鴿（白色鳥面具、白手套）拉開左輪的擊鎚，背景是被綁在椅子上的車掌、掉在地上的帽子；
+  沒有血。上傳第三章結尾 CG、和平鴿、車掌立繪當參考。`chapter3.gd` 的 `_gunshot()` 先切到這張，再上膛、黑屏、槍聲。
+- `h_cg14_queue.jpg`（2560×1440）：醫院大門，一列穿制服的孩子走進去，最後一個回頭、手裡一顆白色糖果；
+  上傳 `h_cg10_outside.jpg` 當參考，招牌是空白的（字由劇本說）。劇本 `c5_a_outside` 的「隊伍的最後一個孩子回過頭」前。
+
+## 第四、五章配樂（程式合成，2026-11-05）
+- `tools/make_ch45_bgm.py`：鋼琴＋弦樂墊，旋律是全作的動機。輸出 `game/audio/ch45/bgm/` 7 首（可循環）。
+  第四章：school（回憶）、after_school（傍晚）、night（夜晚）、unease（芬的段落，動機降半音）；
+  第五章：lesson（最後一堂課）、waking（終章 A，最後一個音落回主音）、hollow（B-2、B-3，遠處的心電監護儀）。
+  組織的段落、理事的實驗室沿用第二章〈涅槃〉，B-1（留在玩偶世界）沿用〈夢〉。
+  「那一天」和第五章開場刻意沒有音樂。
+- 執行：`uv run --no-project --python 3.12 --with numpy --with scipy python tools/make_ch45_bgm.py`（這台電腦的 Python 3.11 scipy 壞了一部分）。
+- 烏鴉叫聲試著合成，聽起來像錯誤提示音，所以沒有用；第三章窗台的烏鴉改用外包的 `bird_peck`（啄窗聲）。

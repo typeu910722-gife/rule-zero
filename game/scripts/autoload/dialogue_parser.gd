@@ -19,7 +19,7 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"cg18_dream_classroom", "cg18_dream_classroom_faceless", "cg19_bad_end", "cg20_ending_all",
 	# 第三章（dialogue.gd 的 BG_ART_3／BG_COLORS_3）
 	"c3_platform", "c3_hall", "c3_nurse", "c3_nirvana", "c3_records", "c3_director", "c3_wild", "c3_b2", "c3_monitor", "c3_lab",
-	"c3_cg_arrival", "c3_cg_nirvana", "c3_cg_records", "c3_cg_crow", "c3_cg_monitor", "c3_cg_ending",
+	"c3_cg_arrival", "c3_cg_nirvana", "c3_cg_records", "c3_cg_crow", "c3_cg_monitor", "c3_cg_ending", "c3_cg_gun",
 	# 第四、五章（dialogue.gd 的 BG_COLORS_45）
 	"c4_classroom", "c4_hallway", "c4_toilet_door", "c4_stairs", "c4_gate", "c4_window", "c4_phone", "c4_home",
 	"c4_mailbox", "c4_orphanage", "c4_office", "c4_downstairs", "c4_principal", "c4_hospital", "c4_ward", "c4_ward_dark",
@@ -29,7 +29,7 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
 	"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside",
 	# 第五章事件 CG（2026-11-05 ChatGPT）：理事進門、白面把背心蓋在芬手上、摺好的背心和紙條
-	"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note"]
+	"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note", "c5_cg14_queue"]
 
 var cmds: Array = []
 var labels := {}

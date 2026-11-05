@@ -100,6 +100,7 @@ func play() -> void:
 func _tap() -> void:
 	_taps += 1
 	Motif.note(self, step, -10.0)
+	Sfx.play(self, "stuff_in", -8.0)
 	if step == 1 and _taps == 1:
 		_flash = 1.2
 	if _taps >= TAPS:

@@ -163,7 +163,8 @@ func _cut(k: int, close := false) -> void:
 		_alive.remove_at(idx)
 		_carry = _alive.duplicate()
 	_smile -= 0.22
-	Tones.play(self, 1567.98, -12.0)
+	if not Sfx.play(self, "snip_flesh" if close else "snip", -6.0):
+		Tones.play(self, 1567.98, -12.0)
 	if close:
 		# 剪太靠近皮膚：剪到肉，棉花露出來
 		if _art():

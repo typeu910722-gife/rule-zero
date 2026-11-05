@@ -920,7 +920,41 @@ func _apply_style() -> void:
 		_text.add_theme_font_size_override("normal_font_size", 29 if touch else 26)
 
 
+## 第二章以後的選項按鈕：每章一套圖（art/ui_choices/chN_normal|focus|off.png），沒有圖就用下面的粉紅框
+const CHOICE_SKIN := {2: ["ch2", Color("#4a4a4a"), Color("#1f1f1f")], 3: ["ch3", Color("#5a2a38"), Color("#1f4a32")], 4: ["ch4", Color("#24314f"), Color("#3a2a10")]}
+static var _choice_tex := {}
+
+
+static func choice_texture(key: String, state: String) -> Texture2D:
+	var path := "res://art/ui_choices/%s_%s.png" % [key, state]
+	if not _choice_tex.has(path):
+		_choice_tex[path] = load(path) if ResourceLoader.exists(path) else null
+	return _choice_tex[path]
+
+
 func _style_button(b: Button) -> void:
+	var ch: int = clampi(GameState.chapter, 2, 4)
+	var skin: Array = CHOICE_SKIN[ch]
+	var normal := choice_texture(skin[0], "normal")
+	if normal != null:
+		for state in ["normal", "hover", "focus", "pressed", "disabled"]:
+			var nm := "off" if state == "disabled" else ("normal" if state == "normal" else "focus")
+			var sb := StyleBoxTexture.new()
+			sb.texture = choice_texture(skin[0], nm)
+			sb.texture_margin_left = 80
+			sb.texture_margin_right = 44
+			sb.content_margin_left = 84
+			sb.content_margin_right = 40
+			sb.content_margin_top = 12
+			sb.content_margin_bottom = 12
+			b.add_theme_stylebox_override(state, sb)
+		b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, 64)
+		b.add_theme_color_override("font_color", skin[1])
+		b.add_theme_color_override("font_hover_color", skin[2])
+		b.add_theme_color_override("font_focus_color", skin[2])
+		b.add_theme_color_override("font_pressed_color", skin[2])
+		b.add_theme_color_override("font_disabled_color", Color(skin[1], 0.45))
+		return
 	for state in ["normal", "hover", "focus", "pressed", "disabled"]:
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = Color("#fff8f0") if state in ["normal", "disabled"] else Color("#ffe1ec")

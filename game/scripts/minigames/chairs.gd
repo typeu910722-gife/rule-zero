@@ -28,6 +28,35 @@ var _note_i := 0
 var _reacted := -1.0
 var _running := false
 var _area: Control
+## 外包的搶椅子配樂（30 秒循環）與「音樂停下」的唱盤刮聲；沒有檔案就退回音樂盒單音
+const MUSIC := "res://audio/ch2/bgm/ch2_bgm07_chairs.ogg"
+const MUSIC_STOP := "res://audio/ch2/bgm/ch2_bgm07_chairs_stop.ogg"
+var _music: AudioStreamPlayer = null
+
+
+func _music_start() -> void:
+	if not ResourceLoader.exists(MUSIC):
+		return
+	if _music == null:
+		_music = AudioStreamPlayer.new()
+		_music.stream = load(MUSIC)
+		_music.volume_db = -4.0 + Audio.music_db()
+		add_child(_music)
+	# 每一輪從曲子不同的地方開始，玩家抓不到停的時機
+	_music.play(randf_range(0.0, 20.0))
+
+
+func _music_stop() -> void:
+	if _music == null:
+		return
+	_music.stop()
+	if ResourceLoader.exists(MUSIC_STOP):
+		var p := AudioStreamPlayer.new()
+		p.stream = load(MUSIC_STOP)
+		p.volume_db = -4.0 + Audio.sfx_db()
+		add_child(p)
+		p.play()
+		p.finished.connect(p.queue_free)
 
 # ── 外包美術（res://art/ch2/minigames/chairs/）。圖不在就退回原本的程序繪圖 ──
 const ART := "res://art/ch2/minigames/chairs/"
@@ -115,6 +144,7 @@ func play() -> void:
 	_losses = int(GameState.flags.get("chairs_losses", 0))
 	_stop_at = randf_range(2.4, 4.2)
 	_running = true
+	_music_start()
 	await done
 	queue_free()
 
@@ -161,6 +191,8 @@ func _restart_round() -> void:
 	_note_t = 0.0
 	_stop_at = randf_range(2.4, 4.2)
 	_finishing = false
+	Sfx.play(self, "chair_drag", -8.0)
+	_music_start()
 
 
 func _process(delta: float) -> void:
@@ -173,11 +205,13 @@ func _process(delta: float) -> void:
 			_note_t -= delta
 			if _note_t <= 0:
 				_note_t = randf_range(0.25, 0.5)
-				Motif.note(self, _note_i)
+				if _music == null:
+					Motif.note(self, _note_i)
 				_note_i += 1
 			if _t >= _stop_at:
 				_phase = "stopped"
 				_t = 0.0
+				_music_stop()
 		"stopped":
 			if _t > 1.6:
 				_phase = "result"
@@ -194,6 +228,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _running and _phase == "stopped" and _reacted < 0 and (event.is_action_pressed("interact") or tap):
 		get_viewport().set_input_as_handled()
 		_reacted = _t
+		Sfx.play(self, "chair_sit", -6.0)
 
 
 func _draw_area() -> void:

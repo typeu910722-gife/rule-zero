@@ -319,8 +319,13 @@ def finish(x, target, mode="mom", ceiling=-1.5, fade_in=0.002, fade_out=0.03, ta
 def save(path, x, quality=6):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     x = stereo(x)
-    with tempfile.NamedTemporaryFile(suffix=".wav") as f:
-        wavfile.write(f.name, SR, x.astype(np.float32))
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", f.name, "-c:a", "libvorbis", "-q:a", str(quality), path], check=True)
+    # Windows 不能重開還開著的 NamedTemporaryFile，所以先關掉再寫、用完自己刪
+    fd, tmp = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)
+    try:
+        wavfile.write(tmp, SR, x.astype(np.float32))
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", tmp, "-c:a", "libvorbis", "-q:a", str(quality), path], check=True)
+    finally:
+        os.remove(tmp)
     li, lm = loudness(x)
     print(f"完成 {os.path.basename(path):24s} {len(x) / SR:5.2f}s  整合 {li:6.1f}  瞬時最大 {lm:6.1f}  真峰值 {true_peak_db(x):5.1f}")

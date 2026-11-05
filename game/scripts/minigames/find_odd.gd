@@ -111,10 +111,12 @@ func _end(ok: bool) -> void:
 
 func _pick(i: int) -> void:
 	if i == _odd:
-		Tones.play(self, 1046.5)
+		if not Sfx.play(self, "found"):
+			Tones.play(self, 1046.5)
 		_end(true)
 	else:
 		_flash = 0.4
+		Sfx.play(self, "wrong", -6.0)
 
 
 func _slot(i: int) -> Vector2:

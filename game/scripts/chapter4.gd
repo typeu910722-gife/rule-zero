@@ -14,8 +14,14 @@ const POV := {"opening": "", "haruka": "視角：遙", "mochi": "視角：小滿
 	"xinhe": "視角：辛禾", "popo": "視角：銘越", "teacher": "視角：導師", "fen": "視角：芬（白面）",
 	"theday": "那一天", "org": "那一天之後", "night": "慈愛組織的第一個晚上"}
 
-const BGM_DIR := "res://audio/ch2/bgm/ch2_bgm%s.ogg"
-const BGM := {"memory": "11_memory", "dream": "16_dream", "night": "08_night", "evening": "02_evening", "nirvana": "10_nirvana"}
+## 人類時期自己的配樂（鋼琴，tools/make_ch45_bgm.py）；組織的段落沿用第二章的〈涅槃〉
+const BGM := {
+	"memory": "res://audio/ch45/bgm/ch4_bgm01_school.ogg",
+	"evening": "res://audio/ch45/bgm/ch4_bgm02_after_school.ogg",
+	"night": "res://audio/ch45/bgm/ch4_bgm03_night.ogg",
+	"dream": "res://audio/ch45/bgm/ch4_bgm04_unease.ogg",
+	"nirvana": "res://audio/ch2/bgm/ch2_bgm10_nirvana.ogg",
+}
 
 
 var segment := "opening"
@@ -78,7 +84,7 @@ func _bgm(name: String) -> void:
 	if name == _bgm_name:
 		return
 	_bgm_name = name
-	var path: String = BGM_DIR % BGM[name] if BGM.has(name) else ""
+	var path: String = BGM.get(name, "")
 	Audio.play_music(path, true, -3.0)
 
 

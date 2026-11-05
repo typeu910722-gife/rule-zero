@@ -120,7 +120,11 @@ UI-01 對話框＋名字牌；UI-02 操行成績單；UI-03 守則板＋滴墨�
 | UI (11) | `ui_01_dialogue`、`ui_01_nameplate`、`ui_06_diary`、`ui_09_chapter2`、`ui_09_chapter3`（有字版）、`ui_10_*` ×4、`ui_11_heart_badge`、`ui_11_heart_line` | 對話框仍是 StyleBoxFlat；日記、顏色碎片圖示沒接 |
 
 ### 2-4 音訊沒用到
-- **BGM（4 檔）**：`03_far_shore`（在 BGM 表裡但沒有任何 `@bgm far_shore`）、`06_apology`、`07_chairs`、`07_chairs_stop`（道歉練習、搶椅子仍用 `Tones.play` 程式合成的旋律）。
+- **BGM**：`03_far_shore` 還沒用到（在 BGM 表裡但沒有任何 `@bgm far_shore`）。
+  （2026-11-05：`06_apology` 接上道歉練習；`07_chairs`／`07_chairs_stop` 接上搶椅子——音樂從曲子隨機位置開始、停下時播刮唱盤聲）
+- 2026-11-05 接上的 SE：brush、bubble（刷洗）、snip、snip_flesh（剪刺）、stuff_in（塞棉花）、found、wrong（找不同）、
+  card_flip、chant（告解）、chair_drag、chair_sit（搶椅子）、bird_peck（第三章烏鴉敲窗）、wings（第三章和平鴿從車頂滑下來）。
+  下面是當時的清單，上面這些已經不算「沒用到」。
 - **SE（35 種／105 檔）從未觸發**：brush、sew、confirm、cursor、conduct_up/down、rule_break、paper、save、title_card、river、broadcast、dove_step、fold、bird_eye、bird_peck、train_whistle、meter_max、hold_buzz、bubble、seam_rip、found、wrong、card_flip、chant、snip、snip_flesh、wind、wind_stop、chair_drag、chair_sit、stuff_in、stuff_out、unstitch、stitch_tick。
   - 有用到的只有：`@sfx` 21 種＋打字 `text`＋環境 `ambience`/`negative_hum`＋電擊 short/medium/long（`Tones.buzz`）。
   - 九個小遊戲的音效全部仍是 `Tones.play` 合成音；UI 系統音效（選項、操行、存檔）都沒接。

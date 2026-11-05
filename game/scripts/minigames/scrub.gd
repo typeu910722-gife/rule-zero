@@ -156,7 +156,8 @@ func _scrub_at(p: Vector2, amount: float) -> void:
 			stripes[k] = maxf(0.0, stripes[k] - amount)
 			if randf() < 0.4:
 				_bubbles.append({"pos": p + Vector2(randf_range(-20, 20), randf_range(-10, 10)), "t": 0.0})
-				Tones.play(self, 1046.5 + randf() * 300.0, -22.0)
+				if not Sfx.play(self, "bubble" if randf() < 0.3 else "brush", -10.0):
+					Tones.play(self, 1046.5 + randf() * 300.0, -22.0)
 
 
 func _process(delta: float) -> void:

@@ -313,7 +313,10 @@ func _on_event(event_name: String) -> void:
 				var r := Runner.new()
 				r.duration = 15.0
 				add_child(r)
+				var prev := _bgm_name
+				_bgm("escape")   # 逃跑要用追逐的曲子，不是舊病棟的夜晚
 				_lose_cotton(await r.play(), 3)
+				_bgm(prev)
 		"c3_sew":
 			var low := party.duplicate()
 			low.sort_custom(func(a, b): return _cotton(a[0]) < _cotton(b[0]))
@@ -438,6 +441,7 @@ func _lights_on() -> void:
 
 ## 舉槍、上膛、黑屏、槍聲；什麼畫面都沒有，停一拍
 func _gunshot() -> void:
+	Dialogue.set_bg("c3_cg_gun")   # 舉槍、上膛的特寫（chapter3.md 第 10 步）
 	if not GameState.fast:
 		_play("res://audio/ch3/gun_cock.ogg", -2.0)
 		await get_tree().create_timer(1.2).timeout

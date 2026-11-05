@@ -47,7 +47,9 @@ func _read() -> void:
 	_i += 1
 	color = maxf(0.0, color - 0.12)
 	_shout = 1.0
-	Tones.play(self, 330.0, -8.0)
+	Sfx.play(self, "card_flip", -4.0)
+	if not Sfx.play(self, "chant", -8.0):
+		Tones.play(self, 330.0, -8.0)
 	if _i >= cards.size():
 		_finish.call_deferred()
 
