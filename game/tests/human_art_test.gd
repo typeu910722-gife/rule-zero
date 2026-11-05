@@ -374,6 +374,27 @@ func _run() -> void:
 		_check(no_file.is_empty(), "%s 配樂檔案都在 %s" % [scr.get_file(), no_file])
 		_check(String(bgm["memory"]).contains("/ch45/"), "%s 回憶段落用人類時期自己的配樂" % scr.get_file())
 	_check(String(load("res://scripts/chapter5.gd").BGM["waking"]).ends_with("ch5_bgm02_waking.ogg"), "終章 A 用〈醒來〉")
+	# 第三章走廊逃跑：小布跑步 4 格，大小一致
+	var R3 = load("res://scripts/ch3/runner.gd")
+	_check(R3.BU_CYCLE.size() == 4, "第三章走廊逃跑：小布跑步 4 格")
+	for k in R3.BU_CYCLE:
+		var bt3: Texture2D = MB.art("run_bu_%02d" % k)
+		_check(bt3 != null and bt3.get_height() == 220, "run_bu_%02d 有圖、高 220" % k)
+	# 第三章結尾：依每個人剩下的棉花合成破爛的玩偶（棉花越少，冒出來的棉花越多），舉槍時拿掉
+	gs.chapter = 3
+	var c3e = load("res://scripts/chapter3.gd").new()
+	c3e.party = [["lulu", "露露"], ["mochi", "麻糬"]]
+	gs.flags["c3_cotton_lulu"] = 9
+	gs.flags["c3_cotton_mochi"] = 2
+	var tl: Control = c3e._tatters()
+	var boxes := tl.get_children().filter(func(n): return n.has_meta("cotton"))
+	_check(boxes.size() == 2, "結尾破爛玩偶：每個同伴一格")
+	if boxes.size() == 2:
+		_check(boxes[1].get_child_count() > boxes[0].get_child_count(), "棉花剩 2 的比剩 9 的破得更多")
+	_check(tl.get_parent() == d and tl.get_index() == d._bg_img.get_index() + 1, "破爛玩偶疊在背景 CG 上、對話框下")
+	_check("@event c3_tatters" in FileAccess.get_file_as_string("res://dialogue/chapter3.txt"), "劇本在和平鴿看見大家時顯示破爛玩偶")
+	tl.queue_free()
+	c3e.free()
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
 	for c in [2, 3, 4, 5]:
 		gs.chapter = c

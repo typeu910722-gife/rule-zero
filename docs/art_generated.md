@@ -221,3 +221,12 @@
   「那一天」和第五章開場刻意沒有音樂。
 - 執行：`uv run --no-project --python 3.12 --with numpy --with scipy python tools/make_ch45_bgm.py`（這台電腦的 Python 3.11 scipy 壞了一部分）。
 - 烏鴉叫聲試著合成，聽起來像錯誤提示音，所以沒有用；第三章窗台的烏鴉改用外包的 `bird_peck`（啄窗聲）。
+
+## 第三章：小布跑步 4 格、病房門突然打開、結尾的破爛玩偶（2026-11-05）
+- `run_bu_03.png`、`run_bu_04.png`：ChatGPT 畫的兩格「經過」動作（上傳原本的 01、02 當參考，原圖 `chatgpt_artun_bu_passing.png`），
+  `fit_parts_sheet.py … 2 1 220` 切成高 220。`runner.gd` 的 `BU_CYCLE` = 01 → 03 → 02 → 04（背包左右甩）。
+- 3D 追逐（玩偶醫院）：每 10 面牆裡的一扇病房門會在玩家走到 1.6 公尺內時突然打開——換成 `door_hospital_front_open.png`、
+  `door_thud` 聲、畫面閃白、腳步慢 0.8 秒；起點附近不會開。不用新圖。
+- 結尾 `@event c3_tatters`（和平鴿看見大家時）：用第二章立繪排一列，依 `c3_cotton_<id>` 合成——棉花越少越灰、
+  裂開的縫線越長、從縫線冒出來的棉花（`sew_cotton.png`）越多；疊在背景 CG 上、對話框下，舉槍時拿掉。
+

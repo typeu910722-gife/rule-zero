@@ -29,6 +29,7 @@ const ROOMS := {
 
 var segment := "arrival"
 var party: Array = []
+var _tatter_layer: Control = null
 var hud: Ch3Hud
 var room: Ch3Room
 var _bgm_name := ""
@@ -73,6 +74,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if _tatter_layer != null:
+		_tatter_layer.queue_free()
 	Audio.stop_music()
 	if Dialogue.event_requested.is_connected(_on_event):
 		Dialogue.event_requested.disconnect(_on_event)
@@ -346,6 +349,8 @@ func _on_event(event_name: String) -> void:
 			GameState.set_flag("c3_ecg_saved" if await c.play() else "c3_ecg_lost")
 		"c3_lights":
 			await _lights_on()
+		"c3_tatters":
+			_tatters()
 		"c3_gun":
 			await _gunshot()
 	Dialogue.event_done.emit()
@@ -441,6 +446,9 @@ func _lights_on() -> void:
 
 ## 舉槍、上膛、黑屏、槍聲；什麼畫面都沒有，停一拍
 func _gunshot() -> void:
+	if _tatter_layer != null:
+		_tatter_layer.queue_free()
+		_tatter_layer = null
 	Dialogue.set_bg("c3_cg_gun")   # 舉槍、上膛的特寫（chapter3.md 第 10 步）
 	if not GameState.fast:
 		_play("res://audio/ch3/gun_cock.ogg", -2.0)
@@ -543,3 +551,91 @@ func _chapter_end() -> void:
 
 ## 自動測試用：章節跑完了
 var _finished := false
+
+
+## 結尾和平鴿看見的「破破爛爛的玩偶」（chapter3.md 第 6 步）：依每個人剩下的棉花合成。
+## 棉花越少：顏色越灰、身上冒出越多團棉花、裂開的縫線越長。一直留在畫面上，直到舉槍那一刻。
+const TATTER_PORTRAIT := {"pip": "pip_portrait_scared", "lulu": "lulu_portrait_default", "mochi": "mochi_portrait_torn",
+	"popo": "popo_portrait_default", "fen": "fen_portrait_a_default", "baimian": "baimian_portrait_default",
+	"zhongzhong": "zhongzhong_portrait_default"}
+
+
+func _tatters() -> Control:
+	if _tatter_layer != null:
+		_tatter_layer.queue_free()
+	# 放在對話層裡、背景 CG 的正上方（對話框和立繪還是在最上面）
+	_tatter_layer = Control.new()
+	_tatter_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_tatter_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Dialogue.add_child(_tatter_layer)
+	Dialogue.move_child(_tatter_layer, Dialogue._bg_img.get_index() + 1)
+	var shade := ColorRect.new()
+	shade.color = Color(0.02, 0.02, 0.03, 0.88)
+	shade.size = Vector2(1280, 720)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tatter_layer.add_child(shade)
+	var who := party.filter(func(p): return TATTER_PORTRAIT.has(p[0]))
+	var w := minf(230.0, 1200.0 / maxf(1.0, who.size()))
+	var cotton_tex: Texture2D = Ch3Mini.art("sew_cotton")
+	for i in who.size():
+		var id: String = who[i][0]
+		var left := _cotton(id)
+		var hurt := 1.0 - left / 10.0
+		var path := "res://art/ch2/characters/portraits/ch2_%s.png" % TATTER_PORTRAIT[id]
+		if not ResourceLoader.exists(path):
+			continue
+		var box := Control.new()
+		box.position = Vector2(640 - w * who.size() / 2.0 + w * i, 70)
+		box.size = Vector2(w, w * 1.5)
+		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.set_meta("cotton", left)
+		_tatter_layer.add_child(box)
+		var pic := TextureRect.new()
+		pic.texture = load(path)
+		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		pic.size = box.size
+		pic.modulate = Color(0.6, 0.56, 0.56).lerp(Color.WHITE, left / 10.0)
+		pic.rotation = deg_to_rad(-3.0 * hurt if i % 2 else 3.0 * hurt)
+		pic.pivot_offset = box.size * Vector2(0.5, 1.0)
+		box.add_child(pic)
+		# 裂開的縫線：從肩膀往下斜的一道，棉花越少越長
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash(id)
+		var a := Vector2(w * rng.randf_range(0.3, 0.45), w * 0.75)
+		var b := a + Vector2(w * 0.3, w * 0.7) * maxf(hurt, 0.2)
+		if hurt > 0.15:
+			var seam := Line2D.new()
+			seam.width = 3.0
+			seam.default_color = Color("#5a2f2a")
+			var steps := 8
+			for k in steps + 1:
+				var q := a.lerp(b, float(k) / steps)
+				seam.add_point(q + Vector2(5, -5) * (1 if k % 2 else -1))
+			box.add_child(seam)
+		# 跑出來的棉花
+		if cotton_tex != null:
+			for k in int(round(hurt * 7.0)):
+				var c := TextureRect.new()
+				c.texture = cotton_tex
+				c.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				c.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				var sz := w * rng.randf_range(0.1, 0.17)
+				c.size = Vector2(sz, sz)
+				c.rotation = rng.randf_range(-0.6, 0.6)
+				c.pivot_offset = c.size / 2
+				# 棉花從裂開的縫線冒出來
+				var along := a.lerp(b, rng.randf())
+				c.position = along + Vector2(rng.randf_range(-14, 14), rng.randf_range(-10, 10)) - c.size / 2
+				box.add_child(c)
+		var nl := Label.new()
+		nl.text = "%s　%d" % [who[i][1], left]
+		nl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nl.size = Vector2(w, 30)
+		nl.position = Vector2(0, w * 1.5 + 4)
+		nl.add_theme_font_size_override("font_size", 20)
+		nl.add_theme_color_override("font_color", Color("#c9d3d6"))
+		nl.add_theme_constant_override("outline_size", 6)
+		nl.add_theme_color_override("font_outline_color", Color.BLACK)
+		box.add_child(nl)
+	return _tatter_layer

@@ -55,6 +55,10 @@ func _run() -> void:
 		Input.action_release(a)
 	_check(result[0] >= 0 and c._cell(c._pos) == c._exit, "按方向鍵真的走到出口（被抓 %d 次，%d 幀）" % [result[0], frames])
 	_check(result[0] <= 1, "沿著正確的路走，追的人追不太上（被抓 %d 次）" % result[0])
+	# 病房門突然打開（第三章的障礙）：醫院有會開的門、走過去真的有門打開，而且不會害玩家一定被抓
+	var fired: int = c._doors.filter(func(dr): return dr.fired).size()
+	_check(c._doors.size() >= 2, "醫院走廊有會突然打開的病房門（%d 扇）" % c._doors.size())
+	_check(fired >= 1, "走到出口的路上有門突然打開（%d 扇）" % fired)
 	# 迷宮每一格都連得到（不會有走不到的死角讓人以為有路）
 	var total := 0
 	var reach := 0

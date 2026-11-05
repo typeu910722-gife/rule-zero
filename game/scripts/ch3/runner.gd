@@ -4,6 +4,9 @@ extends Ch3Mini
 ## rollcall＝true 時：廣播會點名，叫到名字的人要立刻按住「躲」（按住互動鍵／手指壓著）。
 ## 回傳：撞到（被抓到）的次數。
 
+## 小布跑步 4 格：右腳踢起 → 經過 → 左腳踢起 → 經過（背包跟著左右甩）
+const BU_CYCLE := [1, 3, 2, 4]
+
 var rollcall := false
 var duration := 35.0
 var lane := 1
@@ -146,7 +149,7 @@ func _paint(c: Control) -> void:
 				c.draw_circle(p - Vector2(0, 30) * s, 22 * s, Color("#e8c9b0"))
 	# 小布
 	var me := _proj(lane_x, 0.0) - Vector2(0, 50)
-	var bu := art("run_bu_%02d" % (1 + int(t * 8.0) % 2))
+	var bu := art("run_bu_%02d" % BU_CYCLE[int(t * 10.0) % BU_CYCLE.size()])
 	if bu != null:
 		draw_art_h(c, bu, me + Vector2(0, 62), 150)
 	else:

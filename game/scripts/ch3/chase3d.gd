@@ -121,6 +121,10 @@ var _exit := Vector2i.ZERO
 var _start := Vector2i.ZERO
 var _check := Vector2i.ZERO
 var _enemy_start := Vector2i.ZERO
+## 玩偶醫院的病房門：走近時有些會「砰」地突然打開（chapter3.md 第 9 節的障礙），嚇一跳、腳步慢下來
+var _doors: Array = []             # [{"mesh": MeshInstance3D, "at": Vector2（x, z）, "fired": bool}]
+var _door_open_mat: StandardMaterial3D = null
+var _door_slow := 0.0
 var _pos := Vector2.ZERO           # 玩家在地面上的座標（x, z）
 var _yaw := 0.0
 var _epos := Vector2.ZERO
@@ -366,6 +370,8 @@ func _build_walls(w: int, h: int) -> void:
 					dm.position = c + Vector3(d.x, 0, d.y) * 0.01 + Vector3(0, -0.225, 0)
 					dm.rotation.y = m.rotation.y
 					_world.add_child(dm)
+					if _kit() == "hosp" and door_tex != null and n % 10 == 2:
+						_doors.append({"mesh": dm, "at": Vector2(c.x, c.z), "fired": false})
 					if door_tex != null:
 						continue  # 門的圖上已經有窗
 					var wm := MeshInstance3D.new()
@@ -706,10 +712,14 @@ func _process(delta: float) -> void:
 		speed = WALK * 0.75
 	else:
 		_stamina = clampf(_stamina + (-0.35 if running else 0.18) * delta, 0.0, 1.0)
+	if _door_slow > 0.0:
+		_door_slow -= delta
+		speed *= 0.4
 	var dir := Vector2(-sin(_yaw), -cos(_yaw)) * fwd * speed * delta
 	var moved_x := _try_move(Vector2(dir.x, 0))
 	var moved_z := _try_move(Vector2(0, dir.y))
 	_update_runner(delta, fwd, running, fwd > 0.0 and not moved_x and not moved_z)
+	_check_doors()
 	_place_cam()
 	_dread(delta)
 	if fwd != 0.0:
@@ -841,3 +851,31 @@ func _cotton_burst() -> int:
 		tw.tween_property(r, "modulate:a", 0.0, 1.1).set_delay(0.35)
 		tw.chain().tween_callback(r.queue_free)
 	return 9
+
+
+## 走到病房門旁邊（1.6 公尺內）時，那扇門突然打開：換成開著的門、砰一聲、畫面閃一下、腳步慢 0.8 秒。
+## 每扇門只會開一次；起點附近的門不會開（剛開始不要被嚇）。回傳這一次打開了幾扇（測試用）。
+func _check_doors() -> int:
+	var opened := 0
+	for dr in _doors:
+		if dr.fired or _pos.distance_to(dr.at) > 1.6 or _pos.distance_to(_center(_start)) < 3.0:
+			continue
+		dr.fired = true
+		opened += 1
+		if _door_open_mat == null:
+			var p := "res://art/doors/door_hospital_front_open.png"
+			_door_open_mat = (dr.mesh as MeshInstance3D).material_override.duplicate()
+			if ResourceLoader.exists(p):
+				_door_open_mat.albedo_texture = load(p)
+		(dr.mesh as MeshInstance3D).material_override = _door_open_mat
+		_door_slow = 0.8
+		Sfx.play(self, "door_thud", 0.0)
+		var fl := ColorRect.new()
+		fl.color = Color(1, 1, 1, 0.45)
+		fl.set_anchors_preset(Control.PRESET_FULL_RECT)
+		fl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(fl)
+		var tw := fl.create_tween()
+		tw.tween_property(fl, "color:a", 0.0, 0.35)
+		tw.tween_callback(fl.queue_free)
+	return opened
