@@ -197,3 +197,18 @@
 | 網頁 | `tools/build_site.sh`（既有）。新版本在 Chromium（Playwright）實際跑過：標題 → 新遊戲 → 粉紅車廂正常；另用暫時副本測過瀏覽器裡的安全存檔、壞檔退回 .bak、音量設定，全部通過 | `public/`（網站上的版本）還沒重建，要更新網站時跑 `tools/build_site.sh` |
 
 這個雲端環境的網路政策擋住了 Google 的 Android SDK 下載網址（`dl.google.com`），這次改用 Ubuntu 套件庫的 `apksigner`、`zipalign`、`adb` 組出最小 SDK 完成 debug 匯出。要做 Gradle 建置（AAB、上架）時，需要在環境設定裡允許這個網域，或在你的電腦上建置。
+
+## 網頁版各章節試玩連結（2026-11-05）
+
+預覽站每次推送都會自動更新（`.github/workflows/web-preview.yml`）。網址後面加 `?dev=chN` 可以直接從那一章開始，不用先通關前面（前面章節的選擇用預設值）。
+
+| 章節 | 連結 |
+|---|---|
+| 第一章「棉花糖鎮」 | https://rule-zero.yz-try.pages.dev/rule-zero/ |
+| 第二章「漂白鎮」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch2 |
+| 第三章「慈愛實驗醫院」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch3 |
+| 第四章「三年二班」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch4 |
+| 第五章（終章） | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5 |
+
+其他預覽：`?dev=chase`（第一章追逐戰）、`?dev=ending`（修理室之後）。手機安裝頁：https://rule-zero.yz-try.pages.dev/download/
+從頭玩到尾的自動測試：`tests/full_playthrough_test.gd`（第一章真結局 → 按章末按鈕一路進到終章，檢查旗標有沒有帶過去）。

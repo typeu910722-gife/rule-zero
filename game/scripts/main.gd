@@ -206,7 +206,7 @@ func _ready() -> void:
 
 
 ## 網頁版預覽用：網址加上 ?dev=chase（追逐戰）、?dev=ending（修理室之後）、?dev=room_mayor（某間小屋）、
-## ?dev=ch3／ch4／ch5（直接從第三、四、五章開始，不用先通關前面）
+## ?dev=ch2／ch3／ch4／ch5（直接從第二、三、四、五章開始，不用先通關前面）
 func _dev_preview() -> String:
 	if not OS.has_feature("web"):
 		return ""
@@ -218,6 +218,9 @@ func _dev_preview() -> String:
 func _run_dev_preview(what: String) -> void:
 	GameState.reset()
 	match what:
+		"ch2":
+			enter_chapter2(get_tree())
+			return
 		"ch3":
 			enter_chapter3(get_tree())
 			return
