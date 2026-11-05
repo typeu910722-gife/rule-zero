@@ -38,6 +38,7 @@ func _press(down: bool, _e: InputEvent) -> void:
 	if not down or _pressed_this:
 		return
 	_pressed_this = true
+	sfx("res://audio/ch3/compress.ogg", -10.0)   # 手壓在布偶胸口的悶響
 	var period := 60.0 / BPM
 	var off := minf(beat_t, period - beat_t)
 	if off < 0.12:

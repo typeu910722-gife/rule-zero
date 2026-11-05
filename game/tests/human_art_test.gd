@@ -406,6 +406,10 @@ func _run() -> void:
 	for id in ["fold", "wind", "train_whistle", "bird_peck", "bird_eye", "river"]:
 		_check(("@sfx %s" % id) in ch2txt and sfx_lib.stream(id) != null, "第二章劇本用到外包音效 %s" % id)
 	_check("\"meter_max\"" in FileAccess.get_file_as_string("res://scripts/minigames/hold_endure.gd"), "忍耐小遊戲滿格有音效")
+	# 第三章醫療小遊戲的專屬音效（tools/make_ch3_sfx.py）
+	for pair in [["drip", "drip"], ["cpr", "compress"], ["thermo", "thermo_beep"]]:
+		var p3 := "res://audio/ch3/%s.ogg" % pair[1]
+		_check(ResourceLoader.exists(p3) and p3 in FileAccess.get_file_as_string("res://scripts/ch3/%s.gd" % pair[0]), "第三章 %s 小遊戲用 %s 音效" % pair)
 	_check("@bgm far_shore" in FileAccess.get_file_as_string("res://dialogue/chapter2.txt"), "河對岸的模範生出現時播〈far shore〉")
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
 	for c in [2, 3, 4, 5]:

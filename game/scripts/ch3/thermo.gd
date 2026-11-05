@@ -64,9 +64,9 @@ func _press(down: bool, _e: InputEvent) -> void:
 func _release() -> void:
 	running = false
 	var id: String = queue[idx][0]
+	sfx("res://audio/ch3/thermo_beep.ogg", -8.0)   # 電子體溫計量好了：嗶嗶
 	if needle >= GREEN_LO and needle <= GREEN_HI:
 		msg = "%s：正常。" % queue[idx][1]
-		Tones.play(self, 1046.5, -10.0)
 	else:
 		msg = "%s：……發燒了。" % queue[idx][1]
 		fevers.append(id)

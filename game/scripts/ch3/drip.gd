@@ -12,6 +12,8 @@ var moved_while_steps := false
 var out_time := 0.0
 
 
+var _drop_t := 0.0
+
 func _setup() -> void:
 	title = "點滴"
 	hint = "按住讓點滴變快、放開變慢。液面要一直在刻度裡。腳步聲靠近時，不要動。"
@@ -27,6 +29,12 @@ func _tick(delta: float) -> void:
 	if steps_near > 0.0:
 		steps_near -= delta
 	rate = lerpf(rate, 0.35 if held else -0.3, delta * 3.0)
+	# 點滴在滴的時候，聽得到一滴一滴落進滴壺；滴得越快，聲音越密
+	if rate > 0.05:
+		_drop_t -= delta * (0.8 + rate * 6.0)
+		if _drop_t <= 0.0:
+			_drop_t = 1.0
+			sfx("res://audio/ch3/drip.ogg", -10.0)
 	level = clampf(level + rate * delta * 0.5 + sin(t * 1.7) * 0.02 * delta, 0.0, 1.0)
 	if level < 0.35 or level > 0.65:
 		out_time += delta

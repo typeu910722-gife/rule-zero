@@ -223,10 +223,18 @@
 - 烏鴉叫聲試著合成，聽起來像錯誤提示音，所以沒有用；第三章窗台的烏鴉改用外包的 `bird_peck`（啄窗聲）。
 
 ## 第三章：小布跑步 4 格、病房門突然打開、結尾的破爛玩偶（2026-11-05）
-- `run_bu_03.png`、`run_bu_04.png`：ChatGPT 畫的兩格「經過」動作（上傳原本的 01、02 當參考，原圖 `chatgpt_artun_bu_passing.png`），
+- `run_bu_03.png`、`run_bu_04.png`：ChatGPT 畫的兩格「經過」動作（上傳原本的 01、02 當參考，原圖 `chatgpt_art
+un_bu_passing.png`），
   `fit_parts_sheet.py … 2 1 220` 切成高 220。`runner.gd` 的 `BU_CYCLE` = 01 → 03 → 02 → 04（背包左右甩）。
 - 3D 追逐（玩偶醫院）：每 10 面牆裡的一扇病房門會在玩家走到 1.6 公尺內時突然打開——換成 `door_hospital_front_open.png`、
   `door_thud` 聲、畫面閃白、腳步慢 0.8 秒；起點附近不會開。不用新圖。
 - 結尾 `@event c3_tatters`（和平鴿看見大家時）：用第二章立繪排一列，依 `c3_cotton_<id>` 合成——棉花越少越灰、
   裂開的縫線越長、從縫線冒出來的棉花（`sew_cotton.png`）越多；疊在背景 CG 上、對話框下，舉槍時拿掉。
+
+## 第三章醫療小遊戲的音效（程式合成，2026-11-05）
+- `tools/make_ch3_sfx.py` 加了 `drip`（點滴落進滴壺，滴得越快越密）、`compress`（心臟按壓時壓在布偶胸口的悶響）、
+  `thermo_beep`（電子體溫計量好的嗶嗶）。用 earshot 聽過：drip 像水泡破掉、thermo_beep 像電子嗶聲；
+  compress 聽起來像很悶的大鼓，節奏遊戲裡當「壓下去」的回饋可以接受。
+- 點滴小遊戲的腳步聲 `dove_step` 是和平鴿走近的提示（聽到要停手），不是借錯的音效，維持原樣。
+- 只重做幾個：`uv run --no-project --python 3.12 --with numpy --with scipy python tools/make_ch3_sfx.py drip compress thermo_beep`
 

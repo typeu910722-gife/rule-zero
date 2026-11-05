@@ -13,6 +13,9 @@
 | light_on | 實驗室的燈一盞一盞亮起：大開關＋日光燈啟動（-6 dB，連播 4 次） | -14 |
 | card | 撲克牌拍在桌上（-8／-6 dB） | -13 |
 | needle | 針穿過布、線被拉過去（-6 dB） | -16 |
+| drip | 點滴：一滴水落進點滴管的滴壺「滴」（-10 dB，速度跟著點滴的快慢） | -20 |
+| compress | 心臟按壓：手壓在布偶的胸口，棉花被壓扁「噗」（-6 dB） | -18 |
+| thermo_beep | 體溫計量好了：電子體溫計的「嗶嗶」（-8 dB） | -20 |
 
 用法：python3 tools/make_ch3_sfx.py（在專案根目錄；需要 numpy、scipy、ffmpeg）
 """
@@ -152,8 +155,49 @@ def needle():
     return finish(y, -16.0, fade_out=0.04)
 
 
+def drip():
+    """一滴水掉進滴壺：很小的「滴」——水滴撞到水面（短的高頻衝擊）＋氣泡往上跳的音高（共振頻率很快往上滑）"""
+    d = 0.3
+    tt = S.t(d)
+    f = 1400 + 1500 * (1 - np.exp(-tt / 0.012))                  # 氣泡的共振往上滑
+    bub = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt / 0.03)
+    x = bub * 0.6
+    place(x, S.burst(0.006, 0.0006, 3000, 12000) * 0.25, 0)
+    y = S.room(x, "small", wet_db=-14.0)
+    return finish(y, -20.0, fade_out=0.05)
+
+
+def compress():
+    """心臟按壓：手壓在布偶胸口——棉花被壓扁的悶悶「噗咻」：慢慢起來的低頻＋被擠出來的空氣（沒有硬的衝擊）"""
+    d = 0.4
+    x = np.zeros(S.n(d))
+    tt = S.t(0.3)
+    body = np.sin(2 * np.pi * (80 + 30 * np.exp(-tt / 0.05)) * tt) * np.clip(tt / 0.02, 0, 1) * np.exp(-tt / 0.07)
+    place(x, body * 0.8, 0)
+    air = lp(bp(S.noise(0.25), 300, 2500), 1400) * np.clip(S.t(0.25) / 0.03, 0, 1) * np.exp(-S.t(0.25) / 0.06)
+    place(x, air * 0.3, 0.01)
+    place(x, S.grains(0.15, 400, 0.003, 800, 3000) * 0.04, 0.02)
+    y = lp(S.room(x, "small", wet_db=-22.0), 2000)
+    return finish(y, -18.0, fade_out=0.06)
+
+
+def thermo_beep():
+    """電子體溫計量好了：嗶、嗶兩聲（細細的高音，有一點方波的扁平感，小喇叭的聲音）"""
+    d = 0.45
+    x = np.zeros(S.n(d))
+    for at in (0.0, 0.16):
+        tt = S.t(0.1)
+        b = np.sign(np.sin(2 * np.pi * 3900 * tt)) * 0.4 + np.sin(2 * np.pi * 3900 * tt) * 0.6
+        b *= np.clip(tt / 0.003, 0, 1) * np.clip((0.1 - tt) / 0.006, 0, 1)
+        place(x, bp(b, 1500, 7000), at)
+    return finish(x, -20.0, fade_out=0.02)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, fn in [("gunshot", gunshot), ("gunshot_soft", gunshot_soft), ("gun_cock", gun_cock),
-                     ("light_on", light_on), ("card", card), ("needle", needle)]:
+                     ("light_on", light_on), ("card", card), ("needle", needle),
+                     ("drip", drip), ("compress", compress), ("thermo_beep", thermo_beep)]:
+        if len(sys.argv) > 1 and name not in sys.argv[1:]:
+            continue
         save(f"{OUT}/{name}.ogg", fn())
