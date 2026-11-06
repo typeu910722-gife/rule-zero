@@ -5,27 +5,6 @@
   900
  ],
  "props": {
-  "prop:cabinet@260,200,200,50": {
-   "tex": "prop_cabinet_260_200_200_50.png",
-   "off": [
-    -8,
-    -250
-   ]
-  },
-  "prop:cabinet@560,200,200,50": {
-   "tex": "prop_cabinet_560_200_200_50.png",
-   "off": [
-    -8,
-    -250
-   ]
-  },
-  "prop:cabinet@860,200,200,50": {
-   "tex": "prop_cabinet_860_200_200_50.png",
-   "off": [
-    -8,
-    -250
-   ]
-  },
   "prop:cabinet@260,520,200,50": {
    "tex": "prop_cabinet_260_520_200_50.png",
    "off": [
@@ -47,11 +26,32 @@
     -255
    ]
   },
-  "prop:desk@1180,620,220,70": {
-   "tex": "prop_desk_1180_620_220_70.png",
+  "prop:cabinet@260,145,200,50": {
+   "tex": "prop_cabinet_260_200_200_50.png",
    "off": [
     -8,
-    -204
+    -195
+   ]
+  },
+  "prop:cabinet@560,145,200,50": {
+   "tex": "prop_cabinet_560_200_200_50.png",
+   "off": [
+    -8,
+    -195
+   ]
+  },
+  "prop:cabinet@860,145,200,50": {
+   "tex": "prop_cabinet_860_200_200_50.png",
+   "off": [
+    -8,
+    -195
+   ]
+  },
+  "prop:desk@1160,470,250,80": {
+   "tex": "prop_desk_1180_620_220_70.png",
+   "off": [
+    12,
+    -64
    ]
   }
  }

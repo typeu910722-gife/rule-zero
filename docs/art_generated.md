@@ -291,3 +291,11 @@ un_bu_passing.png`），
 - 已知小問題（之後再修）：床的碰撞範圍和畫面上的床有時差一點（第五章床往下畫、第四章醫院床往上畫）；第三章大廳椅子上的布偶兔子；有些房間 ChatGPT 自己畫了門。
 - 2026-11-06 修正：床的碰撞範圍對齊重畫的畫面（第五章 a_ward5、a_other5、b3_ward5、lab5，第四章 hospital4；`tools/art/fit_prop_rect.py`，記在 `tools/levels/prop_rect_fixes.json`，兩支關卡產生器會套用）；hospital4 兩個調查點往上移到床邊。第三章大廳椅子上的布偶兔子用旁邊空的座位蓋掉（原圖留在 `paint_ch3_lobby_with_bunny.png`）。
 - 2026-11-06 CG01 自我介紹：照「棉花糖鎮的孩子沒有參與霸凌」重修，後排三個人改成低著頭、沒有笑（ChatGPT 改圖，原檔 `chatgpt_art\cg_h_cg01_speech_v2.png`）。
+
+## 希露飛走路圖重畫、畢業生（2026-11-06，ChatGPT）
+- 希露飛四方向＋斜向走路圖：使用者回饋「走路太奇怪」（舊圖腳幾乎不動、比例和其他同學不一樣）→ 用遙的走路圖當格式參考、希露飛的立繪當造型參考重畫。原圖 `chatgpt_art/walk_hilufei_v2.png`、`walk_hilufei_diag_v2.png`；`fit_walk_sheet.py`／`fit_diag_sheet.py` 之後再跑 `tools/art/remove_white_outline.py` 去掉貼紙白邊。舊圖留在 `chatgpt_art/h_hilufei_walk_old.png`、`h_hilufei_diag_old.png`。
+- 畢業生（第三章）：照職員的毛氈玩偶畫法（成人比例、布料、臉不畫五官）。
+  - 可以對話的＝被壓榨、聽話：燙平的病人服、縫上去的笑、額頭磨亮、駝背。走路圖 `walk4/graduate.png`，立繪 `ch2_graduate_portrait_default.png`。
+  - 追人的＝神志不清、失控：破病人服、跑出棉花（不畫血）、長毛線頭髮蓋住臉、赤腳、手伸出來抓。走路圖 `walk4/graduate_wild.png`（關卡的 patrols 用這張），立繪 `ch2_graduate_portrait_wild.png`（`@face 畢業生 wild`）。
+  - CG `ch3_bg_cg_graduates.jpg`：舊病棟走廊兩邊面壁的畢業生同時轉頭、中間病床睡著抱玩偶的人（`c3_wild_intro`）。
+  - 原圖 `chatgpt_art/graduates_pair.png`、`walk_graduate.png`、`walk_graduate_wild.png`、`c3_cg_graduates.png`；舊的 Blender 走路圖留在 `graduate_walk_blender_old.png`。

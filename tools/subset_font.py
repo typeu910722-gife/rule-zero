@@ -16,7 +16,7 @@ TC_INDEX = 3  # NotoSansCJK-Regular.ttc 裡的第 4 個字型是 Noto Sans CJK T
 
 chars = set(chr(c) for c in range(0x20, 0x7F))
 chars |= set("，。、！？：；「」『』（）《》〈〉—…～·・★☆♪♥※→←↑↓／｜＿　０１２３４５６７８９")
-for path in list(GAME.rglob("*.gd")) + list(GAME.rglob("*.txt")):
+for path in list(GAME.rglob("*.gd")) + list(GAME.rglob("*.txt")) + list((GAME / "levels").glob("*.json")):
     chars |= set(path.read_text(encoding="utf-8"))
 chars = {c for c in chars if c.isprintable() or c == "　"}
 

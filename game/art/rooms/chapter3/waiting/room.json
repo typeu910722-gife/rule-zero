@@ -5,20 +5,6 @@
   720
  ],
  "props": {
-  "prop:chair@380,380,640,40": {
-   "tex": "paint_prop_chair_380_380_640_40.png",
-   "off": [
-    -8,
-    -142
-   ]
-  },
-  "prop:chair@380,500,640,40": {
-   "tex": "paint_prop_chair_380_500_640_40.png",
-   "off": [
-    -8,
-    -142
-   ]
-  },
   "prop:machine@250,170,100,50": {
    "tex": "paint_prop_machine_250_170_100_50.png",
    "off": [
@@ -38,6 +24,20 @@
    "off": [
     -8,
     -120
+   ]
+  },
+  "prop:chair@345,290,645,65": {
+   "tex": "paint_prop_chair_380_380_640_40.png",
+   "off": [
+    27,
+    -77
+   ]
+  },
+  "prop:chair@345,410,645,75": {
+   "tex": "paint_prop_chair_380_500_640_40.png",
+   "off": [
+    27,
+    -87
    ]
   }
  },

@@ -228,7 +228,7 @@ rooms["ward4"] = room("慈愛組織的醫院　很多年以前", [1800, 900], "h
     ],
     npcs=[{"id": "c4_n_zz", "name": "郡主", "char": "h_junzhu", "pos": [690, 560], "when": N}])
 
-level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}
+level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "items_used": {"c4_m_found_shoes": "c4_m_done"}, "keypads": {}, "rooms": rooms}
 # 重畫過的房間：家具碰撞範圍對齊畫面（tools/art/fit_prop_rect.py 記在 prop_rect_fixes.json）
 _fixes = json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("chapter4", {})
 for _rid, _pairs in _fixes.items():
@@ -236,5 +236,11 @@ for _rid, _pairs in _fixes.items():
         for _old, _new in _pairs:
             if _p["rect"] == _old:
                 _p["rect"] = _new
+# 畫面上有、原本沒有碰撞的東西（長椅、路燈、樓梯…）：加看不見的牆
+for _rid, _ws in json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("walls", {}).get("chapter4", {}).items():
+    level["rooms"][_rid].setdefault("walls", []).extend(_ws)
+# 畫面上的牆比較高的房間：上面的牆往下延（prop_rect_fixes.json 的 wall_h）
+for _rid, _h in json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("wall_h", {}).get("chapter4", {}).items():
+    level["rooms"][_rid]["wall_h"] = _h
 json.dump(level, open("game/levels/chapter4.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")

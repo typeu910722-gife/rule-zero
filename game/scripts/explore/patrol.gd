@@ -65,6 +65,9 @@ func active() -> bool:
 
 func _process(delta: float) -> void:
 	visible = active()
+	# 劇情讓巡邏的人退場（條件不成立了）：追逐也跟著結束
+	if not visible and _chasing:
+		_set_chasing(false)
 	if not visible or explore.busy or explore.paused:
 		queue_redraw()
 		return

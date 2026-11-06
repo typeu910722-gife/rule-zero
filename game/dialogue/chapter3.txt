@@ -325,7 +325,7 @@ Fen：……那是什麼？
 === c3_bed_lulu
 @if c3_saw_body_lulu c3_bed_lulu2
 > 床尾的牌子：「希露飛」。
-* 看（守則 4） -> c3_bed_lulu_look $1
+* 看（守則 4） -> c3_bed_lulu_look
 * 不要看 -> c3_bed_skip
 # c3_bed_lulu_look
 @set c3_saw_body_lulu
@@ -345,7 +345,7 @@ Fen：……那是什麼？
 === c3_bed_popo
 @if c3_saw_body_popo c3_bed_popo2
 > 床尾的牌子：「銘越」。
-* 看（守則 4） -> c3_bed_popo_look $1
+* 看（守則 4） -> c3_bed_popo_look
 * 不要看 -> c3_bed_skip
 # c3_bed_popo_look
 @set c3_saw_body_popo
@@ -359,7 +359,7 @@ Fen：……那是什麼？
 === c3_bed_mochi
 @if c3_saw_body_mochi c3_bed_mochi2
 > 床尾的牌子：「小滿」。
-* 看（守則 4） -> c3_bed_mochi_look $1
+* 看（守則 4） -> c3_bed_mochi_look
 * 不要看 -> c3_bed_skip
 # c3_bed_mochi_look
 @set c3_saw_body_mochi
@@ -377,7 +377,7 @@ Fen：……那是什麼？
 === c3_bed_fen
 @if c3_saw_body_fen c3_bed_fen2
 > 床尾的牌子：「芬」。
-* 看（守則 4） -> c3_bed_fen_look $1
+* 看（守則 4） -> c3_bed_fen_look
 * 不要看 -> c3_bed_skip
 # c3_bed_fen_look
 @set c3_saw_body_fen
@@ -395,7 +395,7 @@ Fen：……是我們。
 === c3_bed_zhongzhong
 @if c3_saw_body_zhongzhong c3_bed_zz2
 > 床尾的牌子：「郡主」。
-* 看（守則 4） -> c3_bed_zz_look $1
+* 看（守則 4） -> c3_bed_zz_look
 * 不要看 -> c3_bed_skip
 # c3_bed_zz_look
 @set c3_saw_body_zhongzhong
@@ -651,6 +651,7 @@ Fen：……是我們。
 > 他們站著。穿著整齊的病人服。對著牆壁。
 畢業生：早安。
 @sfx shutter
+@bg c3_cg_graduates
 > 他們同時轉頭。
 畢業生：今天的天氣，很好。今天的我，很好。
 > 條碼說過的話。一模一樣。
@@ -751,6 +752,7 @@ Fen：……是我們。
 > 門旁邊有一個標示：「配電箱　→」
 
 === c3_wild_caught
+@face 畢業生 wild
 畢業生：早安。
 > 一隻很冷的手抓住了誰的手臂。
 畢業生：違反守則的孩子，要修理。

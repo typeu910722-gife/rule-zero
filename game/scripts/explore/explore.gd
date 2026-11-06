@@ -139,7 +139,11 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	for c in _world.get_children():
 		c.queue_free()
 	_patrols.clear()
-	_chasing_patrols.clear()
+	# 追逐中換房間：追兵留在原本的房間，追逐結束（不然追逐的音樂會一直播）
+	if not _chasing_patrols.is_empty():
+		_chasing_patrols.clear()
+		chase_changed.emit(false, "")
+	_occluders.clear()
 	_followers.clear()
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
@@ -165,6 +169,10 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		var key := "prop:%s@%d,%d,%d,%d" % [kind, int(r.position.x), int(r.position.y), int(r.size.x), int(r.size.y)]
 		if _art_tex(key):
 			n.draw.connect(func(): _draw_art(n, key))
+			# 遮擋圖蓋住的範圍：角色走到它後面時變半透明（_process）
+			var tex := _art_tex(key)
+			n.set_meta("occ", Rect2(n.position + _v(_art.props[key].off), tex.get_size()))
+			_occluders.append(n)
 		elif kind in ["window", "rug", "blackboard"] and _art.has("bg"):
 			pass   # 已經畫在房間的背景圖裡
 		else:
@@ -215,26 +223,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	_cam.limit_bottom = int(maxf(size.y + 40.0 / z, _cam.limit_top + view.y))
 	_cam.reset_smoothing()
 	# 暗的房間：只有身邊一圈亮
-	var dark: bool = room.get("dark", false)
-	_dark.color = Color(0.13, 0.14, 0.17) if dark else tint
-	if dark and _light == null:
-		_light = PointLight2D.new()
-		var g := GradientTexture2D.new()
-		g.fill = GradientTexture2D.FILL_RADIAL
-		g.fill_from = Vector2(0.5, 0.5)
-		g.fill_to = Vector2(1.0, 0.5)
-		g.width = 512
-		g.height = 512
-		var gr := Gradient.new()
-		gr.set_color(0, Color(1, 1, 1, 1))
-		gr.set_color(1, Color(1, 1, 1, 0))
-		g.gradient = gr
-		_light.texture = g
-		_light.texture_scale = 1.3
-		_light.energy = 1.6
-		player.add_child(_light)
-	if _light:
-		_light.enabled = dark
+	_apply_dark()
 	_refresh_items()
 	refresh_guide()
 	room_entered.emit(id)
@@ -282,7 +271,12 @@ func _blockers() -> Array:
 		out.append(_r(w))
 	for p in room.get("props", []):
 		if p.get("solid", true):
-			out.append(_r(p.rect))
+			var pr := _r(p.rect)
+			out.append(pr)
+			# 靠牆的家具（櫃子、書架）：家具和牆中間的縫也擋住，不會走進家具裡、站到牆上
+			var gap := pr.position.y - wall
+			if gap > 0.0 and gap <= 75.0:
+				out.append(Rect2(pr.position.x, wall, pr.size.x, gap))
 	return out
 
 
@@ -404,8 +398,10 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			var open := _door_open(s)
 			var th := ExploreArt.theme(room.get("theme", "hospital"))
 			var rc := Rect2(-sz / 2.0, sz)
-			var art_kind := _draw_door_art(n, s, sz, open)
-			if art_kind != "":
+			var painted: bool = _art.get("painted", false)
+			# 重畫過的房間：門口就畫在地圖上，不再貼門的圖（會破圖），只在對應位置畫一個標記
+			var art_kind := _draw_door_marker(n, sz, open, t) if painted else _draw_door_art(n, s, sz, open)
+			if painted or art_kind != "":
 				pass
 			elif open:
 				# 開著的門：一個暗暗的門洞，越裡面越黑
@@ -440,11 +436,47 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			elif s.has("kind"):
 				var sz3 := _v(s.get("size", [60, 30]))
 				ExploreArt.draw_prop(n, s.kind, Rect2(Vector2(-sz3.x / 2.0, -sz3.y), sz3), ExploreArt.theme(room.get("theme", "hospital")))
-			var a := 0.55 + 0.35 * sin(t * 3.0 + n.position.x)
-			n.draw_circle(Vector2(0, -12), 5, Color(1, 1, 1, a))
-			n.draw_arc(Vector2(0, -12), 10, 0, TAU, 16, Color(0.95, 0.55, 0.68, a), 2.0)
+			if GameState.has("done_" + str(s.get("id", ""))) and not _pending(s):
+				# 調查過了：灰色、不閃，一眼看得出來
+				n.draw_arc(Vector2(0, -12), 8, 0, TAU, 16, Color(0.6, 0.6, 0.62, 0.45), 1.5)
+			else:
+				var a := 0.55 + 0.35 * sin(t * 3.0 + n.position.x)
+				n.draw_circle(Vector2(0, -12), 5, Color(1, 1, 1, a))
+				n.draw_arc(Vector2(0, -12), 10, 0, TAU, 16, Color(0.95, 0.55, 0.68, a), 2.0)
 	if show_guide and not _guide.is_empty() and _guide.room == room_id and str(s.get("id", "")) == _guide.id and s._kind == _guide.kind:
 		_draw_guide_arrow(n, s, t)
+
+
+## 重畫過的房間的門口標記：地上一圈淡淡的光＋往外的箭頭（鎖著的門是灰色、畫一把鎖的橫槓）。
+## 回傳 "front"（上面牆的門，名字寫在標記下面）或 "side"
+func _draw_door_marker(n: Node2D, sz: Vector2, open: bool, t: float) -> String:
+	var room_sz := _v(room.get("size", [1280, 720]))
+	var p := n.position
+	var dir := Vector2.UP
+	if sz.y > sz.x:
+		dir = Vector2.LEFT if p.x < room_sz.x / 2.0 else Vector2.RIGHT
+	elif p.y > room_sz.y / 2.0:
+		dir = Vector2.DOWN
+	var col := Color(1.0, 0.86, 0.55) if open else Color(0.62, 0.64, 0.68)
+	var a := (0.45 + 0.25 * sin(t * 2.5 + p.x * 0.01)) if open else 0.4
+	# 地上的光：門的範圍畫成一塊淡淡的橢圓
+	var r := maxf(sz.x, sz.y) * 0.5
+	n.draw_set_transform(Vector2.ZERO, dir.angle() + PI / 2.0, Vector2(1.0, 0.35))
+	for k in 4:
+		var f := 1.0 - k * 0.22
+		n.draw_circle(Vector2.ZERO, r * f, Color(col.r, col.g, col.b, a * 0.18))
+	n.draw_set_transform(Vector2.ZERO)
+	# 往外的箭頭（開著的門會往外輕輕動）
+	var bob := (sin(t * 3.0) * 4.0) if open else 0.0
+	var tip := dir * (16.0 + bob)
+	var side := Vector2(-dir.y, dir.x) * 11.0
+	var pts := PackedVector2Array([tip, tip - dir * 14.0 + side, tip - dir * 8.0, tip - dir * 14.0 - side])
+	n.draw_colored_polygon(pts, Color(col.r, col.g, col.b, minf(1.0, a + 0.35)))
+	n.draw_polyline(pts + PackedVector2Array([pts[0]]), Color(0.2, 0.2, 0.22, 0.5), 1.5)
+	if not open:
+		n.draw_rect(Rect2(Vector2(-9, -8), Vector2(18, 14)), Color(0.35, 0.37, 0.4, 0.85))
+		n.draw_arc(Vector2(0, -8), 6, PI, TAU, 10, Color(0.35, 0.37, 0.4, 0.85), 2.5)
+	return "front" if dir == Vector2.UP else "side"
 
 
 ## 門的圖：上面牆（橫的門、在房間上半）畫正面、腳在門框的下緣；左右牆、下面牆畫俯視的細長門。
@@ -515,6 +547,7 @@ func _process(delta: float) -> void:
 				n.queue_redraw()
 	if _edge_arrow:
 		_edge_arrow.queue_redraw()
+	_fade_occluders(delta)
 	if _toast_t > 0.0:
 		_toast_t -= delta
 		if _toast_t <= 0.0:
@@ -537,7 +570,7 @@ func _dread_step(delta: float) -> void:
 			var d: float = pt.position.distance_to(player.position)
 			close = maxf(close, clampf(1.0 - (d - 90.0) / 380.0, 0.0, 1.0))
 	threat = close
-	var want := dread + (0.3 if room.get("dark", false) else 0.0) + close * 0.45
+	var want := dread + (0.3 if is_dark() else 0.0) + close * 0.45
 	_vig = lerpf(_vig, clampf(want, 0.0, 1.0), minf(1.0, delta * 3.0))
 	if Dialogue.get("fx") and Dialogue.fx:
 		Dialogue.fx.vignette = _vig
@@ -556,6 +589,10 @@ func _dread_step(delta: float) -> void:
 
 func _exit_tree() -> void:
 	ExploreArt.human_mul = 1.0
+	# 地圖探索結束時還在被追：通知章節把追逐的音樂換回來
+	if not _chasing_patrols.is_empty():
+		_chasing_patrols.clear()
+		chase_changed.emit(false, "")
 	if Dialogue.get("fx") and Dialogue.fx:
 		Dialogue.fx.vignette = 0.0
 
@@ -600,7 +637,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func interact(s: Dictionary) -> void:
 	busy = true
 	var id: String = str(s.get("id", ""))
-	var hash_before := _guide_hash()
 	match s._kind:
 		"doors":
 			if _door_open(s):
@@ -634,8 +670,8 @@ func interact(s: Dictionary) -> void:
 			GameState.flags["done_" + id] = true
 			interacted.emit(id)
 			# 按了、可是什麼都沒改變（例如還沒有鑰匙卡的電梯）：引導先跳過它，等旗標變了再說
-			if _guide_hash() == hash_before and _pending(s):
-				_tried[room_id + "/" + id] = hash_before
+			if _pending(s):
+				_tried[room_id + "/" + id] = _flags_hash()
 	busy = false
 	if is_inside_tree():
 		_rebuild_things()
@@ -667,7 +703,42 @@ func _rebuild_things() -> void:
 	_refresh_items()
 
 
+## 這個房間現在是不是暗的：dark＝true，而且 lit_when（例如配電箱修好）還沒成立
+func is_dark() -> bool:
+	if room.is_empty() or not room.get("dark", false):
+		return false
+	var lit: String = room.get("lit_when", "")
+	return lit == "" or not GameState.check(lit)
+
+
+## 暗的房間：只有身邊一圈亮；燈亮了（lit_when 成立）就恢復一般的顏色
+func _apply_dark() -> void:
+	if _dark == null or player == null:
+		return
+	var dark := is_dark()
+	_dark.color = Color(0.13, 0.14, 0.17) if dark else tint
+	if dark and _light == null:
+		_light = PointLight2D.new()
+		var g := GradientTexture2D.new()
+		g.fill = GradientTexture2D.FILL_RADIAL
+		g.fill_from = Vector2(0.5, 0.5)
+		g.fill_to = Vector2(1.0, 0.5)
+		g.width = 512
+		g.height = 512
+		var gr := Gradient.new()
+		gr.set_color(0, Color(1, 1, 1, 1))
+		gr.set_color(1, Color(1, 1, 1, 0))
+		g.gradient = gr
+		_light.texture = g
+		_light.texture_scale = 1.3
+		_light.energy = 1.6
+		player.add_child(_light)
+	if _light:
+		_light.enabled = dark
+
+
 func _on_changed() -> void:
+	_apply_dark()
 	_refresh_items()
 	refresh_guide()
 
@@ -677,8 +748,10 @@ func _refresh_items() -> void:
 		return
 	var names: Array = []
 	var items: Dictionary = level.get("items", {})
+	# 用過、之後用不到的東西就不再顯示（items_used：持有旗標 → 用掉的條件）
+	var used: Dictionary = level.get("items_used", {})
 	for k in items:
-		if GameState.has(k):
+		if GameState.has(k) and not (used.has(k) and GameState.check(used[k])):
 			names.append(items[k])
 	_items.text = ("持有：" + "、".join(names)) if not names.is_empty() else ""
 
@@ -763,6 +836,9 @@ func handle_event(name: String) -> bool:
 		kp.title = pd.get("title", "密碼鎖")
 		kp.code = str(pd.code)
 		kp.hint_text = pd.get("hint", "")
+		# 找到線索之後，密碼鎖下面幫你記著（hint_when 成立就換成 hint_found）
+		if pd.get("hint_when", "") != "" and GameState.check(pd.hint_when):
+			kp.hint_text = pd.get("hint_found", kp.hint_text)
 		add_child(kp)
 		var ok: bool = await kp.play()
 		if ok:
@@ -812,6 +888,7 @@ var _guide := {}             # {"room", "id", "kind", "text"}：下一步要去�
 var _guide_lbl: Label
 var _tried := {}             # 玩家按過、沒有改變什麼的東西（房間/id → 當時的旗標）
 var _edge_arrow: Control
+var _occluders: Array = []     # 有遮擋圖的家具（角色在後面時變半透明）
 
 
 func _things_in(r: Dictionary) -> Array:
@@ -840,9 +917,11 @@ func _finishes(s: Dictionary) -> bool:
 func find_guide() -> Dictionary:
 	if room_id == "" or not level.has("rooms"):
 		return {}
-	var h := _guide_hash()
+	var h := _flags_hash()
 	var best := {}
 	var best_score := INF
+	var fallback := {}
+	var fallback_score := INF
 	# 房間之間的最短路（只走打得開的門）
 	var first_door := {room_id: {}}
 	var dist := {room_id: 0}
@@ -856,13 +935,22 @@ func find_guide() -> Dictionary:
 				queue.append(str(s.to))
 	for rid in dist:
 		for s in _things_in(level.rooms[rid]):
-			if not _pending(s) or _tried.get(rid + "/" + str(s.get("id", "")), -1) == h:
+			if not _pending(s):
 				continue
 			var score := float(dist[rid]) * 10000.0
 			if rid == room_id and player:
 				score += player.position.distance_to(_v(s.pos))
 			if _finishes(s):
 				score -= 1000000.0
+			# 調查過、可是還沒完成的（例如還沒鑰匙卡的電梯、要先跟大家說完話的車掌）：排在還沒調查過的後面
+			if GameState.has("done_" + str(s.get("id", ""))):
+				score += 3000000.0
+			# 按過之後重要的旗標都沒變：先不指它；真的沒別的事可做了才指回去
+			if _tried.get(rid + "/" + str(s.get("id", "")), -1) == h:
+				if score < fallback_score:
+					fallback_score = score
+					fallback = {"room": rid, "s": s}
+				continue
 			if score < best_score:
 				best_score = score
 				best = {"room": rid, "s": s}
@@ -873,6 +961,8 @@ func find_guide() -> Dictionary:
 			if sc < best_score:
 				best_score = sc
 				best = {"room": rid, "s": {}}
+	if best.is_empty():
+		best = fallback
 	if best.is_empty():
 		return {}
 	var s: Dictionary = best.s
@@ -897,6 +987,25 @@ func refresh_guide() -> void:
 ".join(lines) if show_guide else ""
 	_guide_lbl.visible = _guide_lbl.text != ""
 	_guide_lbl.reset_size()
+
+
+## 角色（小布或同伴）走到家具後面、被遮擋圖蓋住時，家具變半透明，不會看不到人
+func _fade_occluders(delta: float) -> void:
+	var feet: Array = [player.position]
+	for fo in _followers:
+		feet.append(fo.position)
+	for n in _occluders:
+		if not is_instance_valid(n):
+			continue
+		var r: Rect2 = n.get_meta("occ")
+		var behind := false
+		for f in feet:
+			# 腳在家具的「腳」上面（比較後面），而且身體（往上約 80px）和遮擋圖重疊
+			if f.y < n.position.y and r.intersects(Rect2(f - Vector2(18, 80 * cam_zoom()), Vector2(36, 80 * cam_zoom()))):
+				behind = true
+				break
+		var want := 0.42 if behind else 1.0
+		n.modulate.a = move_toward(n.modulate.a, want, delta * 4.0)
 
 
 ## 下一步的東西在畫面外：畫面邊緣畫一個指向它的箭頭（回傳箭頭的位置，給測試用；在畫面裡回傳 null）

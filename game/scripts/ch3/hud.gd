@@ -67,7 +67,8 @@ func refresh() -> void:
 	if header != "":
 		_label.text = "%s　%s" % [header, place]
 		return
-	var t := "[b]第三章[/b]　%s　　膽量 %s\n棉花　" % [place, "★".repeat(GameState.courage) + "☆".repeat(GameState.MAX_COURAGE - GameState.courage)]
+	# 第三章起沒有膽量（2026-11-06 使用者決定）：狀態列只放地點和棉花
+	var t := "[b]第三章[/b]　%s\n棉花　" % place
 	var parts := []
 	for p in party:
 		var v := int(GameState.flags.get("c3_cotton_%s" % p[0], 10))

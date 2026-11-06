@@ -68,7 +68,7 @@ rooms["hall5"] = room("實驗室外的走廊", [2600, 720], "hospital",
     patrols=[{"id": "c5_patrol_staff", "char": "staff", "path": [[400, 420], [2300, 420]], "speed": 80, "view": 210,
               "fov": 0.7, "pause": 1.6, "when": LES, "catch": "c5_l_caught"}],
     hides=[{"id": "c5_hide_cart", "name": "推車後面", "pos": [1300, 560], "kind": "crate", "size": [100, 60]},
-           {"id": "c5_hide_plant", "name": "盆栽後面", "pos": [2100, 560], "kind": "plant", "size": [80, 60]}],
+           {"id": "c5_hide_plant", "name": "花盆後面", "pos": [2100, 560], "kind": "plant", "size": [80, 60]}],
     doors=[{"id": "c5_door_hall_lab", "name": "實驗室", "pos": [40, 450], "size": [60, 120], "to": "lab5", "spawn": "from_hall"},
            {"id": "c5_door_hall_records", "name": "檔案室", "pos": [600, 125], "size": [130, 30], "to": "records5", "spawn": "from_hall"},
            {"id": "c5_door_hall_monitor", "name": "監視室", "pos": [1200, 125], "size": [130, 30], "to": "monitor5", "spawn": "from_hall"},
@@ -280,6 +280,7 @@ rooms["b3_gate5"] = room("校門口", [1600, 720], "school",
     ])
 
 level = {"items": {"c5_read_file": "遙的檔案（看過了）", "c5_a_clip": "粉紅色的髮夾", "c5_l_drawer_open": "抽屜裡的東西"},
+         "items_used": {"c5_a_clip": "c5_a_done", "c5_l_drawer_open": "c5_l_done"},
          "keypads": {"c5_pad_drawer": {"title": "抽屜的密碼鎖", "code": "1020", "flag": "c5_l_drawer_open",
                                         "hint": "四個數字。照片背面，好像寫著日期。"}},
          "rooms": rooms}
@@ -290,5 +291,11 @@ for _rid, _pairs in _fixes.items():
         for _old, _new in _pairs:
             if _p["rect"] == _old:
                 _p["rect"] = _new
+# 畫面上有、原本沒有碰撞的東西（長椅、路燈、樓梯…）：加看不見的牆
+for _rid, _ws in json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("walls", {}).get("chapter5", {}).items():
+    level["rooms"][_rid].setdefault("walls", []).extend(_ws)
+# 畫面上的牆比較高的房間：上面的牆往下延（prop_rect_fixes.json 的 wall_h）
+for _rid, _h in json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("wall_h", {}).get("chapter5", {}).items():
+    level["rooms"][_rid]["wall_h"] = _h
 json.dump(level, open("game/levels/chapter5.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")

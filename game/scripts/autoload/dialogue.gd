@@ -35,6 +35,8 @@ const PORTRAITS := {
 	"小玉": "tama",
 	# 理事：玩偶世界裡的真人（CLAUDE.md 1-5），照車掌、和平鴿的布料質感、臉不畫出來
 	"理事": "director",
+	# 畢業生（第三章，玩偶世界的布料質感、臉不畫出來）：default＝聽話、縫上笑容；wild＝失控（@face 畢業生 wild）
+	"畢業生": "graduate",
 }
 const PORTRAIT_DIR := "res://art/ch2/characters/portraits/ch2_%s_portrait_"
 ## 人類時期（第四、五章）的立繪：外包美術包（docs/vendor/human_era_characters_request.txt），
@@ -206,7 +208,7 @@ func run(label: String) -> void:
 					break
 				var k: int = await _choose(opts)
 				var picked: Dictionary = opts[k]
-				if picked.cost > 0:
+				if picked.cost > 0 and GameState.chapter < 3:
 					GameState.spend_courage(picked.cost)
 				i = parser.labels[picked.target]
 			"cmd":
@@ -523,6 +525,10 @@ func _choose(opts: Array) -> int:
 			UiSkin.button(b, 26 if GameState.touch_ui() else 21)
 		if GameState.touch_ui():
 			b.custom_minimum_size.y = 72
+		# 第三章起沒有膽量（2026-11-06）：花膽量的選項當一般選項
+		if o.cost > 0 and GameState.chapter >= 3:
+			o = o.duplicate()
+			o.cost = 0
 		if o.cost > 0:
 			b.text = "★ %s　（違反守則・膽量 -%d）" % [GameState.fill(o.text), o.cost]
 			if GameState.courage < o.cost:
@@ -543,7 +549,7 @@ func _choose(opts: Array) -> int:
 		if first == null and not b.disabled:
 			first = b
 	# 第一次看到要用膽量的選項：在選項上面說明一次
-	var has_cost := opts.any(func(o): return o.cost > 0)
+	var has_cost := GameState.chapter < 3 and opts.any(func(o): return o.cost > 0)
 	_tip.visible = has_cost and not GameState.meta.get("tip_courage", false)
 	if _tip.visible:
 		GameState.meta["tip_courage"] = true

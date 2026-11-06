@@ -5,13 +5,6 @@
   720
  ],
  "props": {
-  "prop:desk@440,220,400,70": {
-   "tex": "paint_prop_desk_440_220_400_70.png",
-   "off": [
-    -8,
-    -156
-   ]
-  },
   "prop:shelf@120,160,220,40": {
    "tex": "paint_prop_shelf_120_160_220_40.png",
    "off": [
@@ -24,6 +17,13 @@
    "off": [
     -8,
     -170
+   ]
+  },
+  "prop:desk@410,300,440,75": {
+   "tex": "paint_prop_desk_440_220_400_70.png",
+   "off": [
+    22,
+    -241
    ]
   }
  },

@@ -5,13 +5,6 @@
   720
  ],
  "props": {
-  "prop:cabinet@900,160,140,40": {
-   "tex": "paint_prop_cabinet_900_160_140_40.png",
-   "off": [
-    -8,
-    -200
-   ]
-  },
   "prop:plant@2450,560,60,40": {
    "tex": "paint_prop_plant_2450_560_60_40.png",
    "off": [
@@ -31,6 +24,13 @@
    "off": [
     -48,
     -218
+   ]
+  },
+  "prop:cabinet@895,190,145,40": {
+   "tex": "paint_prop_cabinet_900_160_140_40.png",
+   "off": [
+    -3,
+    -230
    ]
   }
  },

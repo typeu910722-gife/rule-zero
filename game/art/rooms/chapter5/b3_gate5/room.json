@@ -5,25 +5,25 @@
   720
  ],
  "props": {
-  "prop:pillar@300,160,60,50": {
+  "prop:pillar@400,230,80,55": {
    "tex": "paint_prop_pillar_300_160_60_50.png",
    "off": [
-    -8,
-    -210
+    -108,
+    -285
    ]
   },
-  "prop:pillar@1240,160,60,50": {
+  "prop:pillar@1130,230,80,55": {
    "tex": "paint_prop_pillar_1240_160_60_50.png",
    "off": [
-    -8,
-    -210
+    102,
+    -285
    ]
   },
-  "prop:box@1380,320,80,60": {
+  "prop:box@1290,420,95,60": {
    "tex": "paint_prop_box_1380_320_80_60.png",
    "off": [
-    -8,
-    -106
+    82,
+    -206
    ]
   }
  },
