@@ -1,8 +1,10 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1600,
   720
  ],
- "props": {}
+ "props": {},
+ "painted": true,
+ "source": "paint_ch5_b1_platform5.png"
 }

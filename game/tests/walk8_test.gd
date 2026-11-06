@@ -77,16 +77,18 @@ func _run() -> void:
 	print("[月台：ChatGPT 重畫的房間]")
 	_check(ex._art.get("painted", false) and ResourceLoader.exists(ex._art.dir + "bg_paint.jpg"), "月台用重畫的背景")
 	# 第三章 22 間全部重畫：每間的背景、每件家具的遮擋圖都在
-	var missing: Array = []
-	for rid in ex.level.rooms:
-		var art: Dictionary = ex._room_art(rid)
-		if not art.get("painted", false) or not ResourceLoader.exists(art.dir + str(art.bg)):
-			missing.append(rid)
-			continue
-		for key in art.get("props", {}):
-			if not ResourceLoader.exists(art.dir + str(art.props[key].tex)):
-				missing.append("%s/%s" % [rid, key])
-	_check(missing.is_empty(), "第三章每間房間都用重畫的圖（缺：%s）" % [missing])
+	for lv in ["chapter3", "chapter5"]:
+		ex.load_level("res://levels/%s.json" % lv)
+		var missing: Array = []
+		for rid in ex.level.rooms:
+			var art: Dictionary = ex._room_art(rid)
+			if not art.get("painted", false) or not ResourceLoader.exists(art.dir + str(art.bg)):
+				missing.append(rid)
+				continue
+			for key in art.get("props", {}):
+				if not ResourceLoader.exists(art.dir + str(art.props[key].tex)):
+					missing.append("%s/%s" % [rid, key])
+		_check(missing.is_empty(), "%s 每間房間都用重畫的圖（缺：%s）" % [lv, missing])
 	ex.queue_free()
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)
