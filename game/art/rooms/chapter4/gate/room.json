@@ -1,37 +1,39 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1600,
   720
  ],
  "props": {
   "prop:pillar@300,160,60,50": {
-   "tex": "prop_pillar_300_160_60_50.png",
+   "tex": "paint_prop_pillar_300_160_60_50.png",
    "off": [
     -8,
     -210
    ]
   },
   "prop:pillar@1240,160,60,50": {
-   "tex": "prop_pillar_1240_160_60_50.png",
+   "tex": "paint_prop_pillar_1240_160_60_50.png",
    "off": [
     -8,
     -210
    ]
   },
   "prop:box@1380,320,80,60": {
-   "tex": "prop_box_1380_320_80_60.png",
+   "tex": "paint_prop_box_1380_320_80_60.png",
    "off": [
     -8,
     -106
    ]
   },
   "prop:plant@120,420,70,50": {
-   "tex": "prop_plant_120_420_70_50.png",
+   "tex": "paint_prop_plant_120_420_70_50.png",
    "off": [
     -8,
     -151
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_gate.png"
 }

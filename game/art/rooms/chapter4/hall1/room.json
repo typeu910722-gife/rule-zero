@@ -1,23 +1,25 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   2400,
   700
  ],
  "props": {
   "prop:cabinet@500,160,200,40": {
-   "tex": "prop_cabinet_500_160_200_40.png",
+   "tex": "paint_prop_cabinet_500_160_200_40.png",
    "off": [
     -8,
     -170
    ]
   },
   "prop:plant@2200,170,60,40": {
-   "tex": "prop_plant_2200_170_60_40.png",
+   "tex": "paint_prop_plant_2200_170_60_40.png",
    "off": [
     -8,
     -141
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_hall1.png"
 }

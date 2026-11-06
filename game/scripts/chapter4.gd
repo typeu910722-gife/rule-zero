@@ -406,7 +406,8 @@ func _shoes() -> void:
 	c.set_anchors_preset(Control.PRESET_FULL_RECT)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(c)
-	var shoes := [Color("#2d2d33"), Color("#e9e6e0"), Color("#6b4a32"), Color("#2f4a6b"), Color("#8c2f2f"), Color("#3d5b3f")]
+	# 只有霸凌的那幾個人（郡主、辛禾、薙文、李恩、秋歌）；棉花糖鎮那一邊的孩子沒有站在這裡（2026-11-06）
+	var shoes := [Color("#2d2d33"), Color("#e9e6e0"), Color("#6b4a32"), Color("#2f4a6b"), Color("#8c2f2f")]
 	var state := {"k": 0}
 	var door_bg := Ch3Mini.art4("bg_toilet_door")
 	c.draw.connect(func():

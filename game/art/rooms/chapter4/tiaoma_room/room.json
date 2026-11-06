@@ -1,30 +1,32 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:desk@140,260,260,70": {
-   "tex": "prop_desk_140_260_260_70.png",
+   "tex": "paint_prop_desk_140_260_260_70.png",
    "off": [
     -8,
     -156
    ]
   },
   "prop:bed@860,300,280,110": {
-   "tex": "prop_bed_860_300_280_110.png",
+   "tex": "paint_prop_bed_860_300_280_110.png",
    "off": [
     -8,
     -216
    ]
   },
   "prop:shelf@480,150,200,40": {
-   "tex": "prop_shelf_480_150_200_40.png",
+   "tex": "paint_prop_shelf_480_150_200_40.png",
    "off": [
     -8,
     -190
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_tiaoma_room.png"
 }

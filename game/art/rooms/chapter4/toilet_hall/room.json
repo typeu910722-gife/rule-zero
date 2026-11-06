@@ -1,16 +1,18 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1600,
   720
  ],
  "props": {
   "prop:sink@140,160,120,40": {
-   "tex": "prop_sink_140_160_120_40.png",
+   "tex": "paint_prop_sink_140_160_120_40.png",
    "off": [
     -8,
     -131
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_toilet_hall.png"
 }

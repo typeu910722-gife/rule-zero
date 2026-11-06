@@ -1,23 +1,25 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:bed@140,280,260,110": {
-   "tex": "prop_bed_140_280_260_110.png",
+   "tex": "paint_prop_bed_140_280_260_110.png",
    "off": [
     -8,
     -216
    ]
   },
   "prop:desk@880,280,240,70": {
-   "tex": "prop_desk_880_280_240_70.png",
+   "tex": "paint_prop_desk_880_280_240_70.png",
    "off": [
     -8,
     -156
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_lulu_room.png"
 }
