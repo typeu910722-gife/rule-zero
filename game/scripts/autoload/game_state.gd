@@ -906,7 +906,9 @@ func _setup_font() -> void:
 	])
 	var bundled := load("res://fonts/NotoSansTC-Game.otf") as FontFile
 	if bundled:
-		bundled.fallbacks = [sys]
+		# 主字型缺的字：tools/subset_font_extra.py 補的小字型（網頁版、Android 沒有系統字型）
+		var extra := load("res://fonts/NotoSansTC-Extra.ttf") as FontFile
+		bundled.fallbacks = [extra, sys] if extra else [sys]
 		font = bundled
 	else:
 		font = sys

@@ -408,7 +408,7 @@ func _shoes() -> void:
 	layer.add_child(c)
 	# 只有霸凌的那幾個人（郡主、辛禾、薙文、李恩、秋歌）；棉花糖鎮那一邊的孩子沒有站在這裡（2026-11-06）
 	var shoes := [Color("#2d2d33"), Color("#e9e6e0"), Color("#6b4a32"), Color("#2f4a6b"), Color("#8c2f2f")]
-	var state := {"k": 0}
+	var state := {"k": 0, "line": 0}
 	var door_bg := Ch3Mini.art4("bg_toilet_door")
 	c.draw.connect(func():
 		var shoe_tex := Ch3Mini.art4("shoes_%d" % (state.k % shoes.size()))
@@ -429,6 +429,7 @@ func _shoes() -> void:
 				c.draw_texture_rect_region(shoe_tex, dst, Rect2(0, sy, sw, sh_k), Color(1, 1, 1, a))
 			c.draw_rect(Rect2(0, 652, 1280, 48), Color(0, 0, 0, 0.35) if state.k > 0 else Color(0, 0, 0, 0))
 			c.draw_string(GameState.font, Vector2(0, 685), "換了一雙鞋。" if state.k > 0 else "", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#f3ece0"))
+			_shoes_voices(c, state)
 			return
 		c.draw_rect(Rect2(0, 0, 1280, 720), Color("#cfc6b6"))
 		c.draw_colored_polygon(PackedVector2Array([Vector2(0, 720), Vector2(420, 430), Vector2(860, 430), Vector2(1280, 720)]), Color("#b9a68a"))
@@ -440,15 +441,54 @@ func _shoes() -> void:
 		for side in [-1, 1]:
 			c.draw_rect(Rect2(Vector2(640 + side * 40 - 26, 560), Vector2(52, 22)), col)
 			c.draw_rect(Rect2(Vector2(640 + side * 40 - 14, 470), Vector2(28, 92)), Color("#4d4a52"))
-		c.draw_string(GameState.font, Vector2(0, 680), "換了一雙鞋。" if state.k > 0 else "", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#4a4238")))
+		c.draw_string(GameState.font, Vector2(0, 680), "換了一雙鞋。" if state.k > 0 else "", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#4a4238"))
+		_shoes_voices(c, state))
 	if not GameState.fast:
+		var prev_bgm := _bgm_name
+		_bgm("dream")
+		if not GameState.gentle():
+			_play("sob_muffled", -10.0)
 		for k in shoes.size():
 			state.k = k
+			state.line = 0
 			c.queue_redraw()
-			if k == 0 and not GameState.gentle():
-				_play("door_thud", -18.0)
+			if not GameState.gentle():
+				_play(SHOE_SFX[k][0], SHOE_SFX[k][1])
 			await get_tree().create_timer(1.6).timeout
+			# 門裡面的聲音晚一點才出來
+			state.line = 1
+			c.queue_redraw()
+			if not GameState.gentle() and k in [1, 3]:
+				_play("sob_muffled", -12.0)
+			await get_tree().create_timer(1.9).timeout
+		_bgm(prev_bgm)
 	layer.queue_free()
+
+
+## 「那一天」門外：每換一雙鞋，門外的人說一句、門裡面的遙一聲（2026-11-06 使用者：要讓玩家知道發生了什麼，但不畫出來）。
+## 只用聲音和字暗示（CLAUDE.md 1）；不寫身體、不寫性的細節。減少驚嚇與敏感內容：只留「換了一雙鞋」。
+const SHOE_LINES := [
+	["「穿裙子來學校？」　「不男不女的。怪胎。」", "遙（隔著門）：……讓我出去。"],
+	["「換我了。」", "遙（隔著門）：不要……拜託……"],
+	["「叫啊。今天放假，沒有人會來。」", "遙（隔著門）：救命——"],
+	["「換我了。」", "水龍頭的聲音。哭聲被什麼蓋住了。"],
+	["「快一點。換我了。」", "遙（隔著門）：……芬……"],
+]
+const SHOE_SFX := [["laugh_muffled", -14.0], ["door_thud", -18.0], ["handle_rattle", -14.0], ["water", -12.0], ["laugh_muffled", -16.0]]
+
+
+func _shoes_voices(c: Control, state: Dictionary) -> void:
+	if GameState.gentle():
+		if int(state.get("line", 0)) == 1:
+			c.draw_string(GameState.font, Vector2(0, 140), "門裡面有聲音。你沒有回頭。", HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#f3ece0"))
+		return
+	var ln: Array = SHOE_LINES[int(state.k) % SHOE_LINES.size()]
+	c.draw_rect(Rect2(0, 88, 1280, 120), Color(0, 0, 0, 0.45))
+	c.draw_string_outline(GameState.font, Vector2(0, 132), ln[0], HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, 6, Color(0, 0, 0, 0.8))
+	c.draw_string(GameState.font, Vector2(0, 132), ln[0], HORIZONTAL_ALIGNMENT_CENTER, 1280, 28, Color("#f3ece0"))
+	if int(state.get("line", 0)) == 1:
+		c.draw_string_outline(GameState.font, Vector2(0, 182), ln[1], HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, 6, Color(0, 0, 0, 0.8))
+		c.draw_string(GameState.font, Vector2(0, 182), ln[1], HORIZONTAL_ALIGNMENT_CENTER, 1280, 24, Color("#f2b8c6"))
 
 
 ## 慈愛組織的第一個晚上：電閘

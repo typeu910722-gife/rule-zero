@@ -282,16 +282,32 @@ func _run() -> void:
 	var psrc := FileAccess.get_file_as_string("res://scripts/explore/patrol.gd")
 	_check("_cand_t >= 0.15" in psrc, "巡邏的人換方向也要持續一小段時間")
 
+	print("[⑯ 那一天：門外每換一雙鞋都有門外的話和門裡的求救，只用聲音和字，不畫出來]")
+	var C4: GDScript = load("res://scripts/chapter4.gd")
+	var lines: Array = C4.SHOE_LINES
+	_check(lines.size() == 5, "五雙鞋各有一組台詞（%d）" % lines.size())
+	var joined := ""
+	for ln in lines:
+		joined += "".join(ln)
+	_check(joined.count("換我了") >= 3 and "救命" in joined and "怪胎" in joined, "有嘲笑、換人、求救")
+	_check(ResourceLoader.exists("res://audio/ch4/sob_muffled.wav"), "隔著門的哭聲音效")
+	var c4src := FileAccess.get_file_as_string("res://scripts/chapter4.gd")
+	_check("門裡面有聲音。你沒有回頭。" in c4src, "減少驚嚇與敏感內容：只留「換了一雙鞋」和一句旁白")
+	var c4txt := FileAccess.get_file_as_string("res://dialogue/chapter4.txt")
+	_check("[!gentle] > 門裡面在發生什麼事，站在門外的每一個人都知道。" in c4txt, "門外的旁白讓玩家知道發生了什麼")
+	_check(load("res://art/walk4/director.png").get_image().get_width() == 1280, "理事換成 ChatGPT 毛氈走路圖")
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
-	for lv in ["chapter3", "chapter4", "chapter5"]:
-		var txt := FileAccess.get_file_as_string("res://levels/%s.json" % lv)
+	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")
+	for lv in ["levels/chapter3.json", "levels/chapter4.json", "levels/chapter5.json", "scripts/chapter4.gd", "dialogue/chapter4.txt"]:
+		var txt := FileAccess.get_file_as_string("res://" + lv)
 		var miss := {}
 		for i in txt.length():
 			var code := txt.unicode_at(i)
-			if code > 0x2000 and not font.has_char(code):
+			if code > 0x2000 and not font.has_char(code) and not (extra_font and extra_font.has_char(code)):
 				miss[txt[i]] = true
-		_check(miss.is_empty(), "%s.json 的字都有字型（缺：%s）" % [lv, "".join(miss.keys())])
+		_check(miss.is_empty(), "%s 的字都有內建字型（缺：%s）" % [lv, "".join(miss.keys())])
 
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

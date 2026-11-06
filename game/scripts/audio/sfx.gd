@@ -91,6 +91,8 @@ static func stream(name: String) -> AudioStream:
 	if not FILES.has(name):
 		# 第四、五章的合成音效（tools/make_ch45_sfx.py）
 		var extra := "res://audio/ch4/%s.ogg" % name
+		if not ResourceLoader.exists(extra) and ResourceLoader.exists("res://audio/ch4/%s.wav" % name):
+			extra = "res://audio/ch4/%s.wav" % name   # 這台電腦寫不出 OGG 的音效（例：sob_muffled）
 		if not _cache.has(extra):
 			_cache[extra] = load(extra) if ResourceLoader.exists(extra) else null
 		return _cache[extra]
