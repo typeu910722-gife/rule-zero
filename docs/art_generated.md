@@ -290,3 +290,4 @@ un_bu_passing.png`），
 - 第三、四、五章 54 間全部重畫完成（`walk8_test` 檢查每間都用重畫的圖）。
 - 已知小問題（之後再修）：床的碰撞範圍和畫面上的床有時差一點（第五章床往下畫、第四章醫院床往上畫）；第三章大廳椅子上的布偶兔子；有些房間 ChatGPT 自己畫了門。
 - 2026-11-06 修正：床的碰撞範圍對齊重畫的畫面（第五章 a_ward5、a_other5、b3_ward5、lab5，第四章 hospital4；`tools/art/fit_prop_rect.py`，記在 `tools/levels/prop_rect_fixes.json`，兩支關卡產生器會套用）；hospital4 兩個調查點往上移到床邊。第三章大廳椅子上的布偶兔子用旁邊空的座位蓋掉（原圖留在 `paint_ch3_lobby_with_bunny.png`）。
+- 2026-11-06 CG01 自我介紹：照「棉花糖鎮的孩子沒有參與霸凌」重修，後排三個人改成低著頭、沒有笑（ChatGPT 改圖，原檔 `chatgpt_art\cg_h_cg01_speech_v2.png`）。
