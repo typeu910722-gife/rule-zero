@@ -24,6 +24,10 @@ var _chase_speed := 230.0
 var _aggro_distance := 250.0
 var _lose_distance := 520.0
 var _catch_distance := 30.0
+## 走路圖的列：新的方向要持續 0.15 秒才換，斜向邊界上不會每幀亂跳（看起來像身體裂開）
+var _row := 0
+var _cand := -1
+var _cand_t := 0.0
 
 
 func setup(d: Dictionary, ex: Node) -> void:
@@ -65,6 +69,15 @@ func active() -> bool:
 
 func _process(delta: float) -> void:
 	visible = active()
+	var want := ExploreArt.walk_row(facing)
+	if want == _row:
+		_cand_t = 0.0
+	else:
+		_cand_t = _cand_t + delta if want == _cand else 0.0
+		_cand = want
+		if _cand_t >= 0.15:
+			_row = want
+			_cand_t = 0.0
 	# 劇情讓巡邏的人退場（條件不成立了）：追逐也跟著結束
 	if not visible and _chasing:
 		_set_chasing(false)
@@ -171,4 +184,4 @@ func _draw() -> void:
 	if who.begins_with("human:"):
 		ExploreArt.draw_human(self, Vector2.ZERO, who.trim_prefix("human:"), 0 if facing.y > 0 else 3, true, Time.get_ticks_msec() / 1000.0)
 	else:
-		ExploreArt.draw_char(self, who, Vector2.ZERO, facing.x < 0, ExploreArt.walk_row(facing), int(Time.get_ticks_msec() / 140.0) % 4)
+		ExploreArt.draw_char(self, who, Vector2.ZERO, facing.x < 0, _row, int(Time.get_ticks_msec() / 140.0) % 4)

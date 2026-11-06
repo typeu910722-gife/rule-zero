@@ -235,6 +235,53 @@ func _run() -> void:
 		var im: Image = load("res://art/walk4/%s.png" % n).get_image()
 		_check(im.get_width() == 1280, "%s 換成 ChatGPT Q 版走路圖（1280×1280，舊的寫實照片是 640）" % n)
 
+	print("[⑮ 同伴走路：方向和走／停不會每幀亂跳（之前看起來身體像裂開）]")
+	gs.reset()
+	gs.chapter = 3
+	var ex7 = ExS.new()
+	ex7.load_level("res://levels/chapter3.json")
+	ex7.party = ["lulu", "mochi", "popo", "fen", "baimian"]
+	root.add_child(ex7)
+	await process_frame
+	gs.flags["seen_c3_hall_intro"] = true
+	await ex7.enter("lobby", "from_platform")
+	ex7.busy = false
+	var changes := {}
+	var stops := {}
+	var last := {}
+	for dirs in [["move_right", "move_down"], ["move_right"], ["move_left", "move_down"]]:
+		for a in dirs:
+			Input.action_press(a)
+		for i in 70:
+			var ppos: Vector2 = ex7.player.position
+			await process_frame
+			if i < 25 or ex7.player.position.distance_to(ppos) < 1.0:
+				continue   # 剛轉彎（同伴還在轉方向）、或小布撞到牆停住
+			for fo in ex7._followers:
+				var k: int = fo.get_meta("k")
+				var rf: Array = [fo.get_meta("row"), fo.get_meta("frame")]
+				if last.has(k) and last[k][0] != rf[0]:
+					changes[k] = changes.get(k, 0) + 1
+				var mvg: bool = fo.get_meta("moving", false)
+				if last.has(k) and last[k].size() > 2 and last[k][2] != mvg:
+					stops[k] = stops.get(k, 0) + 1
+				rf.append(mvg)
+				last[k] = rf
+		for a in dirs:
+			Input.action_release(a)
+	var worst := 0
+	for k in changes:
+		worst = maxi(worst, changes[k])
+	var worst_stop := 0
+	for k in stops:
+		worst_stop = maxi(worst_stop, stops[k])
+	_check(worst <= 4, "走直線時同伴的方向最多換 %d 次（<= 4）" % worst)
+	_check(worst_stop <= 4, "走路中同伴不會在「走／站」之間一直切換（最多切換 %d 次，<= 4）" % worst_stop)
+	ex7.queue_free()
+	await process_frame
+	var psrc := FileAccess.get_file_as_string("res://scripts/explore/patrol.gd")
+	_check("_cand_t >= 0.15" in psrc, "巡邏的人換方向也要持續一小段時間")
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	for lv in ["chapter3", "chapter4", "chapter5"]:

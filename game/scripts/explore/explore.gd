@@ -521,6 +521,38 @@ func _door_open(s: Dictionary) -> bool:
 
 # ───────── 每一幀 ─────────
 
+## 同伴的走路圖：用平滑過的速度決定方向和有沒有在走。
+## 之前直接用每一幀的小位移，方向在「側面／斜向」兩張圖之間每幀亂跳、走和停也一直切換，看起來身體像裂開（2026-11-06 使用者回饋）
+func _animate_follower(fo: Node2D, mv: Vector2, delta: float) -> void:
+	var vel: Vector2 = fo.get_meta("vel", Vector2.ZERO)
+	vel = vel.lerp(mv / maxf(delta, 0.001), minf(1.0, delta * 6.0))
+	fo.set_meta("vel", vel)
+	var moving: bool = fo.get_meta("moving", false)
+	# 開始走、停下來各用不同的門檻，不會在邊界上一直切換
+	moving = vel.length() > (14.0 if moving else 30.0)
+	fo.set_meta("moving", moving)
+	if moving:
+		# 新的方向要持續一小段時間才換（避開斜向邊界上的抖動）
+		var want := ExploreArt.walk_row(vel)
+		if want == int(fo.get_meta("row")):
+			fo.set_meta("cand_t", 0.0)
+		else:
+			var t: float = fo.get_meta("cand_t", 0.0) + delta
+			if want != int(fo.get_meta("cand", -1)):
+				t = 0.0
+			fo.set_meta("cand", want)
+			fo.set_meta("cand_t", t)
+			if t >= 0.15:
+				fo.set_meta("row", want)
+				fo.set_meta("cand_t", 0.0)
+		var wt: float = fo.get_meta("walk_t", 0.0) + delta
+		fo.set_meta("walk_t", wt)
+		fo.set_meta("frame", int(wt * 7.0) % 4)
+	else:
+		fo.set_meta("frame", 0)
+	fo.queue_redraw()
+
+
 func _process(delta: float) -> void:
 	var can := not busy and not paused and hidden_in == ""
 	player.can_move = can
@@ -533,14 +565,7 @@ func _process(delta: float) -> void:
 		if idx >= 0:
 			var before: Vector2 = fo.position
 			fo.position = fo.position.lerp(player.trail[idx], minf(1.0, delta * 10.0))
-			# 走路圖：往哪邊走就換哪一列，有在動才換格
-			var mv: Vector2 = fo.position - before
-			if mv.length() > 0.3:
-				fo.set_meta("row", ExploreArt.walk_row(mv))
-				fo.set_meta("frame", int(Time.get_ticks_msec() / 140.0) % 4)
-			else:
-				fo.set_meta("frame", 0)
-			fo.queue_redraw()
+			_animate_follower(fo, fo.position - before, delta)
 	if _ysort:   # 還沒進任何房間（加進場景後、enter() 之前）時是 null
 		for n in _ysort.get_children():
 			if n.has_meta("thing"):
