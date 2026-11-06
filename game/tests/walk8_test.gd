@@ -77,7 +77,7 @@ func _run() -> void:
 	print("[月台：ChatGPT 重畫的房間]")
 	_check(ex._art.get("painted", false) and ResourceLoader.exists(ex._art.dir + "bg_paint.jpg"), "月台用重畫的背景")
 	# 第三章 22 間全部重畫：每間的背景、每件家具的遮擋圖都在
-	for lv in ["chapter3", "chapter5"]:
+	for lv in ["chapter3", "chapter4", "chapter5"]:
 		ex.load_level("res://levels/%s.json" % lv)
 		var missing: Array = []
 		for rid in ex.level.rooms:

@@ -1,30 +1,32 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1600,
   720
  ],
  "props": {
   "prop:bed@420,280,200,80": {
-   "tex": "prop_bed_420_280_200_80.png",
+   "tex": "paint_prop_bed_420_280_200_80.png",
    "off": [
     -8,
     -186
    ]
   },
   "prop:bed@820,280,200,80": {
-   "tex": "prop_bed_820_280_200_80.png",
+   "tex": "paint_prop_bed_820_280_200_80.png",
    "off": [
     -8,
     -186
    ]
   },
   "prop:machine@640,200,80,50": {
-   "tex": "prop_machine_640_200_80_50.png",
+   "tex": "paint_prop_machine_640_200_80_50.png",
    "off": [
     -8,
     -191
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch4_hospital4.png"
 }
