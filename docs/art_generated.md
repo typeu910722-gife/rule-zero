@@ -285,3 +285,4 @@ un_bu_passing.png`），
 - CG02 鏡子碎片：換成使用者給的版本（原檔 `chatgpt_art\cg_h_cg02_mirror_user_v2.png`）→ `game/art/human/cg/h_cg02_mirror.jpg`（裁 16:9、2560×1440）。
 - 走路圖：使用者給的 4×4（原檔 `chatgpt_art\walk_h_hilufei_user_v2.jpg`）方向混在一起，重新排成遊戲的順序後轉檔：下＝正面那幾格、左＝側面兩格輪流、右＝左的翻轉、上＝背面三格；斜向用 3/4 正面、3/4 背面那幾格（`h_hilufei_diag.png`）。每格上緣 30px 塗成底色，避免上一格的鞋子跑進來。
 - 對話立繪沒有換（維持原本 6 張）。
+- 2026-11-06 對話立繪 6 張換成使用者提供、已經調整過比例的版本（原檔 `chatgpt_art\portrait_h_hilufei_user_v3.jpg`，一張 6 格）。去背：從邊緣連通的底色＋夾在頭髮之間、靠兩側的小塊底色（不動中間的臉和手、白襯衫），再用 `fit_human_portrait.py` 轉 512×768。注意：「gown」兩張畫的是灰色毛衣，不是病人服。
