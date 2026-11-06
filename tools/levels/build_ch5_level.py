@@ -283,5 +283,12 @@ level = {"items": {"c5_read_file": "遙的檔案（看過了）", "c5_a_clip": "
          "keypads": {"c5_pad_drawer": {"title": "抽屜的密碼鎖", "code": "1020", "flag": "c5_l_drawer_open",
                                         "hint": "四個數字。照片背面，好像寫著日期。"}},
          "rooms": rooms}
+# 重畫過的房間：家具碰撞範圍對齊畫面（tools/art/fit_prop_rect.py 記在 prop_rect_fixes.json）
+_fixes = json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("chapter5", {})
+for _rid, _pairs in _fixes.items():
+    for _p in level["rooms"][_rid]["props"]:
+        for _old, _new in _pairs:
+            if _p["rect"] == _old:
+                _p["rect"] = _new
 json.dump(level, open("game/levels/chapter5.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")

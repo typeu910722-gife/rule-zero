@@ -202,8 +202,8 @@ rooms["principal"] = room("校長室", [1280, 720], "school",
 rooms["hospital4"] = room("醫院（很多年以前）", [1600, 720], "hospital",
     spawns={"start": [160, 600]},
     props=[{"kind": "bed", "rect": [420, 280, 200, 80]}, {"kind": "bed", "rect": [820, 280, 200, 80]}, {"kind": "machine", "rect": [640, 200, 80, 50]}],
-    spots=[{"id": "c4_org_hospital", "name": "遙的床", "pos": [520, 420], "when": O},
-           {"id": "c4_o_fenbed", "name": "芬的床", "pos": [920, 420], "when": O}],
+    spots=[{"id": "c4_org_hospital", "name": "遙的床", "pos": [520, 320], "when": O},
+           {"id": "c4_o_fenbed", "name": "芬的床", "pos": [920, 320], "when": O}],
     npcs=[{"id": "c4_org_father", "name": "芬的父親", "char": "h_fen_father", "pos": [1200, 450], "when": O},
           {"id": "c4_org_whitecoat", "name": "穿白大衣的人", "char": "h_whitecoat", "pos": [1320, 450], "when": O, "flip": True}],
     doors=[{"id": "c4_door_hosp_platform", "name": "很遠的月台", "pos": [1560, 450], "size": [60, 120], "to": "platform4", "spawn": "start",
@@ -229,5 +229,12 @@ rooms["ward4"] = room("慈愛組織的醫院　很多年以前", [1800, 900], "h
     npcs=[{"id": "c4_n_zz", "name": "郡主", "char": "h_junzhu", "pos": [690, 560], "when": N}])
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "keypads": {}, "rooms": rooms}
+# 重畫過的房間：家具碰撞範圍對齊畫面（tools/art/fit_prop_rect.py 記在 prop_rect_fixes.json）
+_fixes = json.load(open("tools/levels/prop_rect_fixes.json", encoding="utf-8")).get("chapter4", {})
+for _rid, _pairs in _fixes.items():
+    for _p in level["rooms"][_rid]["props"]:
+        for _old, _new in _pairs:
+            if _p["rect"] == _old:
+                _p["rect"] = _new
 json.dump(level, open("game/levels/chapter4.json", "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=1)
 print("完成", len(rooms), "個房間")
