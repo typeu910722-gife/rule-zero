@@ -230,6 +230,11 @@ func _run_dev_preview(what: String) -> void:
 		"ch5":
 			enter_chapter5(get_tree())
 			return
+	# ?dev=ch4_theday：直接從第四章的某一段開始（段落名稱見 chapter4.gd SEGMENTS，例如 theday＝那一天、org＝那一天之後）
+	if what.begins_with("ch4_"):
+		enter_chapter4(get_tree())
+		GameState.checkpoint = "c4_" + what.substr(4)
+		return
 	_layout("day")
 	_set_tint("day")
 	player.bounds = WORLD_BOUNDS

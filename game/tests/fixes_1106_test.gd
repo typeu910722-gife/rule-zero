@@ -297,6 +297,19 @@ func _run() -> void:
 	_check("[!gentle] > 門裡面在發生什麼事，站在門外的每一個人都知道。" in c4txt, "門外的旁白讓玩家知道發生了什麼")
 	_check(load("res://art/walk4/director.png").get_image().get_width() == 1280, "理事換成 ChatGPT 毛氈走路圖")
 
+	print("[⑰ 網頁版 ?dev=ch4_theday：直接從「那一天」開始]")
+	var msrc := FileAccess.get_file_as_string("res://scripts/main.gd")
+	_check("what.begins_with(\"ch4_\")" in msrc, "main.gd 認得 ?dev=ch4_<段落>")
+	gs.reset()
+	gs.start_chapter4()
+	gs.checkpoint = "c4_theday"
+	var ch4n = load("res://scripts/chapter4.gd").new()
+	root.add_child(ch4n)
+	await process_frame
+	_check(ch4n.segment == "theday", "第四章從「那一天」這一段開始（%s）" % ch4n.segment)
+	ch4n.queue_free()
+	await process_frame
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")
