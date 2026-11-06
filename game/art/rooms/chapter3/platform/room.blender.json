@@ -1,0 +1,37 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  1800,
+  720
+ ],
+ "props": {
+  "prop:chair@440,600,180,40": {
+   "tex": "prop_chair_440_600_180_40.png",
+   "off": [
+    -8,
+    -142
+   ]
+  },
+  "prop:machine@1160,260,90,50": {
+   "tex": "prop_machine_1160_260_90_50.png",
+   "off": [
+    -8,
+    -272
+   ]
+  },
+  "prop:pillar@820,520,50,40": {
+   "tex": "prop_pillar_820_520_50_40.png",
+   "off": [
+    -8,
+    -560
+   ]
+  },
+  "prop:pillar@1420,520,50,40": {
+   "tex": "prop_pillar_1420_520_50_40.png",
+   "off": [
+    -8,
+    -560
+   ]
+  }
+ }
+}

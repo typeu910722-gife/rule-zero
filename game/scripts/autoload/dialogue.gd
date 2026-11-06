@@ -365,6 +365,7 @@ func _set_bg_ch2(mode: String) -> void:
 		if ResourceLoader.exists(art3):
 			_bg_img.texture = load(art3)
 			_bg_img.visible = true
+			_cg_shown = mode.begins_with("c3_cg")   # 第三章的 CG 上也不疊立繪（抵達月台：和平鴿已經畫在 CG 裡）
 		_bg.color = BG_COLORS_3.get(mode, BG_COLORS.black)
 		return
 	var art := ""

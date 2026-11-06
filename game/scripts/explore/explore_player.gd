@@ -18,6 +18,8 @@ var moving := false
 var _walk_t := 0.0
 ## 走過的路（給跟在後面的同伴用）
 var trail: Array = []
+## 進房間之後走過了沒有（還沒走之前，同伴站在原地的隊形，不去追路線）
+var walked := false
 
 
 func _process(delta: float) -> void:
@@ -25,6 +27,7 @@ func _process(delta: float) -> void:
 	var was := moving
 	moving = dir != Vector2.ZERO
 	if moving:
+		walked = true
 		facing = dir
 		_walk_t += delta
 		_move(dir * SPEED * speed_mul * delta)
@@ -55,17 +58,16 @@ func blocked(p: Vector2) -> bool:
 
 func place(p: Vector2) -> void:
 	position = p
+	walked = false
 	trail.clear()
-	# 同伴一開始排在小布後面（往左上斜斜一列；門多半在下面或兩側，這樣不會排到房間外）
+	# 同伴一開始擠在小布身後一小團（以前是往左上斜斜一長列，2026-11-06 使用者覺得奇怪）
 	for k in 60:
-		trail.append(p + Vector2(-k * 6.0, -k * 3.5))
+		trail.append(p + Vector2(0, -minf(k, 20) * 1.5))
 	queue_redraw()
 
 
 func _row() -> int:
-	if absf(facing.x) > absf(facing.y):
-		return 1 if facing.x < 0 else 2
-	return 3 if facing.y < 0 else 0
+	return ExploreArt.walk_row(facing)
 
 
 func _draw() -> void:
@@ -78,10 +80,13 @@ func _draw() -> void:
 		var col := int(_walk_t * 8.0) % 4 if moving else 0
 		var tex := ExploreArt.tex(ExploreArt.PIP_SHEET_MARKS if GameState.day >= 3 else ExploreArt.PIP_SHEET)
 		if tex:
-			draw_texture_rect_region(tex, Rect2(Vector2(-40, -76), Vector2(80, 80)), Rect2(col * 160, _row() * 160, 160, 160))
+			var r := _row()
+			if r >= 4:   # 玩偶小布還沒有斜向圖：用左右那一列
+				r = 1 if r in [4, 5] else 2
+			draw_texture_rect_region(tex, Rect2(Vector2(-40, -76), Vector2(80, 80)), Rect2(col * 160, r * 160, 160, 160))
 			return
 	# 有四方向走路圖的角色（人類時期 h_<id> 等）
 	if not look.begins_with("human:") and ExploreArt.draw_walk(self, look, Vector2.ZERO, _row(), int(_walk_t * 8.0) % 4 if moving else 0):
 		return
 	var col: String = look.trim_prefix("human:") if look.begins_with("human:") else ExploreArt.HUMAN_FALLBACK.get(look, "#6d7f8a")
-	ExploreArt.draw_human(self, Vector2.ZERO, col, _row(), moving, _walk_t)
+	ExploreArt.draw_human(self, Vector2.ZERO, col, mini(_row(), 3) if _row() < 4 else (1 if _row() in [4, 5] else 2), moving, _walk_t)

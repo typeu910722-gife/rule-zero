@@ -423,5 +423,12 @@ func _run() -> void:
 		_check(n_sb is StyleBoxTexture and n_sb.texture != null, "第%d章 選項按鈕有圖" % c)
 		_check(f_sb is StyleBoxTexture and f_sb.texture != n_sb.texture, "第%d章 選到的選項換一張圖" % c)
 		bt.free()
+	# 第三章的 CG 上不疊立繪（2026-11-06：抵達月台的 CG 已經畫了和平鴿，右邊又站一個）
+	gs.chapter = 3
+	d.set_bg("c3_cg_arrival")
+	d._show_portrait_ch2("和平鴿")
+	_check(not d._ch2_portrait.visible, "第三章 CG（抵達月台）上不疊和平鴿的立繪")
+	d.set_bg("c3_platform")
+	d.set_bg("none")
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

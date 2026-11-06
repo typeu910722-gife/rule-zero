@@ -78,7 +78,25 @@ func _ready() -> void:
 	ui.layer = 15
 	add_child(ui)
 	_prompt = _label(ui, Vector2(0, 640), 24)
-	_items = _label(ui, Vector2(16, 78), 18)
+	_guide_lbl = _label(ui, Vector2(16, 78), 18)
+	_guide_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_guide_lbl.size = Vector2.ZERO
+	_guide_lbl.add_theme_color_override("font_color", Color("#5a3d4f"))
+	var gsb := StyleBoxFlat.new()
+	gsb.bg_color = Color(1, 0.98, 0.97, 0.82)
+	gsb.set_corner_radius_all(10)
+	gsb.content_margin_left = 12
+	gsb.content_margin_right = 14
+	gsb.content_margin_top = 4
+	gsb.content_margin_bottom = 6
+	_guide_lbl.add_theme_stylebox_override("normal", gsb)
+	# 目標不在畫面裡：畫面邊緣一個箭頭指過去
+	_edge_arrow = Control.new()
+	_edge_arrow.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_edge_arrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_edge_arrow.draw.connect(_draw_edge_arrow)
+	ui.add_child(_edge_arrow)
+	_items = _label(ui, Vector2(16, 132), 18)
 	_items.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_items.size.x = 900
 	_toast = _label(ui, Vector2(0, 300), 26)
@@ -179,7 +197,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		var fid: String = party[i]
 		fo.set_meta("id", fid)
 		fo.set_meta("k", i)
-		fo.position = player.trail[mini(player.trail.size() - 1, 7 + i * 7)]
+		fo.position = sp + FORMATION[i % FORMATION.size()]
 		fo.set_meta("row", 3)
 		fo.set_meta("frame", 0)
 		fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO, false, fo.get_meta("row"), fo.get_meta("frame")))
@@ -218,6 +236,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	if _light:
 		_light.enabled = dark
 	_refresh_items()
+	refresh_guide()
 	room_entered.emit(id)
 	var on_enter: String = room.get("on_enter", "")
 	if on_enter != "" and not GameState.has("seen_" + on_enter) and Dialogue.has_label(on_enter):
@@ -230,6 +249,8 @@ func enter(id: String, spawn: Variant = "start") -> void:
 
 
 ## 人類時期：鏡頭拉近、人放大（房間是照玩偶的大小做的，人照原比例會比桌子還矮、看不到臉）
+## 剛進房間時同伴站的位置（小布身後一小團，不排成一長列）
+const FORMATION := [Vector2(-34, -16), Vector2(34, -16), Vector2(-62, -38), Vector2(0, -42), Vector2(62, -38), Vector2(-30, -64), Vector2(30, -64)]
 const HUMAN_ZOOM := 1.5
 const HUMAN_SIZE := 1.5
 
@@ -309,7 +330,8 @@ func _draw_back(c: Node2D, size: Vector2, th: Dictionary) -> void:
 	if bg_tex:
 		c.draw_rect(Rect2(-400, -400, size.x + 800, size.y + 800), Color(th.wall).darkened(0.8))
 		c.draw_texture_rect(bg_tex, Rect2(Vector2.ZERO, size), false)
-		for d in room.get("decals", []):
+		# ChatGPT 重畫的房間（tools/art/room_repaint.py）：招牌、指示都畫在圖裡了，不再把字寫在地上
+		for d in ([] if _art.get("painted", false) else room.get("decals", [])):
 			if d.get("kind", "") == "text":
 				c.draw_string(GameState.font, _v(d.pos), d.text, HORIZONTAL_ALIGNMENT_CENTER, float(d.get("w", 300)), int(d.get("size", 22)), Color(d.get("color", "#7c98a2")))
 		return
@@ -374,6 +396,8 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			else:
 				ExploreArt.draw_char(n, who, Vector2.ZERO, s.get("flip", false))
 			if s.get("name", "") != "":
+				# 白邊：重畫過的暗色地板上也看得清楚
+				n.draw_string_outline(GameState.font, Vector2(-60, 20), s.name, HORIZONTAL_ALIGNMENT_CENTER, 120, 14, 5, Color(1, 1, 1, 0.8))
 				n.draw_string(GameState.font, Vector2(-60, 20), s.name, HORIZONTAL_ALIGNMENT_CENTER, 120, 14, Color("#55606a"))
 		"doors":
 			var sz := _v(s.get("size", [90, 26]))
@@ -419,6 +443,8 @@ func _draw_thing(n: Node2D, s: Dictionary) -> void:
 			var a := 0.55 + 0.35 * sin(t * 3.0 + n.position.x)
 			n.draw_circle(Vector2(0, -12), 5, Color(1, 1, 1, a))
 			n.draw_arc(Vector2(0, -12), 10, 0, TAU, 16, Color(0.95, 0.55, 0.68, a), 2.0)
+	if show_guide and not _guide.is_empty() and _guide.room == room_id and str(s.get("id", "")) == _guide.id and s._kind == _guide.kind:
+		_draw_guide_arrow(n, s, t)
 
 
 ## 門的圖：上面牆（橫的門、在房間上半）畫正面、腳在門框的下緣；左右牆、下面牆畫俯視的細長門。
@@ -468,6 +494,8 @@ func _process(delta: float) -> void:
 	player.can_move = can
 	# 同伴沿著小布走過的路跟著
 	for fo in _followers:
+		if not player.walked:
+			break
 		var k: int = fo.get_meta("k")
 		var idx := mini(player.trail.size() - 1, 7 + k * 7)
 		if idx >= 0:
@@ -485,6 +513,8 @@ func _process(delta: float) -> void:
 		for n in _ysort.get_children():
 			if n.has_meta("thing"):
 				n.queue_redraw()
+	if _edge_arrow:
+		_edge_arrow.queue_redraw()
 	if _toast_t > 0.0:
 		_toast_t -= delta
 		if _toast_t <= 0.0:
@@ -570,6 +600,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func interact(s: Dictionary) -> void:
 	busy = true
 	var id: String = str(s.get("id", ""))
+	var hash_before := _guide_hash()
 	match s._kind:
 		"doors":
 			if _door_open(s):
@@ -602,9 +633,13 @@ func interact(s: Dictionary) -> void:
 				GameState.set_flag(s.set)
 			GameState.flags["done_" + id] = true
 			interacted.emit(id)
+			# 按了、可是什麼都沒改變（例如還沒有鑰匙卡的電梯）：引導先跳過它，等旗標變了再說
+			if _guide_hash() == hash_before and _pending(s):
+				_tried[room_id + "/" + id] = hash_before
 	busy = false
 	if is_inside_tree():
 		_rebuild_things()
+		refresh_guide()
 
 
 func _unhide() -> void:
@@ -634,6 +669,7 @@ func _rebuild_things() -> void:
 
 func _on_changed() -> void:
 	_refresh_items()
+	refresh_guide()
 
 
 func _refresh_items() -> void:
@@ -663,11 +699,16 @@ func _fade_to(a: float) -> void:
 
 ## 讓玩家自由探索，直到條件成立
 func until(cond: String) -> void:
+	goal_cond = cond
+	refresh_guide()
 	busy = false
 	while is_inside_tree() and not GameState.check(cond):
 		await get_tree().process_frame
 		if GameState.fast and not busy:
-			await _auto_step(cond)
+			if auto_by_guide:
+				await _guide_step()
+			else:
+				await _auto_step(cond)
 	busy = true
 
 
@@ -697,7 +738,7 @@ func on_spotted(by: Dictionary) -> void:
 	await _fade_to(1.0)
 	player.place(_entry)
 	for fo in _followers:
-		fo.position = _entry
+		fo.position = _entry + FORMATION[int(fo.get_meta("k")) % FORMATION.size()]
 	for p in _patrols:
 		p.reset()
 	await _fade_to(0.0)
@@ -730,6 +771,176 @@ func handle_event(name: String) -> bool:
 			GameState.set_flag(pd.fail_flag)
 		return true
 	return false
+
+
+# ───────── 主線引導（第三～五章；同第一、二章的目標）─────────
+
+## 每一段地圖探索的主線（chapter 腳本呼叫 until(條件) 時，依條件找這裡的文字）
+const GOALS := {
+	"c3_took_elevator": "到醫院裡面，找到上二樓的方法。",
+	"c3_haruka_slip": "在二樓找一找：遙的床在哪裡。",
+	"c3_to_wild": "找到往舊病棟的連通道。",
+	"c3_crow": "穿過舊病棟，走到最裡面。",
+	"c3_monitor_seen": "在地下二樓找到監控室。",
+	"c4_h_spoke": "走進三年二班的教室，向全班自我介紹。",
+	"c4_m_done": "找回書包和鞋子，然後去校門口。",
+	"c4_t_done": "在自己的房間裡看一看。",
+	"c4_l_done": "找齊三片鏡子的碎片，回到自己的房間。",
+	"c4_x_done": "等大家走光，然後去校門口的郵筒。",
+	"c4_p_done": "穿過人群，去校門口的信箱。",
+	"c4_te_done": "待到晚上，最後看看教室後面的班規。",
+	"c4_f_done": "看看自己的桌子和垃圾桶，然後走到走廊盡頭。",
+	"c4_d1_done": "到樓梯口去。",
+	"c4_d2_done": "拿水桶，把教室的窗戶擦乾淨。",
+	"c4_d5_done": "去找老師，然後趕到樓梯口。",
+	"c4_d8_done": "看看樓梯底下，然後打電話。",
+	"c4_o_done": "像影子一樣走過那些地方，最後到月台。",
+	"c4_n_done": "看看白線的兩邊，還有遙。",
+	"c5_x_done": "在實驗室裡看看大家，然後去找車掌。",
+	"c5_l_done": "去檔案室和監視室，再回到病床。",
+	"c5_baimian_returned": "叫醒大家，走到白線的另一邊。",
+	"c5_a_done": "走出醫院的大門。",
+	"c5_b1_done": "走到月台，等夜車。",
+	"c5_b2_done": "守住走廊，走到走廊盡頭的床。",
+	"c5_b3_done": "出院，走到校門口。",
+}
+
+var goal_cond := ""          # 現在這段探索要等的條件（until）
+var goal := ""               # 章節自己指定的主線文字（空＝用 GOALS）
+var show_guide := true
+var _guide := {}             # {"room", "id", "kind", "text"}：下一步要去的東西
+var _guide_lbl: Label
+var _tried := {}             # 玩家按過、沒有改變什麼的東西（房間/id → 當時的旗標）
+var _edge_arrow: Control
+
+
+func _things_in(r: Dictionary) -> Array:
+	var keep := room
+	room = r
+	var out := _things()
+	room = keep
+	return out
+
+
+## 調查點、人物還沒做完（做完：done_when 成立，或按過一次）
+func _pending(s: Dictionary) -> bool:
+	if not s.get("_kind", "") in ["spots", "npcs"] or s.get("auto_skip", false):
+		return false
+	if s.has("done_when"):
+		return not GameState.check(s.done_when)
+	return not GameState.has("done_" + str(s.get("id", "")))
+
+
+## 會結束這一段的東西（set 這個條件，或 done_when 寫著它）
+func _finishes(s: Dictionary) -> bool:
+	return goal_cond != "" and (str(s.get("set", "")) == goal_cond or goal_cond in str(s.get("done_when", "")))
+
+
+## 找下一步：先找能結束這一段的東西；沒有的話，最近的還沒調查的東西。在別的房間就指向路上的門。
+func find_guide() -> Dictionary:
+	if room_id == "" or not level.has("rooms"):
+		return {}
+	var h := _guide_hash()
+	var best := {}
+	var best_score := INF
+	# 房間之間的最短路（只走打得開的門）
+	var first_door := {room_id: {}}
+	var dist := {room_id: 0}
+	var queue := [room_id]
+	while not queue.is_empty():
+		var rid: String = queue.pop_front()
+		for s in _things_in(level.rooms[rid]):
+			if s._kind == "doors" and _door_open(s) and level.rooms.has(str(s.to)) and not dist.has(str(s.to)):
+				dist[str(s.to)] = dist[rid] + 1
+				first_door[str(s.to)] = s if rid == room_id else first_door[rid]
+				queue.append(str(s.to))
+	for rid in dist:
+		for s in _things_in(level.rooms[rid]):
+			if not _pending(s) or _tried.get(rid + "/" + str(s.get("id", "")), -1) == h:
+				continue
+			var score := float(dist[rid]) * 10000.0
+			if rid == room_id and player:
+				score += player.position.distance_to(_v(s.pos))
+			if _finishes(s):
+				score -= 1000000.0
+			if score < best_score:
+				best_score = score
+				best = {"room": rid, "s": s}
+		# 還沒進去過的房間（有進門的劇情還沒看過）也是下一步，例如監控室
+		var oe: String = level.rooms[rid].get("on_enter", "")
+		if rid != room_id and oe != "" and not GameState.has("seen_" + oe) and Dialogue.has_label(oe):
+			var sc := float(dist[rid]) * 10000.0 + 5000.0
+			if sc < best_score:
+				best_score = sc
+				best = {"room": rid, "s": {}}
+	if best.is_empty():
+		return {}
+	var s: Dictionary = best.s
+	if best.room == room_id:
+		return {"room": room_id, "id": str(s.get("id", "")), "kind": s._kind, "text": ("找%s說話" if s._kind == "npcs" else "調查「%s」") % s.get("name", "")}
+	var d: Dictionary = first_door[best.room]
+	var where: String = level.rooms[best.room].get("name", "")
+	return {"room": room_id, "id": str(d.get("id", "")), "kind": "doors", "text": "往「%s」（要去：%s）" % [d.get("name", "門"), where]}
+
+
+func refresh_guide() -> void:
+	if _guide_lbl == null:
+		return
+	_guide = find_guide() if show_guide else {}
+	var g := goal if goal != "" else str(GOALS.get(goal_cond, ""))
+	var lines := []
+	if g != "":
+		lines.append("目標：" + g)
+	if not _guide.is_empty():
+		lines.append("→ 下一步：" + _guide.text)
+	_guide_lbl.text = "
+".join(lines) if show_guide else ""
+	_guide_lbl.visible = _guide_lbl.text != ""
+	_guide_lbl.reset_size()
+
+
+## 下一步的東西在畫面外：畫面邊緣畫一個指向它的箭頭（回傳箭頭的位置，給測試用；在畫面裡回傳 null）
+func guide_edge_point() -> Variant:
+	if _guide.is_empty() or _ysort == null or busy or not show_guide:
+		return null
+	for n in _ysort.get_children():
+		if n.has_meta("thing"):
+			var s: Dictionary = n.get_meta("thing")
+			if str(s.get("id", "")) == _guide.id and s._kind == _guide.kind:
+				var p: Vector2 = get_viewport().get_canvas_transform() * (n.global_position + Vector2(0, -30))
+				var view := Rect2(Vector2(40, 150), Vector2(1200, 500))
+				if view.has_point(p):
+					return null
+				return p.clamp(view.position, view.end)
+	return null
+
+
+func _draw_edge_arrow() -> void:
+	var p = guide_edge_point()
+	if p == null:
+		return
+	var center := Vector2(640, 400)
+	var dir: Vector2 = ((p as Vector2) - center).normalized()
+	var bob := sin(Time.get_ticks_msec() / 250.0) * 5.0
+	var tip: Vector2 = p + dir * bob
+	var side := dir.orthogonal()
+	var col := Color(0.93, 0.36, 0.55, 0.95)
+	_edge_arrow.draw_colored_polygon(PackedVector2Array([tip + dir * 4, tip - dir * 30 + side * 20, tip - dir * 30 - side * 20]), Color(1, 1, 1, 0.9))
+	_edge_arrow.draw_colored_polygon(PackedVector2Array([tip, tip - dir * 26 + side * 15, tip - dir * 26 - side * 15]), col)
+
+
+## 下一步的東西頭上：一個上下跳的粉紅色箭頭
+func _draw_guide_arrow(n: Node2D, s: Dictionary, t: float) -> void:
+	var top := -60.0
+	match s._kind:
+		"npcs":
+			top = -130.0
+		"doors":
+			top = -_v(s.get("size", [90, 26])).y / 2.0 - 34.0
+	var y := top + sin(t * 4.0) * 6.0
+	var col := Color(0.93, 0.36, 0.55, 0.95)
+	n.draw_colored_polygon(PackedVector2Array([Vector2(-13, y - 16), Vector2(13, y - 16), Vector2(0, y)]), Color(1, 1, 1, 0.9))
+	n.draw_colored_polygon(PackedVector2Array([Vector2(-9, y - 13), Vector2(9, y - 13), Vector2(0, y - 3)]), col)
 
 
 # ───────── 存檔 ─────────
@@ -780,6 +991,40 @@ func _auto_step(_cond: String) -> void:
 	var key := room_id + ">" + str(d.to)
 	_auto_seen[key] = int(_auto_seen.get(key, 0)) + 1
 	await interact(d)
+
+
+## 自動測試：只照引導箭頭玩（tests/guide_test.gd）。引導找不到下一步就記一次「卡住」
+static var auto_by_guide := false
+static var guide_stuck := 0
+static var guide_steps := 0
+
+
+func _guide_step() -> void:
+	await get_tree().process_frame
+	if busy:
+		return
+	refresh_guide()
+	if _guide.is_empty():
+		guide_stuck += 1
+		print("  [引導卡住] 房間 %s　等 %s" % [room_id, goal_cond])
+		# 卡住時退回一般的自動玩家，測試才不會無限等
+		await _auto_step(goal_cond)
+		return
+	for s in _things():
+		if str(s.get("id", "")) == _guide.id and s._kind == _guide.kind:
+			guide_steps += 1
+			player.place(_v(s.pos) + Vector2(0, 30))
+			await interact(s)
+			return
+	guide_stuck += 1
+	await _auto_step(goal_cond)
+
+
+## 引導用：連「按過哪些東西」也算進去（跟其他人說完話，車掌那邊才會有新的反應）
+func _guide_hash() -> int:
+	var keys := GameState.flags.keys().filter(func(k): return not str(k).begins_with("explore_"))
+	keys.sort()
+	return str(keys).hash()
 
 
 func _flags_hash() -> int:

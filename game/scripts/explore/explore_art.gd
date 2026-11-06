@@ -48,11 +48,19 @@ static var _cache := {}
 static var human_mul := 1.0
 
 
-## 有四方向走路圖就畫（回傳 true）。row：0 下、1 左、2 右、3 上；frame：0～3
+## 有走路圖就畫（回傳 true）。row：0 下、1 左、2 右、3 上；斜向 4 左下、5 左上、6 右下、7 右上
+## （斜向用 <id>_diag.png，四列依序是左下、左上、右下、右上；沒有斜向圖就用左右那一列）
 static func draw_walk(ci: CanvasItem, id: String, foot: Vector2, row := 0, frame := 0) -> bool:
 	var t := tex(WALK_DIR % id)
 	if t == null:
 		return false
+	if row >= 4:
+		var d := tex(WALK_DIR % (id + "_diag"))
+		if d:
+			t = d
+			row -= 4
+		else:
+			row = 1 if row in [4, 5] else 2
 	var sc: float = WALK_SCALE.get(id, 0.5) * (human_mul if id.begins_with("h_") else 1.0)
 	# 一格的大小看圖：自己做的是 160px，外包的人類時期是 320px（畫面上一樣大，只是更清楚）
 	var cell := t.get_width() / 4.0
@@ -60,8 +68,11 @@ static func draw_walk(ci: CanvasItem, id: String, foot: Vector2, row := 0, frame
 	return true
 
 
-## 方向（移動的向量）→ 走路圖的列
+## 方向（移動的向量）→ 走路圖的列（斜著走：兩個方向都夠大時，4 左下、5 左上、6 右下、7 右上）
 static func walk_row(dir: Vector2) -> int:
+	var n := dir.normalized()
+	if absf(n.x) > 0.38 and absf(n.y) > 0.38:
+		return (4 if n.y > 0 else 5) if n.x < 0 else (6 if n.y > 0 else 7)
 	if absf(dir.x) > absf(dir.y):
 		return 1 if dir.x < 0 else 2
 	return 3 if dir.y < 0 else 0

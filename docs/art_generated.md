@@ -246,3 +246,26 @@ un_bu_passing.png`），
 - `tests/screenshots_ch3.gd`、`screenshots_ch45.gd` 還在讀舊的房間表（已經改成探索地圖），改成只拍還存在的；房間畫面看 `screenshots_ch*_map.gd`。
 - 看起來是「空房間」的第四章校門、玄關：背景圖上的黑色方塊是家具的位置，遊戲裡會疊上家具圖，不是缺圖。
 - 同一天再跑第一章（9）、第一章追逐（6）、3D 追逐（3）、結局（7）、手機版面（5）、探索（2）的截圖：沒有發現缺圖或擋字。
+
+## 人類時期斜向走路圖 13 張（2026-11-06，ChatGPT）
+使用者回饋：第四章走路沒有左上、右上、左下、右下。同一個 ChatGPT 對話「繪製對角行走精靈圖」，每次附上原本的四方向走路圖，請它畫同一個角色的 4×4 斜向走路圖。
+- 原圖：`E:\哲\第零條規則\chatgpt_art\walk_<id>_diag.png`
+- 進遊戲：`py -3.11 tools/art/fit_diag_sheet.py <原圖> <id>` → `game/art/walk4/<id>_diag.png`。只用第 1 列（左下）、第 2 列（左上），右下、右上是左右翻過來的（ChatGPT 畫右邊常常轉錯方向）；高度照同一角色四方向圖最高的那格；頭髮之間包住的白底另外挖掉。
+- 列的順序：0 左下、1 左上、2 右下、3 右上（`explore_art.gd` `draw_walk` 的 row 4～7）。沒有斜向圖的角色（玩偶小布等）斜著走時用左右那一列。
+- 角色：h_haruka、h_xiaoman、h_tiwen、h_hilufei、h_xinhe、h_mingyue、h_teacher、h_fen、h_haruka_dress、h_duty、h_lien、h_haruka_gown；h_shadow_diag 用遙的斜向圖照 `make_crowd_shadow.py` 的方法做成人影（`tools/art/make_shadow_diag.py`）。
+- 測試：`tests/walk8_test.gd`（方向對到哪一列、第四、五章能操作的人都有斜向圖、16 格都有人且腳底對齊）。
+
+## 第三章抵達月台的 CG 重畫（2026-11-06，ChatGPT）
+使用者回饋：倒掛的和平鴿很怪（飄在半空、臉不是鴿子面具，右邊又站一個和平鴿立繪）。
+- 照劇本「車窗的上緣，倒掛著一張白色的臉」：和平鴿趴在左邊火車的車頂，白色鳥嘴面具從車窗上緣倒掛下來，白手套抓著車頂邊緣。其他（車掌、五個玩偶、月台）照舊。原圖 `chatgpt_art\c3_cg_arrival_v2.png` → `game/art/ch3/bg/ch3_bg_cg_arrival.jpg`（1280×720）。
+- `dialogue.gd`：第三章的 CG（`c3_cg_*`）上不再疊立繪（以前只有第四、五章和一般 CG 有這條規則）。測試在 `human_art_test`。
+
+## 地圖房間用 ChatGPT 重畫（2026-11-06 起，進行中）
+使用者回饋：地圖很奇怪（Blender 算的俯視圖：空、柱子是深色長條、站名寫在地上、月台沒有火車）。使用者選擇：每個房間用 ChatGPT 重畫一張完整的背景，先做第三章。
+1. `py -3.11 tools/art/room_guide.py chapter3 <房間> <輸出.png>`：用現有的背景＋家具合成「版型參考圖」（縮到寬 1536、上下補黑邊成 1536×1024），並印出家具、調查點、門在參考圖上的座標。
+2. ChatGPT（對話「Repaint Room Map」）：附上參考圖＋風格參考（第三章抵達月台的 CG），要求同樣的鏡頭角度、每件家具同樣的位置大小、不寫字、不畫人、黑邊保持黑色。
+3. `py -3.11 tools/art/room_repaint.py chapter3 <房間> <ChatGPT 原圖>`：切出房間那一條縮放成房間大小（`bg_paint.jpg`）；家具用舊家具圖的形狀從新背景切出來（`prop_paint_*.png`，角色走到後面一樣會被擋住）；`room.json` 加 `"painted": true`，舊的存成 `room.blender.json`（`--undo` 退回）。
+4. 重畫過的房間不再把地上的字（站名等）畫出來，招牌畫在圖裡、沒有字。
+| 房間 | 原圖 | 說明 |
+|---|---|---|
+| 第三章 platform 地下月台 | `chatgpt_art\rooms\paint_ch3_platform.png` | 上面一排是停著的夜車；空白的站名牌、時刻表；正常的磁磚柱子 |
