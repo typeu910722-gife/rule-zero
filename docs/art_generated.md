@@ -269,3 +269,11 @@ un_bu_passing.png`），
 | 房間 | 原圖 | 說明 |
 |---|---|---|
 | 第三章 platform 地下月台 | `chatgpt_art\rooms\paint_ch3_platform.png` | 上面一排是停著的夜車；空白的站名牌、時刻表；正常的磁磚柱子 |
+| 第三章其他 21 間 | `chatgpt_art\rooms\paint_ch3_<房間>.png` | 一樓（大廳、候診室、走廊、診間、藥局）、二樓（走廊、涅槃計畫區、護理站、被服室、病歷室、理事室）、舊病棟（走廊、交誼廳、兒童病房、倉庫、盡頭）、地下二樓（走廊、置物間、病房、特別病房、監控室）。同一個 ChatGPT 對話「Repaint Room Map」接著畫；地下二樓走廊在新對話「Repaint Game Map」重畫（`_v4`） |
+
+經驗（第五、四章照做）：
+- 每次都附參考圖、寫「SAME 3:2 canvas, black bars black, trace the guide layout exactly」，並寫出牆只到哪裡（`room_prompt.py` 會算：「The back wall is ONLY a thin band…」），不然 ChatGPT 會把牆畫成半個房間高。
+- 對位檢查：`room_repaint.py` 會存 `E:/rzw/check_<房間>.jpg`（紅框＝家具碰撞、藍圈＝調查點、綠框＝門）。藥局第一次架子畫錯邊、地下二樓走廊兩次東西往下滑，都是看這張圖發現的，重畫到對齊為止。
+- ChatGPT 偶爾換畫布比例（例如 2:1），工具會改用「不是黑邊的範圍」切；畫布一樣是 3:2 時照參考圖座標切。
+- 同一個對話裡重畫同一間，ChatGPT 容易沿用上一張的構圖；開新對話（附參考圖＋一張已經畫好的同區房間當風格參考）比較準。
+- 已知小問題（之後再修）：大廳候診椅上多了一隻布偶兔子；有些房間 ChatGPT 自己畫了門，和遊戲畫的門位置不同。
