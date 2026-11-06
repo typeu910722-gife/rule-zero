@@ -1,30 +1,32 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:desk@440,220,400,70": {
-   "tex": "prop_desk_440_220_400_70.png",
+   "tex": "paint_prop_desk_440_220_400_70.png",
    "off": [
     -8,
     -204
    ]
   },
   "prop:plant@140,180,60,40": {
-   "tex": "prop_plant_140_180_60_40.png",
+   "tex": "paint_prop_plant_140_180_60_40.png",
    "off": [
     -8,
     -198
    ]
   },
   "prop:cabinet@1000,170,160,40": {
-   "tex": "prop_cabinet_1000_170_160_40.png",
+   "tex": "paint_prop_cabinet_1000_170_160_40.png",
    "off": [
     -8,
     -210
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch5_office5.png"
 }

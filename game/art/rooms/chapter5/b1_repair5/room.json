@@ -1,23 +1,25 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:table@480,300,320,90": {
-   "tex": "prop_table_480_300_320_90.png",
+   "tex": "paint_prop_table_480_300_320_90.png",
    "off": [
     -8,
     -186
    ]
   },
   "prop:shelf@140,160,260,40": {
-   "tex": "prop_shelf_140_160_260_40.png",
+   "tex": "paint_prop_shelf_140_160_260_40.png",
    "off": [
     -8,
     -196
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch5_b1_repair5.png"
 }

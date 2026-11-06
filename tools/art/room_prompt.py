@@ -12,6 +12,10 @@ THEMES = {
     "lab": "a sterile white laboratory/treatment ward of the same hospital, steel and white enamel, cold light",
     "hospital_old": "the abandoned OLD wing of the same hospital: peeling paint, stained grey-green tiles, dust, broken things, dim",
     "basement": "the hospital's second basement: dark concrete, pipes on the walls, damp stains, very dim and oppressive",
+    "real": "a REAL modern hospital in the human world (not the doll world): ordinary, clean, bright soft daylight, realistic furniture, Japanese anime background art style",
+    "town": "Marshmallow Town from the doll world: a pastel pink candy-colored storybook town made of felt and fabric, but faded and greyish now, quiet and empty",
+    "home": "the bear mayor's mansion office in Marshmallow Town: cozy pastel storybook interior made of felt and fabric, a little faded",
+    "school": "a real junior high school gate and front yard in the human world, morning light, Japanese anime background art style",
 }
 
 

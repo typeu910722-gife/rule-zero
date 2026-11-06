@@ -1,37 +1,39 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:desk@460,200,360,60": {
-   "tex": "prop_desk_460_200_360_60.png",
+   "tex": "paint_prop_desk_460_200_360_60.png",
    "off": [
     -8,
     -194
    ]
   },
   "prop:cabinet@120,160,160,40": {
-   "tex": "prop_cabinet_120_160_160_40.png",
+   "tex": "paint_prop_cabinet_120_160_160_40.png",
    "off": [
     -8,
     -200
    ]
   },
   "prop:shelf@980,160,200,40": {
-   "tex": "prop_shelf_980_160_200_40.png",
+   "tex": "paint_prop_shelf_980_160_200_40.png",
    "off": [
     -8,
     -200
    ]
   },
   "prop:bed@980,400,180,80": {
-   "tex": "prop_bed_980_400_180_80.png",
+   "tex": "paint_prop_bed_980_400_180_80.png",
    "off": [
     -8,
     -246
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch5_dove5.png"
 }

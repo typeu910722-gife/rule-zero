@@ -1,23 +1,25 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   2600,
   760
  ],
  "props": {
   "prop:bed@2380,300,180,80": {
-   "tex": "prop_bed_2380_300_180_80.png",
+   "tex": "paint_prop_bed_2380_300_180_80.png",
    "off": [
     -8,
     -246
    ]
   },
   "prop:chair@1300,600,80,50": {
-   "tex": "prop_chair_1300_600_80_50.png",
+   "tex": "paint_prop_chair_1300_600_80_50.png",
    "off": [
     -8,
     -152
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch5_b2_hall5.png"
 }

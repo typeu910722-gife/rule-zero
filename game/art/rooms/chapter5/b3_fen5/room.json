@@ -1,16 +1,18 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:bed@540,220,200,80": {
-   "tex": "prop_bed_540_220_200_80.png",
+   "tex": "paint_prop_bed_540_220_200_80.png",
    "off": [
     -8,
     -186
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch5_b3_fen5.png"
 }
