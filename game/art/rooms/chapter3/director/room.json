@@ -1,23 +1,25 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
  "props": {
   "prop:desk@480,330,320,80": {
-   "tex": "prop_desk_480_330_320_80.png",
+   "tex": "paint_prop_desk_480_330_320_80.png",
    "off": [
     -8,
     -214
    ]
   },
   "prop:plant@160,180,60,40": {
-   "tex": "prop_plant_160_180_60_40.png",
+   "tex": "paint_prop_plant_160_180_60_40.png",
    "off": [
     -8,
     -198
    ]
   }
- }
+ },
+ "painted": true,
+ "source": "paint_ch3_director.png"
 }

@@ -1,8 +1,10 @@
 {
- "bg": "bg.jpg",
+ "bg": "bg_paint.jpg",
  "size": [
   1280,
   720
  ],
- "props": {}
+ "props": {},
+ "painted": true,
+ "source": "paint_ch3_wild_end.png"
 }

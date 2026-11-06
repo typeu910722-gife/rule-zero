@@ -1,0 +1,58 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  1800,
+  900
+ ],
+ "props": {
+  "prop:shelf@300,250,500,40": {
+   "tex": "prop_shelf_300_250_500_40.png",
+   "off": [
+    -8,
+    -286
+   ]
+  },
+  "prop:shelf@300,520,500,40": {
+   "tex": "prop_shelf_300_520_500_40.png",
+   "off": [
+    -8,
+    -286
+   ]
+  },
+  "prop:shelf@1000,250,500,40": {
+   "tex": "prop_shelf_1000_250_500_40.png",
+   "off": [
+    -8,
+    -286
+   ]
+  },
+  "prop:shelf@1000,520,500,40": {
+   "tex": "prop_shelf_1000_520_500_40.png",
+   "off": [
+    -8,
+    -286
+   ]
+  },
+  "prop:crate@1550,700,120,60": {
+   "tex": "prop_crate_1550_700_120_60.png",
+   "off": [
+    -8,
+    -130
+   ]
+  },
+  "hide:c3_hide_store_shelf": {
+   "tex": "hide_c3_hide_store_shelf.png",
+   "off": [
+    -38,
+    -270
+   ]
+  },
+  "hide:c3_hide_store_crate": {
+   "tex": "hide_c3_hide_store_crate.png",
+   "off": [
+    -48,
+    -110
+   ]
+  }
+ }
+}

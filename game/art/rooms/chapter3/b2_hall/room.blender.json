@@ -1,0 +1,44 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  2800,
+  720
+ ],
+ "props": {
+  "prop:bed@880,520,200,70": {
+   "tex": "prop_bed_880_520_200_70.png",
+   "off": [
+    -8,
+    -236
+   ]
+  },
+  "prop:machine@1500,170,120,50": {
+   "tex": "prop_machine_1500_170_120_50.png",
+   "off": [
+    -8,
+    -220
+   ]
+  },
+  "prop:crate@2200,560,90,50": {
+   "tex": "prop_crate_2200_560_90_50.png",
+   "off": [
+    -8,
+    -120
+   ]
+  },
+  "hide:c3_hide_b2_gurney": {
+   "tex": "hide_c3_hide_b2_gurney.png",
+   "off": [
+    -68,
+    -91
+   ]
+  },
+  "hide:c3_hide_b2_crate": {
+   "tex": "hide_c3_hide_b2_crate.png",
+   "off": [
+    -43,
+    -110
+   ]
+  }
+ }
+}

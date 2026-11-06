@@ -25,14 +25,29 @@ def load_room(level: str, rid: str):
     return room, art, art_dir
 
 
+def anchor(room, key: str):
+    """一件美術在房間裡的錨點（遊戲畫它的節點位置）：
+    家具 prop:<種類>@x,y,w,h → (x, y+h)；調查點、躲藏點 spot:<id>／hide:<id> → 那個點的 pos"""
+    if "@" in key:
+        x, y, pw, ph = [int(v) for v in key.split("@")[1].split(",")]
+        return x, y + ph
+    kind, sid = key.split(":", 1)
+    for group in ("spots", "hides", "npcs", "doors"):
+        for s in room.get(group, []):
+            if str(s.get("id", "")) == sid:
+                return int(s["pos"][0]), int(s["pos"][1])
+    return None
+
+
 def composite(room, art, art_dir) -> Image.Image:
     w, h = room.get("size", [1280, 720])
     im = Image.open(art_dir / art["bg"]).convert("RGBA").resize((w, h))
     # 家具照 y 排序疊上去（和遊戲一樣：腳的位置越下面越後畫）
     items = []
     for key, p in art.get("props", {}).items():
-        x, y, pw, ph = [int(v) for v in key.split("@")[1].split(",")]
-        items.append((y + ph, x, p))
+        a = anchor(room, key)
+        if a:
+            items.append((a[1], a[0], p))
     for foot, x, p in sorted(items, key=lambda t: t[0]):
         spr = Image.open(art_dir / p["tex"]).convert("RGBA")
         im.alpha_composite(spr, (x + int(p["off"][0]), foot + int(p["off"][1])))

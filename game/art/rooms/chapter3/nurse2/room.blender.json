@@ -1,0 +1,37 @@
+{
+ "bg": "bg.jpg",
+ "size": [
+  1280,
+  720
+ ],
+ "props": {
+  "prop:desk@380,330,520,70": {
+   "tex": "prop_desk_380_330_520_70.png",
+   "off": [
+    -8,
+    -204
+   ]
+  },
+  "prop:cabinet@1050,160,120,40": {
+   "tex": "prop_cabinet_1050_160_120_40.png",
+   "off": [
+    -8,
+    -200
+   ]
+  },
+  "prop:machine@140,160,140,50": {
+   "tex": "prop_machine_140_160_140_50.png",
+   "off": [
+    -8,
+    -210
+   ]
+  },
+  "hide:c3_hide_nurse2_desk": {
+   "tex": "hide_c3_hide_nurse2_desk.png",
+   "off": [
+    -58,
+    -91
+   ]
+  }
+ }
+}
