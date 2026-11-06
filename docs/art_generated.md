@@ -299,3 +299,4 @@ un_bu_passing.png`），
   - 追人的＝神志不清、失控：破病人服、跑出棉花（不畫血）、長毛線頭髮蓋住臉、赤腳、手伸出來抓。走路圖 `walk4/graduate_wild.png`（關卡的 patrols 用這張），立繪 `ch2_graduate_portrait_wild.png`（`@face 畢業生 wild`）。
   - CG `ch3_bg_cg_graduates.jpg`：舊病棟走廊兩邊面壁的畢業生同時轉頭、中間病床睡著抱玩偶的人（`c3_wild_intro`）。
   - 原圖 `chatgpt_art/graduates_pair.png`、`walk_graduate.png`、`walk_graduate_wild.png`、`c3_cg_graduates.png`；舊的 Blender 走路圖留在 `graduate_walk_blender_old.png`。
+- 第四、五章殘留的寫實照片風走路圖全部換成 ChatGPT Q 版（使用者回饋「圍過來的人沒改」）：`h_crowd`（三個路人同學擠一格）、`h_principal`、`h_fen_father`、`h_nurse`、`h_whitecoat`（大人用 `fit_walk_sheet.py --height 300`，比同學高一點）。`h_shadow`／`h_shadow_diag` 改用遙的 Q 版走路圖做成半透明人影。原圖 `chatgpt_art/walk_crowd.png`、`walk_principal.png`、`walk_fen_father.png`、`walk_nurse.png`、`walk_whitecoat.png`；舊圖留在 `*_old_photo.png`。注意：白衣服的角色（護理師、白大衣）不要跑 `remove_white_outline.py`，會把口罩和大衣挖掉。

@@ -212,6 +212,29 @@ func _run() -> void:
 	_check(moved == 3, "正面、左、右三個方向的第 1、2 格腳的位置不一樣（%d/3）" % moved)
 	_check("_draw_door_marker(n, sz, open, t) if painted" in esrc, "重畫過的房間門口畫標記，不貼門的圖")
 
+	print("[⑬ 教室：坐在桌子後面的同學不會被桌子蓋住；⑭ 圍過來的人、大人都換成 Q 版]")
+	gs.reset()
+	gs.chapter = 4
+	gs.flags["c4_pov_haruka"] = true
+	var ex6 = ExS.new()
+	ex6.load_level("res://levels/chapter4.json")
+	root.add_child(ex6)
+	await process_frame
+	await ex6.enter("classroom", "from_hall")
+	ex6.player.position = Vector2(1500, 860)   # 小布在角落，不在任何桌子後面
+	for i in 60:
+		await process_frame
+	var faded := 0
+	for oc in ex6._occluders:
+		if is_instance_valid(oc) and oc.modulate.a < 0.6:
+			faded += 1
+	_check(faded >= 3, "坐在桌子後面的同學：前面的桌子變半透明（%d 張）" % faded)
+	ex6.queue_free()
+	await process_frame
+	for n in ["h_crowd", "h_shadow", "h_shadow_diag", "h_principal", "h_fen_father", "h_nurse", "h_whitecoat"]:
+		var im: Image = load("res://art/walk4/%s.png" % n).get_image()
+		_check(im.get_width() == 1280, "%s 換成 ChatGPT Q 版走路圖（1280×1280，舊的寫實照片是 640）" % n)
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	for lv in ["chapter3", "chapter4", "chapter5"]:

@@ -994,6 +994,14 @@ func _fade_occluders(delta: float) -> void:
 	var feet: Array = [player.position]
 	for fo in _followers:
 		feet.append(fo.position)
+	# 站在桌子後面的人物（教室裡坐著的同學）、巡邏的人：被家具擋住時家具也要變半透明
+	if _ysort:
+		for n in _ysort.get_children():
+			if n.has_meta("thing") and str((n.get_meta("thing") as Dictionary).get("_kind", "")) == "npcs" and n.visible:
+				feet.append(n.position)
+	for pt in _patrols:
+		if is_instance_valid(pt) and pt.visible:
+			feet.append(pt.position)
 	for n in _occluders:
 		if not is_instance_valid(n):
 			continue
