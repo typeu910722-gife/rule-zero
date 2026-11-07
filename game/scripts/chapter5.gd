@@ -30,6 +30,8 @@ const PARTY := ["lulu", "mochi", "popo", "fen", "baimian"]
 const HARUKA := "h_haruka_gown"     # 醒來之後的遙：病人服（art/walk4/h_haruka_gown.png）
 const REAL_SLOW := 0.7              # 人類的身體很重、走很慢
 const NIGHT := Color(0.62, 0.66, 0.8)
+## 終章 A：叫醒一個人，就多一個人跟在後面（人類的樣子）
+const WAKE_FOLLOW := {"h_hilufei": "c5_woke_lulu", "h_mingyue": "c5_woke_popo", "h_xiaoman": "c5_woke_mochi", "h_fen_gown": "c5_woke_fen"}
 
 var segment := "opening"
 var route := ""
@@ -248,6 +250,8 @@ func _explore(stage: String, room_id: String, spawn: Variant, cond: String, tint
 	if stage in ["a", "b3"]:
 		explore.player.look = HARUKA
 		explore.player.speed_mul = REAL_SLOW
+	if stage == "a":
+		explore.party_flags = WAKE_FOLLOW
 	explore.room_entered.connect(func(_id):
 		hud.place = "%s　%s" % [ROUTES[route] if segment == "ending" else PLACES[segment], explore.room.get("name", "")]
 		hud.refresh()

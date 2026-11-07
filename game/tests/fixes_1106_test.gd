@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 ## 2026-11-06 使用者回饋的修正：
 ## ① 碰撞對齊重畫的畫面之後，每個調查點、人物、門旁邊都還站得到人（按得到）
 ## ② 角色走到家具後面，家具變半透明
@@ -324,10 +324,67 @@ func _run() -> void:
 		ch5n.queue_free()
 		await process_frame
 
+	print("[⑲ 床上的人畫出來：第四章第一個晚上（左邊醒著被綁、右邊睡著），第五章還沒叫醒的人]")
+	for lv in ["chapter4", "chapter5"]:
+		var data = JSON.parse_string(FileAccess.get_file_as_string("res://levels/%s.json" % lv))
+		for rid in data.rooms:
+			for sl in data.rooms[rid].get("sleepers", []):
+				var path := "res://art/beds/%s_%s.png" % [sl.char, sl.get("state", "asleep")]
+				_check(ResourceLoader.exists(path), "%s/%s 床上的人有圖（%s）" % [lv, rid, path.get_file()])
+	gs.reset()
+	gs.chapter = 4
+	gs.flags["c4_pov_night"] = true
+	var ex8 = ExS.new()
+	ex8.load_level("res://levels/chapter4.json")
+	root.add_child(ex8)
+	await process_frame
+	await ex8.enter("ward4", "start")
+	var tied := 0
+	var asleep := 0
+	for n in ex8._sleepers:
+		if n.visible:
+			var st: String = n.get_meta("sleeper").state
+			if st == "tied": tied += 1
+			elif st.begins_with("asleep"): asleep += 1
+	_check(tied == 6 and asleep == 5, "第四章病房：白線左邊 6 個人醒著被綁、右邊 5 個人睡著（%d／%d）" % [tied, asleep])
+	var zz := false
+	for n in ex8._ysort.get_children():
+		if n.has_meta("thing") and n.get_meta("thing").get("id", "") == "c4_n_zz":
+			zz = n.get_meta("thing")._kind == "spots"
+	_check(zz, "郡主在床上（不再站在地上）")
+	ex8.queue_free()
+	await process_frame
+	gs.reset()
+	gs.chapter = 5
+	gs.flags["c5_st_a"] = true
+	var ex9 = ExS.new()
+	ex9.load_level("res://levels/chapter5.json")
+	ex9.party_flags = load("res://scripts/chapter5.gd").WAKE_FOLLOW
+	root.add_child(ex9)
+	await process_frame
+	await ex9.enter("a_ward5", "start")
+	var vis := func() -> int:
+		var c := 0
+		for n in ex9._sleepers:
+			if n.visible: c += 1
+		return c
+	_check(vis.call() == 4 and ex9._followers.size() == 0, "第五章：四個人還在床上睡、沒有人跟著（%d／%d）" % [vis.call(), ex9._followers.size()])
+	gs.set_flag("c5_woke_lulu")
+	await process_frame
+	_check(vis.call() == 3 and ex9._followers.size() == 1, "叫醒希露飛：她從床上起來、跟在後面（床上 %d／跟著 %d）" % [vis.call(), ex9._followers.size()])
+	gs.set_flag("c5_woke_popo")
+	gs.set_flag("c5_woke_mochi")
+	await process_frame
+	_check(ex9._followers.size() == 3, "每叫醒一個人就多一個人跟著（%d）" % ex9._followers.size())
+	await ex9.enter("a_hall5", "from_ward")
+	_check(ex9._followers.size() == 3, "換房間之後還跟著（%d）" % ex9._followers.size())
+	ex9.queue_free()
+	await process_frame
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")
-	for lv in ["levels/chapter3.json", "levels/chapter4.json", "levels/chapter5.json", "scripts/chapter4.gd", "dialogue/chapter4.txt"]:
+	for lv in ["levels/chapter3.json", "levels/chapter4.json", "levels/chapter5.json", "scripts/chapter4.gd", "dialogue/chapter4.txt", "dialogue/chapter5.txt"]:
 		var txt := FileAccess.get_file_as_string("res://" + lv)
 		var miss := {}
 		for i in txt.length():

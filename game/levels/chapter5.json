@@ -1157,6 +1157,48 @@
      "done_when": "c5_woke_fen"
     }
    ],
+   "sleepers": [
+    {
+     "char": "h_hilufei",
+     "state": "asleep",
+     "head": [
+      218,
+      545
+     ],
+     "when": "c5_st_a&!c5_woke_lulu",
+     "follow": "h_hilufei"
+    },
+    {
+     "char": "h_mingyue",
+     "state": "asleep",
+     "head": [
+      583,
+      545
+     ],
+     "when": "c5_st_a&!c5_woke_popo",
+     "follow": "h_mingyue"
+    },
+    {
+     "char": "h_xiaoman",
+     "state": "asleep",
+     "head": [
+      948,
+      545
+     ],
+     "when": "c5_st_a&!c5_woke_mochi",
+     "follow": "h_xiaoman"
+    },
+    {
+     "char": "h_fen_gown",
+     "state": "asleep",
+     "head": [
+      1313,
+      545
+     ],
+     "when": "c5_st_a&!c5_woke_fen",
+     "follow": "h_fen_gown"
+    }
+   ],
    "doors": [
     {
      "id": "c5_door_award_hall",
@@ -1412,6 +1454,68 @@
       175,
       180
      ]
+    }
+   ],
+   "sleepers": [
+    {
+     "char": "h_xinhe_gown",
+     "state": "awake",
+     "head": [
+      210,
+      208
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
+    },
+    {
+     "char": "h_tiwen",
+     "state": "asleep",
+     "head": [
+      625,
+      208
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
+    },
+    {
+     "char": "h_lien_gown",
+     "state": "asleep",
+     "head": [
+      1045,
+      208
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
+    },
+    {
+     "char": "h_qiuge_gown",
+     "state": "awake",
+     "head": [
+      1465,
+      208
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
+    },
+    {
+     "char": "h_junzhu_gown",
+     "state": "asleep",
+     "head": [
+      210,
+      543
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
+    },
+    {
+     "char": "h_duty",
+     "state": "asleep",
+     "head": [
+      625,
+      543
+     ],
+     "scale": 0.95,
+     "when": "c5_st_a"
     }
    ],
    "spots": [

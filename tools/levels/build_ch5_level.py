@@ -134,6 +134,10 @@ rooms["a_ward5"] = room("真的病房", [1600, 820], "real",
         {"id": "c5_a_mochi", "name": "小滿的床", "pos": [940, 520], "when": A, "done_when": "c5_woke_mochi"},
         {"id": "c5_a_fen", "name": "芬的床", "pos": [1300, 520], "when": A, "done_when": "c5_woke_fen"},
     ],
+    # 還沒叫醒的人躺在床上；叫醒之後起來、跟在後面（chapter5.gd WAKE_FOLLOW）
+    sleepers=[{"char": c, "state": "asleep", "head": hd, "when": A + "&!" + f, "follow": c} for c, hd, f in [
+        ("h_hilufei", [218, 545], "c5_woke_lulu"), ("h_mingyue", [583, 545], "c5_woke_popo"),
+        ("h_xiaoman", [948, 545], "c5_woke_mochi"), ("h_fen_gown", [1313, 545], "c5_woke_fen")]],
     doors=[{"id": "c5_door_award_hall", "name": "走廊", "pos": [1560, 420], "size": [60, 120], "to": "a_hall5", "spawn": "from_ward",
             "open": "c5_woke_lulu&c5_woke_popo&c5_woke_mochi&c5_woke_fen", "locked_text": "（大家還在睡。要先把他們叫醒。）"}])
 rooms["a_hall5"] = room("走廊", [2400, 720], "real",
@@ -154,6 +158,10 @@ rooms["a_hall5"] = room("走廊", [2400, 720], "real",
 rooms["a_other5"] = room("白線的另一邊", [1800, 820], "real",
     spawns={"from_hall": [900, 740]},
     props=[{"kind": "bed", "rect": [120 + (k % 4) * 420, 200 + (k // 4) * 260, 200, 80]} for k in range(8)],
+    # 「有的人醒了，有的人還在睡」；最後一張床（右下）是空的（白面）
+    sleepers=[{"char": c, "state": st, "head": hd, "scale": 0.95, "when": A} for c, st, hd in [
+        ("h_xinhe_gown", "awake", [210, 208]), ("h_tiwen", "asleep", [625, 208]), ("h_lien_gown", "asleep", [1045, 208]),
+        ("h_qiuge_gown", "awake", [1465, 208]), ("h_junzhu_gown", "asleep", [210, 543]), ("h_duty", "asleep", [625, 543])]],
     spots=[
         {"id": "c5_a_others", "name": "一整排的床", "pos": [900, 640], "when": A},
         {"id": "c5_a_baimian", "name": "最後一張床", "pos": [1480, 600], "when": A + "&done_c5_a_others", "done_when": "c5_baimian_returned"},

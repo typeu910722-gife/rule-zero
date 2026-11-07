@@ -2085,17 +2085,126 @@
      ],
      "when": "c4_pov_night&done_c4_n_left&done_c4_n_right&done_c4_n_haruka",
      "done_when": "c4_n_done"
-    }
-   ],
-   "npcs": [
+    },
     {
      "id": "c4_n_zz",
-     "name": "郡主",
-     "char": "h_junzhu",
+     "name": "一直在喊的床",
      "pos": [
       690,
       560
      ],
+     "when": "c4_pov_night"
+    }
+   ],
+   "sleepers": [
+    {
+     "char": "h_fen_gown",
+     "state": "tied",
+     "head": [
+      220,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_xinhe_gown",
+     "state": "tied",
+     "head": [
+      445,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_tiwen",
+     "state": "tied",
+     "head": [
+      670,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_lien_gown",
+     "state": "tied",
+     "head": [
+      220,
+      478
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_qiuge_gown",
+     "state": "tied",
+     "head": [
+      445,
+      478
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_junzhu_gown",
+     "state": "tied",
+     "head": [
+      670,
+      478
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_hilufei",
+     "state": "asleep_tied",
+     "head": [
+      1090,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_mingyue",
+     "state": "asleep_tied",
+     "head": [
+      1315,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_haruka_gown",
+     "state": "asleep_tied",
+     "head": [
+      1538,
+      176
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_xiaoman",
+     "state": "asleep_tied",
+     "head": [
+      1090,
+      478
+     ],
+     "scale": 0.9,
+     "when": "c4_pov_night"
+    },
+    {
+     "char": "h_duty",
+     "state": "asleep_tied",
+     "head": [
+      1315,
+      478
+     ],
+     "scale": 0.9,
      "when": "c4_pov_night"
     }
    ]

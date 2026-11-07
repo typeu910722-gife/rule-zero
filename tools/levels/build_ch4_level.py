@@ -226,7 +226,17 @@ rooms["ward4"] = room("慈愛組織的醫院　很多年以前", [1800, 900], "h
         {"id": "c4_n_haruka", "name": "最裡面的床", "pos": [1570, 340], "when": N},
         {"id": "c4_n_end", "name": "門的聲音", "pos": [900, 760], "when": N + "&done_c4_n_left&done_c4_n_right&done_c4_n_haruka", "done_when": "c4_n_done"},
     ],
-    npcs=[{"id": "c4_n_zz", "name": "郡主", "char": "h_junzhu", "pos": [690, 560], "when": N}])
+    # 郡主也被綁在床上（白線左邊、下面那排最靠白線的床），一直喊「我沒有推他」
+    spots_extra=[{"id": "c4_n_zz", "name": "一直在喊的床", "pos": [690, 560], "when": N}],
+    # 床上的人（tools/art/make_bed_sleepers.py）：左邊醒著被綁、在掙扎；右邊被打了針睡著，也綁著
+    # head＝臉在背景畫上的位置（枕頭）；被子、束帶是床本身畫的
+    sleepers=[{"char": c, "state": "tied", "head": hd, "scale": 0.9, "when": N} for c, hd in [
+                  ("h_fen_gown", [220, 176]), ("h_xinhe_gown", [445, 176]), ("h_tiwen", [670, 176]),
+                  ("h_lien_gown", [220, 478]), ("h_qiuge_gown", [445, 478]), ("h_junzhu_gown", [670, 478])]] +
+             [{"char": c, "state": "asleep_tied", "head": hd, "scale": 0.9, "when": N} for c, hd in [
+                  ("h_hilufei", [1090, 176]), ("h_mingyue", [1315, 176]), ("h_haruka_gown", [1538, 176]),
+                  ("h_xiaoman", [1090, 478]), ("h_duty", [1315, 478])]])
+rooms["ward4"]["spots"] += rooms["ward4"].pop("spots_extra")
 
 level = {"items": {"c4_m_found_shoes": "自己的室內鞋"}, "items_used": {"c4_m_found_shoes": "c4_m_done"}, "keypads": {}, "rooms": rooms}
 # 重畫過的房間：家具碰撞範圍對齊畫面（tools/art/fit_prop_rect.py 記在 prop_rect_fixes.json）

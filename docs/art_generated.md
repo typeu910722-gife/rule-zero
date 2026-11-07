@@ -300,3 +300,9 @@ un_bu_passing.png`），
   - CG `ch3_bg_cg_graduates.jpg`：舊病棟走廊兩邊面壁的畢業生同時轉頭、中間病床睡著抱玩偶的人（`c3_wild_intro`）。
   - 原圖 `chatgpt_art/graduates_pair.png`、`walk_graduate.png`、`walk_graduate_wild.png`、`c3_cg_graduates.png`；舊的 Blender 走路圖留在 `graduate_walk_blender_old.png`。
 - 第四、五章殘留的寫實照片風走路圖全部換成 ChatGPT Q 版（使用者回饋「圍過來的人沒改」）：`h_crowd`（三個路人同學擠一格）、`h_principal`、`h_fen_father`、`h_nurse`、`h_whitecoat`（大人用 `fit_walk_sheet.py --height 300`，比同學高一點）。`h_shadow`／`h_shadow_diag` 改用遙的 Q 版走路圖做成半透明人影。原圖 `chatgpt_art/walk_crowd.png`、`walk_principal.png`、`walk_fen_father.png`、`walk_nurse.png`、`walk_whitecoat.png`；舊圖留在 `*_old_photo.png`。注意：白衣服的角色（護理師、白大衣）不要跑 `remove_white_outline.py`，會把口罩和大衣挖掉。
+
+## 床上的人（2026-11-07）
+- 使用者：「4.5 章人類孩子們在床上時要畫出來，第四章壞孩子被綁起來也要畫出來」。
+- `tools/art/make_bed_sleepers.py`：從走路圖（`art/walk4/h_*.png`）正面第一格切出頭，睡著的把眼睛塗掉、畫成閉眼的線 → `game/art/beds/<id>_<state>.png`（asleep／asleep_tied／tied／awake）。不給參數就重新產生關卡裡用到的全部。
+- 遊戲裡（`explore.gd` `_add_sleeper`）：關卡的 `sleepers` 用 `head` 指定臉在背景畫上的位置（枕頭）；下巴以下用房間背景畫裡同一塊床蓋回去，看起來像蓋著被子（第四章的床本來就畫有束帶）。`tied` 會一陣一陣地掙扎。
+- 第四章「第一個晚上」（ward4）：白線左邊芬、辛禾、薙文、李恩、秋歌、郡主醒著被綁；右邊希露飛、銘越、遙、小滿、值日生睡著。第五章終章 A：還沒叫醒的四個人在床上，叫醒的人起來跟著（`chapter5.gd` WAKE_FOLLOW）；「白線的另一邊」一排床有人醒著、有人睡著。

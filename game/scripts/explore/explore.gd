@@ -22,6 +22,10 @@ var room_id := ""
 var room: Dictionary = {}
 var player: ExplorePlayer
 var party: Array = []            # 跟在後面的同伴 id
+## 旗標成立就加入跟隨的人：{角色 id: 旗標}（第五章：叫醒一個人，就多一個人跟著）
+var party_flags: Dictionary = {}
+var _sleepers: Array = []        # 躺在床上的人（房間的 sleepers）
+var _sleep_t := 0.0
 var busy := true                 # 對話、小遊戲進行中：不能走、不能互動
 var paused := false              # 選單開著等
 var _world: Node2D               # 這個房間的東西（換房間時整個換掉）
@@ -145,6 +149,7 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		chase_changed.emit(false, "")
 	_occluders.clear()
 	_followers.clear()
+	_sleepers.clear()
 	hidden_in = ""
 	var size := _v(room.get("size", [1280, 720]))
 	var th := ExploreArt.theme(room.get("theme", "hospital"))
@@ -178,6 +183,9 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		else:
 			n.draw.connect(func(): ExploreArt.draw_prop(n, kind, local, th, lab))
 		_ysort.add_child(n)
+	# 躺在床上的人（sleepers）：睡著的、被綁著的（art/beds，tools/art/make_bed_sleepers.py）
+	for sl in room.get("sleepers", []):
+		_add_sleeper(sl)
 	# 調查點、NPC、門、躲藏點
 	for s in _things():
 		var n := Node2D.new()
@@ -200,17 +208,9 @@ func enter(id: String, spawn: Variant = "start") -> void:
 	var sp := _spawn(spawn)
 	player.place(sp)
 	_entry = sp
+	_sync_party_flags()
 	for i in party.size():
-		var fo := Node2D.new()
-		var fid: String = party[i]
-		fo.set_meta("id", fid)
-		fo.set_meta("k", i)
-		fo.position = sp + FORMATION[i % FORMATION.size()]
-		fo.set_meta("row", 3)
-		fo.set_meta("frame", 0)
-		fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO, false, fo.get_meta("row"), fo.get_meta("frame")))
-		_ysort.add_child(fo)
-		_followers.append(fo)
+		_add_follower(party[i], sp + FORMATION[i % FORMATION.size()])
 	# 鏡頭：人類時期（主角是 h_ 開頭的人）拉近，看得到臉；房間比畫面小時置中
 	var z := cam_zoom()
 	_cam.zoom = Vector2(z, z)
@@ -235,6 +235,85 @@ func enter(id: String, spawn: Variant = "start") -> void:
 		await Dialogue.run(on_enter)
 		Dialogue.set_bg("none")
 		busy = was
+
+
+func _add_follower(fid: String, pos: Vector2) -> void:
+	var fo := Node2D.new()
+	fo.set_meta("id", fid)
+	fo.set_meta("k", _followers.size())
+	fo.position = pos
+	fo.set_meta("row", 3)
+	fo.set_meta("frame", 0)
+	fo.draw.connect(func(): ExploreArt.draw_char(fo, fid, Vector2.ZERO, false, fo.get_meta("row"), fo.get_meta("frame")))
+	_ysort.add_child(fo)
+	_followers.append(fo)
+
+
+## party_flags 裡旗標成立、還沒跟著的人加進 party（回傳新加入的人）
+func _sync_party_flags() -> Array:
+	var added: Array = []
+	for fid in party_flags:
+		if GameState.check(str(party_flags[fid])) and not (fid in party):
+			party.append(fid)
+			added.append(fid)
+	return added
+
+
+## 躺在床上的人。head：臉在房間背景畫上的位置（枕頭上）；scale：大小；
+## state：asleep 睡著／asleep_tied 睡著、綁著（床本身畫有束帶）／tied 醒著被綁（會掙扎）／awake 醒著
+func _add_sleeper(sl: Dictionary) -> void:
+	var head := _v(sl.get("head", [0, 0]))
+	# 排前後：放在最近那張床的下緣（畫在床的上面一層）
+	var bottom := head.y + 60.0
+	var best_d := INF
+	for p in room.get("props", []):
+		if str(p.get("kind", "")) == "bed":
+			var pr := _r(p.rect)
+			var d := pr.get_center().distance_to(head + Vector2(0, 60))
+			if d < best_d:
+				best_d = d
+				bottom = pr.end.y + 0.5
+	var n := Node2D.new()
+	n.position = Vector2(head.x, maxf(bottom, head.y + 30.0))
+	var state := str(sl.get("state", "asleep"))
+	var path := "res://art/beds/%s_%s.png" % [str(sl.get("char", "")), state]
+	var sc := float(sl.get("scale", 1.0))
+	var local := head - n.position
+	n.set_meta("sleeper", sl)
+	n.set_meta("occ", Rect2(head - Vector2(70, 70) * sc, Vector2(140, 170) * sc))
+	n.draw.connect(func(): _draw_sleeper(n, path, local, sc, state))
+	n.visible = GameState.check(str(sl.get("when", "")))
+	_ysort.add_child(n)
+	_sleepers.append(n)
+	_occluders.append(n)
+
+
+## 圖（216×192）裡臉的中心、下巴（tools/art/make_bed_sleepers.py PILLOW）
+const SLEEPER_FACE := Vector2(108, 64)
+const SLEEPER_CHIN := 22.0
+
+
+func _draw_sleeper(n: Node2D, path: String, face: Vector2, sc: float, state: String) -> void:
+	var t := ExploreArt.tex(path)
+	if t == null:
+		return
+	var head := Rect2(face - SLEEPER_FACE * sc, Vector2(216, 192) * sc)
+	if state == "tied":
+		# 醒著被綁：一陣一陣地掙扎（頭左右扭）
+		var phase := fmod(_sleep_t + float(n.position.x) * 0.013, 2.6)
+		if phase < 1.1:
+			head.position.x += sin(phase * 26.0) * 3.0
+			head.position.y -= absf(sin(phase * 13.0)) * 1.5
+	n.draw_texture_rect(t, head, false)
+	# 下巴以下（被子）：用房間背景畫裡同一塊再蓋回去，看起來像蓋著被子
+	var cover := Rect2(face + Vector2(-80, SLEEPER_CHIN) * sc, Vector2(160, 120) * sc)
+	var bg := ExploreArt.tex(_art.dir + str(_art.bg)) if _art.has("bg") else null
+	if bg:
+		var k := bg.get_size() / _v(room.get("size", [1280, 720]))
+		var world := Rect2(n.position + cover.position, cover.size)
+		n.draw_texture_rect_region(bg, cover, Rect2(world.position * k, world.size * k))
+	else:
+		n.draw_rect(cover, Color("#e4e8ee"))
 
 
 ## 人類時期：鏡頭拉近、人放大（房間是照玩偶的大小做的，人照原比例會比桌子還矮、看不到臉）
@@ -573,6 +652,10 @@ func _process(delta: float) -> void:
 	if _edge_arrow:
 		_edge_arrow.queue_redraw()
 	_fade_occluders(delta)
+	_sleep_t += delta
+	for n in _sleepers:
+		if is_instance_valid(n) and n.visible and str((n.get_meta("sleeper") as Dictionary).get("state", "")) == "tied":
+			n.queue_redraw()
 	if _toast_t > 0.0:
 		_toast_t -= delta
 		if _toast_t <= 0.0:
@@ -763,6 +846,17 @@ func _apply_dark() -> void:
 
 
 func _on_changed() -> void:
+	for n in _sleepers:
+		if is_instance_valid(n):
+			n.visible = GameState.check(str((n.get_meta("sleeper") as Dictionary).get("when", "")))
+	if _ysort and not party_flags.is_empty():
+		for fid in _sync_party_flags():
+			# 剛叫醒的人：從他的床邊起來，跟在後面
+			var from: Vector2 = player.position + Vector2(0, 30)
+			for n in _sleepers:
+				if is_instance_valid(n) and str((n.get_meta("sleeper") as Dictionary).get("follow", "")) == fid:
+					from = n.position + Vector2(90, 20)
+			_add_follower(fid, from)
 	_apply_dark()
 	_refresh_items()
 	refresh_guide()
