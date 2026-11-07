@@ -381,6 +381,19 @@ func _run() -> void:
 	ex9.queue_free()
 	await process_frame
 
+	print("[⑳ 終章 B-1：交代為什麼變成鎮長；同伴成了居民；Fen 記得]")
+	var d5 := FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
+	for lb in ["c5_b1_bridge", "c5_b1_forget_names", "c5_b1_lulu", "c5_b1_mochi", "c5_b1_popo", "c5_b1_roll", "c5_b1_fen"]:
+		_check(("=== " + lb) in d5, "B-1 有 %s" % lb)
+	_check("上一個鎮長，是你親手剪開的" in d5, "理事說明為什麼是小布")
+	var c5src := FileAccess.get_file_as_string("res://scripts/chapter5.gd")
+	_check(c5src.find("c5_b1_bridge") >= 0 and c5src.find("c5_b1_bridge") < c5src.find("c5_b1_intro"), "B-1 先交代、再到小鎮")
+	var lv5 = JSON.parse_string(FileAccess.get_file_as_string("res://levels/chapter5.json"))
+	var train_when := ""
+	for sp in lv5.rooms.b1_platform5.spots:
+		if sp.id == "c5_b1_train": train_when = sp.when
+	_check("c5_b1_fen_seen" in train_when, "夜車要先見過 Fen 才會來")
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")

@@ -1814,6 +1814,36 @@
       640
      ],
      "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_lulu",
+     "name": "露露",
+     "char": "lulu",
+     "pos": [
+      1120,
+      470
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_mochi",
+     "name": "麻糬",
+     "char": "mochi",
+     "pos": [
+      1370,
+      670
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_popo",
+     "name": "波波",
+     "char": "popo",
+     "pos": [
+      480,
+      520
+     ],
+     "when": "c5_st_b1"
     }
    ],
    "doors": [
@@ -1934,6 +1964,15 @@
      "pos": [
       230,
       260
+     ],
+     "when": "c5_st_b1"
+    },
+    {
+     "id": "c5_b1_roll",
+     "name": "名冊",
+     "pos": [
+      800,
+      330
      ],
      "when": "c5_st_b1"
     },
@@ -2105,9 +2144,22 @@
       1200,
       330
      ],
-     "when": "c5_st_b1",
+     "when": "c5_st_b1&c5_b1_fen_seen",
      "label": "c5_b1_end",
      "done_when": "c5_b1_done"
+    }
+   ],
+   "npcs": [
+    {
+     "id": "c5_b1_fen",
+     "name": "路燈下的玩偶",
+     "char": "fen",
+     "pos": [
+      290,
+      500
+     ],
+     "when": "c5_st_b1",
+     "flip": true
     }
    ]
   },

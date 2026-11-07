@@ -199,6 +199,11 @@ func _seg_ending() -> void:
 				await _walk_out()
 			await _explore("a", "a_lobby5", "from_hall", "c5_a_done")
 		"b1":
+			if not GameState.has("explore_room"):
+				# 為什麼是小布：理事說明（上一個鎮長是他剪開的），名字一個一個變淡
+				_bgm("nirvana")
+				await Dialogue.run("c5_b1_bridge")
+				await Dialogue.run("c5_b1_forget_names")
 			_bgm("dream")
 			if not GameState.has("explore_room"):
 				await Dialogue.run("c5_b1_intro")

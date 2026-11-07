@@ -198,6 +198,10 @@ rooms["b1_square5"] = room("棉花糖鎮　廣場", [2000, 820], "town",
     npcs=[
         {"id": "c5_b1_xiaoyu", "name": "小玉", "char": "tama", "pos": [600, 600], "when": B1},
         {"id": "c5_b1_puppies", "name": "小狗們", "char": "puppy", "pos": [760, 640], "when": B1},
+        # 同伴們也成了居民（什麼都不記得，可是身體記得一點點）
+        {"id": "c5_b1_lulu", "name": "露露", "char": "lulu", "pos": [1120, 470], "when": B1},
+        {"id": "c5_b1_mochi", "name": "麻糬", "char": "mochi", "pos": [1370, 670], "when": B1},
+        {"id": "c5_b1_popo", "name": "波波", "char": "popo", "pos": [480, 520], "when": B1},
     ],
     doors=[{"id": "c5_door_sq_office", "name": "鎮長公館", "pos": [1000, 125], "size": [160, 30], "to": "b1_office5", "spawn": "from_square"},
            {"id": "c5_door_sq_repair", "name": "修理室", "pos": [40, 450], "size": [60, 120], "to": "b1_repair5", "spawn": "from_square",
@@ -211,6 +215,7 @@ rooms["b1_office5"] = room("鎮長公館", [1280, 720], "home",
     spots=[
         {"id": "c5_b1_hat", "name": "衣帽架", "pos": [1050, 260], "when": B1},
         {"id": "c5_b1_shelf", "name": "書架", "pos": [230, 260], "when": B1},
+        {"id": "c5_b1_roll", "name": "名冊", "pos": [800, 330], "when": B1},
         {"id": "c5_b1_desk", "name": "桌上的紙", "pos": [640, 360], "when": B1, "label": "c5_b1_rules", "done_when": "c5_b1_ruled"},
     ],
     doors=[{"id": "c5_door_office_sq", "name": "廣場", "pos": [640, 700], "size": [140, 30], "to": "b1_square5", "spawn": "from_office"}])
@@ -227,8 +232,10 @@ rooms["b1_platform5"] = room("棉花糖鎮　月台", [1600, 720], "platform",
     walls=[[0, 110, 1600, 100]],
     spots=[
         {"id": "c5_b1_sign", "name": "站名牌", "pos": [500, 330], "when": B1},
-        {"id": "c5_b1_train", "name": "夜車的燈", "pos": [1200, 330], "when": B1, "label": "c5_b1_end", "done_when": "c5_b1_done"},
-    ])
+        {"id": "c5_b1_train", "name": "夜車的燈", "pos": [1200, 330], "when": B1 + "&c5_b1_fen_seen", "label": "c5_b1_end", "done_when": "c5_b1_done"},
+    ],
+    # Fen 記得（父親要求保留他的記憶）：這次換他在路燈的柱子上刻記號
+    npcs=[{"id": "c5_b1_fen", "name": "路燈下的玩偶", "char": "fen", "pos": [290, 500], "when": B1, "flip": True}])
 
 # ───────── 終章 B-2「最後一張床」：守住走廊 ─────────
 rooms["b2_hall5"] = room("醫院的走廊　晚上", [2600, 760], "hospital",
