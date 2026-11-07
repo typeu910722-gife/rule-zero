@@ -111,8 +111,6 @@ func _run() -> void:
 	gs.chapter = 5
 	g = A.call("ch5/breath_walk")
 	await _try("呼吸（終章 A）", g, func(): await g.play(), 120.0, "hold")
-	g = A.call("ch5/guard")
-	await _try("守住走廊（終章 B-2）", g, func(): await g.play(), 90.0)
 	Engine.time_scale = 1.0
 	print("結果：%s（%d 個失敗）" % ["通過" if failures == 0 else "失敗", failures])
 	quit(1 if failures else 0)

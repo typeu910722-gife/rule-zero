@@ -15,7 +15,7 @@ const EVENTS := ["candy", "board", "mirror_stare", "to_plaza", "mayor_appears", 
 	# 第三章
 	"c3_whistle", "c3_rules", "c3_heart", "c3_thermo", "c3_chase1", "c3_sew", "c3_chase2", "c3_cpr", "c3_lights", "c3_tatters", "c3_gun", "c3_drip", "c3_drip_chase",
 	"jumpscare_dove_up",
-	"c4_speech", "c4_chat", "c4_viewfinder", "c4_shoes", "c4_hold_door", "c4_whistle", "c4_breaker", "c5_guard", "c4_run"]
+	"c4_speech", "c4_chat", "c4_viewfinder", "c4_shoes", "c4_hold_door", "c4_whistle", "c4_breaker", "c4_run", "c5_b2_drip", "c5_b2_cpr", "c5_b2_decoy"]
 
 
 func _init() -> void:

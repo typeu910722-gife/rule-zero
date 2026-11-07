@@ -394,6 +394,38 @@ func _run() -> void:
 		if sp.id == "c5_b1_train": train_when = sp.when
 	_check("c5_b1_fen_seen" in train_when, "夜車要先見過 Fen 才會來")
 
+	print("[㉑ 終章 B-3：從芬的病房出來不會卡在椅子上；B-2 不再有推人的守走廊]")
+	gs.reset()
+	gs.chapter = 5
+	gs.flags["c5_st_b3"] = true
+	var ex10 = ExS.new()
+	ex10.load_level("res://levels/chapter5.json")
+	root.add_child(ex10)
+	await process_frame
+	await ex10.enter("b3_hall5", "from_fen")
+	var me := Rect2(ex10.player.position - Vector2(16, 9.6), Vector2(32, 19.2))
+	var stuck := false
+	for blk in ex10.player.blockers:
+		if (blk as Rect2).intersects(me): stuck = true
+	_check(not stuck, "出來的位置沒有壓在任何擋路的東西上（%s）" % ex10.player.position)
+	var start10: Vector2 = ex10.player.position
+	ex10.busy = false
+	for k in 30:
+		Input.action_press("move_down")
+		await process_frame
+	Input.action_release("move_down")
+	_check(ex10.player.position.distance_to(start10) > 20.0, "出來之後走得動（%.0f px）" % ex10.player.position.distance_to(start10))
+	var fen_door := Vector2.ZERO
+	for dd in ex10.room.doors:
+		if dd.id == "c5_door_b3hall_fen": fen_door = Vector2(dd.pos[0], dd.pos[1])
+	_check(absf(fen_door.x - 1675) < 40, "芬的病房的門在背景畫裡那扇門的位置（%s）" % fen_door)
+	ex10.queue_free()
+	await process_frame
+	var d5b := FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
+	_check("@event c5_guard" not in d5b and "c5_b2_drip" in d5b and "c5_b2_decoy" in d5b, "B-2：點滴、心臟按壓、引開巡夜，不再推人")
+	for lb in ["c5_b3_bag", "c5_b3_doctor", "c5_b3_mom", "c5_b3_face"]:
+		_check(("=== " + lb) in d5b, "B-3 有 %s" % lb)
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")

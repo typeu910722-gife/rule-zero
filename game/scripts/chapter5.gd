@@ -5,7 +5,10 @@ extends Node2D
 ## 判定：「想起來」remember、「沒有放手」hold 兩個分數，各自 >= THRESHOLD 才算足夠（見 scores()）。
 
 const BreathWalk := preload("res://scripts/ch5/breath_walk.gd")
-const Guard := preload("res://scripts/ch5/guard.gd")
+## 終章 B-2：叫醒大家用的小遊戲（第三章的點滴、心臟按壓；最後引開巡夜的大人＝捉迷藏）
+const Drip := preload("res://scripts/ch3/drip.gd")
+const Cpr := preload("res://scripts/ch3/cpr.gd")
+const Runner := preload("res://scripts/ch3/runner.gd")
 const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
 const SEGMENTS := ["opening", "director", "choice", "ending"]
@@ -282,10 +285,21 @@ func _on_event(event_name: String) -> void:
 		Dialogue.event_done.emit()
 		return
 	match event_name:
-		"c5_guard":
-			var g := Guard.new()
-			add_child(g)
-			await g.play()
+		"c5_b2_drip":
+			var d := Drip.new()
+			add_child(d)
+			await d.play()
+		"c5_b2_cpr":
+			var c := Cpr.new()
+			add_child(c)
+			await c.play()
+		"c5_b2_decoy":
+			var r := Runner.new()
+			r.duration = 25.0
+			add_child(r)
+			_bgm("next_stop")
+			await r.play()
+			_bgm("night")
 		_:
 			await get_tree().process_frame
 	Dialogue.event_done.emit()

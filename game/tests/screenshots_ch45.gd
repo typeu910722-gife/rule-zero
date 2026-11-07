@@ -51,7 +51,7 @@ func _run() -> void:
 	hud.header = "[b]第五章　終章[/b]"
 	hud.place = "終章 A「醒來」"
 	hud.refresh()
-	for m in [["ch5/breath_walk", "ch5_breath"], ["ch5/guard", "ch5_guard"]]:
+	for m in [["ch5/breath_walk", "ch5_breath"]]:
 		var g = load("res://scripts/%s.gd" % m[0]).new()
 		root.add_child(g)
 		for k in 40:

@@ -217,7 +217,7 @@ func _run() -> void:
 	_check("Ch3Mini.art4(\"phone\")" in ch4src and "Ch3Mini.art4(\"shoes_%d\"" in ch4src, "第四章 手機取景、門縫的鞋子用圖")
 	was_fast = gs.fast
 	gs.fast = false
-	for gp in ["ch4/speech", "ch4/group_chat", "ch4/hold_door", "ch5/breath_walk", "ch5/guard"]:
+	for gp in ["ch4/speech", "ch4/group_chat", "ch4/hold_door", "ch5/breath_walk"]:
 		var mg = load("res://scripts/%s.gd" % gp).new()
 		root.add_child(mg)
 		for k in 3:
@@ -410,7 +410,8 @@ func _run() -> void:
 	for pair in [["drip", "drip"], ["cpr", "compress"], ["thermo", "thermo_beep"]]:
 		var p3 := "res://audio/ch3/%s.ogg" % pair[1]
 		_check(ResourceLoader.exists(p3) and p3 in FileAccess.get_file_as_string("res://scripts/ch3/%s.gd" % pair[0]), "第三章 %s 小遊戲用 %s 音效" % pair)
-	_check(MB.art4("wall_monitor") != null and "art4(\"wall_monitor\")" in FileAccess.get_file_as_string("res://scripts/ch5/guard.gd"), "終章 守走廊：牆上的心電監視器用圖")
+	# 終章 B-2 的守走廊（推人）2026-11-07 換掉了（改成點滴、心臟按壓、捉迷藏）
+	_check(not FileAccess.file_exists("res://scripts/ch5/guard.gd"), "終章 B-2：推人的守走廊已經拿掉")
 	_check("Vector2(160, 520), \"值班護士" in FileAccess.get_file_as_string("res://scripts/ch3/heart_cards.gd"), "心臟病：值班護士的字不壓到心電圖")
 	_check("@bgm far_shore" in FileAccess.get_file_as_string("res://dialogue/chapter2.txt"), "河對岸的模範生出現時播〈far shore〉")
 	# 第二～五章的選項按鈕：每章一套圖，選到時換成另一張
