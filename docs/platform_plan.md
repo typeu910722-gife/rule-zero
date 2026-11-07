@@ -210,8 +210,12 @@
 | 第四章「三年二班」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch4 |
 | 第五章（終章） | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5 |
 | 第四章「那一天」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch4_theday |
+| 終章 A「醒來」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5_a |
+| 終章 B-1「新鎮長」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5_b1 |
+| 終章 B-2「最後一張床」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5_b2 |
+| 終章 B-3「一個人的出院」 | https://rule-zero.yz-try.pages.dev/rule-zero/?dev=ch5_b3 |
 
-第四章可以從任一段開始：`?dev=ch4_<段落>`（段落名稱見 `chapter4.gd` SEGMENTS，例如 `theday` 那一天、`org` 那一天之後、`night` 第一個晚上）。
+第四章可以從任一段開始：`?dev=ch4_<段落>`（段落名稱見 `chapter4.gd` SEGMENTS，例如 `theday` 那一天、`org` 那一天之後、`night` 第一個晚上）。第五章的結局：`?dev=ch5_a`／`ch5_b1`／`ch5_b2`／`ch5_b3`（直接進那個結局，不經過判定）。
 其他預覽：`?dev=chase`（第一章追逐戰）、`?dev=ending`（修理室之後）。手機安裝頁：https://rule-zero.yz-try.pages.dev/download/
 從頭玩到尾的自動測試：`tests/full_playthrough_test.gd`（第一章真結局 → 按章末按鈕一路進到終章，檢查旗標有沒有帶過去）。
 

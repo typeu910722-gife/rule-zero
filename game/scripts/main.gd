@@ -235,6 +235,16 @@ func _run_dev_preview(what: String) -> void:
 		enter_chapter4(get_tree())
 		GameState.checkpoint = "c4_" + what.substr(4)
 		return
+	# ?dev=ch5_a／ch5_b1／ch5_b2／ch5_b3：直接看第五章的某一個結局（路線名稱見 chapter5.gd ROUTES）
+	if what.begins_with("ch5_"):
+		enter_chapter5(get_tree())
+		var r := what.substr(4)
+		if r in ["a", "b1", "b2", "b3"]:
+			GameState.checkpoint = "c5_ending"
+			GameState.set_flag("c5_route", r)
+		else:
+			GameState.checkpoint = "c5_" + r
+		return
 	_layout("day")
 	_set_tint("day")
 	player.bounds = WORLD_BOUNDS

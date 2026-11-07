@@ -1,4 +1,4 @@
-extends SceneTree
+﻿extends SceneTree
 ## 2026-11-06 使用者回饋的修正：
 ## ① 碰撞對齊重畫的畫面之後，每個調查點、人物、門旁邊都還站得到人（按得到）
 ## ② 角色走到家具後面，家具變半透明
@@ -309,6 +309,20 @@ func _run() -> void:
 	_check(ch4n.segment == "theday", "第四章從「那一天」這一段開始（%s）" % ch4n.segment)
 	ch4n.queue_free()
 	await process_frame
+
+	print("[⑱ 網頁版 ?dev=ch5_<結局>：直接看第五章的每一個結局]")
+	_check("what.begins_with(\"ch5_\")" in msrc, "main.gd 認得 ?dev=ch5_<結局>")
+	for rr in ["a", "b1", "b2", "b3"]:
+		gs.reset()
+		gs.start_chapter5()
+		gs.checkpoint = "c5_ending"
+		gs.set_flag("c5_route", rr)
+		var ch5n = load("res://scripts/chapter5.gd").new()
+		root.add_child(ch5n)
+		await process_frame
+		_check(ch5n.segment == "ending" and ch5n.route == rr, "第五章直接進結局 %s（%s／%s）" % [rr, ch5n.segment, ch5n.route])
+		ch5n.queue_free()
+		await process_frame
 
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
