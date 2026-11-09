@@ -306,3 +306,10 @@ un_bu_passing.png`），
 - `tools/art/make_bed_sleepers.py`：從走路圖（`art/walk4/h_*.png`）正面第一格切出頭，睡著的把眼睛塗掉、畫成閉眼的線 → `game/art/beds/<id>_<state>.png`（asleep／asleep_tied／tied／awake）。不給參數就重新產生關卡裡用到的全部。
 - 遊戲裡（`explore.gd` `_add_sleeper`）：關卡的 `sleepers` 用 `head` 指定臉在背景畫上的位置（枕頭）；下巴以下用房間背景畫裡同一塊床蓋回去，看起來像蓋著被子（第四章的床本來就畫有束帶）。`tied` 會一陣一陣地掙扎。
 - 第四章「第一個晚上」（ward4）：白線左邊芬、辛禾、薙文、李恩、秋歌、郡主醒著被綁；右邊希露飛、銘越、遙、小滿、值日生睡著。第五章終章 A：還沒叫醒的四個人在床上，叫醒的人起來跟著（`chapter5.gd` WAKE_FOLLOW）；「白線的另一邊」一排床有人醒著、有人睡著。
+
+## 終章 BOSS 的美術（Codex 2026-11-09）
+- 使用者：「不夠的美術用 CODEX 補上」。`codex exec`（image_generation）出圖，原圖在 `E:\哲\第零條規則\chatgpt_art\codex_boss\`（提示 p_*.txt、參考圖 ref_*）。
+  - 注意：codex exec 的沙箱存不了檔，圖會留在 `~/.codex/generated_images/<session>/`，要自己複製出來；`-i` 會吃掉後面的參數，提示要用 stdin（`-`）傳。
+- `art/walk4/head_nurse.png`：B-2 的護理長（口罩、包頭、針筒、手電筒），`tools/art/fit_walk_sheet.py` 套成 4×4。
+- `art/human/cg/h_cg15_mirror.jpg`：B-1 剪刀刀面裡的遙（男生制服、手心的粉紅色髮夾）。`@bg c5_cg15_mirror`。
+- `art/ch5/boss/doctor_bust.png`：B-3 出院面談的醫生半身（去白底）。

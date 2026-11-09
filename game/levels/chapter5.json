@@ -2289,7 +2289,7 @@
    "patrols": [
     {
      "id": "c5_b2_head_nurse",
-     "char": "human_nurse",
+     "char": "head_nurse",
      "path": [
       [
        2200,

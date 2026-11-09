@@ -29,7 +29,7 @@ const KNOWN_BG := ["none", "black", "train", "dream", "platform", "plaza", "bake
 	"c4_cg01_speech", "c4_cg02_mirror", "c4_cg03_mailbox", "c4_cg04_teacher_night", "c4_cg05_practice",
 	"c4_cg06_dove", "c4_cg07_hairclip", "c4_cg08_first_night", "c5_cg09_waking", "c5_cg10_outside",
 	# 第五章事件 CG（2026-11-05 ChatGPT）：理事進門、白面把背心蓋在芬手上、摺好的背心和紙條
-	"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note", "c5_cg14_queue"]
+	"c5_cg11_director", "c5_cg12_vest", "c5_cg13_vest_note", "c5_cg14_queue", "c5_cg15_mirror"]
 
 var cmds: Array = []
 var labels := {}

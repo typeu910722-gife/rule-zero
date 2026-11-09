@@ -41,6 +41,8 @@ const WALK_SCALE := {"h_principal": 0.62, "h_fen_father": 0.62, "h_nurse": 0.6, 
 	# 第三章玩偶世界裡的人類：比玩偶大很多（graduate＝Blender 模型轉的；human_nurse＝h_nurse 同一張圖放大）
 	# 畢業生（ChatGPT 2026-11-06）：graduate＝聽話、縫上笑容的；graduate_wild＝失控、追人的
 	"graduate": 0.92, "graduate_wild": 0.92, "human_nurse": 0.85,
+	# 終章 B-2 的 BOSS：護理長（Codex 2026-11-09）
+	"head_nurse": 0.92,
 	# 第四章：一群同學（三個人擠在一格，所以放大）、「影子」（tools/art/make_crowd_shadow.py）
 	"h_crowd": 0.69, "h_shadow": 0.56}
 

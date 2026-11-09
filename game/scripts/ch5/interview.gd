@@ -160,9 +160,12 @@ func _other_input(e: InputEvent) -> void:
 
 func _paint(c: Control) -> void:
 	var f: Font = GameState.font
-	# 醫生：沒有臉的大人（走路圖第一格放大）
+	# 醫生：半身圖（Codex 2026-11-09）；沒有圖就用走路圖第一格放大
+	var bust := ExploreArt.tex("res://art/ch5/boss/doctor_bust.png")
 	var doc := ExploreArt.tex(ExploreArt.WALK_DIR % "h_whitecoat")
-	if doc:
+	if bust:
+		c.draw_texture_rect(bust, Rect2(Vector2(522, 82), Vector2(236, 236)), false)
+	elif doc:
 		var cell := doc.get_width() / 4.0
 		c.draw_texture_rect_region(doc, Rect2(Vector2(520, 70), Vector2(240, 240)), Rect2(0, 0, cell, cell))
 	c.draw_rect(Rect2(380, 300, 520, 26), Color("#c9b79a"))   # 桌子

@@ -527,6 +527,14 @@ func _run() -> void:
 	c5n.queue_free()
 	await process_frame
 
+	print("[㉓ BOSS 的美術（Codex）：護理長走路圖、剪刀 CG、醫生半身]")
+	var hn: Texture2D = load("res://art/walk4/head_nurse.png")
+	_check(hn != null and hn.get_width() == 1280, "護理長的走路圖")
+	var lv5n = JSON.parse_string(FileAccess.get_file_as_string("res://levels/chapter5.json"))
+	_check(lv5n.rooms.b2_hall5.patrols[0].char == "head_nurse", "B-2 的 BOSS 用護理長的圖")
+	_check(ResourceLoader.exists("res://art/human/cg/h_cg15_mirror.jpg") and "@bg c5_cg15_mirror" in FileAccess.get_file_as_string("res://dialogue/chapter5.txt"), "B-1：剪刀刀面裡的遙（CG）")
+	_check(ResourceLoader.exists("res://art/ch5/boss/doctor_bust.png") and "doctor_bust" in FileAccess.get_file_as_string("res://scripts/ch5/interview.gd"), "B-3：醫生半身圖")
+
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
 	var extra_font: FontFile = load("res://fonts/NotoSansTC-Extra.ttf")

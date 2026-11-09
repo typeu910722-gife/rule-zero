@@ -255,7 +255,7 @@ rooms["b2_hall5"] = room("醫院的走廊　晚上", [2600, 760], "hospital",
         {"id": "c5_b2_endbed", "name": "走廊盡頭的床", "pos": [2470, 440], "when": B2 + "&c5_b2_guarded", "label": "c5_b2_after", "done_when": "c5_b2_done"},
     ],
     # BOSS：死亡躲貓貓（撐 3 分鐘；躲著的時候時間不走，chapter5.gd HUNT_SECS）
-    patrols=[{"id": "c5_b2_head_nurse", "char": "human_nurse", "path": [[2200, 420], [300, 420]], "random": True, "roam": [150, 260, 2250, 430],
+    patrols=[{"id": "c5_b2_head_nurse", "char": "head_nurse", "path": [[2200, 420], [300, 420]], "random": True, "roam": [150, 260, 2250, 430],
               "speed": 90, "chase_speed": 255, "aggro_distance": 270, "lose_distance": 560, "view": 240, "fov": 0.8, "pause": 0.8,
               "catch": "c5_b2_caught", "scare": "nurse", "when": B2 + "&c5_b2_hunt"},
              {"id": "c5_b2_night_nurse", "char": "human_nurse", "path": [[400, 600], [2100, 600]], "random": True, "roam": [150, 300, 2250, 400],
