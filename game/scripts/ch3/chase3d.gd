@@ -83,6 +83,57 @@ const MAZE_REAL_ESCAPE := [
 	"#D..W.....#.......#E#",
 	"#####################",
 ]
+## 單一路線的追逐（2026-11-09 使用者：沒有壓迫感、感受不到追的人多近；要只有一條路、跑錯就重開）
+## tools/levels/make_chase_mazes.py 產生、驗證：路線是一棵樹，X＝死路（跑進去就被抓），D 在 S 正後方
+## MAZE_LINEAR_HOSP：正確路線 55 格、6 個岔路
+const MAZE_LINEAR_HOSP := [
+	"#####################",
+	"#DS......############",
+	"#####X##.############",
+	"#####X##.#.......####",
+	"########.#.#####.####",
+	"###......#.XXX##.XX##",
+	"###.######C#####.####",
+	"###.XXX###.##....####",
+	"###.######.##.#######",
+	"###........##.##X####",
+	"#######X#####.##X####",
+	"#######X#####......E#",
+	"#####################",
+]
+## MAZE_LINEAR_ROLLCALL：正確路線 79 格、9 個岔路
+const MAZE_LINEAR_ROLLCALL := [
+	"#######################",
+	"#DS....###########....#",
+	"####X#.###########.##.#",
+	"####X#.##......###.##.#",
+	"######.##.##X#.###.##.#",
+	"##.....##.##X#.#XX.##.#",
+	"##.######.##X#.X##.##.#",
+	"##.XX####...##.###.#X.#",
+	"##.########.##.###.##.#",
+	"##.....####C##.....##.#",
+	"######.#XXX.#########.#",
+	"###XXX.####.#######XX.#",
+	"######.####.#########.#",
+	"######......#########E#",
+	"#######################",
+]
+## MAZE_LINEAR_REAL：正確路線 42 格、5 個岔路
+const MAZE_LINEAR_REAL := [
+	"###################",
+	"#DS.....###########",
+	"#####X#.###########",
+	"#####X#.###......##",
+	"#######.###.##X#.##",
+	"###.....###.##X#.##",
+	"###.#######CXX##.##",
+	"###.XXX##X#.####.##",
+	"###.#####X#.####.##",
+	"###.........####E##",
+	"###################",
+]
+
 ## 配色：預設是第三章的醫院（暗、有霧、手電筒）
 const LOOK_SCHOOL := {"wall": "#e2d6c2", "floor": "#a8957a", "ceil": "#efe6d6", "bg": "#e9c9a0", "fog": "#e8c49a",
 	"fog_density": 0.035, "ambient": "#f0d2b0", "ambient_energy": 0.75, "lamp": false, "light": "#ffd9a8", "kit": "school"}
@@ -111,6 +162,20 @@ var _enemy_sprite: Sprite3D
 var _enemy_cell := 0.0
 var _esfx_t := 0.0
 var enemy_delay := 4.0             # 「我不數了」：幾秒後開始追
+## 單一路線模式：自動往前跑（不用體力）、往下＝回頭看、追的人一直跟在後面（保持 chase_gap 公尺，停下來、撞牆、跑錯就追上）
+## 被抓到從起點（或檢查點）重來，沒有次數上限；路口地上有綠色的燈指著正確的方向
+var linear := false
+var chase_gap := 3.6
+var enemy_base := 3.5
+var chase_ease := 1.0           # 太近的時候追的人慢多少（越大越好逃）
+var _main: Array = []
+var _gap_bonus := 0.0
+var _back := 0.0
+var _meter: Control
+var _red: ColorRect
+var _estep_t := 0.0
+var _trap := false
+var _shake := 0.0
 var enemy_speed := 2.3            # 比走路（2.6）慢：只有走錯路、停下來才會被追上
 var has_enemy := true             # false：沒有追的人（只是走到出口）
 var time_limit := 0.0             # > 0：要在幾秒內走到；超過也照樣能走完，只是回傳 1（「來不及了」）
@@ -201,6 +266,40 @@ func _ready() -> void:
 	_hint.text = hint
 	_status = _label(Vector2(0, 60), 22)
 	_make_runner()
+	if linear:
+		_red = ColorRect.new()
+		_red.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_red.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_red.color = Color(0.6, 0.0, 0.05, 0.0)
+		add_child(_red)
+		move_child(_red, _vig.get_index() + 1)
+		_meter = Control.new()
+		_meter.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_meter.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_meter.draw.connect(_draw_meter)
+		add_child(_meter)
+
+
+## 距離計：畫面下方，右邊是你，紅點是追的人。越近越紅
+func _draw_meter() -> void:
+	if not has_enemy:
+		return
+	var d := _epos.distance_to(_pos)
+	var k := clampf(d / 12.0, 0.0, 1.0)
+	var x0 := 390.0
+	var x1 := 890.0
+	var y := 628.0
+	var close := 1.0 - k
+	var col := Color(1.0, 0.85 - close * 0.7, 0.85 - close * 0.75)
+	_meter.draw_line(Vector2(x0, y), Vector2(x1, y), Color(1, 1, 1, 0.35), 4.0)
+	_meter.draw_circle(Vector2(x1, y), 9.0, Color("#e8eef0"))
+	var ex := x1 - k * (x1 - x0)
+	var pulse := 1.0 + (sin(_t * (6.0 + close * 14.0)) * 0.25 if close > 0.5 else 0.0)
+	_meter.draw_circle(Vector2(ex, y), 11.0 * pulse, Color(0.85, 0.1, 0.15) if close > 0.5 else col)
+	var f: Font = GameState.font
+	var txt := "距離 %.1f 公尺" % d
+	_meter.draw_string_outline(f, Vector2(x0, y - 16), txt, HORIZONTAL_ALIGNMENT_CENTER, x1 - x0, 18, 5, Color(0, 0, 0, 0.8))
+	_meter.draw_string(f, Vector2(x0, y - 16), txt, HORIZONTAL_ALIGNMENT_CENTER, x1 - x0, 18, col)
 
 
 func _make_runner() -> void:
@@ -505,6 +604,8 @@ func _build() -> void:
 				"D":
 					_enemy_start = c
 					_has_d = true
+	if linear:
+		_build_guides()
 	# 天花板的燈（一閃一閃）；有燈具的圖就貼圖並自己發光
 	var lamp_mat := _glow_mat("ceiling_lamp", Color(look.get("light", "#dfe9ea")), 1.3)
 	var k := 0
@@ -579,6 +680,38 @@ func _build() -> void:
 	_respawn(_start)
 	_epos = _center(_enemy_start)
 	_place_enemy()
+
+
+## 單一路線：算出正確路線；每個岔路口的地上放一條綠色的燈，指著正確的方向（死路那邊沒有）
+func _build_guides() -> void:
+	_main = [_start] + _bfs(_start, _exit)
+	var mat := _mat(Color("#5be38a"), 2.2)
+	for i in range(1, _main.size() - 1):
+		var c: Vector2i = _main[i]
+		var n := 0
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			if walkable(c + d):
+				n += 1
+		if n <= 2:
+			continue
+		var nxt: Vector2i = _main[i + 1]
+		var dir := Vector2(nxt - c)
+		for k in 3:
+			var strip := MeshInstance3D.new()
+			var bm := BoxMesh.new()
+			bm.size = Vector3(0.5, 0.012, 0.12) if dir.x != 0.0 else Vector3(0.12, 0.012, 0.5)
+			strip.mesh = bm
+			strip.material_override = mat
+			var at := _center(c) + dir * (0.1 + k * 0.55)
+			strip.position = Vector3(at.x, 0.01, at.y)
+			_world.add_child(strip)
+		var gl := OmniLight3D.new()
+		var at2 := _center(c) + dir * 0.6
+		gl.position = Vector3(at2.x, 0.08, at2.y)
+		gl.light_color = Color("#7cf0a0")
+		gl.light_energy = 0.45
+		gl.omni_range = 1.3
+		_world.add_child(gl)
 
 
 func _make_enemy() -> Node3D:
@@ -671,7 +804,7 @@ func _respawn(c: Vector2i) -> void:
 
 func _place_cam() -> void:
 	_cam.position = Vector3(_pos.x, EYE, _pos.y)
-	_cam.rotation = Vector3(0, _yaw, 0)
+	_cam.rotation = Vector3(0, _yaw + _back * PI, 0)
 
 
 func _place_enemy() -> void:
@@ -695,6 +828,22 @@ func _dread(delta: float) -> void:
 	if has_enemy and _t > enemy_delay:
 		close = clampf(1.0 - _epos.distance_to(_pos) / 9.0, 0.0, 1.0)
 	threat = close
+	if linear and has_enemy:
+		var calm0 := GameState.gentle()
+		# 紅色一閃一閃（越近越快、越紅）、追的人的腳步聲、畫面晃
+		if _red:
+			var pulse := 0.5 + 0.5 * sin(_t * (3.0 + close * 9.0))
+			_red.color.a = maxf(_red.color.a - delta * 1.5, close * close * (0.18 + pulse * 0.17))
+		if _meter:
+			_meter.queue_redraw()
+		_estep_t -= delta
+		if _t > enemy_delay and _estep_t <= 0.0:
+			_estep_t = lerpf(0.75, 0.28, close)
+			Sfx.play(self, "dove_step", lerpf(-22.0, -4.0, close))
+		_shake = maxf(_shake - delta, 0.0)
+		if not calm0 and (close > 0.55 or _shake > 0.0):
+			var amt := maxf(close - 0.55, 0.0) * 0.05 + _shake * 0.08
+			_cam.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * amt
 	if _vig:
 		(_vig.material as ShaderMaterial).set_shader_parameter("strength", 0.35 + close * 0.6 if look.is_empty() else close * 0.5)
 	if _drag:
@@ -741,8 +890,13 @@ func _process(delta: float) -> void:
 	# 移動
 	var turn := Input.get_axis("move_right", "move_left")
 	var fwd := Input.get_axis("move_down", "move_up")
+	if linear:
+		# 往下＝回頭看（看得到他離你多近）；不能往後退。轉身快一點
+		_back = move_toward(_back, 1.0 if Input.is_action_pressed("move_down") else 0.0, delta * 5.0)
+		fwd = maxf(fwd, 0.0)
+		turn *= 1.35
 	_yaw += turn * TURN * delta
-	var running := Input.is_action_pressed("interact") and _stamina > 0.05 and fwd > 0.0 and not breath
+	var running := (Input.is_action_pressed("interact") and _stamina > 0.05 and fwd > 0.0 and not breath) or (linear and fwd > 0.0 and not breath)
 	var speed := RUN if running else WALK
 	if breath:
 		# 呼吸：往前走會慢慢喘，停下來才會恢復；喘到底就要停一下
@@ -756,7 +910,7 @@ func _process(delta: float) -> void:
 				_stop_t = 1.5
 				breath_stops += 1
 		speed = WALK * 0.75
-	else:
+	elif not linear:
 		_stamina = clampf(_stamina + (-0.35 if running else 0.18) * delta, 0.0, 1.0)
 	if _door_slow > 0.0:
 		_door_slow -= delta
@@ -792,7 +946,13 @@ func _process(delta: float) -> void:
 		if not _epath.is_empty():
 			var target := _center(_epath[0])
 			var to := target - _epos
-			var step := enemy_speed * delta
+			var spd := enemy_speed
+			if linear:
+				var dd := _epos.distance_to(_pos)
+				spd = enemy_base + clampf((dd - chase_gap - _gap_bonus) * 0.9, -chase_ease, 2.6)
+				if _trap:
+					spd = 7.0   # 跑進死路：他衝過來
+			var step := spd * delta
 			if to.length() <= step:
 				_epos = target
 				_epath.pop_front()
@@ -803,9 +963,19 @@ func _process(delta: float) -> void:
 		if d < 0.85:
 			_get_caught()
 			return
-		_status.text = ("……腳步聲很近。" if d < 4.0 else "") + ("　體力 " + "■".repeat(int(_stamina * 5)) + "□".repeat(5 - int(_stamina * 5)))
+		if linear:
+			var pc := _cell(_pos)
+			var in_x: bool = maze[pc.y][pc.x] == "X"
+			if in_x and not _trap:
+				Sfx.play(self, "door_thud", -2.0)
+			_trap = in_x
+			_status.text = "死路——！" if _trap else ("……他就在你後面。" if d < 2.2 else ("……腳步聲。" if d < 4.5 else ""))
+			if breath:
+				_status.text += ("　喘不過氣，停下來……" if _stop_t > 0.0 else "　呼吸 " + "■".repeat(int(_stamina * 5)) + "□".repeat(5 - int(_stamina * 5)))
+		else:
+			_status.text = ("……腳步聲很近。" if d < 4.0 else "") + ("　體力 " + "■".repeat(int(_stamina * 5)) + "□".repeat(5 - int(_stamina * 5)))
 	else:
-		_status.text = "（他在數數……）"
+		_status.text = "……跑！" if linear else "（他在數數……）"
 	if _cell(_pos) == _exit:
 		_finish()
 
@@ -851,6 +1021,20 @@ func _get_caught() -> void:
 	_caught += 1
 	Sfx.play(self, "wrong", -2.0)
 	_cotton_burst()
+	if linear:
+		# 跑錯、被追上：從起點（過了檢查點就從檢查點）重來。追的人回到你正後方兩格
+		_status.text = "……被抓到了。重來。"
+		_shake = 0.5
+		if _red:
+			_red.color.a = 0.85
+		_respawn(_start)
+		var i := _main.find(_start)
+		_epos = _center(_main[i - 2] if i >= 2 else _enemy_start)
+		_epath.clear()
+		_trap = false
+		_t = enemy_delay - 1.2
+		_gap_bonus = minf(_gap_bonus + 0.3, 1.5)   # 放水：每被抓一次，多讓一點距離
+		return
 	if _caught >= MAX_CAUGHT:
 		_finish()
 		return

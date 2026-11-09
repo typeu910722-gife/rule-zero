@@ -303,6 +303,11 @@ func _on_event(event_name: String) -> void:
 		"c3_chase1":
 			# 捉迷藏：3D 第一人稱追逐（之後換 Blender 的和平鴿模型）
 			var c3d := Chase3DScript.new()
+			# 單一路線：一直被追、跑錯就重來（2026-11-09 使用者：要有壓迫感）
+			c3d.maze = Chase3DScript.MAZE_LINEAR_HOSP.duplicate()
+			c3d.linear = true
+			c3d.enemy_delay = 1.5
+			c3d.hint = "上：往前跑　左右：轉彎　下：回頭看　地上的綠燈指著出口——跑錯路就會被抓"
 			add_child(c3d)
 			_lose_cotton(await c3d.play(), 3)
 			_lose_all(2)
@@ -337,9 +342,11 @@ func _on_event(event_name: String) -> void:
 		"c3_chase2":
 			# 廣播點名：第二段 3D 追逐（比較長的迷宮）
 			var c3d2 := Chase3DScript.new()
-			c3d2.maze = Chase3DScript.MAZE_ROLLCALL.duplicate()
+			c3d2.maze = Chase3DScript.MAZE_LINEAR_ROLLCALL.duplicate()
+			c3d2.linear = true
+			c3d2.enemy_delay = 1.5
 			c3d2.title = "點名"
-			c3d2.hint = "被點到名之前，跑到電梯。上：往前　左右：轉身　按住互動鍵：跑"
+			c3d2.hint = "跑到電梯。上：往前跑　左右：轉彎　下：回頭看　地上的綠燈指著出口——跑錯路就會被抓"
 			add_child(c3d2)
 			_lose_cotton(await c3d2.play(), 2)
 			_lose_all(2)

@@ -236,19 +236,21 @@ func _walk_out() -> void:
 	await Dialogue.run("c5_a_walk")
 	var r := Chase3DScript.new()
 	# BOSS：理事（3D 追逐）。他走得不快，可是不會停；人類的身體會喘，要找他看不到的地方停
-	r.maze = Chase3DScript.MAZE_REAL_ESCAPE.duplicate()
+	r.maze = Chase3DScript.MAZE_LINEAR_REAL.duplicate()
+	r.linear = true
+	r.chase_gap = 3.4
+	r.enemy_base = 1.6
 	r.look = Chase3DScript.LOOK_REAL
 	r.has_enemy = true
 	r.enemy_char = "director"
 	r.enemy_height = 2.4
-	r.enemy_speed = 2.0
-	r.enemy_delay = 3.0
+	r.enemy_delay = 2.0
 	r.enemy_sfx = "hawk"
 	r.breath = true
 	r.runner = "h_haruka_chase_gown"   # 左下角：遙（病人服）慢慢走、喘氣
 	r.start_motif = ""
 	r.title = "BOSS　理事"
-	r.hint = "上：往前　左右：轉身　喘不過氣的時候要停下來——不要停在他看得到的地方"
+	r.hint = "上：往前　左右：轉彎　下：回頭看　喘不過氣會停下來——綠燈指著出口，跑錯路就會被追上"
 	add_child(r)
 	_bgm("nirvana")
 	GameState.set_flag("c5_a_boss_caught", await r.play())

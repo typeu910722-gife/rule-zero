@@ -40,6 +40,71 @@ func _reachable(pos: Vector2, reach: float, blockers: Array, size: Vector2) -> b
 	return false
 
 
+func _chase_bot(c, trap_at := -1, stand := false, lag := 0.0) -> Dictionary:
+	var dt := 1.0 / 60.0
+	var idx := 0
+	var frames := 0
+	var min_d := 99.0
+	var trapped := false
+	var react := 0.0
+	var last_caught := 0
+	while not c._finished and frames < 60 * 120:
+		frames += 1
+		var cell: Vector2i = c._cell(c._pos)
+		if c._caught > last_caught:
+			last_caught = c._caught
+			idx = 0
+		var i: int = c._main.find(cell)
+		if i >= idx:
+			idx = i
+		var tgt: Vector2i = c._main[mini(idx + 1, c._main.size() - 1)]
+		# 跑錯：在第 trap_at 個岔路口轉進死路
+		if trap_at >= 0 and not trapped:
+			var j := 0
+			for k in range(1, c._main.size() - 1):
+				var m: Vector2i = c._main[k]
+				var n := 0
+				for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					if c.walkable(m + d): n += 1
+				if n > 2:
+					if j == trap_at and idx == k:
+						for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+							if c.maze[(m + d).y][(m + d).x] == "X":
+								tgt = m + d
+					j += 1
+			if c.maze[cell.y][cell.x] == "X":
+				trapped = true
+		if trapped:
+			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				if c.walkable(cell + d) and c.maze[(cell + d).y][(cell + d).x] == "X":
+					tgt = cell + d
+		var to: Vector2 = c._center(tgt) - c._pos
+		var want := atan2(-to.x, -to.y)
+		var diff := wrapf(want - c._yaw, -PI, PI)
+		Input.action_release("move_left")
+		Input.action_release("move_right")
+		Input.action_release("move_up")
+		if not stand:
+			react -= dt
+			if absf(diff) > 0.12 and react <= 0.0:
+				Input.action_press("move_left" if diff > 0 else "move_right")
+			elif absf(diff) <= 0.12:
+				react = lag
+			if absf(diff) < 0.9:
+				Input.action_press("move_up")
+		c._process(dt)
+		if c._t > c.enemy_delay:
+			min_d = minf(min_d, c._epos.distance_to(c._pos))
+		if trap_at >= 0 and c._caught > 0:
+			break
+		if stand and c._caught > 0:
+			break
+	Input.action_release("move_left")
+	Input.action_release("move_right")
+	Input.action_release("move_up")
+	return {"caught": c._caught, "secs": frames / 60.0, "min_d": min_d, "done": c._finished}
+
+
 func _run() -> void:
 	gs = root.get_node("GameState")
 	var ExS: GDScript = load("res://scripts/explore/explore.gd")
@@ -534,6 +599,38 @@ func _run() -> void:
 	_check(lv5n.rooms.b2_hall5.patrols[0].char == "head_nurse", "B-2 的 BOSS 用護理長的圖")
 	_check(ResourceLoader.exists("res://art/human/cg/h_cg15_mirror.jpg") and "@bg c5_cg15_mirror" in FileAccess.get_file_as_string("res://dialogue/chapter5.txt"), "B-1：剪刀刀面裡的遙（CG）")
 	_check(ResourceLoader.exists("res://art/ch5/boss/doctor_bust.png") and "doctor_bust" in FileAccess.get_file_as_string("res://scripts/ch5/interview.gd"), "B-3：醫生半身圖")
+
+	print("[㉔ 3D 追逐改成單一路線：一直被追、跑錯就重開（壓迫感）]")
+	gs.fast = false
+	for spec in [["MAZE_LINEAR_HOSP", false], ["MAZE_LINEAR_ROLLCALL", false], ["MAZE_LINEAR_REAL", true]]:
+		var runs := {}
+		for mode in ["good", "slow", "stand", "trap"]:
+			var lc = load("res://scripts/ch3/chase3d.gd").new()
+			lc.maze = lc.get(spec[0]).duplicate()
+			lc.linear = true
+			lc.enemy_delay = 1.5
+			if spec[1]:
+				lc.look = lc.LOOK_REAL
+				lc.enemy_char = "director"
+				lc.breath = true
+				lc.chase_gap = 3.4
+				lc.enemy_base = 1.6
+			root.add_child(lc)
+			await process_frame
+			runs[mode] = _chase_bot(lc, 1 if mode == "trap" else -1, mode == "stand", 0.45 if mode == "slow" else 0.0)
+			if mode == "trap":
+				_check(not lc._finished and lc._cell(lc._pos) == lc._start, "%s：被抓之後回到起點重來（沒有次數上限、不會直接結束）" % spec[0])
+			lc.queue_free()
+			await process_frame
+		_check(runs.good.done and runs.good.caught == 0, "%s：照綠燈跑，逃得掉（%.0f 秒）" % [spec[0], runs.good.secs])
+		_check(runs.good.min_d < 3.0, "%s：一路上他都很近（最近 %.1f 公尺）" % [spec[0], runs.good.min_d])
+		_check(runs.slow.done and runs.slow.caught == 0, "%s：反應慢 0.45 秒的人也逃得掉" % spec[0])
+		_check(runs.stand.caught >= 1 and runs.stand.secs < 4.0, "%s：停下來幾秒就被抓（%.1f 秒）" % [spec[0], runs.stand.secs])
+		_check(runs.trap.caught >= 1, "%s：跑進死路就被抓" % spec[0])
+	gs.fast = true
+	var c3src := FileAccess.get_file_as_string("res://scripts/chapter3.gd")
+	_check(c3src.count("linear = true") == 2 and "MAZE_LINEAR_HOSP" in c3src and "MAZE_LINEAR_ROLLCALL" in c3src, "第三章兩場追逐都改成單一路線")
+	_check("MAZE_LINEAR_REAL" in FileAccess.get_file_as_string("res://scripts/chapter5.gd"), "終章 A 的理事也是單一路線")
 
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font
