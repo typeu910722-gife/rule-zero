@@ -224,7 +224,9 @@ rooms["b1_repair5"] = room("修理室", [1280, 720], "town",
     props=[{"kind": "table", "rect": [480, 300, 320, 90], "label": "修理台"}, {"kind": "shelf", "rect": [140, 160, 260, 40], "label": "線和針"}],
     spots=[
         {"id": "c5_b1_tools", "name": "線和針", "pos": [270, 260], "when": B1},
-        {"id": "c5_b1_table", "name": "修理台", "pos": [640, 440], "when": B1, "label": "c5_b1_repair", "done_when": "c5_b1_repaired"},
+        # BOSS：剪刀的刀面映出「鏡子裡的孩子」（座位表解謎）
+        {"id": "c5_b1_mirror", "name": "修理台上的剪刀", "pos": [540, 400], "when": B1, "done_when": "c5_b1_mirror_done"},
+        {"id": "c5_b1_table", "name": "修理台", "pos": [800, 440], "when": B1 + "&c5_b1_mirror_done", "label": "c5_b1_repair", "done_when": "c5_b1_repaired"},
     ],
     doors=[{"id": "c5_door_repair_sq", "name": "廣場", "pos": [1240, 450], "size": [60, 120], "to": "b1_square5", "spawn": "from_repair"}])
 rooms["b1_platform5"] = room("棉花糖鎮　月台", [1600, 720], "platform",
@@ -248,10 +250,20 @@ rooms["b2_hall5"] = room("醫院的走廊　晚上", [2600, 760], "hospital",
         {"id": "c5_b2_w_popo", "name": "銘越的病房", "pos": [810, 200], "when": B2, "done_when": "c5_b2_popo_ok"},
         {"id": "c5_b2_w_mochi", "name": "最裡面的病房", "pos": [1440, 200], "when": B2, "done_when": "c5_b2_mochi_ok"},
         {"id": "c5_b2_w_fen", "name": "芬的病房", "pos": [2030, 200], "when": B2, "done_when": "c5_b2_fen_ok"},
-        {"id": "c5_b2_guard", "name": "走廊的正中間", "pos": [1300, 520], "when": B2 + "&c5_b2_lulu_ok&c5_b2_popo_ok&c5_b2_mochi_ok&c5_b2_fen_ok",
+        {"id": "c5_b2_guard", "name": "走廊的正中間", "pos": [1300, 520], "when": B2 + "&c5_b2_lulu_ok&c5_b2_popo_ok&c5_b2_mochi_ok&c5_b2_fen_ok&!c5_b2_hunt",
          "done_when": "c5_b2_guarded"},
         {"id": "c5_b2_endbed", "name": "走廊盡頭的床", "pos": [2470, 440], "when": B2 + "&c5_b2_guarded", "label": "c5_b2_after", "done_when": "c5_b2_done"},
-    ])
+    ],
+    # BOSS：死亡躲貓貓（撐 3 分鐘；躲著的時候時間不走，chapter5.gd HUNT_SECS）
+    patrols=[{"id": "c5_b2_head_nurse", "char": "human_nurse", "path": [[2200, 420], [300, 420]], "random": True, "roam": [150, 260, 2250, 430],
+              "speed": 90, "chase_speed": 255, "aggro_distance": 270, "lose_distance": 560, "view": 240, "fov": 0.8, "pause": 0.8,
+              "catch": "c5_b2_caught", "scare": "nurse", "when": B2 + "&c5_b2_hunt"},
+             {"id": "c5_b2_night_nurse", "char": "human_nurse", "path": [[400, 600], [2100, 600]], "random": True, "roam": [150, 300, 2250, 400],
+              "speed": 75, "chase_speed": 235, "aggro_distance": 240, "lose_distance": 520, "view": 210, "fov": 0.7, "pause": 1.2,
+              "catch": "c5_b2_caught", "scare": "nurse", "when": B2 + "&c5_b2_hunt"}],
+    hides=[{"id": "c5_b2_hide_door2", "name": "銘越病房的門後", "pos": [810, 190], "kind": "cabinet", "size": [90, 40], "when": B2 + "&c5_b2_hunt"},
+           {"id": "c5_b2_hide_door4", "name": "芬病房的門後", "pos": [2030, 190], "kind": "cabinet", "size": [90, 40], "when": B2 + "&c5_b2_hunt"},
+           {"id": "c5_b2_hide_bed", "name": "盡頭的床底下", "pos": [2470, 470], "kind": "table", "size": [100, 40], "when": B2 + "&c5_b2_hunt"}])
 
 # ───────── 終章 B-3「一個人的出院」 ─────────
 rooms["b3_ward5"] = room("真的病房", [1280, 720], "real",

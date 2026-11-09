@@ -18,6 +18,27 @@
     47,
     -147
    ]
+  },
+  "hide:c5_b2_hide_door2": {
+   "tex": "paint_hide_c5_b2_hide_door2.png",
+   "off": [
+    -70,
+    -150
+   ]
+  },
+  "hide:c5_b2_hide_door4": {
+   "tex": "paint_hide_c5_b2_hide_door4.png",
+   "off": [
+    -70,
+    -150
+   ]
+  },
+  "hide:c5_b2_hide_bed": {
+   "tex": "paint_hide_c5_b2_hide_bed.png",
+   "off": [
+    -110,
+    -200
+   ]
   }
  },
  "painted": true,

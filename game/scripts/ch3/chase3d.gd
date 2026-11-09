@@ -67,6 +67,22 @@ const MAZE_REAL_HALL := [
 	"#......W......#E#",
 	"#################",
 ]
+## 終章 A 的 BOSS：理事追來（D＝理事出發的地方；C＝檢查點）。比較長，有繞得開的環
+const MAZE_REAL_ESCAPE := [
+	"#####################",
+	"#S....#.....W.....#.#",
+	"#.###.#.###.#####.#.#",
+	"#.#...#...#.....#...#",
+	"#.#.#####.#####.###.#",
+	"#.#.....#.....#.#...#",
+	"#.#####.#####.#.#.###",
+	"#.....#..C..#...#...#",
+	"#####.#.###.#####.#.#",
+	"#.....#...#.....#.#.#",
+	"#.#######.#####.#.#.#",
+	"#D..W.....#.......#E#",
+	"#####################",
+]
 ## 配色：預設是第三章的醫院（暗、有霧、手電筒）
 const LOOK_SCHOOL := {"wall": "#e2d6c2", "floor": "#a8957a", "ceil": "#efe6d6", "bg": "#e9c9a0", "fog": "#e8c49a",
 	"fog_density": 0.035, "ambient": "#f0d2b0", "ambient_energy": 0.75, "lamp": false, "light": "#ffd9a8", "kit": "school"}
@@ -88,7 +104,12 @@ void fragment() {
 
 var title := "捉迷藏"
 var hint := "上：往前　左右：轉身　按住互動鍵：跑"
-var enemy_char := "dove"           # 之後換模型用
+var enemy_char := "dove"           # 之後換模型用；art/walk4/<id>.png 有的話用走路圖做成 3D 看板（終章 A：director＝理事）
+var enemy_height := 2.3            # 走路圖看板的身高（公尺）
+var enemy_sfx := ""                # 靠近時偶爾響的聲音（終章 A：hawk＝老鷹）
+var _enemy_sprite: Sprite3D
+var _enemy_cell := 0.0
+var _esfx_t := 0.0
 var enemy_delay := 4.0             # 「我不數了」：幾秒後開始追
 var enemy_speed := 2.3            # 比走路（2.6）慢：只有走錯路、停下來才會被追上
 var has_enemy := true             # false：沒有追的人（只是走到出口）
@@ -561,6 +582,24 @@ func _build() -> void:
 
 
 func _make_enemy() -> Node3D:
+	# 走路圖看板（人類時期的大人：理事）：一直面向鏡頭，走路的四格會動
+	if enemy_char != "dove" and ResourceLoader.exists(ExploreArt.WALK_DIR % enemy_char):
+		var tex: Texture2D = load(ExploreArt.WALK_DIR % enemy_char)
+		var root := Node3D.new()
+		_enemy_sprite = Sprite3D.new()
+		_enemy_sprite.texture = tex
+		_enemy_sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		_enemy_sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		_enemy_sprite.shaded = false
+		_enemy_sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		_enemy_cell = tex.get_width() / 4.0
+		_enemy_sprite.region_enabled = true
+		_enemy_sprite.region_rect = Rect2(0, 0, _enemy_cell, _enemy_cell)
+		# 走路圖裡人大約佔一格的 0.9：照身高換算
+		_enemy_sprite.pixel_size = enemy_height / (_enemy_cell * 0.9)
+		_enemy_sprite.position.y = _enemy_cell * _enemy_sprite.pixel_size * 0.5 - 0.05
+		root.add_child(_enemy_sprite)
+		return root
 	# 第三章：神志不清的畢業生（Blender 模型）＋拖著點滴架的聲音
 	if _kit() == "hosp":
 		var g := _model("graduate")
@@ -637,6 +676,13 @@ func _place_cam() -> void:
 
 func _place_enemy() -> void:
 	_enemy.position = Vector3(_epos.x, absf(sin(_t * 2.6)) * 0.03, _epos.y)
+	if _enemy_sprite:
+		_enemy_sprite.region_rect = Rect2((int(_t * 6.0) % 4) * _enemy_cell, 0, _enemy_cell, _enemy_cell)
+		if enemy_sfx != "" and has_enemy and _enemy.visible:
+			_esfx_t -= get_process_delta_time()
+			if _esfx_t <= 0.0 and _pos.distance_to(_epos) < CELL * 5.0:
+				_esfx_t = 5.0
+				Sfx.play(self, enemy_sfx, -6.0)
 	var to := _pos - _epos
 	if to.length() > 0.01:
 		_enemy.rotation.y = atan2(-to.x, -to.y)

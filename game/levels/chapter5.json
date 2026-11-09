@@ -2054,13 +2054,23 @@
      "when": "c5_st_b1"
     },
     {
+     "id": "c5_b1_mirror",
+     "name": "修理台上的剪刀",
+     "pos": [
+      540,
+      400
+     ],
+     "when": "c5_st_b1",
+     "done_when": "c5_b1_mirror_done"
+    },
+    {
      "id": "c5_b1_table",
      "name": "修理台",
      "pos": [
-      640,
+      800,
       440
      ],
-     "when": "c5_st_b1",
+     "when": "c5_st_b1&c5_b1_mirror_done",
      "label": "c5_b1_repair",
      "done_when": "c5_b1_repaired"
     }
@@ -2261,7 +2271,7 @@
       1300,
       520
      ],
-     "when": "c5_st_b2&c5_b2_lulu_ok&c5_b2_popo_ok&c5_b2_mochi_ok&c5_b2_fen_ok",
+     "when": "c5_st_b2&c5_b2_lulu_ok&c5_b2_popo_ok&c5_b2_mochi_ok&c5_b2_fen_ok&!c5_b2_hunt",
      "done_when": "c5_b2_guarded"
     },
     {
@@ -2274,6 +2284,114 @@
      "when": "c5_st_b2&c5_b2_guarded",
      "label": "c5_b2_after",
      "done_when": "c5_b2_done"
+    }
+   ],
+   "patrols": [
+    {
+     "id": "c5_b2_head_nurse",
+     "char": "human_nurse",
+     "path": [
+      [
+       2200,
+       420
+      ],
+      [
+       300,
+       420
+      ]
+     ],
+     "random": true,
+     "roam": [
+      150,
+      260,
+      2250,
+      430
+     ],
+     "speed": 90,
+     "chase_speed": 255,
+     "aggro_distance": 270,
+     "lose_distance": 560,
+     "view": 240,
+     "fov": 0.8,
+     "pause": 0.8,
+     "catch": "c5_b2_caught",
+     "scare": "nurse",
+     "when": "c5_st_b2&c5_b2_hunt"
+    },
+    {
+     "id": "c5_b2_night_nurse",
+     "char": "human_nurse",
+     "path": [
+      [
+       400,
+       600
+      ],
+      [
+       2100,
+       600
+      ]
+     ],
+     "random": true,
+     "roam": [
+      150,
+      300,
+      2250,
+      400
+     ],
+     "speed": 75,
+     "chase_speed": 235,
+     "aggro_distance": 240,
+     "lose_distance": 520,
+     "view": 210,
+     "fov": 0.7,
+     "pause": 1.2,
+     "catch": "c5_b2_caught",
+     "scare": "nurse",
+     "when": "c5_st_b2&c5_b2_hunt"
+    }
+   ],
+   "hides": [
+    {
+     "id": "c5_b2_hide_door2",
+     "name": "銘越病房的門後",
+     "pos": [
+      810,
+      190
+     ],
+     "kind": "cabinet",
+     "size": [
+      90,
+      40
+     ],
+     "when": "c5_st_b2&c5_b2_hunt"
+    },
+    {
+     "id": "c5_b2_hide_door4",
+     "name": "芬病房的門後",
+     "pos": [
+      2030,
+      190
+     ],
+     "kind": "cabinet",
+     "size": [
+      90,
+      40
+     ],
+     "when": "c5_st_b2&c5_b2_hunt"
+    },
+    {
+     "id": "c5_b2_hide_bed",
+     "name": "盡頭的床底下",
+     "pos": [
+      2470,
+      470
+     ],
+     "kind": "table",
+     "size": [
+      100,
+      40
+     ],
+     "when": "c5_st_b2&c5_b2_hunt"
     }
    ]
   },

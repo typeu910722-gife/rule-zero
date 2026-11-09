@@ -422,9 +422,110 @@ func _run() -> void:
 	ex10.queue_free()
 	await process_frame
 	var d5b := FileAccess.get_file_as_string("res://dialogue/chapter5.txt")
-	_check("@event c5_guard" not in d5b and "c5_b2_drip" in d5b and "c5_b2_decoy" in d5b, "B-2：點滴、心臟按壓、引開巡夜，不再推人")
+	_check("@event c5_guard" not in d5b and "c5_b2_drip" in d5b and "@set c5_b2_hunt" in d5b, "B-2：點滴、心臟按壓、死亡躲貓貓，不再推人")
 	for lb in ["c5_b3_bag", "c5_b3_doctor", "c5_b3_mom", "c5_b3_face"]:
 		_check(("=== " + lb) in d5b, "B-3 有 %s" % lb)
+
+	print("[㉒ 終章的 BOSS：A 理事 3D 追逐、B-1 座位表、B-2 死亡躲貓貓 3 分鐘、B-3 出院面談]")
+	gs.fast = false
+	# B-1：座位表（答案唯一：tools 驗過；這裡驗操作）
+	var sp = load("res://scripts/ch5/seat_puzzle.gd").new()
+	root.add_child(sp)
+	await process_frame
+	sp._submit()
+	_check(sp.lives == 2 and sp.wrong == 1, "座位表：空著交卷＝錯一次、少一條線")
+	sp._submit()
+	sp._submit()
+	_check(sp.lives == 3 and sp.seats[0][0] == "" and sp.seats[2][0] == "遙" and sp.locked.size() == 1, "座位表：三條線用完，位子清空重來，鏡子裡的孩子幫你放好一個人")
+	for y in 3:
+		for x in 3:
+			sp.seats[y][x] = sp.ANSWER[y][x]
+	var sp_got: Array = []
+	sp.done.connect(func(r): sp_got.append(r))
+	sp._submit()
+	sp._win_t = 0.01
+	for k in 200:
+		await process_frame
+		if not sp_got.is_empty(): break
+	_check(sp_got.size() == 1 and int(sp_got[0]) == 3, "座位表：排對就過關（錯了 %s 次）" % [sp_got])
+	sp.queue_free()
+	# B-3：面談（三次懷疑＝重來；全部冷靜回答安全的話＝過關）
+	var iv = load("res://scripts/ch5/interview.gd").new()
+	root.add_child(iv)
+	await process_frame
+	for k in 3:
+		iv.heart = 160.0
+		iv._pause = 0.0
+		var good_i := 0
+		for i in iv.opts.size():
+			if iv.opts[i][1]: good_i = i
+		iv._answer(good_i)
+	_check(iv.suspect == 3, "面談：心跳太快，回答安全的話也會被懷疑（%d）" % iv.suspect)
+	iv._pause = 0.01
+	await process_frame
+	await process_frame
+	_check(iv.retries == 1 and iv.qi == 0 and iv._hi() > iv.BAND_HI, "面談：懷疑滿了，從第一題重來（綠色範圍放寬一點）")
+	var ivr: Array = []
+	iv.done.connect(func(r): ivr.append(r))
+	for q in iv.QUESTIONS.size():
+		iv._pause = 0.0
+		iv.heart = 85.0
+		var gi := 0
+		for i in iv.opts.size():
+			if iv.opts[i][1]: gi = i
+		var prev_q: int = iv.qi
+		iv._answer(gi)
+		iv._pause = 0.01
+		for k in 60:
+			await process_frame
+			if iv.qi != prev_q or not ivr.is_empty(): break
+	_check(ivr.size() == 1 and int(ivr[0]) == 1, "面談：冷靜地回答完八題就過關（%s）" % [ivr])
+	_check(not iv.QUESTIONS[0][2][0][1] == false, "面談：第一題「名字」要說真話（什麼都說忘了反而可疑）")
+	iv.queue_free()
+	# A：理事在 3D 裡是走路圖做的看板
+	var cz = load("res://scripts/ch3/chase3d.gd").new()
+	cz.maze = cz.MAZE_REAL_ESCAPE.duplicate()
+	cz.look = cz.LOOK_REAL
+	cz.enemy_char = "director"
+	root.add_child(cz)
+	await process_frame
+	_check(cz._enemy_sprite != null and cz._enemy_sprite.texture != null, "A：理事出現在 3D 追逐裡（走路圖看板）")
+	cz.queue_free()
+	gs.fast = true
+	# B-2：躲貓貓（躲著不算時間；被抓到從頭算）
+	gs.reset()
+	gs.chapter = 5
+	gs.start_chapter5()
+	gs.flags["c5_route"] = "b2"
+	var c5n = load("res://scripts/chapter5.gd").new()
+	gs.fast = false
+	gs.checkpoint = "c5_ending"
+	c5n.set_process(false)
+	root.add_child(c5n)
+	var ex11 = ExS.new()
+	ex11.load_level("res://levels/chapter5.json")
+	root.add_child(ex11)
+	gs.flags["c5_st_b2"] = true
+	await ex11.enter("b2_hall5", "start")
+	c5n.explore = ex11
+	ex11.busy = false
+	gs.set_flag("c5_b2_hunt")
+	var pats := 0
+	for pt in ex11._patrols:
+		if pt.active(): pats += 1
+	_check(pats == 2, "B-2：躲貓貓開始，巡夜的人出來了（%d）" % pats)
+	c5n._hunt_tick(10.0)
+	_check(absf(c5n.hunt_left - 170.0) < 0.1, "B-2：沒躲的時候時間會走（%.1f）" % c5n.hunt_left)
+	ex11.hidden_in = "c5_b2_hide_bed"
+	c5n._hunt_tick(10.0)
+	_check(absf(c5n.hunt_left - 170.0) < 0.1, "B-2：躲著的時候時間不走")
+	ex11.hidden_in = ""
+	ex11.caught.emit("c5_b2_head_nurse")
+	_check(c5n.hunt_left == c5n.HUNT_SECS, "B-2：被抓到＝從 3 分鐘重新算")
+	gs.fast = true
+	ex11.queue_free()
+	c5n.queue_free()
+	await process_frame
 
 	print("[⑫ 關卡裡會顯示的字（地點、門、道具、密碼鎖提示）內建字型都有]")
 	var font: Font = gs.font

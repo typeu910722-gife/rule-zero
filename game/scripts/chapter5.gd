@@ -8,7 +8,13 @@ const BreathWalk := preload("res://scripts/ch5/breath_walk.gd")
 ## 終章 B-2：叫醒大家用的小遊戲（第三章的點滴、心臟按壓；最後引開巡夜的大人＝捉迷藏）
 const Drip := preload("res://scripts/ch3/drip.gd")
 const Cpr := preload("res://scripts/ch3/cpr.gd")
-const Runner := preload("res://scripts/ch3/runner.gd")
+## 終章的 BOSS（2026-11-09）：A＝理事 3D 追逐（_walk_out）、B-1＝座位表解謎、B-2＝死亡躲貓貓 3 分鐘、B-3＝出院面談測謊
+const SeatPuzzle := preload("res://scripts/ch5/seat_puzzle.gd")
+const Interview := preload("res://scripts/ch5/interview.gd")
+const HUNT_SECS := 180.0
+var hunt_left := HUNT_SECS
+var _hunt_label: Label
+var _hunt_busy := false
 const Chase3DScript := preload("res://scripts/ch3/chase3d.gd")
 
 const SEGMENTS := ["opening", "director", "choice", "ending"]
@@ -229,16 +235,25 @@ func _seg_ending() -> void:
 func _walk_out() -> void:
 	await Dialogue.run("c5_a_walk")
 	var r := Chase3DScript.new()
-	r.maze = Chase3DScript.MAZE_REAL_HALL.duplicate()
+	# BOSS：理事（3D 追逐）。他走得不快，可是不會停；人類的身體會喘，要找他看不到的地方停
+	r.maze = Chase3DScript.MAZE_REAL_ESCAPE.duplicate()
 	r.look = Chase3DScript.LOOK_REAL
-	r.has_enemy = false
+	r.has_enemy = true
+	r.enemy_char = "director"
+	r.enemy_height = 2.4
+	r.enemy_speed = 2.0
+	r.enemy_delay = 3.0
+	r.enemy_sfx = "hawk"
 	r.breath = true
 	r.runner = "h_haruka_chase_gown"   # 左下角：遙（病人服）慢慢走、喘氣
 	r.start_motif = ""
-	r.title = "走出去"
-	r.hint = "上：往前　左右：轉身　喘不過氣的時候，停下來"
+	r.title = "BOSS　理事"
+	r.hint = "上：往前　左右：轉身　喘不過氣的時候要停下來——不要停在他看得到的地方"
 	add_child(r)
-	await r.play()
+	_bgm("nirvana")
+	GameState.set_flag("c5_a_boss_caught", await r.play())
+	_bgm("waking")
+	await Dialogue.run("c5_a_escaped")
 	GameState.set_flag("c5_a_walked")
 	GameState.set_flag("c5_a_breath_stops", r.breath_stops)
 	GameState.save_game("c5_ending")
@@ -274,9 +289,50 @@ func _explore(stage: String, room_id: String, spawn: Variant, cond: String, tint
 	explore = null
 
 
-func _process(_d: float) -> void:
+func _process(d: float) -> void:
 	if explore:
 		explore.paused = hud.menu_open
+	_hunt_tick(d)
+
+
+## 終章 B-2 的死亡躲貓貓：撐 3 分鐘。躲起來的時候時間不走；被抓到＝從頭開始（explore.caught）
+func _hunt_tick(d: float) -> void:
+	var on := GameState.has("c5_b2_hunt") and explore != null and not _hunt_busy
+	if _hunt_label:
+		_hunt_label.visible = on
+	if not on:
+		return
+	if _hunt_label == null:
+		_hunt_label = Label.new()
+		_hunt_label.position = Vector2(0, 92)
+		_hunt_label.size = Vector2(1280, 40)
+		_hunt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_hunt_label.add_theme_font_size_override("font_size", 30)
+		_hunt_label.add_theme_color_override("font_color", Color("#f2c2cf"))
+		_hunt_label.add_theme_constant_override("outline_size", 8)
+		_hunt_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+		hud.add_child(_hunt_label)
+		explore.caught.connect(func(_by): hunt_left = HUNT_SECS)
+		_bgm("next_stop")
+	if GameState.fast:
+		hunt_left = 0.0
+	elif not explore.busy and not explore.paused and explore.hidden_in == "":
+		hunt_left -= d
+	_hunt_label.text = "撐到天亮　%d:%02d%s" % [int(ceilf(hunt_left)) / 60, int(ceilf(hunt_left)) % 60, "　（躲著的時候，時間不會走）" if explore.hidden_in != "" else ""]
+	if hunt_left <= 0.0:
+		_hunt_busy = true
+		_hunt_survived()
+
+
+func _hunt_survived() -> void:
+	explore.busy = true
+	GameState.flags.erase("c5_b2_hunt")
+	GameState.changed.emit()   # 巡邏的人、躲藏點跟著消失
+	_bgm("night")
+	await Dialogue.run("c5_b2_survived")
+	if explore:
+		explore.busy = false
+	_hunt_busy = false
 
 
 func _on_event(event_name: String) -> void:
@@ -293,13 +349,14 @@ func _on_event(event_name: String) -> void:
 			var c := Cpr.new()
 			add_child(c)
 			await c.play()
-		"c5_b2_decoy":
-			var r := Runner.new()
-			r.duration = 25.0
-			add_child(r)
-			_bgm("next_stop")
-			await r.play()
-			_bgm("night")
+		"c5_b1_seats":
+			var sp := SeatPuzzle.new()
+			add_child(sp)
+			GameState.set_flag("c5_b1_seat_wrong", await sp.play())
+		"c5_b3_interview":
+			var iv := Interview.new()
+			add_child(iv)
+			GameState.set_flag("c5_b3_interview_retries", await iv.play())
 		_:
 			await get_tree().process_frame
 	Dialogue.event_done.emit()
